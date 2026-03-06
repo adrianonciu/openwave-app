@@ -42,3 +42,26 @@ Next steps:
 - article summarization
 - Daily Brief generation from real articles
 - connect Flutter Home screen to real briefing
+## 2026-03-06
+
+Major milestone.
+
+- Git repository initialized locally
+- Connected to GitHub repository: adrianonciu/openwave-app
+- Saved initial project structure
+- Resolved nested git repository issues
+- Cleaned local folder structure
+- Project now version-controlled and safely stored in GitHub
+
+Current repository structure:
+- ai_pipeline
+- audio_system
+- backend
+- data
+- docs
+- frontend
+- services
+
+Next step:
+Continue MVP development and migrate toward clean architecture:
+backend / flutter_app / docs.
