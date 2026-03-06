@@ -1,115 +1,147 @@
 # OpenWave – Project Map
 
 ## Project summary
+
 OpenWave is an AI audio-first news briefing application.
 
-Users do not read multiple articles.
-They listen to a short Daily Brief generated from news sources.
+Instead of reading many articles, users listen to a short Daily Brief generated from news sources.
 
-## Current project goal
-Build the MVP that supports this flow:
+The application aggregates articles, summarizes them, and presents them as an audio playlist.
 
-RSS / test feed
+## MVP goal
+
+Build a minimal product that supports the following pipeline:
+
+RSS feed
 → article ingestion
 → summarization
 → Daily Brief generation
 → mobile app display
-→ player screen
-→ audio playback later
+→ audio playback (later)
 
-## Current repository structure
+## Repository structure
 
 backend/
 flutter_app/
 docs/
 
-## Backend structure
+## Backend architecture
 
-backend/app/main.py
-- FastAPI entrypoint
+FastAPI backend responsible for:
 
-backend/app/api/routes.py
-- API routes
-- /articles
-- /briefing/today
+- retrieving articles
+- generating Daily Brief
+- serving API endpoints
 
-backend/app/models/article.py
-- Article model
+Backend structure:
 
-backend/app/models/briefing.py
-- DailyBrief and BriefingSegment models
+backend/app/main.py  
+FastAPI entrypoint
 
-backend/app/services/article_service.py
-- article retrieval / management
+backend/app/api/routes.py  
+API routes
 
-backend/app/services/briefing_service.py
-- Daily Brief generation
+backend/app/models/article.py  
+Article model
 
-Future backend services:
-- rss_ingestion_service.py
-- summarization_service.py
+backend/app/models/briefing.py  
+DailyBrief and BriefingSegment models
 
-## Flutter app structure
+backend/app/services/article_service.py  
+article retrieval
 
-flutter_app/lib/main.dart
-- app bootstrap
+backend/app/services/briefing_service.py  
+Daily Brief generation
 
-flutter_app/lib/models/article.dart
-- Article model for Flutter
+Future services:
 
-flutter_app/lib/models/daily_brief.dart
-- DailyBrief and BriefingSegment for Flutter
+backend/app/services/rss_ingestion_service.py  
+backend/app/services/summarization_service.py  
 
-flutter_app/lib/services/api_service.dart
-- backend API communication
+## Mobile architecture
 
-flutter_app/lib/screens/home_screen.dart
-- Home screen
-- shows articles or briefing
+Flutter mobile application.
 
-flutter_app/lib/screens/player_screen.dart
-- Player screen
-- shows title, source, summary, audio state
+Structure:
 
-## Docs structure
+flutter_app/lib/main.dart  
+application bootstrap
 
-docs/PROJECT_CONTEXT.md
-- stable project context
+flutter_app/lib/models/article.dart  
+Article model
 
-docs/TASKS.md
-- current task list
+flutter_app/lib/models/daily_brief.dart  
+Daily Brief model
 
-docs/DAILY_LOG.md
-- daily progress log
+flutter_app/lib/services/api_service.dart  
+API communication
 
-docs/ARCHITECTURE.md
-- technical notes and architecture decisions
+flutter_app/lib/screens/home_screen.dart  
+Home UI
+
+flutter_app/lib/screens/player_screen.dart  
+Player UI
+
+## API endpoints
+
+GET /articles  
+returns article list
+
+GET /briefing/today  
+returns Daily Brief with segments
+
+## Core models
+
+Article
+
+fields:
+title  
+source  
+summary  
+audio_url  
+
+BriefingSegment
+
+fields:
+title  
+source  
+summary  
+audio_url  
+
+DailyBrief
+
+fields:
+title  
+duration  
+segments[]
 
 ## MVP scope
+
 Included:
-- backend FastAPI
-- /articles endpoint
-- /briefing/today endpoint
+
+- FastAPI backend
 - article model
 - DailyBrief model
+- /articles endpoint
+- /briefing/today endpoint
 - Flutter Home screen
 - Flutter Player screen
 - API integration
-- RSS ingestion next
-- summarization next
 
 Not included yet:
-- authentication
-- notifications
-- analytics
-- explain mode
-- reality mixer
-- smart commute
-- personalization engine
-- real TTS orchestration
-- advanced fact-checking
+
+authentication  
+notifications  
+analytics  
+Explain Mode  
+Reality Mixer  
+Smart Commute  
+personalization engine  
+advanced fact-checking  
+real TTS orchestration
 
 ## Development priority
+
 1. Stabilize repository structure
 2. Implement RSS ingestion
 3. Implement summarization
@@ -119,13 +151,17 @@ Not included yet:
 7. Add real audio playback
 
 ## Important rule
+
 Do not create alternative project structures.
-Do not create folders like:
-- mobile/
-- frontend/
-- app/
+
+Do NOT create:
+
+mobile/  
+frontend/  
+client/  
 
 Use only:
-- backend/
-- flutter_app/
-- docs/
+
+backend/  
+flutter_app/  
+docs/
