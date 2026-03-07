@@ -16,7 +16,7 @@ class ArticleService:
                     id=index,
                     title=item.get("title", ""),
                     source=item.get("source_name", "Unknown source"),
-                    summary="",
+                    summary=item.get("description", "") or "",
                     url=item.get("link", ""),
                     published_at=published_at,
                 )
@@ -39,3 +39,4 @@ class ArticleService:
             return parsed.replace(tzinfo=timezone.utc)
 
         return parsed.astimezone(timezone.utc)
+
