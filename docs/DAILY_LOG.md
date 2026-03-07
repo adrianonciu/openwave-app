@@ -1,3 +1,9 @@
+# OpenWave Development Log
+
+This file records important milestones and architectural decisions during the development of OpenWave.
+
+It is not intended to list every commit.
+
 ## 2026-03-06
 
 Major milestone: OpenWave MVP rebuilt with stable structure.
@@ -88,3 +94,32 @@ Next:
 - connect RSS ingestion to ArticleService
 - make /articles return real RSS articles
 - then update BriefingService to build briefing from real articles
+Completed later the same day:
+
+Backend:
+- connected RSS ingestion to ArticleService
+- /articles now returns real RSS articles
+- added article sorting by publish date
+- mapped RSS description to summary
+- implemented HTML stripping in summaries
+
+Briefing:
+- DailyBrief now generated from first 5 articles
+- dynamic headline generation
+
+Flutter:
+- created DailyBrief model
+- implemented ApiService
+- implemented HomeScreen
+- connected Flutter to FastAPI /briefing/today
+
+Result:
+First working end-to-end pipeline:
+
+RSS
+→ FastAPI backend
+→ /briefing/today
+→ Flutter app
+→ HomeScreen displays real news briefing
+
+This is the first fully working OpenWave MVP.
