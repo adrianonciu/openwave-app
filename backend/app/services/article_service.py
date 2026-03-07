@@ -6,7 +6,7 @@ from app.services.rss_ingestion_service import ingest_rss
 
 class ArticleService:
     def get_articles(self) -> list[Article]:
-        rss_items = ingest_rss()
+        rss_items = ingest_rss()[:20]
         articles: list[Article] = []
 
         for index, item in enumerate(rss_items, start=1):
@@ -16,7 +16,7 @@ class ArticleService:
                     id=index,
                     title=item.get("title", ""),
                     source=item.get("source_name", "Unknown source"),
-                    summary="Summary not available yet.",
+                    summary="",
                     url=item.get("link", ""),
                     published_at=published_at,
                 )
@@ -38,3 +38,4 @@ class ArticleService:
             return parsed.replace(tzinfo=timezone.utc)
 
         return parsed.astimezone(timezone.utc)
+
