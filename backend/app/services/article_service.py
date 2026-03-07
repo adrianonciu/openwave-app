@@ -22,6 +22,7 @@ class ArticleService:
                 )
             )
 
+        articles.sort(key=lambda article: article.published_at, reverse=True)
         return articles
 
     @staticmethod
@@ -38,4 +39,3 @@ class ArticleService:
             return parsed.replace(tzinfo=timezone.utc)
 
         return parsed.astimezone(timezone.utc)
-
