@@ -9,8 +9,8 @@ class BriefingService:
         self.article_service = article_service or ArticleService()
 
     def get_today_briefing(self) -> DailyBriefing:
-        articles = self.article_service.get_articles()
-        highlights = [article.title for article in articles[:3]]
+        articles = self.article_service.get_articles()[:5]
+        highlights = [article.title for article in articles]
 
         return DailyBriefing(
             date=date.today(),
