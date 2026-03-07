@@ -1,0 +1,1 @@
+"""Briefing model placeholders."""
