@@ -1,34 +1,40 @@
 from datetime import datetime, timezone
 
 from app.models.article import Article
+from app.services.rss_ingestion_service import ingest_rss
 
 
 class ArticleService:
     def get_articles(self) -> list[Article]:
-        now = datetime.now(timezone.utc)
-        return [
-            Article(
-                id=1,
-                title="Global markets open mixed as inflation cools",
-                source="OpenWave Newswire",
-                summary="Analysts report cautious optimism after a lower-than-expected inflation print.",
-                url="https://example.com/articles/1",
-                published_at=now,
-            ),
-            Article(
-                id=2,
-                title="New battery breakthrough promises faster charging",
-                source="Tech Dispatch",
-                summary="Researchers unveiled a prototype chemistry that may reduce charge times.",
-                url="https://example.com/articles/2",
-                published_at=now,
-            ),
-            Article(
-                id=3,
-                title="City pilots AI-assisted traffic control",
-                source="Civic Daily",
-                summary="The pilot project aims to optimize signal timing and reduce commute times.",
-                url="https://example.com/articles/3",
-                published_at=now,
-            ),
-        ]
+        rss_items = ingest_rss()
+        articles: list[Article] = []
+
+        for index, item in enumerate(rss_items, start=1):
+            published_at = self._parse_published_at(item.get("published_date", ""))
+            articles.append(
+                Article(
+                    id=index,
+                    title=item.get("title", ""),
+                    source=item.get("source_name", "Unknown source"),
+                    summary="Summary not available yet.",
+                    url=item.get("link", ""),
+                    published_at=published_at,
+                )
+            )
+
+        return articles
+
+    @staticmethod
+    def _parse_published_at(raw_date: str) -> datetime:
+        if not raw_date:
+            return datetime.now(timezone.utc)
+
+        try:
+            parsed = datetime.fromisoformat(raw_date)
+        except ValueError:
+            return datetime.now(timezone.utc)
+
+        if parsed.tzinfo is None:
+            return parsed.replace(tzinfo=timezone.utc)
+
+        return parsed.astimezone(timezone.utc)
