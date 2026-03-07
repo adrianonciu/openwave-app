@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timezone
 
 from app.models.article import Article
@@ -16,7 +17,7 @@ class ArticleService:
                     id=index,
                     title=item.get("title", ""),
                     source=item.get("source_name", "Unknown source"),
-                    summary=item.get("description", "") or "",
+                    summary=self._strip_html(item.get("description", "") or ""),
                     url=item.get("link", ""),
                     published_at=published_at,
                 )
@@ -40,3 +41,6 @@ class ArticleService:
 
         return parsed.astimezone(timezone.utc)
 
+    @staticmethod
+    def _strip_html(raw_html: str) -> str:
+        return re.sub(r"<[^>]+>", "", raw_html).strip()
