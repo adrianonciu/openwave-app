@@ -14,7 +14,8 @@ class BriefingService:
 
         return DailyBriefing(
             date=date.today(),
-            headline="Your OpenWave Daily Briefing",
+            headline=f"Top {len(articles)} stories today",
             highlights=highlights,
             articles=articles,
         )
+
