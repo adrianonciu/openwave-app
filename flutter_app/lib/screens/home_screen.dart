@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/daily_brief.dart';
 import '../services/api_service.dart';
+import 'player_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
+
   DailyBrief? _dailyBrief;
   String? _error;
 
@@ -24,16 +26,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadDailyBrief() async {
     try {
       final dailyBrief = await _apiService.getDailyBrief();
+
       if (!mounted) return;
+
       setState(() {
         _dailyBrief = dailyBrief;
       });
     } catch (_) {
       if (!mounted) return;
+
       setState(() {
         _error = 'Failed to load daily brief.';
       });
     }
+  }
+
+  void _openPlayer() {
+    if (_dailyBrief == null) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PlayerScreen(dailyBrief: _dailyBrief!),
+      ),
+    );
   }
 
   @override
@@ -63,13 +78,46 @@ class _HomeScreenState extends State<HomeScreen> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('Play Daily Brief'),
+                onPressed: _openPlayer,
+              ),
+            ),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
-                itemCount: _dailyBrief!.highlights.length,
+                itemCount: _dailyBrief!.articles.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(_dailyBrief!.highlights[index]),
+                  final article = _dailyBrief!.articles[index];
+
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            article.title,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            article.source,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            article.summary,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),
