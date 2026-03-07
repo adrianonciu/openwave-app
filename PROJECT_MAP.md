@@ -165,3 +165,21 @@ Use only:
 backend/  
 flutter_app/  
 docs/
+## Current status
+
+Implemented:
+- backend/app/main.py
+- backend/app/api/routes.py
+- backend/app/models/article.py
+- backend/app/models/briefing.py
+- backend/app/services/article_service.py
+- backend/app/services/briefing_service.py
+- backend/app/services/rss_ingestion_service.py
+
+Working locally:
+- FastAPI backend starts successfully
+- Swagger UI works at /docs
+
+Next step:
+- connect rss_ingestion_service.py to article_service.py
+- make /articles return real RSS-based Article objects

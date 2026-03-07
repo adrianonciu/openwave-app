@@ -65,3 +65,26 @@ Current repository structure:
 Next step:
 Continue MVP development and migrate toward clean architecture:
 backend / flutter_app / docs.
+## 2026-03-07
+
+Completed:
+- switched from Codex Cloud workflow to Codex Local workflow
+- created working FastAPI backend scaffold
+- fixed backend files manually where Codex created placeholders
+- verified local backend startup with uvicorn
+- verified Swagger UI at /docs
+- added RSS ingestion service using Python standard library
+- committed:
+  - af8d40a Create minimal backend scaffold files
+  - 68a1244 Implement RSS ingestion service with stdlib parsing
+
+Current status:
+- backend runs locally
+- /docs works
+- /articles and /briefing/today exist
+- RSS ingestion service exists but is not yet connected to ArticleService
+
+Next:
+- connect RSS ingestion to ArticleService
+- make /articles return real RSS articles
+- then update BriefingService to build briefing from real articles

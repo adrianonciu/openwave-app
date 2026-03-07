@@ -85,3 +85,10 @@ docs/PROJECT_CONTEXT.md
 docs/TASKS.md  
 docs/DAILY_LOG.md  
 docs/ARCHITECTURE.md
+## Execution rules
+
+- Do not run tests unless explicitly requested.
+- Do not install dependencies unless explicitly requested.
+- Do not run the development server unless explicitly requested.
+- Prefer small, incremental diffs.
+- Stop after showing the diff for each task.
