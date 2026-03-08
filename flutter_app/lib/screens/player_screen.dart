@@ -93,12 +93,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     if (_isPlayingIntro) {
       _isPlayingIntro = false;
-      await _playCurrentArticle();
+      _isPlayingCue = true;
+      await _flutterTts.speak('Top story.');
       return;
     }
 
     if (_isPlayingCue) {
       _isPlayingCue = false;
+      if (_currentIndex == 0) {
+        await _playCurrentArticle();
+        return;
+      }
       setState(() {
         _currentIndex++;
       });
