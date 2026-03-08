@@ -26,6 +26,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _flutterTts.setCompletionHandler(() {
       _handleTtsCompletion();
     });
+    if (widget.dailyBrief.articles.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        setState(() {
+          _isPlaying = true;
+        });
+        await _playCurrentArticle();
+      });
+    }
   }
 
   Future<void> _handleTtsCompletion() async {
@@ -266,4 +275,3 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
   }
 }
-
