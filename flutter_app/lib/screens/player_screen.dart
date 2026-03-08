@@ -46,8 +46,25 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _playIntroIfNeeded() async {
+    final articleCount = widget.dailyBrief.articles.length;
+    final countWord = <int, String>{
+          1: 'One',
+          2: 'Two',
+          3: 'Three',
+          4: 'Four',
+          5: 'Five',
+          6: 'Six',
+          7: 'Seven',
+          8: 'Eight',
+          9: 'Nine',
+          10: 'Ten',
+        }[articleCount] ??
+        articleCount.toString();
+    final storyLabel = articleCount == 1 ? 'story' : 'stories';
+
     _isPlayingIntro = true;
-    await _flutterTts.speak('Your OpenWave Daily Brief. Five stories today.');
+    await _flutterTts
+        .speak('Your OpenWave Daily Brief. $countWord $storyLabel today.');
   }
 
   Future<void> _handleTtsCompletion() async {
