@@ -43,6 +43,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Widget build(BuildContext context) {
     final articles = widget.dailyBrief.articles;
     final nowPlaying = articles.isNotEmpty ? articles[_currentIndex] : null;
+    final nextArticle = _currentIndex < articles.length - 1
+        ? articles[_currentIndex + 1]
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -84,6 +87,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         nowPlaying.source,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        nowPlaying.summary,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '30 sec',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       const SizedBox(height: 16),
                       LinearProgressIndicator(
                         value: (_currentIndex + 1) / articles.length,
@@ -109,6 +122,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   ),
                 ),
               ),
+              if (nextArticle != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Up next: ${nextArticle.title}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
               const SizedBox(height: 24),
             ],
             Text(
