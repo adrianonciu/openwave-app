@@ -170,3 +170,19 @@ Pipeline verified:
 RSS → Article → Segment → DailyBrief → Flutter Player → TTS playback
 
 OpenWave MVP now supports continuous audio news briefing with playlist navigation.
+## 2026-03-08
+
+Major milestone: OpenWave audio player upgraded.
+
+PlayerScreen improvements:
+- auto-start briefing playback
+- auto-play between articles
+- voice cue between articles
+- interactive playlist
+- highlight for current article
+- estimated narration duration
+- progress bar based on narration duration
+- playback timer (current / total / remaining)
+- duration visible in playlist items
+
+OpenWave now behaves like a real audio news briefing player.
