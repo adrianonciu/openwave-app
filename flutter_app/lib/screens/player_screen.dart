@@ -238,6 +238,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final remainingSeconds =
         (_currentArticleDurationSeconds - _currentProgressSeconds)
             .clamp(0, _currentArticleDurationSeconds);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Brief Player'),
@@ -353,6 +354,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 itemBuilder: (context, index) {
                   final article = articles[index];
                   final isActive = index == _currentIndex;
+                  final playlistNarrationText = _buildNarrationText(article);
+                  final playlistDurationSeconds =
+                      _estimateDurationSeconds(playlistNarrationText);
+                  final playlistDurationLabel = playlistDurationSeconds >= 60
+                      ? '${(playlistDurationSeconds / 60).round()} min'
+                      : '$playlistDurationSeconds sec';
 
                   return Card(
                     color: isActive
@@ -385,7 +392,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(article.source),
+                                Text('${article.source} • $playlistDurationLabel'),
                                 Text(
                                   'Playing now',
                                   style: Theme.of(context)
@@ -397,7 +404,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                 ),
                               ],
                             )
-                          : Text(article.source),
+                          : Text('${article.source} • $playlistDurationLabel'),
                       trailing: Icon(
                         isActive ? Icons.graphic_eq : Icons.play_arrow,
                       ),
