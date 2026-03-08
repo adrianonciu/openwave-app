@@ -32,7 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _dailyBrief = dailyBrief;
       });
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Daily brief load error: $e');
+
       if (!mounted) return;
 
       setState(() {

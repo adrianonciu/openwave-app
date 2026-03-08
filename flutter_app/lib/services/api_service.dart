@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -10,12 +9,7 @@ class ApiService {
 
   final http.Client _client;
 
-  String get _baseUrl {
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000';
-    }
-    return 'http://127.0.0.1:8000';
-  }
+  static const String _baseUrl = 'http://127.0.0.1:8000';
 
   Future<DailyBrief> getDailyBrief() async {
     final response = await _client.get(Uri.parse('$_baseUrl/briefing/today'));
