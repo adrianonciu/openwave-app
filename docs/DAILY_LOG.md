@@ -123,3 +123,27 @@ RSS
 → HomeScreen displays real news briefing
 
 This is the first fully working OpenWave MVP.
+## 2026-03-08
+
+Major milestone: First real audio playback in OpenWave.
+
+Completed:
+- implemented Flutter TTS playback
+- Play button reads article title + summary
+- PlayerScreen supports play/pause
+- Up Next indicator added
+- summary and duration shown in player
+- fixed Flutter Web API integration
+- enabled CORS in FastAPI backend
+- verified end-to-end pipeline in browser
+
+Pipeline now:
+
+RSS
+→ Article
+→ Segment
+→ DailyBrief
+→ Flutter Player
+→ TTS voice playback
+
+OpenWave can now read the daily briefing aloud.
