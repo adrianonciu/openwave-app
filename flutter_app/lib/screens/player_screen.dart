@@ -62,20 +62,30 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
   }
 
-  void _playPrevious() {
+  Future<void> _playPrevious() async {
     if (_currentIndex == 0) return;
 
     setState(() {
       _currentIndex--;
     });
+
+    if (_isPlaying) {
+      await _flutterTts.stop();
+      await _playCurrentArticle();
+    }
   }
 
-  void _playNext() {
+  Future<void> _playNext() async {
     if (_currentIndex >= widget.dailyBrief.articles.length - 1) return;
 
     setState(() {
       _currentIndex++;
     });
+
+    if (_isPlaying) {
+      await _flutterTts.stop();
+      await _playCurrentArticle();
+    }
   }
 
   Future<void> _playCurrentArticle() async {
