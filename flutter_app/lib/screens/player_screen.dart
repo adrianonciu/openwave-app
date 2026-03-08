@@ -254,13 +254,46 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     color: isActive
                         ? Theme.of(context).colorScheme.primaryContainer
                         : null,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: isActive
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                        width: isActive ? 2 : 0,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: ListTile(
                       onTap: () => _selectArticle(index),
                       leading: CircleAvatar(
                         child: Text('${index + 1}'),
                       ),
-                      title: Text(article.title),
-                      subtitle: Text(article.source),
+                      title: Text(
+                        article.title,
+                        style: isActive
+                            ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              )
+                            : null,
+                      ),
+                      subtitle: isActive
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(article.source),
+                                Text(
+                                  'Playing now',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ],
+                            )
+                          : Text(article.source),
                       trailing: Icon(
                         isActive ? Icons.graphic_eq : Icons.play_arrow,
                       ),
