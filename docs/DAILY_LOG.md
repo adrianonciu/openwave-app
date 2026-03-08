@@ -186,3 +186,61 @@ PlayerScreen improvements:
 - duration visible in playlist items
 
 OpenWave now behaves like a real audio news briefing player.
+## 2026-03-09
+
+Major milestone: OpenWave audio briefing experience significantly improved.
+
+PlayerScreen upgrades:
+
+Audio experience
+- Added spoken Daily Brief intro
+- Intro now dynamically reflects article count
+- Intro now includes estimated total briefing duration
+- Added "Top story." cue before the first article
+- Added "Next story." cue between subsequent articles
+
+Playback
+- Continuous auto-play between articles
+- Stable TTS playback using flutter_tts
+- Improved playback flow using cue states
+
+Timing and duration
+- Estimated narration duration per article
+- Total briefing duration estimation
+- Progress timer synced with narration duration
+- Display of current / total / remaining time
+
+Playlist UI improvements
+- Interactive playlist
+- Highlight for currently playing article
+- Estimated duration displayed for each playlist item
+
+Pipeline confirmed working end-to-end:
+
+RSS
+→ rss_ingestion_service
+→ ArticleService
+→ SegmentService
+→ BriefingService
+→ /briefing/today endpoint
+→ Flutter HomeScreen
+→ PlayerScreen
+→ TTS playback
+
+Current user experience:
+
+Your OpenWave Daily Brief.
+Five stories today. About two minutes.
+
+Top story.
+Article 1…
+
+Next story.
+Article 2…
+
+OpenWave now behaves like a real audio news briefing player.
+
+Next planned improvements:
+- Display total briefing duration in PlayerScreen UI
+- Introduce basic editorial section cues
+- Improve visual structure of PlayerScreen
