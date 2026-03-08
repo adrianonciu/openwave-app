@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import '../models/daily_brief.dart';
 
@@ -16,6 +17,8 @@ class PlayerScreen extends StatefulWidget {
 
 class _PlayerScreenState extends State<PlayerScreen> {
   int _currentIndex = 0;
+  final FlutterTts _flutterTts = FlutterTts();
+  bool _isPlaying = false;
 
   String _buildNarrationText(DailyBriefArticle article) {
     return '${article.title}. ${article.summary}';
@@ -41,6 +44,32 @@ class _PlayerScreenState extends State<PlayerScreen> {
     setState(() {
       _currentIndex++;
     });
+  }
+
+  Future<void> _playCurrentArticle() async {
+    final articles = widget.dailyBrief.articles;
+    if (articles.isEmpty) return;
+
+    final article = articles[_currentIndex];
+    final text = _buildNarrationText(article);
+
+    if (text.trim().isEmpty) return;
+    await _flutterTts.speak(text);
+  }
+
+  Future<void> _togglePlayback() async {
+    if (_isPlaying) {
+      await _flutterTts.stop();
+      setState(() {
+        _isPlaying = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isPlaying = true;
+    });
+    await _playCurrentArticle();
   }
 
   @override
@@ -123,7 +152,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                             icon: const Icon(Icons.skip_previous),
                           ),
                           const SizedBox(width: 12),
-                          const Icon(Icons.pause_circle_filled, size: 40),
+                          IconButton(
+                            onPressed: _togglePlayback,
+                            iconSize: 40,
+                            icon: Icon(
+                              _isPlaying
+                                  ? Icons.pause_circle_filled
+                                  : Icons.play_circle_filled,
+                            ),
+                          ),
                           const SizedBox(width: 12),
                           IconButton(
                             onPressed: _playNext,
