@@ -60,6 +60,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return '${article.title}. ${article.summary}';
   }
 
+  int _estimateDurationSeconds(String text) {
+    final words = text
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty)
+        .length;
+    if (words == 0) return 0;
+
+    return ((words / 170) * 60).ceil();
+  }
+
   Future<void> _selectArticle(int index) async {
     setState(() {
       _currentIndex = index;
@@ -138,6 +149,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final nextArticle = _currentIndex < articles.length - 1
         ? articles[_currentIndex + 1]
         : null;
+    final estimatedDurationSeconds = _estimateDurationSeconds(narrationText);
+    final estimatedDurationLabel = estimatedDurationSeconds >= 60
+        ? '${(estimatedDurationSeconds / 60).round()} min'
+        : '$estimatedDurationSeconds sec';
 
     return Scaffold(
       appBar: AppBar(
@@ -193,7 +208,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ],
                       const SizedBox(height: 8),
                       Text(
-                        '30 sec',
+                        estimatedDurationLabel,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 16),
