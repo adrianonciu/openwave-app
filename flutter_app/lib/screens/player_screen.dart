@@ -420,6 +420,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 itemBuilder: (context, index) {
                   final article = articles[index];
                   final isActive = index == _currentIndex;
+                  final isNext = index == _currentIndex + 1;
                   final playlistNarrationText = _buildNarrationText(article);
                   final playlistDurationSeconds =
                       _estimateDurationSeconds(playlistNarrationText);
@@ -470,9 +471,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                 ),
                               ],
                             )
-                          : Text('${article.source} • $playlistDurationLabel'),
+                          : Text(
+                              isNext
+                                  ? 'Next: ${article.source} • $playlistDurationLabel'
+                                  : '${article.source} • $playlistDurationLabel',
+                            ),
                       trailing: Icon(
-                        isActive ? Icons.graphic_eq : Icons.play_arrow,
+                        isActive
+                            ? Icons.graphic_eq
+                            : (isNext ? Icons.arrow_forward : Icons.play_arrow),
                       ),
                     ),
                   );
