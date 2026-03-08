@@ -62,9 +62,30 @@ class _PlayerScreenState extends State<PlayerScreen> {
         articleCount.toString();
     final storyLabel = articleCount == 1 ? 'story' : 'stories';
 
+    final totalEstimatedSeconds = widget.dailyBrief.articles
+        .map((article) => _estimateDurationSeconds(_buildNarrationText(article)))
+        .fold(0, (sum, duration) => sum + duration);
+    final roundedMinutes = (totalEstimatedSeconds / 60).round();
+    final safeMinutes = roundedMinutes < 1 ? 1 : roundedMinutes;
+    final minuteWord = <int, String>{
+          1: 'one',
+          2: 'two',
+          3: 'three',
+          4: 'four',
+          5: 'five',
+          6: 'six',
+          7: 'seven',
+          8: 'eight',
+          9: 'nine',
+          10: 'ten',
+        }[safeMinutes] ??
+        safeMinutes.toString();
+    final minuteLabel = safeMinutes == 1 ? 'minute' : 'minutes';
+
     _isPlayingIntro = true;
-    await _flutterTts
-        .speak('Your OpenWave Daily Brief. $countWord $storyLabel today.');
+    await _flutterTts.speak(
+      'Your OpenWave Daily Brief. $countWord $storyLabel today. About $minuteWord $minuteLabel.',
+    );
   }
 
   Future<void> _handleTtsCompletion() async {
