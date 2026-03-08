@@ -24,6 +24,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   int _currentProgressSeconds = 0;
   int _currentArticleDurationSeconds = 0;
   Timer? _progressTimer;
+  bool _isPlayingCue = false;
 
   @override
   void initState() {
@@ -46,8 +47,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Future<void> _handleTtsCompletion() async {
     if (!_isPlaying) return;
 
-    final hasNext = _currentIndex < widget.dailyBrief.articles.length - 1;
-    if (hasNext) {
+    if (_isPlayingCue) {
+      _isPlayingCue = false;
       setState(() {
         _currentIndex++;
       });
@@ -55,7 +56,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
       return;
     }
 
+    final hasNext = _currentIndex < widget.dailyBrief.articles.length - 1;
+    if (hasNext) {
+      _stopProgressTimer();
+      _isPlayingCue = true;
+      await _flutterTts.speak('Next story.');
+      return;
+    }
+
     _stopProgressTimer();
+    _isPlayingCue = false;
     await _flutterTts.stop();
     if (!mounted) return;
     setState(() {
@@ -186,6 +196,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   Future<void> _togglePlayback() async {
     if (_isPlaying) {
+      _isPlayingCue = false;
       _stopProgressTimer();
       await _flutterTts.stop();
       setState(() {
@@ -401,4 +412,3 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
   }
 }
-
