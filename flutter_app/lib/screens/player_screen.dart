@@ -51,10 +51,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return '${article.title}. ${article.summary}';
   }
 
-  void _selectArticle(int index) {
+  Future<void> _selectArticle(int index) async {
     setState(() {
       _currentIndex = index;
     });
+
+    if (_isPlaying) {
+      await _flutterTts.stop();
+      await _playCurrentArticle();
+    }
   }
 
   void _playPrevious() {
@@ -251,3 +256,4 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
   }
 }
+
