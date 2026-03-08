@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import timezone
 from email.utils import parsedate_to_datetime
+import time
 from typing import Any
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -13,6 +14,10 @@ RSS_SOURCES = [
     "https://feeds.bbci.co.uk/news/world/rss.xml",
     "https://rss.dw.com/xml/rss-en-world",
 ]
+RSS_CACHE_TTL_SECONDS = 600
+
+_cached_articles: list[dict[str, Any]] = []
+_last_fetch_timestamp: float | None = None
 
 
 def _read_feed(url: str) -> bytes:
@@ -53,6 +58,16 @@ def _source_name(root: ET.Element, feed_url: str) -> str:
 
 def ingest_rss() -> list[dict[str, Any]]:
     """Fetch and parse configured RSS feeds into article dictionaries."""
+    global _cached_articles, _last_fetch_timestamp
+
+    now = time.time()
+    if (
+        _cached_articles
+        and _last_fetch_timestamp is not None
+        and (now - _last_fetch_timestamp) < RSS_CACHE_TTL_SECONDS
+    ):
+        return [article.copy() for article in _cached_articles]
+
     articles: list[dict[str, Any]] = []
 
     for feed_url in RSS_SOURCES:
@@ -77,4 +92,6 @@ def ingest_rss() -> list[dict[str, Any]]:
                 }
             )
 
-    return articles
+    _cached_articles = [article.copy() for article in articles]
+    _last_fetch_timestamp = now
+    return [article.copy() for article in _cached_articles]
