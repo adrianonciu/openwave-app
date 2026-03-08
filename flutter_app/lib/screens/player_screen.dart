@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -19,6 +21,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
   int _currentIndex = 0;
   final FlutterTts _flutterTts = FlutterTts();
   bool _isPlaying = false;
+  int _currentProgressSeconds = 0;
+  int _currentArticleDurationSeconds = 0;
+  Timer? _progressTimer;
 
   @override
   void initState() {
@@ -27,6 +32,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       _handleTtsCompletion();
     });
     if (widget.dailyBrief.articles.isNotEmpty) {
+      _resetProgressForCurrentArticle();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted) return;
         setState(() {
@@ -49,10 +55,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
       return;
     }
 
+    _stopProgressTimer();
     await _flutterTts.stop();
     if (!mounted) return;
     setState(() {
       _isPlaying = false;
+      _currentProgressSeconds = _currentArticleDurationSeconds;
     });
   }
 
@@ -71,9 +79,48 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return ((words / 170) * 60).ceil();
   }
 
+  void _resetProgressForCurrentArticle() {
+    final articles = widget.dailyBrief.articles;
+    if (articles.isEmpty) {
+      _currentProgressSeconds = 0;
+      _currentArticleDurationSeconds = 0;
+      return;
+    }
+
+    final text = _buildNarrationText(articles[_currentIndex]);
+    _currentProgressSeconds = 0;
+    _currentArticleDurationSeconds = _estimateDurationSeconds(text);
+  }
+
+  void _startProgressTimer() {
+    _stopProgressTimer();
+    if (_currentArticleDurationSeconds <= 0) return;
+
+    _progressTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        if (_currentProgressSeconds < _currentArticleDurationSeconds) {
+          _currentProgressSeconds++;
+        } else {
+          timer.cancel();
+        }
+      });
+    });
+  }
+
+  void _stopProgressTimer() {
+    _progressTimer?.cancel();
+    _progressTimer = null;
+  }
+
   Future<void> _selectArticle(int index) async {
     setState(() {
       _currentIndex = index;
+      _resetProgressForCurrentArticle();
     });
 
     if (_isPlaying) {
@@ -87,6 +134,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     setState(() {
       _currentIndex--;
+      _resetProgressForCurrentArticle();
     });
 
     if (_isPlaying) {
@@ -100,6 +148,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     setState(() {
       _currentIndex++;
+      _resetProgressForCurrentArticle();
     });
 
     if (_isPlaying) {
@@ -116,11 +165,19 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final text = _buildNarrationText(article);
 
     if (text.trim().isEmpty) return;
+
+    setState(() {
+      _currentProgressSeconds = 0;
+      _currentArticleDurationSeconds = _estimateDurationSeconds(text);
+    });
+    _startProgressTimer();
+
     await _flutterTts.speak(text);
   }
 
   Future<void> _togglePlayback() async {
     if (_isPlaying) {
+      _stopProgressTimer();
       await _flutterTts.stop();
       setState(() {
         _isPlaying = false;
@@ -136,6 +193,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   @override
   void dispose() {
+    _stopProgressTimer();
     _flutterTts.stop();
     super.dispose();
   }
@@ -149,10 +207,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final nextArticle = _currentIndex < articles.length - 1
         ? articles[_currentIndex + 1]
         : null;
-    final estimatedDurationSeconds = _estimateDurationSeconds(narrationText);
-    final estimatedDurationLabel = estimatedDurationSeconds >= 60
-        ? '${(estimatedDurationSeconds / 60).round()} min'
-        : '$estimatedDurationSeconds sec';
+    final estimatedDurationLabel = _currentArticleDurationSeconds >= 60
+        ? '${(_currentArticleDurationSeconds / 60).round()} min'
+        : '$_currentArticleDurationSeconds sec';
+    final progressValue = _currentArticleDurationSeconds > 0
+        ? (_currentProgressSeconds / _currentArticleDurationSeconds)
+            .clamp(0.0, 1.0)
+            .toDouble()
+        : 0.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -213,7 +275,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ),
                       const SizedBox(height: 16),
                       LinearProgressIndicator(
-                        value: (_currentIndex + 1) / articles.length,
+                        value: progressValue,
                       ),
                       const SizedBox(height: 12),
                       Row(
