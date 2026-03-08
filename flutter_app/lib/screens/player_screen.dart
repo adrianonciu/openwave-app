@@ -224,7 +224,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
             .clamp(0.0, 1.0)
             .toDouble()
         : 0.0;
-
+    final remainingSeconds =
+        (_currentArticleDurationSeconds - _currentProgressSeconds)
+            .clamp(0, _currentArticleDurationSeconds);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Brief Player'),
@@ -288,7 +290,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}',
+                        '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}  •  -${_formatDuration(remainingSeconds)}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 12),
@@ -399,3 +401,4 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
   }
 }
+
