@@ -244,3 +244,16 @@ Next planned improvements:
 - Display total briefing duration in PlayerScreen UI
 - Introduce basic editorial section cues
 - Improve visual structure of PlayerScreen
+- Added estimated total briefing duration to PlayerScreen UI under the briefing title.
+- Reused the same total duration estimation logic already used by the audio intro via a shared helper method.
+- Kept changes minimal and limited to flutter_app/lib/screens/player_screen.dart.
+- Added radio-like briefing sections in backend Daily Brief output.
+- Introduced DailyBriefingArticle with a section field.
+- Marked the first article as Top story and added minimal keyword-based section inference for Economy and Tech, with International as fallback.
+- Kept /briefing/today backward-compatible apart from the new per-article section field.
+- Improved PlayerScreen playlist UI to make the upcoming story more visible.
+- Added a subtle "Next:" label and arrow indicator for the item immediately after the active article.
+- Kept playback logic, TTS behavior, and data flow unchanged.
+- Added simple in-memory RSS caching with a 10-minute TTL in rss_ingestion_service.
+- RSS feeds are now reused between requests while the cache is valid, reducing repeated fetches.
+- Kept the existing service API and endpoint behavior unchanged.
