@@ -62,9 +62,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         articleCount.toString();
     final storyLabel = articleCount == 1 ? 'story' : 'stories';
 
-    final totalEstimatedSeconds = widget.dailyBrief.articles
-        .map((article) => _estimateDurationSeconds(_buildNarrationText(article)))
-        .fold(0, (sum, duration) => sum + duration);
+    final totalEstimatedSeconds = _estimateTotalBriefingDurationSeconds();
     final roundedMinutes = (totalEstimatedSeconds / 60).round();
     final safeMinutes = roundedMinutes < 1 ? 1 : roundedMinutes;
     final minuteWord = <int, String>{
@@ -131,6 +129,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   String _buildNarrationText(DailyBriefArticle article) {
     return '${article.title}. ${article.summary}';
+  }
+
+  int _estimateTotalBriefingDurationSeconds() {
+    return widget.dailyBrief.articles
+        .map((article) => _estimateDurationSeconds(_buildNarrationText(article)))
+        .fold(0, (sum, duration) => sum + duration);
   }
 
   int _estimateDurationSeconds(String text) {
@@ -277,6 +281,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
     final articles = widget.dailyBrief.articles;
+    final totalEstimatedBriefingSeconds = _estimateTotalBriefingDurationSeconds();
     final nowPlaying = articles.isNotEmpty ? articles[_currentIndex] : null;
     final narrationText =
         nowPlaying != null ? _buildNarrationText(nowPlaying) : '';
@@ -307,6 +312,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
             Text(
               widget.dailyBrief.headline,
               style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Estimated duration: ${_formatDuration(totalEstimatedBriefingSeconds)}',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
             Text(
