@@ -79,6 +79,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return ((words / 170) * 60).ceil();
   }
 
+  String _formatDuration(int seconds) {
+    final safeSeconds = seconds < 0 ? 0 : seconds;
+    final minutes = safeSeconds ~/ 60;
+    final remainingSeconds = safeSeconds % 60;
+    final paddedSeconds = remainingSeconds.toString().padLeft(2, '0');
+
+    return '$minutes:$paddedSeconds';
+  }
+
   void _resetProgressForCurrentArticle() {
     final articles = widget.dailyBrief.articles;
     if (articles.isEmpty) {
@@ -276,6 +285,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       const SizedBox(height: 16),
                       LinearProgressIndicator(
                         value: progressValue,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}',
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 12),
                       Row(
