@@ -25,6 +25,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   int _currentArticleDurationSeconds = 0;
   Timer? _progressTimer;
   bool _isPlayingCue = false;
+  bool _isPlayingIntro = false;
 
   @override
   void initState() {
@@ -39,13 +40,24 @@ class _PlayerScreenState extends State<PlayerScreen> {
         setState(() {
           _isPlaying = true;
         });
-        await _playCurrentArticle();
+        await _playIntroIfNeeded();
       });
     }
   }
 
+  Future<void> _playIntroIfNeeded() async {
+    _isPlayingIntro = true;
+    await _flutterTts.speak('Your OpenWave Daily Brief. Five stories today.');
+  }
+
   Future<void> _handleTtsCompletion() async {
     if (!_isPlaying) return;
+
+    if (_isPlayingIntro) {
+      _isPlayingIntro = false;
+      await _playCurrentArticle();
+      return;
+    }
 
     if (_isPlayingCue) {
       _isPlayingCue = false;
@@ -197,6 +209,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Future<void> _togglePlayback() async {
     if (_isPlaying) {
       _isPlayingCue = false;
+      _isPlayingIntro = false;
       _stopProgressTimer();
       await _flutterTts.stop();
       setState(() {
