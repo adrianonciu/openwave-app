@@ -20,6 +20,33 @@ class _PlayerScreenState extends State<PlayerScreen> {
   final FlutterTts _flutterTts = FlutterTts();
   bool _isPlaying = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _flutterTts.setCompletionHandler(() {
+      _handleTtsCompletion();
+    });
+  }
+
+  Future<void> _handleTtsCompletion() async {
+    if (!_isPlaying) return;
+
+    final hasNext = _currentIndex < widget.dailyBrief.articles.length - 1;
+    if (hasNext) {
+      setState(() {
+        _currentIndex++;
+      });
+      await _playCurrentArticle();
+      return;
+    }
+
+    await _flutterTts.stop();
+    if (!mounted) return;
+    setState(() {
+      _isPlaying = false;
+    });
+  }
+
   String _buildNarrationText(DailyBriefArticle article) {
     return '${article.title}. ${article.summary}';
   }
@@ -70,6 +97,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
       _isPlaying = true;
     });
     await _playCurrentArticle();
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
   }
 
   @override
