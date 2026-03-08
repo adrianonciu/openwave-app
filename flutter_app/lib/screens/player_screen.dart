@@ -17,6 +17,10 @@ class PlayerScreen extends StatefulWidget {
 class _PlayerScreenState extends State<PlayerScreen> {
   int _currentIndex = 0;
 
+  String _buildNarrationText(DailyBriefArticle article) {
+    return '${article.title}. ${article.summary}';
+  }
+
   void _selectArticle(int index) {
     setState(() {
       _currentIndex = index;
@@ -43,6 +47,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Widget build(BuildContext context) {
     final articles = widget.dailyBrief.articles;
     final nowPlaying = articles.isNotEmpty ? articles[_currentIndex] : null;
+    final narrationText =
+        nowPlaying != null ? _buildNarrationText(nowPlaying) : '';
     final nextArticle = _currentIndex < articles.length - 1
         ? articles[_currentIndex + 1]
         : null;
@@ -92,6 +98,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         nowPlaying.summary,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
+                      if (narrationText.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Audio narration ready',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
                       const SizedBox(height: 8),
                       Text(
                         '30 sec',
