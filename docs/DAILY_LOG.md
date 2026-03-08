@@ -147,3 +147,26 @@ RSS
 → TTS voice playback
 
 OpenWave can now read the daily briefing aloud.
+## 2026-03-08 (Session 2)
+
+Major milestone: OpenWave audio player significantly improved.
+
+Implemented in PlayerScreen:
+
+- auto-start briefing playback
+- auto-play between articles
+- voice cue between articles ("Next story")
+- interactive playlist with article selection
+- highlight for currently playing article
+- estimated narration duration based on text length
+- progress bar based on estimated duration
+- current / total / remaining playback time
+- estimated duration displayed in playlist items
+
+Player now behaves like a real audio briefing player.
+
+Pipeline verified:
+
+RSS → Article → Segment → DailyBrief → Flutter Player → TTS playback
+
+OpenWave MVP now supports continuous audio news briefing with playlist navigation.
