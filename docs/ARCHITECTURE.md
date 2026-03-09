@@ -868,4 +868,132 @@ Această arhitectură permite în viitor:
 * tipuri multiple de briefing
 * integrare de noi surse
 * noi formate audio
+# 11. Design Principles
+
+Arhitectura OpenWave este ghidată de câteva principii simple care mențin sistemul clar și extensibil.
+
+---
+
+## 11.1 Segment-first architecture
+
+Unitatea centrală a sistemului este **Segmentul**, nu articolul.
+
+Articolele sunt doar surse de informație.
+Experiența utilizatorului este construită din **segmente audio**.
+
+Fluxul fundamental:
+
+```
+Article → Event → Segment → Briefing
+```
+
+Playerul redă **segmente**, nu articole.
+
+---
+
+## 11.2 Pipeline simplu de procesare
+
+Sistemul urmează un pipeline clar:
+
+```
+RSS → Articles → Events → Segments → Briefing
+```
+
+Fiecare etapă are o responsabilitate clară.
+
+Avantaje:
+
+* cod ușor de înțeles
+* debugging simplu
+* extensibilitate
+
+---
+
+## 11.3 Servicii cu responsabilitate unică
+
+Fiecare serviciu backend trebuie să facă **un singur lucru**.
+
+Exemple:
+
+* RSS Ingestion → colectează articole
+* Article Service → procesează articole
+* Event Service → grupează articole
+* Segment Service → creează segmente
+* Briefing Service → orchestrează briefingul
+
+Acest principiu evită servicii monolitice.
+
+---
+
+## 11.4 Audio-first product
+
+OpenWave este proiectat ca **audio-first product**, nu ca agregator de articole.
+
+Experiența principală este:
+
+```
+Play briefing → Listen → Next story
+```
+
+Interfața și backend-ul trebuie să susțină acest model.
+
+---
+
+## 11.5 Simplitate pentru MVP
+
+Pentru MVP:
+
+* un singur backend FastAPI
+* servicii logice, nu microservicii
+* logică clară și modulară
+
+Complexitatea trebuie introdusă **doar când este necesar**.
+
+---
+
+## 11.6 Transparence of sources
+
+Pentru credibilitate, sistemul trebuie să menționeze clar sursele.
+
+Fiecare segment poate include:
+
+```
+source
+content_type
+section
+```
+
+Utilizatorul trebuie să știe de unde provine informația.
+
+---
+
+## 11.7 Evoluție graduală
+
+Arhitectura trebuie să permită adăugarea de funcții fără rescrierea sistemului.
+
+Exemple de extensii viitoare:
+
+* Perspective Mode
+* Smart Commute
+* Breaking News
+* Advanced Personalization
+* Multiple briefing formats
+
+---
+
+# Concluzie
+
+Arhitectura OpenWave trebuie să rămână:
+
+* modulară
+* clară
+* audio-first
+* extensibilă
+
+Principiul central al sistemului este:
+
+```
+Build audio briefings from structured segments.
+```
+
 
