@@ -2,6 +2,7 @@ from datetime import date
 
 from app.models.article import Article
 from app.models.briefing import DailyBriefing, DailyBriefingArticle
+from app.models.segment import Segment
 from app.services.article_service import ArticleService
 from app.services.segment_service import SegmentService
 
@@ -82,13 +83,22 @@ class BriefingService:
 
         return briefing_articles
 
-    def get_today_briefing(self) -> DailyBriefing:
-        articles = self.article_service.get_articles()[:5]
-        segments = [
+    def _select_briefing_articles(self) -> list[Article]:
+        return self.article_service.get_articles()[:5]
+
+    def _build_briefing_segments(self, ordered_articles: list[Article]) -> list[Segment]:
+        return [
             self.segment_service.create_segment_from_article(article, segment_id=index)
-            for index, article in enumerate(articles, start=1)
+            for index, article in enumerate(ordered_articles, start=1)
         ]
-        highlights = [segment.title for segment in segments]
+
+    def _build_highlights_from_segments(self, segments: list[Segment]) -> list[str]:
+        return [segment.title for segment in segments]
+
+    def get_today_briefing(self) -> DailyBriefing:
+        articles = self._select_briefing_articles()
+        segments = self._build_briefing_segments(articles)
+        highlights = self._build_highlights_from_segments(segments)
         briefing_articles = self._build_briefing_articles(articles)
 
         return DailyBriefing(
