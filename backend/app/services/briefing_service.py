@@ -72,6 +72,45 @@ class BriefingService:
             return 'Top story'
         return self._infer_section(article)
 
+    def _build_section_cue_text(self, section_name: str) -> str:
+        section_lower = section_name.lower()
+        if section_lower == 'economy':
+            return 'In economy news.'
+        if section_lower == 'tech':
+            return 'In technology.'
+        if section_lower == 'international':
+            return 'In international news.'
+
+        return f"In {section_lower}."
+
+    def _insert_section_cues(self, ordered_segments: list[Segment]) -> list[Segment]:
+        if not ordered_segments:
+            return []
+
+        segments_with_cues: list[Segment] = []
+        previous_section = ordered_segments[0].section
+        next_segment_id = max(segment.id for segment in ordered_segments) + 1
+
+        for index, segment in enumerate(ordered_segments):
+            if index > 0 and segment.section != previous_section:
+                cue = self.segment_service.create_section_cue(segment.section, segment_id=next_segment_id)
+                cue_text = self._build_section_cue_text(segment.section)
+                cue.title = cue_text
+                cue.narration_text = cue_text
+                cue.summary = cue_text
+                cue.section = segment.section
+                segments_with_cues.append(cue)
+                next_segment_id += 1
+
+            segments_with_cues.append(segment)
+            previous_section = segment.section
+
+        return segments_with_cues
+
+    def _build_internal_playback_segments(self, article_segments: list[Segment]) -> list[Segment]:
+        # Internal preparation step only: DailyBrief does not expose segments yet.
+        return self._insert_section_cues(article_segments)
+
     def _build_briefing_articles(
         self,
         articles: list[Article],
@@ -109,9 +148,10 @@ class BriefingService:
 
     def get_today_briefing(self) -> DailyBriefing:
         articles = self._select_briefing_articles()
-        segments = self._build_briefing_segments(articles)
-        highlights = self._build_highlights_from_segments(segments)
-        briefing_articles = self._build_briefing_articles(articles, segments)
+        article_segments = self._build_briefing_segments(articles)
+        _ = self._build_internal_playback_segments(article_segments)
+        highlights = self._build_highlights_from_segments(article_segments)
+        briefing_articles = self._build_briefing_articles(articles, article_segments)
 
         return DailyBriefing(
             date=date.today(),
@@ -119,3 +159,4 @@ class BriefingService:
             highlights=highlights,
             articles=briefing_articles,
         )
+
