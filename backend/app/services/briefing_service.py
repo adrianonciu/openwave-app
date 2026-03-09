@@ -110,6 +110,18 @@ class BriefingService:
     def _build_internal_playback_segments(self, article_segments: list[Segment]) -> list[Segment]:
         return self._insert_section_cues(article_segments)
 
+    def _prepend_intro_segment(self, playback_segments: list[Segment], headline: str) -> list[Segment]:
+        next_segment_id = (
+            max(segment.id for segment in playback_segments) + 1
+            if playback_segments
+            else 1
+        )
+        intro_segment = self.segment_service.create_intro_segment(
+            headline=headline,
+            segment_id=next_segment_id,
+        )
+        return [intro_segment, *playback_segments]
+
     def _build_briefing_articles(
         self,
         articles: list[Article],
@@ -147,14 +159,16 @@ class BriefingService:
 
     def get_today_briefing(self) -> DailyBriefing:
         articles = self._select_briefing_articles()
+        headline = f"Top {len(articles)} stories today"
         article_segments = self._build_briefing_segments(articles)
         playback_segments = self._build_internal_playback_segments(article_segments)
+        playback_segments = self._prepend_intro_segment(playback_segments, headline=headline)
         highlights = self._build_highlights_from_segments(article_segments)
         briefing_articles = self._build_briefing_articles(articles, article_segments)
 
         return DailyBriefing(
             date=date.today(),
-            headline=f"Top {len(articles)} stories today",
+            headline=headline,
             highlights=highlights,
             articles=briefing_articles,
             segments=playback_segments,
