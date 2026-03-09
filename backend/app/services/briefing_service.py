@@ -116,6 +116,10 @@ class BriefingService:
             return playback_segments
 
         first_article_segment = playback_segments[first_article_index]
+        allowed_sections = {"Top story", "International", "Economy"}
+        if first_article_segment.section not in allowed_sections:
+            return playback_segments
+
         article_summary = first_article_segment.summary.strip()
         supporters_text = (
             "Supporters say this development could be positive."
@@ -215,4 +219,5 @@ class BriefingService:
             articles=briefing_articles,
             segments=playback_segments,
         )
+
 
