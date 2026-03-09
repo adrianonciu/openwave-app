@@ -65,19 +65,26 @@ class BriefingService:
 
         return 'International'
 
+    def _resolve_section_for_segment(self, article: Article, index: int, segment: Segment) -> str:
+        if segment.section and segment.section != 'General':
+            return segment.section
+        if index == 0:
+            return 'Top story'
+        return self._infer_section(article)
+
     def _build_briefing_articles(
         self,
         articles: list[Article],
+        segments: list[Segment],
     ) -> list[DailyBriefingArticle]:
         briefing_articles: list[DailyBriefingArticle] = []
 
-        for index, article in enumerate(articles):
-            section = 'Top story' if index == 0 else self._infer_section(article)
+        for article, segment in zip(articles, segments):
             article_data = article.model_dump()
             briefing_articles.append(
                 DailyBriefingArticle(
                     **article_data,
-                    section=section,
+                    section=segment.section,
                 )
             )
 
@@ -87,10 +94,15 @@ class BriefingService:
         return self.article_service.get_articles()[:5]
 
     def _build_briefing_segments(self, ordered_articles: list[Article]) -> list[Segment]:
-        return [
+        segments = [
             self.segment_service.create_segment_from_article(article, segment_id=index)
             for index, article in enumerate(ordered_articles, start=1)
         ]
+
+        for index, (article, segment) in enumerate(zip(ordered_articles, segments)):
+            segment.section = self._resolve_section_for_segment(article, index, segment)
+
+        return segments
 
     def _build_highlights_from_segments(self, segments: list[Segment]) -> list[str]:
         return [segment.title for segment in segments]
@@ -99,7 +111,7 @@ class BriefingService:
         articles = self._select_briefing_articles()
         segments = self._build_briefing_segments(articles)
         highlights = self._build_highlights_from_segments(segments)
-        briefing_articles = self._build_briefing_articles(articles)
+        briefing_articles = self._build_briefing_articles(articles, segments)
 
         return DailyBriefing(
             date=date.today(),
