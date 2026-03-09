@@ -202,6 +202,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     return _playlistTypeSubtitle(item);
   }
+  bool _isPerspectivePairStart(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length - 1) {
+      return false;
+    }
+
+    return items[index].isPerspective && items[index + 1].isPerspective;
+  }
+
   String _formatDuration(int seconds) {
     final safeSeconds = seconds < 0 ? 0 : seconds;
     final minutes = safeSeconds ~/ 60;
@@ -342,6 +350,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final estimatedDurationLabel = _currentArticleDurationSeconds >= 60
         ? '${(_currentArticleDurationSeconds / 60).round()} min'
         : '$_currentArticleDurationSeconds sec';
+    final showPerspectivePairIndicator =
+        nowPlaying != null && _isPerspectivePairStart(items, _currentIndex);
     final progressValue = _currentArticleDurationSeconds > 0
         ? (_currentProgressSeconds / _currentArticleDurationSeconds)
             .clamp(0.0, 1.0)
@@ -387,6 +397,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (showPerspectivePairIndicator) ...[
+                        Text(
+                          '\u2696\uFE0F Two perspectives',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 8),
+                      ],
                       Text(
                         nowPlaying.title,
                         style: Theme.of(context).textTheme.titleLarge,
@@ -572,6 +589,7 @@ class _PlaybackItem {
 
   bool get isSectionCue => type == 'section_cue';
   bool get isArticle => type == 'article';
+  bool get isPerspective => type == 'perspective';
 
   factory _PlaybackItem.fromArticle(DailyBriefArticle article) {
     return _PlaybackItem(
@@ -596,3 +614,4 @@ class _PlaybackItem {
     );
   }
 }
+
