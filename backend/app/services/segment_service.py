@@ -32,3 +32,21 @@ class SegmentService:
             section=cleaned_section,
             duration_estimate=cue_duration_seconds,
         )
+
+    def create_intro_segment(self, headline: str, segment_id: int) -> Segment:
+        intro_text = headline.strip() or "Good morning. Here are the top stories today."
+        intro_duration_seconds = 5
+
+        return Segment(
+            id=segment_id,
+            type=Segment.TYPE_INTRO,
+            title="Intro",
+            summary=intro_text,
+            source="OpenWave",
+            estimated_duration_seconds=intro_duration_seconds,
+            tags=[],
+            article_id=0,
+            narration_text=intro_text,
+            section="Intro",
+            duration_estimate=intro_duration_seconds,
+        )
