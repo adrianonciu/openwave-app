@@ -257,3 +257,103 @@ Next planned improvements:
 - Added simple in-memory RSS caching with a 10-minute TTL in rss_ingestion_service.
 - RSS feeds are now reused between requests while the cache is valid, reducing repeated fetches.
 - Kept the existing service API and endpoint behavior unchanged.
+- Reviewed current backend services against the target architecture.
+- Confirmed the existing pipeline already aligns well with RSS → Article → Segment → DailyBrief.
+- Fixed a small mismatch by exposing RSS description content in rss_ingestion_service so ArticleService can populate summaries correctly.
+- Extended Segment model with narration_text, section and duration_estimate fields.
+- Added compatibility fallbacks to preserve existing pipeline behavior.
+- Segment model now better reflects the audio-first architecture.
+- Clarified BriefingService responsibilities as the main Daily Brief orchestrator.
+- Extracted explicit internal steps for article selection, segment creation, and highlights generation.
+- Kept DailyBrief structure and app behavior unchanged.
+- Extended Article model with optional metadata fields: topic, geography, content_type, importance_score.
+- Change is backward compatible and does not affect the current pipeline.
+- Prepares the data model for future personalization and event ranking features.
+- Aligned section handling with the target pipeline by making Segment.section the source of truth.
+- BriefingService now resolves section on segments first, then propagates it into DailyBrief articles.
+- Preserved existing section behavior while making the Article → Segment → DailyBrief flow more explicit.
+- Added infrastructure support for section cue segments.
+- Introduced Segment.TYPE_SECTION_CUE and a helper method in SegmentService to create cue segments.
+- This prepares the backend for radio-style briefing sections without changing current behavior.
+- Added internal support in BriefingService for inserting section cue segments when briefing sections change.
+- Kept the change as internal preparation only, since DailyBrief does not expose playback segments yet.
+- Preserved current API and app behavior while preparing the backend for radio-style playback structure.
+- Extended DailyBrief to expose optional playback segments in a backward-compatible way.
+- BriefingService now returns the generated playback segment list, including internal section cues.
+- Existing articles and highlights output remain unchanged, so current clients continue to work as before.
+- Added Flutter support for optional playback segments in DailyBrief.
+- PlayerScreen now consumes segments when available, with full fallback to articles for backward compatibility.
+- Section cue segments are now playable through TTS, enabling the first radio-style transitions in the app.
+- Added infrastructure support for intro segments in the backend.
+- Extended Segment with TYPE_INTRO and added create_intro_segment() in SegmentService.
+- Kept the change as backend preparation only; intro segments are not inserted into playback yet.
+- Added a real intro segment at the beginning of playback segments in BriefingService.
+- Intro uses the briefing headline and is now included in the segment list returned by DailyBrief.
+- Playback structure now supports intro + article segments + section cues in a radio-style order.
+- Improved intro segment text to sound more natural for audio playback.
+- Intro now says “Good morning. Here are the top stories today.” and includes the story count when available.
+- Kept the existing playback pipeline unchanged.
+
+- Added infrastructure support for perspective segments in the backend.
+- Extended Segment with TYPE_PERSPECTIVE and added create_perspective_segment() in SegmentService.
+- Kept the change as preparation only; perspective segments are not inserted into briefing playback yet.
+
+- Inserted the first demo perspective segment into playback flow after the first article.
+- Reused the existing perspective segment infrastructure from SegmentService.
+- This is a static demonstration step that prepares the path toward Perspective Mode in OpenWave.
+
+- Replaced the single demo perspective segment with a Perspective Pair after the first article.
+- Added consecutive “Supporters say” and “Critics argue” segments using the existing perspective segment infrastructure.
+- Kept the implementation static and backward-compatible as a first demonstration of Perspective Mode.
+
+- Improved PlayerScreen playlist UX for special segment types.
+- Added distinct icons and subtitles for intro, section cue, and perspective segments.
+- Kept article playback behavior and overall player layout unchanged.
+
+- Updated the demo Perspective Pair to derive its text from the first article summary instead of using fully static strings.
+- Kept the implementation template-based and deterministic as a preparation step before introducing AI-generated perspectives.
+- Preserved the existing playback pipeline and API structure.
+
+- Added a simple editorial filter for demo Perspective Pair generation.
+- Perspectives are now inserted only for relevant sections: Top story, International, and Economy.
+- This keeps the radio flow more credible and avoids perspective segments on unsuitable topics.
+
+- Added a small “Two perspectives” indicator in PlayerScreen when a Perspective Pair starts.
+- The indicator appears only on the first perspective segment and helps explain the feature to the user.
+- Kept playback logic and playlist behavior unchanged.
+
+## 2026-03-09
+
+### Backend
+- Added Segment infrastructure for:
+  - intro
+  - section_cue
+  - perspective
+- Implemented Perspective Pair prototype (supporters vs critics).
+- Added editorial filter: perspectives only for Top story / International / Economy.
+- DailyBrief now exposes playback `segments`.
+
+### Flutter
+- Player now supports segments pipeline (fallback to articles).
+- Playlist shows icons for:
+  - intro
+  - section
+  - perspective
+- Added UI indicator: “⚖️ Two perspectives”.
+
+### Experiments
+- Created `backend/experiments/ai_news_brief_test.py`
+- Tested AI pipeline:
+  RSS → AI selection → radio narration
+- Initial result: AI over-selects stories from the same global event cluster.
+
+### Observations
+- AI selection works but needs editorial diversity constraints.
+- Radio-style summaries are usable for TTS.
+
+### Next
+Task 20:
+Improve visual grouping of the two Perspective segments in playlist.
+
+Editorial exploration:
+Test Romanian radio-style summaries for OpenWave.
