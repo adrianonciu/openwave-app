@@ -14,3 +14,21 @@ class SegmentService:
             tags=[],
             article_id=article.id,
         )
+
+    def create_section_cue(self, section_name: str, segment_id: int) -> Segment:
+        cleaned_section = section_name.strip() or "General"
+        cue_duration_seconds = 3
+
+        return Segment(
+            id=segment_id,
+            type=Segment.TYPE_SECTION_CUE,
+            title=cleaned_section,
+            summary=cleaned_section,
+            source="OpenWave",
+            estimated_duration_seconds=cue_duration_seconds,
+            tags=[],
+            article_id=0,
+            narration_text=cleaned_section,
+            section=cleaned_section,
+            duration_estimate=cue_duration_seconds,
+        )

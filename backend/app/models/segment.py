@@ -2,6 +2,8 @@ from pydantic import BaseModel, model_validator
 
 
 class Segment(BaseModel):
+    TYPE_SECTION_CUE: str = "section_cue"
+
     id: int
     type: str
     title: str
