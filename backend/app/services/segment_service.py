@@ -58,3 +58,28 @@ class SegmentService:
             section="Intro",
             duration_estimate=intro_duration_seconds,
         )
+
+    def create_perspective_segment(
+        self,
+        title: str,
+        narration_text: str,
+        segment_id: int,
+        section: str = "Perspective",
+    ) -> Segment:
+        cleaned_title = title.strip() or "Perspective"
+        cleaned_narration = narration_text.strip()
+        perspective_duration_seconds = 8
+
+        return Segment(
+            id=segment_id,
+            type=Segment.TYPE_PERSPECTIVE,
+            title=cleaned_title,
+            summary=cleaned_narration,
+            source="OpenWave",
+            estimated_duration_seconds=perspective_duration_seconds,
+            tags=[],
+            article_id=0,
+            narration_text=cleaned_narration,
+            section=section,
+            duration_estimate=perspective_duration_seconds,
+        )
