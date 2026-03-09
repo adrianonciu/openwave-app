@@ -1,3 +1,5 @@
+import re
+
 from app.models.article import Article
 from app.models.segment import Segment
 
@@ -34,7 +36,13 @@ class SegmentService:
         )
 
     def create_intro_segment(self, headline: str, segment_id: int) -> Segment:
-        intro_text = headline.strip() or "Good morning. Here are the top stories today."
+        normalized_headline = headline.strip().lower()
+        count_match = re.search(r"top\s+(\d+)\s+stories", normalized_headline)
+        if count_match:
+            story_count = count_match.group(1)
+            intro_text = f"Good morning. Here are the top {story_count} stories today."
+        else:
+            intro_text = "Good morning. Here are the top stories today."
         intro_duration_seconds = 5
 
         return Segment(
