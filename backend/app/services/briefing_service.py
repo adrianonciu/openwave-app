@@ -116,16 +116,27 @@ class BriefingService:
             return playback_segments
 
         first_article_segment = playback_segments[first_article_index]
+        article_summary = first_article_segment.summary.strip()
+        supporters_text = (
+            "Supporters say this development could be positive."
+            if not article_summary
+            else f"Supporters say this development could be positive. {article_summary}"
+        )
+        critics_text = (
+            "Critics argue the situation could be problematic."
+            if not article_summary
+            else f"Critics argue the situation could be problematic. {article_summary}"
+        )
         next_segment_id = max(segment.id for segment in playback_segments) + 1
         perspective_supporters = self.segment_service.create_perspective_segment(
             title="Supporters say",
-            narration_text="Supporters say the move could bring long-term benefits.",
+            narration_text=supporters_text,
             segment_id=next_segment_id,
             section=first_article_segment.section,
         )
         perspective_critics = self.segment_service.create_perspective_segment(
             title="Critics argue",
-            narration_text="Critics argue the plan could create new risks.",
+            narration_text=critics_text,
             segment_id=next_segment_id + 1,
             section=first_article_segment.section,
         )
@@ -204,3 +215,4 @@ class BriefingService:
             articles=briefing_articles,
             segments=playback_segments,
         )
+
