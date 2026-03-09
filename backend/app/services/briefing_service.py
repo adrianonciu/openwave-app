@@ -108,7 +108,6 @@ class BriefingService:
         return segments_with_cues
 
     def _build_internal_playback_segments(self, article_segments: list[Segment]) -> list[Segment]:
-        # Internal preparation step only: DailyBrief does not expose segments yet.
         return self._insert_section_cues(article_segments)
 
     def _build_briefing_articles(
@@ -149,7 +148,7 @@ class BriefingService:
     def get_today_briefing(self) -> DailyBriefing:
         articles = self._select_briefing_articles()
         article_segments = self._build_briefing_segments(articles)
-        _ = self._build_internal_playback_segments(article_segments)
+        playback_segments = self._build_internal_playback_segments(article_segments)
         highlights = self._build_highlights_from_segments(article_segments)
         briefing_articles = self._build_briefing_articles(articles, article_segments)
 
@@ -158,5 +157,5 @@ class BriefingService:
             headline=f"Top {len(articles)} stories today",
             highlights=highlights,
             articles=briefing_articles,
+            segments=playback_segments,
         )
-
