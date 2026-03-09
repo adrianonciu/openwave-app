@@ -167,6 +167,41 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return ((words / 170) * 60).ceil();
   }
 
+  String _playlistTypeSubtitle(_PlaybackItem item) {
+    if (item.type == 'intro') return 'Briefing intro';
+    if (item.type == 'section_cue') return 'Section';
+    if (item.type == 'perspective') return 'Perspective';
+    return '';
+  }
+
+  IconData _playlistTypeIcon(_PlaybackItem item) {
+    if (item.type == 'intro') return Icons.wb_sunny;
+    if (item.type == 'section_cue') return Icons.radio;
+    if (item.type == 'perspective') return Icons.balance;
+    return Icons.play_arrow;
+  }
+
+  String _buildPlaylistSubtitle(
+    _PlaybackItem item,
+    bool isNext,
+    String durationLabel,
+  ) {
+    if (item.isArticle) {
+      final sourceAndDuration = '${item.source} • $durationLabel';
+      return isNext ? 'Next: $sourceAndDuration' : sourceAndDuration;
+    }
+
+    final typeSubtitle = _playlistTypeSubtitle(item);
+    return isNext ? 'Next: $typeSubtitle' : typeSubtitle;
+  }
+
+  String _buildActivePlaylistMeta(_PlaybackItem item, String durationLabel) {
+    if (item.isArticle) {
+      return '${item.source} • $durationLabel';
+    }
+
+    return _playlistTypeSubtitle(item);
+  }
   String _formatDuration(int seconds) {
     final safeSeconds = seconds < 0 ? 0 : seconds;
     final minutes = safeSeconds ~/ 60;
@@ -475,7 +510,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('${item.source} • $playlistDurationLabel'),
+                                Text(
+                                  _buildActivePlaylistMeta(
+                                    item,
+                                    playlistDurationLabel,
+                                  ),
+                                ),
                                 Text(
                                   'Playing now',
                                   style: Theme.of(context)
@@ -488,14 +528,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               ],
                             )
                           : Text(
-                              isNext
-                                  ? 'Next: ${item.source} • $playlistDurationLabel'
-                                  : '${item.source} • $playlistDurationLabel',
+                              _buildPlaylistSubtitle(
+                                item,
+                                isNext,
+                                playlistDurationLabel,
+                              ),
                             ),
                       trailing: Icon(
                         isActive
                             ? Icons.graphic_eq
-                            : (isNext ? Icons.arrow_forward : Icons.play_arrow),
+                            : (item.isArticle
+                                ? (isNext
+                                    ? Icons.arrow_forward
+                                    : Icons.play_arrow)
+                                : _playlistTypeIcon(item)),
                       ),
                     ),
                   );
@@ -525,6 +571,7 @@ class _PlaybackItem {
   });
 
   bool get isSectionCue => type == 'section_cue';
+  bool get isArticle => type == 'article';
 
   factory _PlaybackItem.fromArticle(DailyBriefArticle article) {
     return _PlaybackItem(
