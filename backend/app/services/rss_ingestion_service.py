@@ -78,6 +78,11 @@ def ingest_rss() -> list[dict[str, Any]]:
         for item in root.findall("./channel/item"):
             title = _first_text(item, "title")
             link = _first_text(item, "link")
+            description = _first_text(
+                item,
+                "description",
+                "{http://purl.org/rss/1.0/modules/content/}encoded",
+            )
             published_raw = _first_text(item, "pubDate", "published", "{http://purl.org/dc/elements/1.1/}date")
 
             if not title or not link:
@@ -87,6 +92,7 @@ def ingest_rss() -> list[dict[str, Any]]:
                 {
                     "title": title,
                     "link": link,
+                    "description": description,
                     "published_date": _normalize_date(published_raw),
                     "source_name": source_name,
                 }
@@ -95,3 +101,4 @@ def ingest_rss() -> list[dict[str, Any]]:
     _cached_articles = [article.copy() for article in articles]
     _last_fetch_timestamp = now
     return [article.copy() for article in _cached_articles]
+
