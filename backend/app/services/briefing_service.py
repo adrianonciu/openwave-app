@@ -107,8 +107,32 @@ class BriefingService:
 
         return segments_with_cues
 
+    def _insert_demo_perspective_after_first_article(self, playback_segments: list[Segment]) -> list[Segment]:
+        first_article_index = next(
+            (index for index, segment in enumerate(playback_segments) if segment.article_id > 0),
+            -1,
+        )
+        if first_article_index < 0:
+            return playback_segments
+
+        first_article_segment = playback_segments[first_article_index]
+        next_segment_id = max(segment.id for segment in playback_segments) + 1
+        perspective_segment = self.segment_service.create_perspective_segment(
+            title="Another perspective",
+            narration_text="Some analysts say this development could have broader implications.",
+            segment_id=next_segment_id,
+            section=first_article_segment.section,
+        )
+
+        return [
+            *playback_segments[: first_article_index + 1],
+            perspective_segment,
+            *playback_segments[first_article_index + 1 :],
+        ]
+
     def _build_internal_playback_segments(self, article_segments: list[Segment]) -> list[Segment]:
-        return self._insert_section_cues(article_segments)
+        segments_with_cues = self._insert_section_cues(article_segments)
+        return self._insert_demo_perspective_after_first_article(segments_with_cues)
 
     def _prepend_intro_segment(self, playback_segments: list[Segment], headline: str) -> list[Segment]:
         next_segment_id = (
