@@ -27,13 +27,28 @@ class _PlayerScreenState extends State<PlayerScreen> {
   bool _isPlayingCue = false;
   bool _isPlayingIntro = false;
 
+  List<_PlaybackItem> get _playlistItems {
+    final segments = widget.dailyBrief.segments;
+    if (segments != null && segments.isNotEmpty) {
+      return segments.map(_PlaybackItem.fromSegment).toList();
+    }
+
+    return widget.dailyBrief.articles
+        .map(_PlaybackItem.fromArticle)
+        .toList();
+  }
+
+  int get _storyCount {
+    return _playlistItems.where((item) => !item.isSectionCue).length;
+  }
+
   @override
   void initState() {
     super.initState();
     _flutterTts.setCompletionHandler(() {
       _handleTtsCompletion();
     });
-    if (widget.dailyBrief.articles.isNotEmpty) {
+    if (_playlistItems.isNotEmpty) {
       _resetProgressForCurrentArticle();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted) return;
@@ -46,7 +61,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _playIntroIfNeeded() async {
-    final articleCount = widget.dailyBrief.articles.length;
+    final articleCount = _storyCount;
     final countWord = <int, String>{
           1: 'One',
           2: 'Two',
@@ -109,7 +124,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       return;
     }
 
-    final hasNext = _currentIndex < widget.dailyBrief.articles.length - 1;
+    final hasNext = _currentIndex < _playlistItems.length - 1;
     if (hasNext) {
       _stopProgressTimer();
       _isPlayingCue = true;
@@ -127,13 +142,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
     });
   }
 
-  String _buildNarrationText(DailyBriefArticle article) {
-    return '${article.title}. ${article.summary}';
+  String _buildNarrationText(_PlaybackItem item) {
+    if (item.isSectionCue) {
+      return item.narrationText;
+    }
+
+    return '${item.title}. ${item.summary}';
   }
 
   int _estimateTotalBriefingDurationSeconds() {
-    return widget.dailyBrief.articles
-        .map((article) => _estimateDurationSeconds(_buildNarrationText(article)))
+    return _playlistItems
+        .map((item) => _estimateDurationSeconds(_buildNarrationText(item)))
         .fold(0, (sum, duration) => sum + duration);
   }
 
@@ -158,14 +177,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   void _resetProgressForCurrentArticle() {
-    final articles = widget.dailyBrief.articles;
-    if (articles.isEmpty) {
+    final items = _playlistItems;
+    if (items.isEmpty) {
       _currentProgressSeconds = 0;
       _currentArticleDurationSeconds = 0;
       return;
     }
 
-    final text = _buildNarrationText(articles[_currentIndex]);
+    final text = _buildNarrationText(items[_currentIndex]);
     _currentProgressSeconds = 0;
     _currentArticleDurationSeconds = _estimateDurationSeconds(text);
   }
@@ -222,7 +241,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _playNext() async {
-    if (_currentIndex >= widget.dailyBrief.articles.length - 1) return;
+    if (_currentIndex >= _playlistItems.length - 1) return;
 
     setState(() {
       _currentIndex++;
@@ -236,11 +255,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _playCurrentArticle() async {
-    final articles = widget.dailyBrief.articles;
-    if (articles.isEmpty) return;
+    final items = _playlistItems;
+    if (items.isEmpty) return;
 
-    final article = articles[_currentIndex];
-    final text = _buildNarrationText(article);
+    final item = items[_currentIndex];
+    final text = _buildNarrationText(item);
 
     if (text.trim().isEmpty) return;
 
@@ -280,14 +299,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final articles = widget.dailyBrief.articles;
+    final items = _playlistItems;
     final totalEstimatedBriefingSeconds = _estimateTotalBriefingDurationSeconds();
-    final nowPlaying = articles.isNotEmpty ? articles[_currentIndex] : null;
-    final narrationText =
-        nowPlaying != null ? _buildNarrationText(nowPlaying) : '';
-    final nextArticle = _currentIndex < articles.length - 1
-        ? articles[_currentIndex + 1]
-        : null;
+    final nowPlaying = items.isNotEmpty ? items[_currentIndex] : null;
+    final narrationText = nowPlaying != null ? _buildNarrationText(nowPlaying) : '';
+    final nextItem = _currentIndex < items.length - 1 ? items[_currentIndex + 1] : null;
     final estimatedDurationLabel = _currentArticleDurationSeconds >= 60
         ? '${(_currentArticleDurationSeconds / 60).round()} min'
         : '$_currentArticleDurationSeconds sec';
@@ -320,7 +336,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${articles.length} stories',
+              '${_storyCount} stories',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 24),
@@ -400,10 +416,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   ),
                 ),
               ),
-              if (nextArticle != null) ...[
+              if (nextItem != null) ...[
                 const SizedBox(height: 12),
                 Text(
-                  'Up next: ${nextArticle.title}',
+                  'Up next: ${nextItem.title}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -416,12 +432,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
-                itemCount: articles.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final article = articles[index];
+                  final item = items[index];
                   final isActive = index == _currentIndex;
                   final isNext = index == _currentIndex + 1;
-                  final playlistNarrationText = _buildNarrationText(article);
+                  final playlistNarrationText = _buildNarrationText(item);
                   final playlistDurationSeconds =
                       _estimateDurationSeconds(playlistNarrationText);
                   final playlistDurationLabel = playlistDurationSeconds >= 60
@@ -447,7 +463,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         child: Text('${index + 1}'),
                       ),
                       title: Text(
-                        article.title,
+                        item.title,
                         style: isActive
                             ? Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
@@ -459,7 +475,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('${article.source} • $playlistDurationLabel'),
+                                Text('${item.source} • $playlistDurationLabel'),
                                 Text(
                                   'Playing now',
                                   style: Theme.of(context)
@@ -473,8 +489,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                             )
                           : Text(
                               isNext
-                                  ? 'Next: ${article.source} • $playlistDurationLabel'
-                                  : '${article.source} • $playlistDurationLabel',
+                                  ? 'Next: ${item.source} • $playlistDurationLabel'
+                                  : '${item.source} • $playlistDurationLabel',
                             ),
                       trailing: Icon(
                         isActive
@@ -489,6 +505,47 @@ class _PlayerScreenState extends State<PlayerScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _PlaybackItem {
+  final String type;
+  final String title;
+  final String source;
+  final String summary;
+  final String narrationText;
+
+  const _PlaybackItem({
+    required this.type,
+    required this.title,
+    required this.source,
+    required this.summary,
+    required this.narrationText,
+  });
+
+  bool get isSectionCue => type == 'section_cue';
+
+  factory _PlaybackItem.fromArticle(DailyBriefArticle article) {
+    return _PlaybackItem(
+      type: 'article',
+      title: article.title,
+      source: article.source,
+      summary: article.summary,
+      narrationText: '${article.title}. ${article.summary}',
+    );
+  }
+
+  factory _PlaybackItem.fromSegment(DailyBriefSegment segment) {
+    final fallbackNarration = '${segment.title}. ${segment.summary}';
+    return _PlaybackItem(
+      type: segment.type,
+      title: segment.title,
+      source: segment.source,
+      summary: segment.summary,
+      narrationText: segment.narrationText.trim().isEmpty
+          ? fallbackNarration
+          : segment.narrationText,
     );
   }
 }
