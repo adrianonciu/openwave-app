@@ -691,14 +691,22 @@ class _PerspectivePairTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final pairAccent = isActive
+        ? colorScheme.primary.withValues(alpha: 0.14)
+        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.55);
+    final pairBorderColor = isActive
+        ? colorScheme.primary.withValues(alpha: 0.35)
+        : colorScheme.outlineVariant.withValues(alpha: 0.8);
+
     return Card(
       color: isActive
-          ? Theme.of(context).colorScheme.primaryContainer
+          ? colorScheme.primaryContainer
           : null,
       shape: RoundedRectangleBorder(
         side: BorderSide(
           color: isActive
-              ? Theme.of(context).colorScheme.primary
+              ? colorScheme.primary
               : Colors.transparent,
           width: isActive ? 2 : 0,
         ),
@@ -717,44 +725,65 @@ class _PerspectivePairTile extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.balance),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '\u2696\uFE0F Two perspectives',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w600),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: pairAccent,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: pairBorderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surface.withValues(alpha: 0.75),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '⚖️ Two perspectives',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w700),
+                            ),
                           ),
-                        ),
-                        Icon(
-                          isActive
-                              ? Icons.graphic_eq
-                              : (isNext
-                                  ? Icons.arrow_forward
-                                  : Icons.play_arrow),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPerspectiveRow(
-                      context,
-                      label: 'Supporters say',
-                      item: first,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPerspectiveRow(
-                      context,
-                      label: 'Critics argue',
-                      item: second,
-                    ),
-                  ],
+                          const SizedBox(width: 12),
+                          Icon(
+                            isActive
+                                ? Icons.graphic_eq
+                                : (isNext
+                                    ? Icons.arrow_forward
+                                    : Icons.play_arrow),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      _buildPerspectiveRow(
+                        context,
+                        label: 'Supporters say',
+                        item: first,
+                      ),
+                      const SizedBox(height: 12),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: colorScheme.outlineVariant.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildPerspectiveRow(
+                        context,
+                        label: 'Critics argue',
+                        item: second,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
