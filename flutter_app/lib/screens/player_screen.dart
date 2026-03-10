@@ -496,12 +496,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
     setState(() {
       _currentIndex = index;
       _resetProgressForCurrentArticle();
+      _isPlaying = true;
+      _isPlayingCue = false;
+      _isPlayingIntro = false;
     });
 
-    if (_isPlaying) {
-      await _flutterTts.stop();
-      await _playCurrentArticle();
-    }
+    await _flutterTts.stop();
+    await _playCurrentArticle();
   }
 
   Future<void> _playPrevious() async {
@@ -615,7 +616,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} \u2022 $_displayStoryCount ${_displayStoryCount == 1 ? 'story' : 'stories'})',
+              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} \u2022 $_storyCount ${_storyCount == 1 ? 'story' : 'stories'})',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 10),
@@ -699,6 +700,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         visibleNumber: visiblePlaylistNumber,
                         isActive: isActive,
                         isNext: isNext,
+                        supportersActive: _currentIndex == articlePerspectiveStartIndex,
+                        criticsActive: _currentIndex == articlePerspectiveStartIndex + 1,
                         progressValue: isActive ? progressValue : 0,
                         onTap: () => _selectArticle(index),
                       ),
@@ -714,6 +717,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         visibleNumber: visiblePlaylistNumber,
                         isActive: isActive,
                         isNext: isNext,
+                        firstActive: _currentIndex == index,
+                        secondActive: _currentIndex == index + 1,
                         progressValue: isActive ? progressValue : 0,
                         onTap: () => _selectArticle(index),
                       ),
@@ -861,6 +866,8 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
   final int visibleNumber;
   final bool isActive;
   final bool isNext;
+  final bool supportersActive;
+  final bool criticsActive;
   final double progressValue;
   final VoidCallback onTap;
 
@@ -871,6 +878,8 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
     required this.visibleNumber,
     required this.isActive,
     required this.isNext,
+    required this.supportersActive,
+    required this.criticsActive,
     required this.progressValue,
     required this.onTap,
   });
@@ -883,23 +892,30 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
   Widget _buildPerspectiveRow(
     BuildContext context, {
     required String label,
-    required _PlaybackItem item,
+    required bool isActive,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          _previewText(item),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
+    final colorScheme = Theme.of(context).colorScheme;
+    final rowColor = isActive
+        ? colorScheme.primary.withValues(alpha: 0.14)
+        : colorScheme.surface.withValues(alpha: 0.7);
+    final borderColor = isActive
+        ? colorScheme.primary.withValues(alpha: 0.35)
+        : colorScheme.outlineVariant.withValues(alpha: 0.55);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: rowColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+            ),
+      ),
     );
   }
 
@@ -975,9 +991,9 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
                       _previewText(article),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: editorialAccent,
                         borderRadius: BorderRadius.circular(14),
@@ -986,40 +1002,24 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.surface.withValues(alpha: 0.75),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              '\u2696\uFE0F Two perspectives',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
+                          Text(
+                            'Two perspectives',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(fontWeight: FontWeight.w700),
                           ),
-                          const SizedBox(height: 14),
+                          const SizedBox(height: 10),
                           _buildPerspectiveRow(
                             context,
-                            label: 'Supporters say',
-                            item: supporters,
+                            label: 'Supporters say...',
+                            isActive: supportersActive,
                           ),
-                          const SizedBox(height: 12),
-                          Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: colorScheme.outlineVariant.withValues(alpha: 0.7),
-                          ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           _buildPerspectiveRow(
                             context,
-                            label: 'Critics argue',
-                            item: critics,
+                            label: 'Critics argue...',
+                            isActive: criticsActive,
                           ),
                         ],
                       ),
@@ -1048,6 +1048,8 @@ class _PerspectivePairTile extends StatelessWidget {
   final int visibleNumber;
   final bool isActive;
   final bool isNext;
+  final bool firstActive;
+  final bool secondActive;
   final double progressValue;
   final VoidCallback onTap;
 
@@ -1057,35 +1059,39 @@ class _PerspectivePairTile extends StatelessWidget {
     required this.visibleNumber,
     required this.isActive,
     required this.isNext,
+    required this.firstActive,
+    required this.secondActive,
     required this.progressValue,
     required this.onTap,
   });
 
-  String _previewText(_PlaybackItem item) {
-    final preview = item.summary.trim().isNotEmpty ? item.summary : item.title;
-    return preview.trim();
-  }
-
   Widget _buildPerspectiveRow(
     BuildContext context, {
     required String label,
-    required _PlaybackItem item,
+    required bool isActive,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          _previewText(item),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
+    final colorScheme = Theme.of(context).colorScheme;
+    final rowColor = isActive
+        ? colorScheme.primary.withValues(alpha: 0.14)
+        : colorScheme.surface.withValues(alpha: 0.7);
+    final borderColor = isActive
+        ? colorScheme.primary.withValues(alpha: 0.35)
+        : colorScheme.outlineVariant.withValues(alpha: 0.55);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: rowColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+            ),
+      ),
     );
   }
 
@@ -1100,14 +1106,10 @@ class _PerspectivePairTile extends StatelessWidget {
         : colorScheme.outlineVariant.withValues(alpha: 0.8);
 
     return Card(
-      color: isActive
-          ? colorScheme.primaryContainer
-          : null,
+      color: isActive ? colorScheme.primaryContainer : null,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: isActive
-              ? colorScheme.primary
-              : Colors.transparent,
+          color: isActive ? colorScheme.primary : Colors.transparent,
           width: isActive ? 2 : 0,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -1126,7 +1128,7 @@ class _PerspectivePairTile extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: pairAccent,
                     borderRadius: BorderRadius.circular(14),
@@ -1137,20 +1139,12 @@ class _PerspectivePairTile extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.surface.withValues(alpha: 0.75),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
+                          Expanded(
                             child: Text(
-                              '⚖️ Two perspectives',
+                              'Two perspectives',
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleSmall
+                                  .labelLarge
                                   ?.copyWith(fontWeight: FontWeight.w700),
                             ),
                           ),
@@ -1164,23 +1158,17 @@ class _PerspectivePairTile extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 10),
                       _buildPerspectiveRow(
                         context,
-                        label: 'Supporters say',
-                        item: first,
+                        label: 'Supporters say...',
+                        isActive: firstActive,
                       ),
-                      const SizedBox(height: 12),
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: colorScheme.outlineVariant.withValues(alpha: 0.7),
-                      ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       _buildPerspectiveRow(
                         context,
-                        label: 'Critics argue',
-                        item: second,
+                        label: 'Critics argue...',
+                        isActive: secondActive,
                       ),
                       if (isActive) ...[
                         const SizedBox(height: 12),
@@ -1200,4 +1188,3 @@ class _PerspectivePairTile extends StatelessWidget {
     );
   }
 }
-
