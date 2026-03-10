@@ -876,7 +876,7 @@ class _PlaybackItem {
   });
 
   bool get isSectionCue => type == 'section_cue';
-  bool get isArticle => type == 'article';
+  bool get isArticle => type == 'article' || type == 'news';
   bool get isPerspective => type == 'perspective';
 
   factory _PlaybackItem.fromArticle(DailyBriefArticle article) {
