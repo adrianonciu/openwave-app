@@ -43,7 +43,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   int get _storyCount {
-    return _playlistItems.where((item) => !item.isSectionCue).length;
+    return _playlistItems.where((item) => item.isArticle).length;
   }
 
   @override
@@ -311,11 +311,33 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return index;
   }
 
+  bool _isVisiblePlaylistAnchor(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length) {
+      return false;
+    }
+
+    final item = items[index];
+    if (item.type == 'intro') {
+      return false;
+    }
+
+    if (_articlePerspectiveBlockAnchorIndex(items, index) case final anchorIndex?
+        when anchorIndex != index) {
+      return false;
+    }
+
+    if (item.isPerspective && index > 0 && items[index - 1].isPerspective) {
+      return false;
+    }
+
+    return true;
+  }
+
   int _visiblePlaylistNumber(List<_PlaybackItem> items, int anchorIndex) {
     var visibleNumber = 0;
 
     for (var index = 0; index <= anchorIndex && index < items.length; index++) {
-      if (_playlistAnchorIndex(items, index) == index) {
+      if (_isVisiblePlaylistAnchor(items, index)) {
         visibleNumber++;
       }
     }
@@ -342,12 +364,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   double _estimatedPlaylistOffset(List<_PlaybackItem> items, int targetIndex) {
     var offset = 0.0;
     for (var index = 0; index < targetIndex; index++) {
-      if (_articlePerspectiveBlockAnchorIndex(items, index) case final anchorIndex?
-          when anchorIndex != index) {
-        continue;
-      }
-
-      if (items[index].isPerspective && index > 0 && items[index - 1].isPerspective) {
+      if (!_isVisiblePlaylistAnchor(items, index)) {
         continue;
       }
 
@@ -559,7 +576,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final items = _playlistItems;
     final totalEstimatedBriefingSeconds = _estimateTotalBriefingDurationSeconds();
     final nowPlaying = items.isNotEmpty ? items[_currentIndex] : null;
-    final activePlaylistIndex = items.isNotEmpty
+    final activePlaylistIndex =
+        items.isNotEmpty && _isVisiblePlaylistAnchor(items, _playlistAnchorIndex(items, _currentIndex))
         ? _playlistAnchorIndex(items, _currentIndex)
         : -1;
     final nextPlaylistIndex = _nextPlaylistIndex(items);
@@ -587,20 +605,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.dailyBrief.headline,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Estimated duration: ${_formatDuration(totalEstimatedBriefingSeconds)}',
+              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} • $_storyCount ${_storyCount == 1 ? 'story' : 'stories'})',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 4),
-            Text(
-              '${_storyCount} stories',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             if (nowPlaying != null) ...[
               Text(
                 nowPlaying.title,
@@ -655,20 +663,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  final articlePerspectiveBlockAnchorIndex =
-                      _articlePerspectiveBlockAnchorIndex(items, index);
-                  final previousItem = index > 0 ? items[index - 1] : null;
                   final nextPerspectiveItem =
                       index < items.length - 1 ? items[index + 1] : null;
                   final isPerspectivePairStart =
                       _isPerspectivePairStart(items, index);
 
-                  if (articlePerspectiveBlockAnchorIndex != null &&
-                      articlePerspectiveBlockAnchorIndex != index) {
-                    return const SizedBox.shrink();
-                  }
-
-                  if (item.isPerspective && previousItem?.isPerspective == true) {
+                  if (!_isVisiblePlaylistAnchor(items, index)) {
                     return const SizedBox.shrink();
                   }
 
