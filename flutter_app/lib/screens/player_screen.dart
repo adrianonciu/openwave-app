@@ -606,7 +606,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         title: const Text('Daily Brief Player'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -614,26 +614,26 @@ class _PlayerScreenState extends State<PlayerScreen> {
               widget.dailyBrief.headline,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               'Estimated duration: ${_formatDuration(totalEstimatedBriefingSeconds)}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               '${_storyCount} stories',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             if (nowPlaying != null) ...[
               Text(
                 'Now Playing',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -642,7 +642,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                           '\u2696\uFE0F Two perspectives',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                       ],
                       Text(
                         nowPlaying.title,
@@ -670,7 +670,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         estimatedDurationLabel,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       LinearProgressIndicator(
                         value: progressValue,
                       ),
@@ -679,7 +679,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}  \u2022  -${_formatDuration(remainingSeconds)}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -709,13 +709,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 ),
               ),
               if (nextItem != null) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   'Up next: ${nextItem.title}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
             ],
             Text(
               'Playlist',
