@@ -45,19 +45,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .toList();
   }
 
-  int get _storyCount {
-    return _playlistItems.where((item) => item.isArticle).length;
-  }
-
-  int? _headlineStoryCount() {
-    final match = RegExp(r'top\s+(\d+)\s+stories', caseSensitive: false)
-        .firstMatch(widget.dailyBrief.headline);
-    return match == null ? null : int.tryParse(match.group(1)!);
-  }
-
-  int get _displayStoryCount {
-    return _headlineStoryCount() ?? _storyCount;
-  }
 
   @override
   void initState() {
@@ -338,11 +325,31 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return true;
   }
 
+  bool _hasMeaningfulPlaybackContent(_PlaybackItem item) {
+    final title = item.title.trim();
+    final summary = item.summary.trim();
+    final narration = item.narrationText.trim();
+    return title.isNotEmpty || summary.isNotEmpty || narration.isNotEmpty;
+  }
+
+  bool _isRealVisiblePlayableStoryBlock(List<_PlaybackItem> items, int index) {
+    if (!_isVisiblePlaylistAnchor(items, index)) {
+      return false;
+    }
+
+    final item = items[index];
+    if (item.isSectionCue || !item.isArticle) {
+      return false;
+    }
+
+    return _hasMeaningfulPlaybackContent(item);
+  }
+
   int _visiblePlaylistNumber(List<_PlaybackItem> items, int anchorIndex) {
     var visibleNumber = 0;
 
     for (var index = 0; index <= anchorIndex && index < items.length; index++) {
-      if (_isVisiblePlaylistAnchor(items, index)) {
+      if (_isRealVisiblePlayableStoryBlock(items, index)) {
         visibleNumber++;
       }
     }
@@ -350,15 +357,22 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return visibleNumber;
   }
 
+  int get _storyCount {
+    final items = _playlistItems;
+    return List.generate(items.length, (index) => index)
+        .where((index) => _isRealVisiblePlayableStoryBlock(items, index))
+        .length;
+  }
+
   int _visiblePlaylistCount(List<_PlaybackItem> items) {
     return List.generate(items.length, (index) => index)
-        .where((index) => _isVisiblePlaylistAnchor(items, index))
+        .where((index) => _isRealVisiblePlayableStoryBlock(items, index))
         .length;
   }
 
   int? _nextVisibleStoryAnchorAfterIndex(List<_PlaybackItem> items, int startIndex) {
     for (var index = startIndex; index < items.length; index++) {
-      if (_isVisiblePlaylistAnchor(items, index) && items[index].isArticle) {
+      if (_isRealVisiblePlayableStoryBlock(items, index)) {
         return index;
       }
     }
@@ -369,8 +383,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
     final items = _playlistItems;
     final currentAnchorIndex = _playlistAnchorIndex(items, currentIndex);
-    if (!_isVisiblePlaylistAnchor(items, currentAnchorIndex) ||
-        !items[currentAnchorIndex].isArticle) {
+    if (!_isRealVisiblePlayableStoryBlock(items, currentAnchorIndex)) {
       return false;
     }
 
@@ -393,7 +406,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final activeAnchorIndex = _playlistAnchorIndex(items, _currentIndex);
     for (var nextIndex = _currentIndex + 1; nextIndex < items.length; nextIndex++) {
       final visibleAnchorIndex = _playlistAnchorIndex(items, nextIndex);
-      if (visibleAnchorIndex != activeAnchorIndex) {
+      if (visibleAnchorIndex != activeAnchorIndex &&
+          _isRealVisiblePlayableStoryBlock(items, visibleAnchorIndex)) {
         return visibleAnchorIndex;
       }
     }
@@ -408,7 +422,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   double _estimatedPlaylistOffset(List<_PlaybackItem> items, int targetIndex) {
     var offset = 0.0;
     for (var index = 0; index < targetIndex; index++) {
-      if (!_isVisiblePlaylistAnchor(items, index)) {
+      if (!_isRealVisiblePlayableStoryBlock(items, index)) {
         continue;
       }
 
@@ -462,8 +476,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   int? _findFirstEditorialIndex() {
     for (var index = 0; index < _playlistItems.length; index++) {
-      final item = _playlistItems[index];
-      if (item.type != 'intro' && !item.isSectionCue) {
+      if (_isRealVisiblePlayableStoryBlock(_playlistItems, index)) {
         return index;
       }
     }
@@ -627,9 +640,13 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final visiblePlaylistCount = _visiblePlaylistCount(items);
     final nowPlaying = items.isNotEmpty ? items[_currentIndex] : null;
     final activePlaylistIndex =
-        items.isNotEmpty && _isVisiblePlaylistAnchor(items, _playlistAnchorIndex(items, _currentIndex))
-        ? _playlistAnchorIndex(items, _currentIndex)
-        : -1;
+        items.isNotEmpty &&
+                _isRealVisiblePlayableStoryBlock(
+                  items,
+                  _playlistAnchorIndex(items, _currentIndex),
+                )
+            ? _playlistAnchorIndex(items, _currentIndex)
+            : -1;
     final nextPlaylistIndex = _nextPlaylistIndex(items);
     if (items.isNotEmpty) {
       _schedulePlaylistSync(items, activePlaylistIndex);
@@ -718,7 +735,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   final isPerspectivePairStart =
                       _isPerspectivePairStart(items, index);
 
-                  if (!_isVisiblePlaylistAnchor(items, index)) {
+                  if (!_isRealVisiblePlayableStoryBlock(items, index)) {
                     return const SizedBox.shrink();
                   }
 
