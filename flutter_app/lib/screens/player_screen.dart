@@ -71,7 +71,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   Future<void> _playIntroIfNeeded() async {
-    final articleCount = _displayStoryCount;
+    final articleCount = _storyCount;
     final countWord = <int, String>{
           1: 'One',
           2: 'Two',
@@ -356,9 +356,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .length;
   }
 
-  int? _nextVisiblePlaylistAnchorAfterIndex(List<_PlaybackItem> items, int startIndex) {
+  int? _nextVisibleStoryAnchorAfterIndex(List<_PlaybackItem> items, int startIndex) {
     for (var index = startIndex; index < items.length; index++) {
-      if (_isVisiblePlaylistAnchor(items, index)) {
+      if (_isVisiblePlaylistAnchor(items, index) && items[index].isArticle) {
         return index;
       }
     }
@@ -369,18 +369,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
   bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
     final items = _playlistItems;
     final currentAnchorIndex = _playlistAnchorIndex(items, currentIndex);
-    if (!_isVisiblePlaylistAnchor(items, currentAnchorIndex)) {
+    if (!_isVisiblePlaylistAnchor(items, currentAnchorIndex) ||
+        !items[currentAnchorIndex].isArticle) {
       return false;
     }
 
-    final nextVisibleAnchorIndex = _nextVisiblePlaylistAnchorAfterIndex(items, nextIndex);
-    if (nextVisibleAnchorIndex == null || nextVisibleAnchorIndex == currentAnchorIndex) {
+    final nextVisibleStoryAnchorIndex = _nextVisibleStoryAnchorAfterIndex(items, nextIndex);
+    if (nextVisibleStoryAnchorIndex == null ||
+        nextVisibleStoryAnchorIndex == currentAnchorIndex) {
       return false;
     }
 
-    final currentAnchorItem = items[currentAnchorIndex];
-    final nextAnchorItem = items[nextVisibleAnchorIndex];
-    return currentAnchorItem.isArticle && nextAnchorItem.isArticle;
+    return true;
   }
 
   Future<void> _playStoryStinger() async {
