@@ -326,6 +326,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return index;
   }
 
+  int _visiblePlaylistNumber(List<_PlaybackItem> items, int anchorIndex) {
+    var visibleNumber = 0;
+
+    for (var index = 0; index <= anchorIndex && index < items.length; index++) {
+      if (_playlistAnchorIndex(items, index) == index) {
+        visibleNumber++;
+      }
+    }
+
+    return visibleNumber;
+  }
+
   int? _nextPlaylistIndex(List<_PlaybackItem> items) {
     final activeAnchorIndex = _playlistAnchorIndex(items, _currentIndex);
     for (var nextIndex = _currentIndex + 1; nextIndex < items.length; nextIndex++) {
@@ -735,6 +747,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
                   final isActive = activePlaylistIndex == index;
                   final isNext = !isActive && nextPlaylistIndex == index;
+                  final visiblePlaylistNumber =
+                      _visiblePlaylistNumber(items, index);
 
                   final articlePerspectiveStartIndex =
                       _articlePerspectiveStartIndex(items, index);
@@ -745,7 +759,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         article: item,
                         supporters: items[articlePerspectiveStartIndex],
                         critics: items[articlePerspectiveStartIndex + 1],
-                        index: index,
+                        visibleNumber: visiblePlaylistNumber,
                         isActive: isActive,
                         isNext: isNext,
                         progressValue: isActive ? progressValue : 0,
@@ -760,7 +774,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       child: _PerspectivePairTile(
                         first: item,
                         second: nextPerspectiveItem,
-                        index: index,
+                        visibleNumber: visiblePlaylistNumber,
                         isActive: isActive,
                         isNext: isNext,
                         progressValue: isActive ? progressValue : 0,
@@ -794,7 +808,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       child: ListTile(
                         onTap: () => _selectArticle(index),
                         leading: CircleAvatar(
-                          child: Text('${index + 1}'),
+                          child: Text('$visiblePlaylistNumber'),
                         ),
                         title: Text(
                           item.title,
@@ -907,7 +921,7 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
   final _PlaybackItem article;
   final _PlaybackItem supporters;
   final _PlaybackItem critics;
-  final int index;
+  final int visibleNumber;
   final bool isActive;
   final bool isNext;
   final double progressValue;
@@ -917,7 +931,7 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
     required this.article,
     required this.supporters,
     required this.critics,
-    required this.index,
+    required this.visibleNumber,
     required this.isActive,
     required this.isNext,
     required this.progressValue,
@@ -980,7 +994,7 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                child: Text('${index + 1}'),
+                child: Text('$visibleNumber'),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -1094,7 +1108,7 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
 class _PerspectivePairTile extends StatelessWidget {
   final _PlaybackItem first;
   final _PlaybackItem second;
-  final int index;
+  final int visibleNumber;
   final bool isActive;
   final bool isNext;
   final double progressValue;
@@ -1103,7 +1117,7 @@ class _PerspectivePairTile extends StatelessWidget {
   const _PerspectivePairTile({
     required this.first,
     required this.second,
-    required this.index,
+    required this.visibleNumber,
     required this.isActive,
     required this.isNext,
     required this.progressValue,
@@ -1170,7 +1184,7 @@ class _PerspectivePairTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                child: Text('${index + 1}'),
+                child: Text('$visibleNumber'),
               ),
               const SizedBox(width: 16),
               Expanded(
