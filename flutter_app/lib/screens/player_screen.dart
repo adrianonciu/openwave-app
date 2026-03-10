@@ -150,13 +150,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final hasNext = nextIndex < _playlistItems.length;
     if (hasNext) {
       _stopProgressTimer();
-      if (_shouldUseNextStoryCue(_currentIndex, nextIndex)) {
-        _queuedPlaybackIndex = nextIndex;
-        _isPlayingCue = true;
-        await _flutterTts.speak('Next story.');
-        return;
-      }
-
       _moveToIndex(nextIndex);
       await _playCurrentArticle();
       return;
@@ -436,12 +429,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
 
     return null;
-  }
-
-  bool _shouldUseNextStoryCue(int currentIndex, int nextIndex) {
-    final currentItem = _playlistItems[currentIndex];
-    final nextItem = _playlistItems[nextIndex];
-    return nextItem.isArticle && !currentItem.isPerspective;
   }
 
   void _moveToIndex(int index) {
