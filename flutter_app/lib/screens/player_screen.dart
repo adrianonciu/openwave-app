@@ -370,11 +370,37 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .length;
   }
 
-  int? _nextVisibleStoryAnchorAfterIndex(List<_PlaybackItem> items, int startIndex) {
-    for (var index = startIndex; index < items.length; index++) {
-      if (_isRealVisiblePlayableStoryBlock(items, index)) {
-        return index;
+  int? _currentStoryBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length) {
+      return null;
+    }
+
+    final anchorIndex = _playlistAnchorIndex(items, index);
+    if (_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
+      return anchorIndex;
+    }
+
+    for (var candidate = index - 1; candidate >= 0; candidate--) {
+      if (_isRealVisiblePlayableStoryBlock(items, candidate)) {
+        return candidate;
       }
+    }
+
+    return null;
+  }
+
+  int? _upcomingStoryBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length) {
+      return null;
+    }
+
+    final anchorIndex = _playlistAnchorIndex(items, index);
+    if (_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
+      return anchorIndex;
+    }
+
+    if (items[index].isSectionCue) {
+      return null;
     }
 
     return null;
@@ -382,18 +408,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
     final items = _playlistItems;
-    final currentAnchorIndex = _playlistAnchorIndex(items, currentIndex);
-    if (!_isRealVisiblePlayableStoryBlock(items, currentAnchorIndex)) {
+    final currentAnchorIndex = _currentStoryBlockAnchorForIndex(items, currentIndex);
+    final nextAnchorIndex = _upcomingStoryBlockAnchorForIndex(items, nextIndex);
+
+    if (currentAnchorIndex == null || nextAnchorIndex == null) {
       return false;
     }
 
-    final nextVisibleStoryAnchorIndex = _nextVisibleStoryAnchorAfterIndex(items, nextIndex);
-    if (nextVisibleStoryAnchorIndex == null ||
-        nextVisibleStoryAnchorIndex == currentAnchorIndex) {
-      return false;
-    }
-
-    return true;
+    return currentAnchorIndex != nextAnchorIndex;
   }
 
   Future<void> _playStoryStinger() async {
