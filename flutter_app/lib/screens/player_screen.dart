@@ -370,7 +370,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .length;
   }
 
-  int? _currentStoryBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
+  int? _storyBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
     if (index < 0 || index >= items.length) {
       return null;
     }
@@ -389,27 +389,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return null;
   }
 
-  int? _upcomingStoryBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
-    if (index < 0 || index >= items.length) {
-      return null;
-    }
-
-    final anchorIndex = _playlistAnchorIndex(items, index);
-    if (_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
-      return anchorIndex;
-    }
-
-    if (items[index].isSectionCue) {
-      return null;
-    }
-
-    return null;
-  }
-
   bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
     final items = _playlistItems;
-    final currentAnchorIndex = _currentStoryBlockAnchorForIndex(items, currentIndex);
-    final nextAnchorIndex = _upcomingStoryBlockAnchorForIndex(items, nextIndex);
+    final currentAnchorIndex = _storyBlockAnchorForIndex(items, currentIndex);
+    final nextAnchorIndex = _storyBlockAnchorForIndex(items, nextIndex);
 
     if (currentAnchorIndex == null || nextAnchorIndex == null) {
       return false;
