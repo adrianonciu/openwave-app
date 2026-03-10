@@ -28,6 +28,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   final Map<int, GlobalKey> _playlistItemKeys = {};
   bool _isPlayingCue = false;
   bool _isPlayingIntro = false;
+  bool _hasPlayedIntro = false;
   int? _queuedPlaybackIndex;
   int _lastScrolledPlaylistIndex = -1;
 
@@ -46,6 +47,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return _playlistItems.where((item) => item.isArticle).length;
   }
 
+  int? _headlineStoryCount() {
+    final match = RegExp(r'top\s+(\d+)\s+stories', caseSensitive: false)
+        .firstMatch(widget.dailyBrief.headline);
+    return match == null ? null : int.tryParse(match.group(1)!);
+  }
+
+  int get _displayStoryCount {
+    return _headlineStoryCount() ?? _storyCount;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,18 +65,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
     });
     if (_playlistItems.isNotEmpty) {
       _resetProgressForCurrentArticle();
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!mounted) return;
-        setState(() {
-          _isPlaying = true;
-        });
-        await _playIntroIfNeeded();
-      });
     }
   }
 
   Future<void> _playIntroIfNeeded() async {
-    final articleCount = _storyCount;
+    final articleCount = _displayStoryCount;
     final countWord = <int, String>{
           1: 'One',
           2: 'Two',
@@ -99,6 +103,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         safeMinutes.toString();
     final minuteLabel = safeMinutes == 1 ? 'minute' : 'minutes';
 
+    _hasPlayedIntro = true;
     _isPlayingIntro = true;
     await _flutterTts.speak(
       'Your OpenWave Daily Brief. $countWord $storyLabel today. About $minuteWord $minuteLabel.',
@@ -560,6 +565,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
     setState(() {
       _isPlaying = true;
     });
+    if (!_hasPlayedIntro) {
+      await _playIntroIfNeeded();
+      return;
+    }
+
     await _playCurrentArticle();
   }
 
