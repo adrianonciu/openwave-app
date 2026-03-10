@@ -238,17 +238,24 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   int? _articlePerspectiveStartIndex(List<_PlaybackItem> items, int index) {
-    if (index < 0 || index >= items.length || !items[index].isArticle) {
+    if (index < 0 || index >= items.length) {
       return null;
     }
 
-    if (index + 2 < items.length &&
-        items[index + 1].isPerspective &&
-        items[index + 2].isPerspective) {
+    final item = items[index];
+    if (!item.isArticle) {
+      return null;
+    }
+
+    if (index > items.length - 3) {
+      return null;
+    }
+
+    if (items[index + 1].isPerspective && items[index + 2].isPerspective) {
       return index + 1;
     }
 
-    if (index + 3 < items.length &&
+    if (index <= items.length - 4 &&
         items[index + 1].isSectionCue &&
         items[index + 2].isPerspective &&
         items[index + 3].isPerspective) {
@@ -269,7 +276,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     for (var offset = 0; offset <= 3; offset++) {
       final candidateIndex = index - offset;
-      if (candidateIndex < 0) {
+      if (candidateIndex < 0 || candidateIndex >= items.length) {
         continue;
       }
 
