@@ -294,21 +294,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return null;
   }
 
-  bool _isPerspectivePairMember(List<_PlaybackItem> items, int index) {
-    if (index < 0 || index >= items.length) {
-      return false;
-    }
-
-    final item = items[index];
-    if (!item.isPerspective) {
-      return false;
-    }
-
-    final hasPreviousPerspective = index > 0 && items[index - 1].isPerspective;
-    final hasNextPerspective = index < items.length - 1 && items[index + 1].isPerspective;
-    return hasPreviousPerspective || hasNextPerspective;
-  }
-
   int _playlistAnchorIndex(List<_PlaybackItem> items, int index) {
     final articleBlockAnchorIndex = _articlePerspectiveBlockAnchorIndex(items, index);
     if (articleBlockAnchorIndex != null) {
@@ -574,24 +559,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final items = _playlistItems;
     final totalEstimatedBriefingSeconds = _estimateTotalBriefingDurationSeconds();
     final nowPlaying = items.isNotEmpty ? items[_currentIndex] : null;
-    final narrationText = nowPlaying != null ? _buildNarrationText(nowPlaying) : '';
     final activePlaylistIndex = items.isNotEmpty
         ? _playlistAnchorIndex(items, _currentIndex)
         : -1;
     final nextPlaylistIndex = _nextPlaylistIndex(items);
-    final nextItem = _currentIndex < items.length - 1 ? items[_currentIndex + 1] : null;
     if (items.isNotEmpty) {
       _schedulePlaylistSync(items, activePlaylistIndex);
     } else {
       _lastScrolledPlaylistIndex = -1;
     }
-    final estimatedDurationLabel = _currentArticleDurationSeconds >= 60
-        ? '${(_currentArticleDurationSeconds / 60).round()} min'
-        : '$_currentArticleDurationSeconds sec';
-    final showPerspectivePairIndicator =
-        nowPlaying != null &&
-        (_isPerspectivePairMember(items, _currentIndex) ||
-            _articlePerspectiveBlockAnchorIndex(items, _currentIndex) != null);
     final progressValue = _currentArticleDurationSeconds > 0
         ? (_currentProgressSeconds / _currentArticleDurationSeconds)
             .clamp(0.0, 1.0)
@@ -627,95 +603,46 @@ class _PlayerScreenState extends State<PlayerScreen> {
             const SizedBox(height: 12),
             if (nowPlaying != null) ...[
               Text(
-                'Now Playing',
+                nowPlaying.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 6),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (showPerspectivePairIndicator) ...[
-                        Text(
-                          '\u2696\uFE0F Two perspectives',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 6),
-                      ],
-                      Text(
-                        nowPlaying.title,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        nowPlaying.source,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        nowPlaying.summary,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      if (narrationText.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'Audio narration ready',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                      const SizedBox(height: 8),
-                      Text(
-                        estimatedDurationLabel,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 12),
-                      LinearProgressIndicator(
-                        value: progressValue,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}  \u2022  -${_formatDuration(remainingSeconds)}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: _playPrevious,
-                            icon: const Icon(Icons.skip_previous),
-                          ),
-                          const SizedBox(width: 12),
-                          IconButton(
-                            onPressed: _togglePlayback,
-                            iconSize: 40,
-                            icon: Icon(
-                              _isPlaying
-                                  ? Icons.pause_circle_filled
-                                  : Icons.play_circle_filled,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          IconButton(
-                            onPressed: _playNext,
-                            icon: const Icon(Icons.skip_next),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: progressValue,
               ),
-              if (nextItem != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  'Up next: ${nextItem.title}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
+              Text(
+                '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}  •  -${_formatDuration(remainingSeconds)}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: _playPrevious,
+                    icon: const Icon(Icons.skip_previous),
+                  ),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    onPressed: _togglePlayback,
+                    iconSize: 40,
+                    icon: Icon(
+                      _isPlaying
+                          ? Icons.pause_circle_filled
+                          : Icons.play_circle_filled,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    onPressed: _playNext,
+                    icon: const Icon(Icons.skip_next),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
             ],
             Text(
               'Playlist',
