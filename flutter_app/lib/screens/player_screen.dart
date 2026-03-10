@@ -237,6 +237,36 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return items[index].isPerspective && items[index + 1].isPerspective;
   }
 
+  bool _isArticlePerspectiveBlockStart(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length - 2) {
+      return false;
+    }
+
+    return items[index].isArticle &&
+        items[index + 1].isPerspective &&
+        items[index + 2].isPerspective;
+  }
+
+  int? _articlePerspectiveBlockAnchorIndex(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length) {
+      return null;
+    }
+
+    if (_isArticlePerspectiveBlockStart(items, index)) {
+      return index;
+    }
+
+    if (index > 0 && _isArticlePerspectiveBlockStart(items, index - 1)) {
+      return index - 1;
+    }
+
+    if (index > 1 && _isArticlePerspectiveBlockStart(items, index - 2)) {
+      return index - 2;
+    }
+
+    return null;
+  }
+
   bool _isPerspectivePairMember(List<_PlaybackItem> items, int index) {
     if (index < 0 || index >= items.length) {
       return false;
@@ -253,6 +283,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   int _playlistAnchorIndex(List<_PlaybackItem> items, int index) {
+    final articleBlockAnchorIndex = _articlePerspectiveBlockAnchorIndex(items, index);
+    if (articleBlockAnchorIndex != null) {
+      return articleBlockAnchorIndex;
+    }
+
     if (index <= 0 || index >= items.length) {
       return index;
     }
@@ -265,12 +300,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   int? _nextPlaylistIndex(List<_PlaybackItem> items) {
-    final nextIndex = _currentIndex + 1;
-    if (nextIndex >= items.length) {
-      return null;
+    final activeAnchorIndex = _playlistAnchorIndex(items, _currentIndex);
+    for (var nextIndex = _currentIndex + 1; nextIndex < items.length; nextIndex++) {
+      final visibleAnchorIndex = _playlistAnchorIndex(items, nextIndex);
+      if (visibleAnchorIndex != activeAnchorIndex) {
+        return visibleAnchorIndex;
+      }
     }
 
-    return _playlistAnchorIndex(items, nextIndex);
+    return null;
   }
 
   GlobalKey _playlistItemKey(int index) {
@@ -280,11 +318,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
   double _estimatedPlaylistOffset(List<_PlaybackItem> items, int targetIndex) {
     var offset = 0.0;
     for (var index = 0; index < targetIndex; index++) {
+      if (_articlePerspectiveBlockAnchorIndex(items, index) case final anchorIndex?
+          when anchorIndex != index) {
+        continue;
+      }
+
       if (items[index].isPerspective && index > 0 && items[index - 1].isPerspective) {
         continue;
       }
 
-      offset += _isPerspectivePairStart(items, index) ? 208 : 96;
+      offset += _isArticlePerspectiveBlockStart(items, index)
+          ? 296
+          : (_isPerspectivePairStart(items, index) ? 208 : 96);
     }
 
     return offset;
@@ -505,7 +550,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
         ? '${(_currentArticleDurationSeconds / 60).round()} min'
         : '$_currentArticleDurationSeconds sec';
     final showPerspectivePairIndicator =
-        nowPlaying != null && _isPerspectivePairMember(items, _currentIndex);
+        nowPlaying != null &&
+        (_isPerspectivePairMember(items, _currentIndex) ||
+            _articlePerspectiveBlockAnchorIndex(items, _currentIndex) != null);
     final progressValue = _currentArticleDurationSeconds > 0
         ? (_currentProgressSeconds / _currentArticleDurationSeconds)
             .clamp(0.0, 1.0)
@@ -642,20 +689,43 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
+                  final articlePerspectiveBlockAnchorIndex =
+                      _articlePerspectiveBlockAnchorIndex(items, index);
                   final previousItem = index > 0 ? items[index - 1] : null;
                   final nextPerspectiveItem =
                       index < items.length - 1 ? items[index + 1] : null;
                   final isPerspectivePairStart =
                       _isPerspectivePairStart(items, index);
 
+                  if (articlePerspectiveBlockAnchorIndex != null &&
+                      articlePerspectiveBlockAnchorIndex != index) {
+                    return const SizedBox.shrink();
+                  }
+
                   if (item.isPerspective && previousItem?.isPerspective == true) {
                     return const SizedBox.shrink();
                   }
 
-                  if (isPerspectivePairStart && nextPerspectiveItem != null) {
-                    final isActive = activePlaylistIndex == index;
-                    final isNext = !isActive && nextPlaylistIndex == index;
+                  final isActive = activePlaylistIndex == index;
+                  final isNext = !isActive && nextPlaylistIndex == index;
 
+                  if (_isArticlePerspectiveBlockStart(items, index)) {
+                    return KeyedSubtree(
+                      key: _playlistItemKey(index),
+                      child: _StoryPerspectiveBlockTile(
+                        article: item,
+                        supporters: items[index + 1],
+                        critics: items[index + 2],
+                        index: index,
+                        isActive: isActive,
+                        isNext: isNext,
+                        progressValue: isActive ? progressValue : 0,
+                        onTap: () => _selectArticle(index),
+                      ),
+                    );
+                  }
+
+                  if (isPerspectivePairStart && nextPerspectiveItem != null) {
                     return KeyedSubtree(
                       key: _playlistItemKey(index),
                       child: _PerspectivePairTile(
@@ -670,8 +740,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     );
                   }
 
-                  final isActive = activePlaylistIndex == index;
-                  final isNext = !isActive && nextPlaylistIndex == index;
                   final playlistNarrationText = _buildNarrationText(item);
                   final playlistDurationSeconds =
                       _estimateDurationSeconds(playlistNarrationText);
@@ -683,64 +751,64 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     key: _playlistItemKey(index),
                     child: Card(
                       color: isActive
-                        ? Theme.of(context).colorScheme.primaryContainer
-                        : null,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        color: isActive
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.transparent,
-                        width: isActive ? 2 : 0,
+                          ? Theme.of(context).colorScheme.primaryContainer
+                          : null,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: isActive
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.transparent,
+                          width: isActive ? 2 : 0,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                       child: ListTile(
                         onTap: () => _selectArticle(index),
-                      leading: CircleAvatar(
-                        child: Text('${index + 1}'),
-                      ),
-                      title: Text(
-                        item.title,
-                        style: isActive
-                            ? Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              )
-                            : null,
-                      ),
-                      subtitle: isActive
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  _buildActivePlaylistMeta(
-                                    item,
-                                    playlistDurationLabel,
+                        leading: CircleAvatar(
+                          child: Text('${index + 1}'),
+                        ),
+                        title: Text(
+                          item.title,
+                          style: isActive
+                              ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                )
+                              : null,
+                        ),
+                        subtitle: isActive
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _buildActivePlaylistMeta(
+                                      item,
+                                      playlistDurationLabel,
+                                    ),
                                   ),
+                                  Text(
+                                    'Playing now',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  LinearProgressIndicator(
+                                    value: progressValue,
+                                    minHeight: 3,
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                _buildPlaylistSubtitle(
+                                  item,
+                                  isNext,
+                                  playlistDurationLabel,
                                 ),
-                                Text(
-                                  'Playing now',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                const SizedBox(height: 8),
-                                LinearProgressIndicator(
-                                  value: progressValue,
-                                  minHeight: 3,
-                                ),
-                              ],
-                            )
-                          : Text(
-                              _buildPlaylistSubtitle(
-                                item,
-                                isNext,
-                                playlistDurationLabel,
                               ),
-                            ),
                         trailing: Icon(
                           isActive
                               ? Icons.graphic_eq
@@ -802,6 +870,194 @@ class _PlaybackItem {
       narrationText: segment.narrationText.trim().isEmpty
           ? fallbackNarration
           : segment.narrationText,
+    );
+  }
+}
+
+class _StoryPerspectiveBlockTile extends StatelessWidget {
+  final _PlaybackItem article;
+  final _PlaybackItem supporters;
+  final _PlaybackItem critics;
+  final int index;
+  final bool isActive;
+  final bool isNext;
+  final double progressValue;
+  final VoidCallback onTap;
+
+  const _StoryPerspectiveBlockTile({
+    required this.article,
+    required this.supporters,
+    required this.critics,
+    required this.index,
+    required this.isActive,
+    required this.isNext,
+    required this.progressValue,
+    required this.onTap,
+  });
+
+  String _previewText(_PlaybackItem item) {
+    final preview = item.summary.trim().isNotEmpty ? item.summary : item.title;
+    return preview.trim();
+  }
+
+  Widget _buildPerspectiveRow(
+    BuildContext context, {
+    required String label,
+    required _PlaybackItem item,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _previewText(item),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final editorialAccent = isActive
+        ? colorScheme.primary.withValues(alpha: 0.14)
+        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.55);
+    final editorialBorderColor = isActive
+        ? colorScheme.primary.withValues(alpha: 0.35)
+        : colorScheme.outlineVariant.withValues(alpha: 0.8);
+
+    return Card(
+      color: isActive ? colorScheme.primaryContainer : null,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: isActive ? colorScheme.primary : Colors.transparent,
+          width: isActive ? 2 : 0,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                child: Text('${index + 1}'),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                article.title,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                article.source,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(
+                          isActive
+                              ? Icons.graphic_eq
+                              : (isNext
+                                  ? Icons.arrow_forward
+                                  : Icons.play_arrow),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _previewText(article),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: editorialAccent,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: editorialBorderColor),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surface.withValues(alpha: 0.75),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '\u2696\uFE0F Two perspectives',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          _buildPerspectiveRow(
+                            context,
+                            label: 'Supporters say',
+                            item: supporters,
+                          ),
+                          const SizedBox(height: 12),
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.7),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildPerspectiveRow(
+                            context,
+                            label: 'Critics argue',
+                            item: critics,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isActive) ...[
+                      const SizedBox(height: 12),
+                      LinearProgressIndicator(
+                        value: progressValue,
+                        minHeight: 3,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
