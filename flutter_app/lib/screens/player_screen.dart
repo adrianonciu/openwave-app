@@ -187,7 +187,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     String durationLabel,
   ) {
     if (item.isArticle) {
-      final sourceAndDuration = '${item.source} • $durationLabel';
+      final sourceAndDuration = '${item.source} \u2022 $durationLabel';
       return isNext ? 'Next: $sourceAndDuration' : sourceAndDuration;
     }
 
@@ -197,11 +197,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   String _buildActivePlaylistMeta(_PlaybackItem item, String durationLabel) {
     if (item.isArticle) {
-      return '${item.source} • $durationLabel';
+      return '${item.source} \u2022 $durationLabel';
     }
 
     return _playlistTypeSubtitle(item);
   }
+
   bool _isPerspectivePairStart(List<_PlaybackItem> items, int index) {
     if (index < 0 || index >= items.length - 1) {
       return false;
@@ -436,7 +437,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}  •  -${_formatDuration(remainingSeconds)}',
+                        '${_formatDuration(_currentProgressSeconds)} / ${_formatDuration(_currentArticleDurationSeconds)}  \u2022  -${_formatDuration(remainingSeconds)}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 12),
@@ -487,6 +488,34 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
+                  final previousItem = index > 0 ? items[index - 1] : null;
+                  final nextPerspectiveItem =
+                      index < items.length - 1 ? items[index + 1] : null;
+                  final isPerspectivePairStart =
+                      _isPerspectivePairStart(items, index);
+
+                  if (item.isPerspective && previousItem?.isPerspective == true) {
+                    return const SizedBox.shrink();
+                  }
+
+                  if (isPerspectivePairStart && nextPerspectiveItem != null) {
+                    final isActive =
+                        _currentIndex == index || _currentIndex == index + 1;
+                    final isNext =
+                        !isActive &&
+                        (_currentIndex + 1 == index ||
+                            _currentIndex + 1 == index + 1);
+
+                    return _PerspectivePairTile(
+                      first: item,
+                      second: nextPerspectiveItem,
+                      index: index,
+                      isActive: isActive,
+                      isNext: isNext,
+                      onTap: () => _selectArticle(index),
+                    );
+                  }
+
                   final isActive = index == _currentIndex;
                   final isNext = index == _currentIndex + 1;
                   final playlistNarrationText = _buildNarrationText(item);
@@ -611,6 +640,127 @@ class _PlaybackItem {
       narrationText: segment.narrationText.trim().isEmpty
           ? fallbackNarration
           : segment.narrationText,
+    );
+  }
+}
+
+class _PerspectivePairTile extends StatelessWidget {
+  final _PlaybackItem first;
+  final _PlaybackItem second;
+  final int index;
+  final bool isActive;
+  final bool isNext;
+  final VoidCallback onTap;
+
+  const _PerspectivePairTile({
+    required this.first,
+    required this.second,
+    required this.index,
+    required this.isActive,
+    required this.isNext,
+    required this.onTap,
+  });
+
+  String _previewText(_PlaybackItem item) {
+    final preview = item.summary.trim().isNotEmpty ? item.summary : item.title;
+    return preview.trim();
+  }
+
+  Widget _buildPerspectiveRow(
+    BuildContext context, {
+    required String label,
+    required _PlaybackItem item,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _previewText(item),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: isActive
+          ? Theme.of(context).colorScheme.primaryContainer
+          : null,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: isActive
+              ? Theme.of(context).colorScheme.primary
+              : Colors.transparent,
+          width: isActive ? 2 : 0,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                child: Text('${index + 1}'),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.balance),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '\u2696\uFE0F Two perspectives',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Icon(
+                          isActive
+                              ? Icons.graphic_eq
+                              : (isNext
+                                  ? Icons.arrow_forward
+                                  : Icons.play_arrow),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPerspectiveRow(
+                      context,
+                      label: 'Supporters say',
+                      item: first,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildPerspectiveRow(
+                      context,
+                      label: 'Critics argue',
+                      item: second,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
