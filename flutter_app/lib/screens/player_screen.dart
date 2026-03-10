@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -20,6 +21,7 @@ class PlayerScreen extends StatefulWidget {
 class _PlayerScreenState extends State<PlayerScreen> {
   int _currentIndex = 0;
   final FlutterTts _flutterTts = FlutterTts();
+  final AudioPlayer _stingerPlayer = AudioPlayer();
   bool _isPlaying = false;
   int _currentProgressSeconds = 0;
   int _currentArticleDurationSeconds = 0;
@@ -118,6 +120,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       final firstEditorialIndex = _findFirstEditorialIndex();
       if (firstEditorialIndex == null) {
         _stopProgressTimer();
+        await _stingerPlayer.stop();
         await _flutterTts.stop();
         if (!mounted) return;
         setState(() {
@@ -150,6 +153,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final hasNext = nextIndex < _playlistItems.length;
     if (hasNext) {
       _stopProgressTimer();
+      if (_shouldPlayStoryStinger(_currentIndex, nextIndex)) {
+        await _playStoryStinger();
+      }
       _moveToIndex(nextIndex);
       await _playCurrentArticle();
       return;
@@ -158,6 +164,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _stopProgressTimer();
     _isPlayingCue = false;
     _queuedPlaybackIndex = null;
+    await _stingerPlayer.stop();
     await _flutterTts.stop();
     if (!mounted) return;
     setState(() {
@@ -349,6 +356,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .length;
   }
 
+  bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
+    final currentItem = _playlistItems[currentIndex];
+    final nextItem = _playlistItems[nextIndex];
+    return currentItem.isArticle && nextItem.isArticle;
+  }
+
+  Future<void> _playStoryStinger() async {
+    await _stingerPlayer.stop();
+    await _stingerPlayer.play(AssetSource('audio/news_stinger.mp3'));
+    await _stingerPlayer.onPlayerComplete.first;
+  }
+
   int? _nextPlaylistIndex(List<_PlaybackItem> items) {
     final activeAnchorIndex = _playlistAnchorIndex(items, _currentIndex);
     for (var nextIndex = _currentIndex + 1; nextIndex < items.length; nextIndex++) {
@@ -494,6 +513,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       _isPlayingIntro = false;
     });
 
+    await _stingerPlayer.stop();
     await _flutterTts.stop();
     await _playCurrentArticle();
   }
@@ -507,6 +527,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     });
 
     if (_isPlaying) {
+      await _stingerPlayer.stop();
       await _flutterTts.stop();
       await _playCurrentArticle();
     }
@@ -521,6 +542,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     });
 
     if (_isPlaying) {
+      await _stingerPlayer.stop();
       await _flutterTts.stop();
       await _playCurrentArticle();
     }
@@ -549,6 +571,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       _isPlayingCue = false;
       _isPlayingIntro = false;
       _stopProgressTimer();
+      await _stingerPlayer.stop();
       await _flutterTts.stop();
       setState(() {
         _isPlaying = false;
@@ -571,6 +594,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   void dispose() {
     _stopProgressTimer();
     _playlistScrollController.dispose();
+    _stingerPlayer.dispose();
     _flutterTts.stop();
     super.dispose();
   }
