@@ -512,6 +512,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       index: index,
                       isActive: isActive,
                       isNext: isNext,
+                      progressValue: isActive ? progressValue : 0,
                       onTap: () => _selectArticle(index),
                     );
                   }
@@ -570,6 +571,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                       ?.copyWith(
                                         fontWeight: FontWeight.w600,
                                       ),
+                                ),
+                                const SizedBox(height: 8),
+                                LinearProgressIndicator(
+                                  value: progressValue,
+                                  minHeight: 3,
                                 ),
                               ],
                             )
@@ -650,6 +656,7 @@ class _PerspectivePairTile extends StatelessWidget {
   final int index;
   final bool isActive;
   final bool isNext;
+  final double progressValue;
   final VoidCallback onTap;
 
   const _PerspectivePairTile({
@@ -658,6 +665,7 @@ class _PerspectivePairTile extends StatelessWidget {
     required this.index,
     required this.isActive,
     required this.isNext,
+    required this.progressValue,
     required this.onTap,
   });
 
@@ -782,6 +790,13 @@ class _PerspectivePairTile extends StatelessWidget {
                         label: 'Critics argue',
                         item: second,
                       ),
+                      if (isActive) ...[
+                        const SizedBox(height: 12),
+                        LinearProgressIndicator(
+                          value: progressValue,
+                          minHeight: 3,
+                        ),
+                      ],
                     ],
                   ),
                 ),
