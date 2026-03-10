@@ -26,6 +26,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Timer? _progressTimer;
   bool _isPlayingCue = false;
   bool _isPlayingIntro = false;
+  int? _queuedPlaybackIndex;
 
   List<_PlaybackItem> get _playlistItems {
     final segments = widget.dailyBrief.segments;
@@ -106,6 +107,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     if (_isPlayingIntro) {
       _isPlayingIntro = false;
+      final firstEditorialIndex = _findFirstEditorialIndex();
+      if (firstEditorialIndex == null) {
+        _stopProgressTimer();
+        await _flutterTts.stop();
+        if (!mounted) return;
+        setState(() {
+          _isPlaying = false;
+        });
+        return;
+      }
+
+      _queuedPlaybackIndex = firstEditorialIndex;
       _isPlayingCue = true;
       await _flutterTts.speak('Top story.');
       return;
@@ -113,27 +126,37 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     if (_isPlayingCue) {
       _isPlayingCue = false;
-      if (_currentIndex == 0) {
+      final queuedPlaybackIndex = _queuedPlaybackIndex;
+      _queuedPlaybackIndex = null;
+      if (queuedPlaybackIndex == null) {
         await _playCurrentArticle();
         return;
       }
-      setState(() {
-        _currentIndex++;
-      });
+
+      _moveToIndex(queuedPlaybackIndex);
       await _playCurrentArticle();
       return;
     }
 
-    final hasNext = _currentIndex < _playlistItems.length - 1;
+    final nextIndex = _currentIndex + 1;
+    final hasNext = nextIndex < _playlistItems.length;
     if (hasNext) {
       _stopProgressTimer();
-      _isPlayingCue = true;
-      await _flutterTts.speak('Next story.');
+      if (_shouldUseNextStoryCue(_currentIndex, nextIndex)) {
+        _queuedPlaybackIndex = nextIndex;
+        _isPlayingCue = true;
+        await _flutterTts.speak('Next story.');
+        return;
+      }
+
+      _moveToIndex(nextIndex);
+      await _playCurrentArticle();
       return;
     }
 
     _stopProgressTimer();
     _isPlayingCue = false;
+    _queuedPlaybackIndex = null;
     await _flutterTts.stop();
     if (!mounted) return;
     setState(() {
@@ -143,7 +166,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   String _buildNarrationText(_PlaybackItem item) {
-    if (item.isSectionCue) {
+    if (item.narrationText.trim().isNotEmpty) {
       return item.narrationText;
     }
 
@@ -209,6 +232,30 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
 
     return items[index].isPerspective && items[index + 1].isPerspective;
+  }
+
+  int? _findFirstEditorialIndex() {
+    for (var index = 0; index < _playlistItems.length; index++) {
+      final item = _playlistItems[index];
+      if (item.type != 'intro' && !item.isSectionCue) {
+        return index;
+      }
+    }
+
+    return null;
+  }
+
+  bool _shouldUseNextStoryCue(int currentIndex, int nextIndex) {
+    final currentItem = _playlistItems[currentIndex];
+    final nextItem = _playlistItems[nextIndex];
+    return nextItem.isArticle && !currentItem.isPerspective;
+  }
+
+  void _moveToIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+      _resetProgressForCurrentArticle();
+    });
   }
 
   String _formatDuration(int seconds) {
