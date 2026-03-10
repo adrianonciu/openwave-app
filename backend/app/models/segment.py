@@ -1,10 +1,12 @@
+from typing import ClassVar
+
 from pydantic import BaseModel, model_validator
 
 
 class Segment(BaseModel):
-    TYPE_SECTION_CUE: str = "section_cue"
-    TYPE_INTRO: str = "intro"
-    TYPE_PERSPECTIVE: str = "perspective"
+    TYPE_SECTION_CUE: ClassVar[str] = "section_cue"
+    TYPE_INTRO: ClassVar[str] = "intro"
+    TYPE_PERSPECTIVE: ClassVar[str] = "perspective"
 
     id: int
     type: str
