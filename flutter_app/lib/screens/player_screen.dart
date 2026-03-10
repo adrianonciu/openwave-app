@@ -24,9 +24,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
   int _currentProgressSeconds = 0;
   int _currentArticleDurationSeconds = 0;
   Timer? _progressTimer;
+  final ScrollController _playlistScrollController = ScrollController();
+  final Map<int, GlobalKey> _playlistItemKeys = {};
   bool _isPlayingCue = false;
   bool _isPlayingIntro = false;
   int? _queuedPlaybackIndex;
+  int _lastScrolledPlaylistIndex = -1;
 
   List<_PlaybackItem> get _playlistItems {
     final segments = widget.dailyBrief.segments;
@@ -270,6 +273,63 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return _playlistAnchorIndex(items, nextIndex);
   }
 
+  GlobalKey _playlistItemKey(int index) {
+    return _playlistItemKeys.putIfAbsent(index, GlobalKey.new);
+  }
+
+  double _estimatedPlaylistOffset(List<_PlaybackItem> items, int targetIndex) {
+    var offset = 0.0;
+    for (var index = 0; index < targetIndex; index++) {
+      if (items[index].isPerspective && index > 0 && items[index - 1].isPerspective) {
+        continue;
+      }
+
+      offset += _isPerspectivePairStart(items, index) ? 208 : 96;
+    }
+
+    return offset;
+  }
+
+  void _scrollPlaylistToIndex(List<_PlaybackItem> items, int visibleIndex) {
+    if (!_playlistScrollController.hasClients || visibleIndex < 0) {
+      return;
+    }
+
+    final targetContext = _playlistItemKeys[visibleIndex]?.currentContext;
+    if (targetContext != null) {
+      Scrollable.ensureVisible(
+        targetContext,
+        alignment: 0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+      return;
+    }
+
+    final targetOffset = _estimatedPlaylistOffset(items, visibleIndex);
+    final clampedOffset = targetOffset.clamp(
+      0.0,
+      _playlistScrollController.position.maxScrollExtent,
+    );
+    _playlistScrollController.animateTo(
+      clampedOffset,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void _schedulePlaylistSync(List<_PlaybackItem> items, int visibleIndex) {
+    if (visibleIndex < 0 || visibleIndex == _lastScrolledPlaylistIndex) {
+      return;
+    }
+
+    _lastScrolledPlaylistIndex = visibleIndex;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _scrollPlaylistToIndex(items, visibleIndex);
+    });
+  }
+
   int? _findFirstEditorialIndex() {
     for (var index = 0; index < _playlistItems.length; index++) {
       final item = _playlistItems[index];
@@ -420,6 +480,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   void dispose() {
     _stopProgressTimer();
+    _playlistScrollController.dispose();
     _flutterTts.stop();
     super.dispose();
   }
@@ -435,6 +496,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
         : -1;
     final nextPlaylistIndex = _nextPlaylistIndex(items);
     final nextItem = _currentIndex < items.length - 1 ? items[_currentIndex + 1] : null;
+    if (items.isNotEmpty) {
+      _schedulePlaylistSync(items, activePlaylistIndex);
+    } else {
+      _lastScrolledPlaylistIndex = -1;
+    }
     final estimatedDurationLabel = _currentArticleDurationSeconds >= 60
         ? '${(_currentArticleDurationSeconds / 60).round()} min'
         : '$_currentArticleDurationSeconds sec';
@@ -572,6 +638,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
+                controller: _playlistScrollController,
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
@@ -589,14 +656,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     final isActive = activePlaylistIndex == index;
                     final isNext = !isActive && nextPlaylistIndex == index;
 
-                    return _PerspectivePairTile(
-                      first: item,
-                      second: nextPerspectiveItem,
-                      index: index,
-                      isActive: isActive,
-                      isNext: isNext,
-                      progressValue: isActive ? progressValue : 0,
-                      onTap: () => _selectArticle(index),
+                    return KeyedSubtree(
+                      key: _playlistItemKey(index),
+                      child: _PerspectivePairTile(
+                        first: item,
+                        second: nextPerspectiveItem,
+                        index: index,
+                        isActive: isActive,
+                        isNext: isNext,
+                        progressValue: isActive ? progressValue : 0,
+                        onTap: () => _selectArticle(index),
+                      ),
                     );
                   }
 
@@ -609,8 +679,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ? '${(playlistDurationSeconds / 60).round()} min'
                       : '$playlistDurationSeconds sec';
 
-                  return Card(
-                    color: isActive
+                  return KeyedSubtree(
+                    key: _playlistItemKey(index),
+                    child: Card(
+                      color: isActive
                         ? Theme.of(context).colorScheme.primaryContainer
                         : null,
                     shape: RoundedRectangleBorder(
@@ -622,8 +694,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: ListTile(
-                      onTap: () => _selectArticle(index),
+                      child: ListTile(
+                        onTap: () => _selectArticle(index),
                       leading: CircleAvatar(
                         child: Text('${index + 1}'),
                       ),
@@ -669,14 +741,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                 playlistDurationLabel,
                               ),
                             ),
-                      trailing: Icon(
-                        isActive
-                            ? Icons.graphic_eq
-                            : (item.isArticle
-                                ? (isNext
-                                    ? Icons.arrow_forward
-                                    : Icons.play_arrow)
-                                : _playlistTypeIcon(item)),
+                        trailing: Icon(
+                          isActive
+                              ? Icons.graphic_eq
+                              : (item.isArticle
+                                  ? (isNext
+                                      ? Icons.arrow_forward
+                                      : Icons.play_arrow)
+                                  : _playlistTypeIcon(item)),
+                        ),
                       ),
                     ),
                   );
