@@ -356,10 +356,31 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .length;
   }
 
+  int? _nextVisiblePlaylistAnchorAfterIndex(List<_PlaybackItem> items, int startIndex) {
+    for (var index = startIndex; index < items.length; index++) {
+      if (_isVisiblePlaylistAnchor(items, index)) {
+        return index;
+      }
+    }
+
+    return null;
+  }
+
   bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
-    final currentItem = _playlistItems[currentIndex];
-    final nextItem = _playlistItems[nextIndex];
-    return currentItem.isArticle && nextItem.isArticle;
+    final items = _playlistItems;
+    final currentAnchorIndex = _playlistAnchorIndex(items, currentIndex);
+    if (!_isVisiblePlaylistAnchor(items, currentAnchorIndex)) {
+      return false;
+    }
+
+    final nextVisibleAnchorIndex = _nextVisiblePlaylistAnchorAfterIndex(items, nextIndex);
+    if (nextVisibleAnchorIndex == null || nextVisibleAnchorIndex == currentAnchorIndex) {
+      return false;
+    }
+
+    final currentAnchorItem = items[currentAnchorIndex];
+    final nextAnchorItem = items[nextVisibleAnchorIndex];
+    return currentAnchorItem.isArticle && nextAnchorItem.isArticle;
   }
 
   Future<void> _playStoryStinger() async {
