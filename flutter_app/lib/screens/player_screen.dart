@@ -350,6 +350,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return visibleNumber;
   }
 
+  int _visiblePlaylistCount(List<_PlaybackItem> items) {
+    return List.generate(items.length, (index) => index)
+        .where((index) => _isVisiblePlaylistAnchor(items, index))
+        .length;
+  }
+
   int? _nextPlaylistIndex(List<_PlaybackItem> items) {
     final activeAnchorIndex = _playlistAnchorIndex(items, _currentIndex);
     for (var nextIndex = _currentIndex + 1; nextIndex < items.length; nextIndex++) {
@@ -586,6 +592,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   Widget build(BuildContext context) {
     final items = _playlistItems;
     final totalEstimatedBriefingSeconds = _estimateTotalBriefingDurationSeconds();
+    final visiblePlaylistCount = _visiblePlaylistCount(items);
     final nowPlaying = items.isNotEmpty ? items[_currentIndex] : null;
     final activePlaylistIndex =
         items.isNotEmpty && _isVisiblePlaylistAnchor(items, _playlistAnchorIndex(items, _currentIndex))
@@ -616,7 +623,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} \u2022 $_storyCount ${_storyCount == 1 ? 'story' : 'stories'})',
+              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} \u2022 $visiblePlaylistCount ${visiblePlaylistCount == 1 ? 'story' : 'stories'})',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 10),
