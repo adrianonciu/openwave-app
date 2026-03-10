@@ -237,14 +237,29 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return items[index].isPerspective && items[index + 1].isPerspective;
   }
 
-  bool _isArticlePerspectiveBlockStart(List<_PlaybackItem> items, int index) {
-    if (index < 0 || index >= items.length - 2) {
-      return false;
+  int? _articlePerspectiveStartIndex(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length || !items[index].isArticle) {
+      return null;
     }
 
-    return items[index].isArticle &&
+    if (index + 2 < items.length &&
         items[index + 1].isPerspective &&
-        items[index + 2].isPerspective;
+        items[index + 2].isPerspective) {
+      return index + 1;
+    }
+
+    if (index + 3 < items.length &&
+        items[index + 1].isSectionCue &&
+        items[index + 2].isPerspective &&
+        items[index + 3].isPerspective) {
+      return index + 2;
+    }
+
+    return null;
+  }
+
+  bool _isArticlePerspectiveBlockStart(List<_PlaybackItem> items, int index) {
+    return _articlePerspectiveStartIndex(items, index) != null;
   }
 
   int? _articlePerspectiveBlockAnchorIndex(List<_PlaybackItem> items, int index) {
@@ -252,16 +267,21 @@ class _PlayerScreenState extends State<PlayerScreen> {
       return null;
     }
 
-    if (_isArticlePerspectiveBlockStart(items, index)) {
-      return index;
-    }
+    for (var offset = 0; offset <= 3; offset++) {
+      final candidateIndex = index - offset;
+      if (candidateIndex < 0) {
+        continue;
+      }
 
-    if (index > 0 && _isArticlePerspectiveBlockStart(items, index - 1)) {
-      return index - 1;
-    }
+      final perspectiveStartIndex = _articlePerspectiveStartIndex(items, candidateIndex);
+      if (perspectiveStartIndex == null) {
+        continue;
+      }
 
-    if (index > 1 && _isArticlePerspectiveBlockStart(items, index - 2)) {
-      return index - 2;
+      final lastBlockIndex = perspectiveStartIndex + 1;
+      if (index >= candidateIndex && index <= lastBlockIndex) {
+        return candidateIndex;
+      }
     }
 
     return null;
@@ -709,13 +729,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   final isActive = activePlaylistIndex == index;
                   final isNext = !isActive && nextPlaylistIndex == index;
 
-                  if (_isArticlePerspectiveBlockStart(items, index)) {
+                  final articlePerspectiveStartIndex =
+                      _articlePerspectiveStartIndex(items, index);
+                  if (articlePerspectiveStartIndex != null) {
                     return KeyedSubtree(
                       key: _playlistItemKey(index),
                       child: _StoryPerspectiveBlockTile(
                         article: item,
-                        supporters: items[index + 1],
-                        critics: items[index + 2],
+                        supporters: items[articlePerspectiveStartIndex],
+                        critics: items[articlePerspectiveStartIndex + 1],
                         index: index,
                         isActive: isActive,
                         isNext: isNext,
