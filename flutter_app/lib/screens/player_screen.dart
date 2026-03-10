@@ -138,17 +138,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     final nextIndex = _currentIndex + 1;
     final hasNext = nextIndex < _playlistItems.length;
+    final completedStoryBlockAnchor =
+        _completedStoryBlockAnchorAtIndex(_playlistItems, _currentIndex);
+
+    _stopProgressTimer();
+    if (completedStoryBlockAnchor != null) {
+      await _playStoryStinger();
+    }
+
     if (hasNext) {
-      _stopProgressTimer();
-      if (_shouldPlayStoryStinger(_currentIndex, nextIndex)) {
-        await _playStoryStinger();
-      }
       _moveToIndex(nextIndex);
       await _playCurrentArticle();
       return;
     }
 
-    _stopProgressTimer();
     _isPlayingCue = false;
     _queuedPlaybackIndex = null;
     await _stingerPlayer.stop();
@@ -331,55 +334,24 @@ class _PlayerScreenState extends State<PlayerScreen> {
         .length;
   }
 
-  int? _storyBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
+  int? _completedStoryBlockAnchorAtIndex(List<_PlaybackItem> items, int index) {
     if (index < 0 || index >= items.length) {
       return null;
     }
 
     final anchorIndex = _playlistAnchorIndex(items, index);
-    if (_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
-      return anchorIndex;
-    }
-
-    for (var candidate = index - 1; candidate >= 0; candidate--) {
-      if (_isRealVisiblePlayableStoryBlock(items, candidate)) {
-        return candidate;
-      }
-    }
-
-    return null;
-  }
-
-  int? _upcomingStoryBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
-    if (index < 0 || index >= items.length) {
+    if (!_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
       return null;
     }
 
-    final anchorIndex = _playlistAnchorIndex(items, index);
-    if (_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
+    final nextIndex = index + 1;
+    if (nextIndex >= items.length) {
       return anchorIndex;
     }
 
-    for (var candidate = index + 1; candidate < items.length; candidate++) {
-      final candidateAnchorIndex = _playlistAnchorIndex(items, candidate);
-      if (_isRealVisiblePlayableStoryBlock(items, candidateAnchorIndex)) {
-        return candidateAnchorIndex;
-      }
-    }
-
-    return null;
-  }
-
-  bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
-    final items = _playlistItems;
-    final currentAnchorIndex = _storyBlockAnchorForIndex(items, currentIndex);
-    final nextAnchorIndex = _upcomingStoryBlockAnchorForIndex(items, nextIndex);
-
-    if (currentAnchorIndex == null || nextAnchorIndex == null) {
-      return false;
-    }
-
-    return currentAnchorIndex != nextAnchorIndex;
+    return _playlistAnchorIndex(items, nextIndex) == anchorIndex
+        ? null
+        : anchorIndex;
   }
 
   Future<void> _playStoryStinger() async {
@@ -905,7 +877,7 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
           child: Text('$visibleNumber'),
         ),
         title: Text(
-          '${article.title} (Two perspectives)',
+          '${article.title} (\u2696 Two perspectives)',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -973,7 +945,7 @@ class _PerspectivePairTile extends StatelessWidget {
           child: Text('$visibleNumber'),
         ),
         title: Text(
-          'Two perspectives',
+          '\u2696 Two perspectives',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
