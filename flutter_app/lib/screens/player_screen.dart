@@ -234,6 +234,42 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return items[index].isPerspective && items[index + 1].isPerspective;
   }
 
+  bool _isPerspectivePairMember(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length) {
+      return false;
+    }
+
+    final item = items[index];
+    if (!item.isPerspective) {
+      return false;
+    }
+
+    final hasPreviousPerspective = index > 0 && items[index - 1].isPerspective;
+    final hasNextPerspective = index < items.length - 1 && items[index + 1].isPerspective;
+    return hasPreviousPerspective || hasNextPerspective;
+  }
+
+  int _playlistAnchorIndex(List<_PlaybackItem> items, int index) {
+    if (index <= 0 || index >= items.length) {
+      return index;
+    }
+
+    if (items[index].isPerspective && items[index - 1].isPerspective) {
+      return index - 1;
+    }
+
+    return index;
+  }
+
+  int? _nextPlaylistIndex(List<_PlaybackItem> items) {
+    final nextIndex = _currentIndex + 1;
+    if (nextIndex >= items.length) {
+      return null;
+    }
+
+    return _playlistAnchorIndex(items, nextIndex);
+  }
+
   int? _findFirstEditorialIndex() {
     for (var index = 0; index < _playlistItems.length; index++) {
       final item = _playlistItems[index];
@@ -394,12 +430,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final totalEstimatedBriefingSeconds = _estimateTotalBriefingDurationSeconds();
     final nowPlaying = items.isNotEmpty ? items[_currentIndex] : null;
     final narrationText = nowPlaying != null ? _buildNarrationText(nowPlaying) : '';
+    final activePlaylistIndex = items.isNotEmpty
+        ? _playlistAnchorIndex(items, _currentIndex)
+        : -1;
+    final nextPlaylistIndex = _nextPlaylistIndex(items);
     final nextItem = _currentIndex < items.length - 1 ? items[_currentIndex + 1] : null;
     final estimatedDurationLabel = _currentArticleDurationSeconds >= 60
         ? '${(_currentArticleDurationSeconds / 60).round()} min'
         : '$_currentArticleDurationSeconds sec';
     final showPerspectivePairIndicator =
-        nowPlaying != null && _isPerspectivePairStart(items, _currentIndex);
+        nowPlaying != null && _isPerspectivePairMember(items, _currentIndex);
     final progressValue = _currentArticleDurationSeconds > 0
         ? (_currentProgressSeconds / _currentArticleDurationSeconds)
             .clamp(0.0, 1.0)
@@ -546,12 +586,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   }
 
                   if (isPerspectivePairStart && nextPerspectiveItem != null) {
-                    final isActive =
-                        _currentIndex == index || _currentIndex == index + 1;
-                    final isNext =
-                        !isActive &&
-                        (_currentIndex + 1 == index ||
-                            _currentIndex + 1 == index + 1);
+                    final isActive = activePlaylistIndex == index;
+                    final isNext = !isActive && nextPlaylistIndex == index;
 
                     return _PerspectivePairTile(
                       first: item,
@@ -564,8 +600,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     );
                   }
 
-                  final isActive = index == _currentIndex;
-                  final isNext = index == _currentIndex + 1;
+                  final isActive = activePlaylistIndex == index;
+                  final isNext = !isActive && nextPlaylistIndex == index;
                   final playlistNarrationText = _buildNarrationText(item);
                   final playlistDurationSeconds =
                       _estimateDurationSeconds(playlistNarrationText);
