@@ -5,6 +5,22 @@ from app.models.segment import Segment
 
 
 class SegmentService:
+    def _build_article_narration_text(self, article: Article) -> str:
+        title = article.title.strip()
+        summary = article.summary.strip()
+
+        if not title:
+            return summary
+        if not summary:
+            return title
+
+        normalized_title = re.sub(r"\s+", " ", title).casefold()
+        normalized_summary = re.sub(r"\s+", " ", summary).casefold()
+        if normalized_summary.startswith(normalized_title):
+            return summary
+
+        return f"{title}. {summary}"
+
     def create_segment_from_article(self, article: Article, segment_id: int) -> Segment:
         return Segment(
             id=segment_id,
@@ -15,6 +31,7 @@ class SegmentService:
             estimated_duration_seconds=30,
             tags=[],
             article_id=article.id,
+            narration_text=self._build_article_narration_text(article),
         )
 
     def create_section_cue(self, section_name: str, segment_id: int) -> Segment:
