@@ -185,41 +185,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return ((words / 170) * 60).ceil();
   }
 
-  String _playlistTypeSubtitle(_PlaybackItem item) {
-    if (item.type == 'intro') return 'Briefing intro';
-    if (item.type == 'section_cue') return 'Section';
-    if (item.type == 'perspective') return 'Perspective';
-    return '';
-  }
-
-  IconData _playlistTypeIcon(_PlaybackItem item) {
-    if (item.type == 'intro') return Icons.wb_sunny;
-    if (item.type == 'section_cue') return Icons.radio;
-    if (item.type == 'perspective') return Icons.balance;
-    return Icons.play_arrow;
-  }
-
-  String _buildPlaylistSubtitle(
-    _PlaybackItem item,
-    bool isNext,
-    String durationLabel,
-  ) {
-    if (item.isArticle) {
-      final sourceAndDuration = '${item.source} \u2022 $durationLabel';
-      return isNext ? 'Next: $sourceAndDuration' : sourceAndDuration;
-    }
-
-    final typeSubtitle = _playlistTypeSubtitle(item);
-    return isNext ? 'Next: $typeSubtitle' : typeSubtitle;
-  }
-
-  String _buildActivePlaylistMeta(_PlaybackItem item, String durationLabel) {
-    if (item.isArticle) {
-      return '${item.source} \u2022 $durationLabel';
-    }
-
-    return _playlistTypeSubtitle(item);
-  }
 
   bool _isPerspectivePairStart(List<_PlaybackItem> items, int index) {
     if (index < 0 || index >= items.length - 1) {
@@ -255,10 +220,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
 
     return null;
-  }
-
-  bool _isArticlePerspectiveBlockStart(List<_PlaybackItem> items, int index) {
-    return _articlePerspectiveStartIndex(items, index) != null;
   }
 
   int? _articlePerspectiveBlockAnchorIndex(List<_PlaybackItem> items, int index) {
@@ -389,10 +350,30 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return null;
   }
 
+  int? _upcomingStoryBlockAnchorForIndex(List<_PlaybackItem> items, int index) {
+    if (index < 0 || index >= items.length) {
+      return null;
+    }
+
+    final anchorIndex = _playlistAnchorIndex(items, index);
+    if (_isRealVisiblePlayableStoryBlock(items, anchorIndex)) {
+      return anchorIndex;
+    }
+
+    for (var candidate = index + 1; candidate < items.length; candidate++) {
+      final candidateAnchorIndex = _playlistAnchorIndex(items, candidate);
+      if (_isRealVisiblePlayableStoryBlock(items, candidateAnchorIndex)) {
+        return candidateAnchorIndex;
+      }
+    }
+
+    return null;
+  }
+
   bool _shouldPlayStoryStinger(int currentIndex, int nextIndex) {
     final items = _playlistItems;
     final currentAnchorIndex = _storyBlockAnchorForIndex(items, currentIndex);
-    final nextAnchorIndex = _storyBlockAnchorForIndex(items, nextIndex);
+    final nextAnchorIndex = _upcomingStoryBlockAnchorForIndex(items, nextIndex);
 
     if (currentAnchorIndex == null || nextAnchorIndex == null) {
       return false;
@@ -431,9 +412,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         continue;
       }
 
-      offset += _isArticlePerspectiveBlockStart(items, index)
-          ? 296
-          : (_isPerspectivePairStart(items, index) ? 208 : 96);
+      offset += 96;
     }
 
     return offset;
@@ -756,13 +735,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       key: _playlistItemKey(index),
                       child: _StoryPerspectiveBlockTile(
                         article: item,
-                        supporters: items[articlePerspectiveStartIndex],
-                        critics: items[articlePerspectiveStartIndex + 1],
                         visibleNumber: visiblePlaylistNumber,
                         isActive: isActive,
                         isNext: isNext,
-                        supportersActive: _currentIndex == articlePerspectiveStartIndex,
-                        criticsActive: _currentIndex == articlePerspectiveStartIndex + 1,
                         progressValue: isActive ? progressValue : 0,
                         onTap: () => _selectArticle(index),
                       ),
@@ -778,20 +753,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         visibleNumber: visiblePlaylistNumber,
                         isActive: isActive,
                         isNext: isNext,
-                        firstActive: _currentIndex == index,
-                        secondActive: _currentIndex == index + 1,
                         progressValue: isActive ? progressValue : 0,
                         onTap: () => _selectArticle(index),
                       ),
                     );
                   }
-
-                  final playlistNarrationText = _buildNarrationText(item);
-                  final playlistDurationSeconds =
-                      _estimateDurationSeconds(playlistNarrationText);
-                  final playlistDurationLabel = playlistDurationSeconds >= 60
-                      ? '${(playlistDurationSeconds / 60).round()} min'
-                      : '$playlistDurationSeconds sec';
 
                   return KeyedSubtree(
                     key: _playlistItemKey(index),
@@ -809,12 +775,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
                         onTap: () => _selectArticle(index),
                         leading: CircleAvatar(
                           child: Text('$visiblePlaylistNumber'),
                         ),
                         title: Text(
                           item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: isActive
                               ? Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w600,
@@ -822,47 +794,20 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               : null,
                         ),
                         subtitle: isActive
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    _buildActivePlaylistMeta(
-                                      item,
-                                      playlistDurationLabel,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Playing now',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  LinearProgressIndicator(
-                                    value: progressValue,
-                                    minHeight: 3,
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                _buildPlaylistSubtitle(
-                                  item,
-                                  isNext,
-                                  playlistDurationLabel,
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: LinearProgressIndicator(
+                                  value: progressValue,
+                                  minHeight: 3,
                                 ),
-                              ),
+                              )
+                            : null,
                         trailing: Icon(
                           isActive
                               ? Icons.graphic_eq
-                              : (item.isArticle
-                                  ? (isNext
-                                      ? Icons.arrow_forward
-                                      : Icons.play_arrow)
-                                  : _playlistTypeIcon(item)),
+                              : (isNext
+                                  ? Icons.arrow_forward
+                                  : Icons.play_arrow),
                         ),
                       ),
                     ),
@@ -922,73 +867,24 @@ class _PlaybackItem {
 
 class _StoryPerspectiveBlockTile extends StatelessWidget {
   final _PlaybackItem article;
-  final _PlaybackItem supporters;
-  final _PlaybackItem critics;
   final int visibleNumber;
   final bool isActive;
   final bool isNext;
-  final bool supportersActive;
-  final bool criticsActive;
   final double progressValue;
   final VoidCallback onTap;
 
   const _StoryPerspectiveBlockTile({
     required this.article,
-    required this.supporters,
-    required this.critics,
     required this.visibleNumber,
     required this.isActive,
     required this.isNext,
-    required this.supportersActive,
-    required this.criticsActive,
     required this.progressValue,
     required this.onTap,
   });
 
-  String _previewText(_PlaybackItem item) {
-    final preview = item.summary.trim().isNotEmpty ? item.summary : item.title;
-    return preview.trim();
-  }
-
-  Widget _buildPerspectiveRow(
-    BuildContext context, {
-    required String label,
-    required bool isActive,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final rowColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.14)
-        : colorScheme.surface.withValues(alpha: 0.7);
-    final borderColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.35)
-        : colorScheme.outlineVariant.withValues(alpha: 0.55);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: rowColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-            ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final editorialAccent = isActive
-        ? colorScheme.primary.withValues(alpha: 0.14)
-        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.55);
-    final editorialBorderColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.35)
-        : colorScheme.outlineVariant.withValues(alpha: 0.8);
 
     return Card(
       color: isActive ? colorScheme.primaryContainer : null,
@@ -999,104 +895,36 @@ class _StoryPerspectiveBlockTile extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 4,
+        ),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                child: Text('$visibleNumber'),
+        leading: CircleAvatar(
+          child: Text('$visibleNumber'),
+        ),
+        title: Text(
+          '${article.title} (Two perspectives)',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                article.title,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w700),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                article.source,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          isActive
-                              ? Icons.graphic_eq
-                              : (isNext
-                                  ? Icons.arrow_forward
-                                  : Icons.play_arrow),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _previewText(article),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: editorialAccent,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: editorialBorderColor),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Two perspectives',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelLarge
-                                ?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(height: 10),
-                          _buildPerspectiveRow(
-                            context,
-                            label: 'Supporters say...',
-                            isActive: supportersActive,
-                          ),
-                          const SizedBox(height: 8),
-                          _buildPerspectiveRow(
-                            context,
-                            label: 'Critics argue...',
-                            isActive: criticsActive,
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (isActive) ...[
-                      const SizedBox(height: 12),
-                      LinearProgressIndicator(
-                        value: progressValue,
-                        minHeight: 3,
-                      ),
-                    ],
-                  ],
+        ),
+        subtitle: isActive
+            ? Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: LinearProgressIndicator(
+                  value: progressValue,
+                  minHeight: 3,
                 ),
-              ),
-            ],
-          ),
+              )
+            : null,
+        trailing: Icon(
+          isActive
+              ? Icons.graphic_eq
+              : (isNext ? Icons.arrow_forward : Icons.play_arrow),
         ),
       ),
     );
@@ -1109,8 +937,6 @@ class _PerspectivePairTile extends StatelessWidget {
   final int visibleNumber;
   final bool isActive;
   final bool isNext;
-  final bool firstActive;
-  final bool secondActive;
   final double progressValue;
   final VoidCallback onTap;
 
@@ -1120,51 +946,13 @@ class _PerspectivePairTile extends StatelessWidget {
     required this.visibleNumber,
     required this.isActive,
     required this.isNext,
-    required this.firstActive,
-    required this.secondActive,
     required this.progressValue,
     required this.onTap,
   });
 
-  Widget _buildPerspectiveRow(
-    BuildContext context, {
-    required String label,
-    required bool isActive,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final rowColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.14)
-        : colorScheme.surface.withValues(alpha: 0.7);
-    final borderColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.35)
-        : colorScheme.outlineVariant.withValues(alpha: 0.55);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: rowColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-            ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final pairAccent = isActive
-        ? colorScheme.primary.withValues(alpha: 0.14)
-        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.55);
-    final pairBorderColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.35)
-        : colorScheme.outlineVariant.withValues(alpha: 0.8);
 
     return Card(
       color: isActive ? colorScheme.primaryContainer : null,
@@ -1175,75 +963,36 @@ class _PerspectivePairTile extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 4,
+        ),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                child: Text('$visibleNumber'),
+        leading: CircleAvatar(
+          child: Text('$visibleNumber'),
+        ),
+        title: Text(
+          'Two perspectives',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: pairAccent,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: pairBorderColor),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Two perspectives',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Icon(
-                            isActive
-                                ? Icons.graphic_eq
-                                : (isNext
-                                    ? Icons.arrow_forward
-                                    : Icons.play_arrow),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      _buildPerspectiveRow(
-                        context,
-                        label: 'Supporters say...',
-                        isActive: firstActive,
-                      ),
-                      const SizedBox(height: 8),
-                      _buildPerspectiveRow(
-                        context,
-                        label: 'Critics argue...',
-                        isActive: secondActive,
-                      ),
-                      if (isActive) ...[
-                        const SizedBox(height: 12),
-                        LinearProgressIndicator(
-                          value: progressValue,
-                          minHeight: 3,
-                        ),
-                      ],
-                    ],
-                  ),
+        ),
+        subtitle: isActive
+            ? Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: LinearProgressIndicator(
+                  value: progressValue,
+                  minHeight: 3,
                 ),
-              ),
-            ],
-          ),
+              )
+            : null,
+        trailing: Icon(
+          isActive
+              ? Icons.graphic_eq
+              : (isNext ? Icons.arrow_forward : Icons.play_arrow),
         ),
       ),
     );
