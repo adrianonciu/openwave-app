@@ -615,7 +615,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} • $_storyCount ${_storyCount == 1 ? 'story' : 'stories'})',
+              'Top stories today (${_formatDuration(totalEstimatedBriefingSeconds)} \u2022 $_displayStoryCount ${_displayStoryCount == 1 ? 'story' : 'stories'})',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 10),
