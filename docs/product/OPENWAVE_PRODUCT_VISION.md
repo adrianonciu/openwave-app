@@ -19,27 +19,40 @@ OpenWave devine briefingul audio de incredere care functioneaza ca o redactie au
 - experienta simpla, rapida si repetabila zilnic
 
 ## Regula De Selectie A Slotului De Bulletin
-OpenWave produce jurnale pe sloturi editoriale fixe, de exemplu din ora in ora. Atunci cand utilizatorul apasa Play, aplicatia nu trebuie sa foloseasca ora exacta a apasarii ca eticheta editoriala a jurnalului. Ea trebuie sa selecteze cel mai recent jurnal disponibil.
+OpenWave produce jurnale pe sloturi editoriale fixe. Atunci cand utilizatorul apasa Play, aplicatia nu trebuie sa foloseasca ora exacta a apasarii ca eticheta editoriala a jurnalului. Ea trebuie sa selecteze cel mai recent jurnal deja publicat.
 
 ### Definitii
 - current playback time: momentul exact in care utilizatorul apasa Play
-- bulletin slot time: ora editoriala fixa a jurnalului generat, de exemplu 06:00 sau 07:00
-- latest available bulletin: cel mai recent jurnal care exista deja si poate fi redat la momentul apasarii Play
+- bulletin slot time: ora editoriala fixa a jurnalului, de exemplu 06:00, 12:00 sau 22:00
+- latest available bulletin: cel mai recent jurnal deja publicat si disponibil pentru redare la momentul apasarii Play
 
 ### Regula de selectie
-- bulletins sunt generate pe sloturi fixe, de exemplu la fiecare ora
-- la Play se selecteaza cel mai recent bulletin slot disponibil
-- daca slotul curent exista deja, se reda acel slot
-- daca slotul curent nu exista inca, se reda cel mai recent slot anterior disponibil
+- bulletins sunt generate pe sloturi fixe
+- la Play se selecteaza cel mai recent bulletin slot deja publicat
+- daca jurnalul din ora curenta este deja disponibil, aplicatia il reda pe acela
+- daca jurnalul din ora curenta nu este inca publicat, aplicatia cade pe cel mai recent slot anterior publicat
+- aplicatia nu trebuie sa faca referire la un slot viitor
 
-### Exemple
-- utilizatorul apasa Play la 06:45
-- bulletins disponibile: 05:00, 06:00
-- aplicatia reda jurnalul de la 06:00
+### Exemple corectate
+- Play la 06:45 -> se reda jurnalul de la 06:00
+- Play la 12:05 -> se reda jurnalul de la 12:00 daca este publicat, altfel 11:00
+- Play la 22:20 -> se reda jurnalul de la 22:00
 
-- utilizatorul apasa Play la 07:05
-- daca jurnalul de la 07:00 exista, aplicatia reda 07:00
-- daca nu exista inca, aplicatia reda cel mai recent jurnal anterior disponibil
+## Fereastra Zilnica De Bulletins
+- primul jurnal al zilei este la 06:00
+- ultimul jurnal al zilei este la 22:00
+- toate referintele editoriale la ora jurnalului trebuie sa foloseasca un slot din aceasta fereastra zilnica
+
+## Rolul Editorial Al Jurnalului De La 06:00
+- jurnalul de la 06:00 este morning opener
+- poate include un scurt recap al celor mai importante stiri din seara si noaptea anterioara
+- trebuie sa se simta totusi ca primul jurnal util al noii zile, nu ca o simpla repetitie a serii trecute
+
+## Cadenta Weekday Vs Weekend
+- in zilele lucratoare, bulletins ruleaza din ora in ora, de la 06:00 la 22:00
+- sambata si duminica, bulletins ruleaza mai rar
+- cadenta de weekend trebuie tratata ca politica editoriala configurabila
+- varianta configurabila documentata: la fiecare 3 ore sau la fiecare 4 ore
 
 ## Intro Personalizat
 Intro-ul trebuie sa includa patru lucruri:
@@ -54,6 +67,15 @@ Ora rostita in intro trebuie sa fie bulletin slot time, nu current playback time
 - morning: pentru intervalul de dimineata
 - day: pentru intervalul de zi
 - evening: pentru intervalul de seara
+
+### Regula de calcul pentru intro
+- greeting_type depinde de playback_time
+- bulletin_hour depinde de resolved published bulletin slot
+
+### Exemplu de rezolvare
+- playback la 12:05
+- bulletin slot rezolvat la 12:00 daca este publicat, altfel 11:00
+- daca 12:00 este publicat, linia rostita este: "Buna ziua, Adrian. Sunt Corina. Iata jurnalul tau de stiri de la ora 12."
 
 ### Exemple in romana
 - Morning: "Buna dimineata, {user_name}. Sunt Corina. Iata jurnalul tau de stiri de la ora {bulletin_hour}."
@@ -77,6 +99,7 @@ Outro-ul trebuie sa includa:
 
 ## Implicatii Minime De Implementare
 - playerul sau stratul care cere redarea trebuie sa cunoasca current playback time
-- selectia de continut trebuie sa intoarca selected bulletin slot
+- selectia de continut trebuie sa intoarca selected bulletin slot si starea lui de publicare
 - generatorul de intro si outro trebuie sa primeasca user_name, presenter_name si bulletin_hour
 - wording-ul audio trebuie sa fie legat de slotul selectat, nu de timestamp-ul de redare
+- politica de weekend trebuie sa poata fi configurata separat de cadenta din timpul saptamanii
