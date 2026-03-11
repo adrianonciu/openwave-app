@@ -28,7 +28,7 @@ Parlamentul a aprobat miercuri, 11 martie 2026, prezența temporară în Români
 - Titlu radio: Argumentul pentru: o prezență americană mai solidă poate descuraja criza
 - De ce intră în jurnal: explică de ce susținătorii văd decizia ca pe o garanție de securitate
 - Text citit în audio:
-Cei care susțin măsura spun că România are nevoie acum de o apărare mai vizibilă. Victor Negrescu spune că noile capabilități defensive arată că România rămâne aproape de Statele Unite. Ideea de fond este simplă: o prezență mai clară poate descuraja escaladarea. În această logică, măsura este una de protecție, nu un pas spre aventură militară.
+Două perspective asupra acestei decizii. Cei care susțin măsura spun că România are nevoie acum de o apărare mai vizibilă. Victor Negrescu spune că noile capabilități defensive arată că România rămâne aproape de Statele Unite. Ideea de fond este simplă: o prezență mai clară poate descuraja escaladarea. În această logică, măsura este una de protecție, nu un pas spre aventură militară.
 - Citat scurt (opțional): Victor Negrescu: „România va dispune de capacități defensive suplimentare”
 - Impact pentru cetățean: perspectiva favorabilă spune că o descurajare mai puternică înseamnă mai multă siguranță
 - Note editoriale: perspectivă scurtă, directă, fără triumfalism
@@ -37,7 +37,7 @@ Cei care susțin măsura spun că România are nevoie acum de o apărare mai viz
 - Titlu radio: Argumentul de prudență: publicul are nevoie de explicații clare despre misiune și limite
 - De ce intră în jurnal: aduce contrast real și răspunde la întrebările firești despre risc
 - Text citit în audio:
-Analistul militar Sandu Valentin Mateiu spune că discuția nu trebuie redusă la ideea că orice prezență militară liniștește automat publicul. El avertizează că, dacă de pe teritoriul României s-ar desfășura acțiuni ofensive, „apar elemente de drept internațional”. Publicul are nevoie de explicații simple despre rolul exact al acestor capabilități și despre limitele lor. Pe scurt, sprijinul strategic contează. Dar la fel de mult contează și transparența.
+Pe de altă parte, criticii acestei măsuri spun că publicul are nevoie de explicații clare despre misiune și limite. Analistul militar Sandu Valentin Mateiu spune că discuția nu trebuie redusă la ideea că orice prezență militară liniștește automat publicul. El avertizează că, dacă de pe teritoriul României s-ar desfășura acțiuni ofensive, „apar elemente de drept internațional”. Pe scurt, sprijinul strategic contează. Dar la fel de mult contează și transparența.
 - Citat scurt (opțional): Sandu Valentin Mateiu: „apar elemente de drept internațional”
 - Impact pentru cetățean: perspectiva prudentă cere claritate despre risc, control politic și expunere
 - Note editoriale: blocul special stă lipit de lead și funcționează ca extensie, nu ca anexă
@@ -64,7 +64,7 @@ De astăzi, pasagerii care pleacă de pe aeroporturile Otopeni și Băneasa pot 
 - Titlu radio: Ministerul Muncii trimite fonduri către sate pentru servicii sociale
 - De ce intră în jurnal: mută jurnalul spre impact social și zone rurale
 - Text citit în audio:
-Ministra Muncii, Simona Bucura-Oprescu, a anunțat aproape 10 milioane de euro pentru comunități rurale. Banii ar trebui să ajute localități mici să lege mai bine ajutorul social, sprijinul medical și prevenirea abandonului școlar. Ministerul spune că programul vizează 2.000 de comunități și peste 450.000 de persoane vulnerabile. Nu sună spectaculos, dar pentru multe sate poate însemna ajutor mai aproape de casă.
+Ministrul Muncii, Simona Bucura-Oprescu, a anunțat aproape 10 milioane de euro pentru comunități rurale. Banii ar trebui să ajute localități mici să lege mai bine ajutorul social, sprijinul medical și prevenirea abandonului școlar. Ministerul spune că programul vizează 2.000 de comunități și peste 450.000 de persoane vulnerabile. Nu sună spectaculos, dar pentru multe sate poate însemna ajutor mai aproape de casă.
 - Citat scurt (opțional): Ministerul Muncii: „circa 10 milioane de euro către comunitățile rurale”
 - Impact pentru cetățean: poate aduce acces mai bun la servicii de bază în zone slab acoperite
 - Note editoriale: titlu instituțional, text person-first cu ministrul numit
@@ -79,7 +79,7 @@ Elevii din programul Masă Sănătoasă vor primi și în 2026 o masă caldă sa
 - Note editoriale: păstrează dimensiunea umană înainte de revenirea la economie
 
 ## ITEM 6
-- Titlu radio: Bugetul pe 2026 promite mult, iar împrumuturile arată cât costă
+- Titlu radio: Bugetul pe 2026 promite mult, însă se bazează pe împrumuturi
 - De ce intră în jurnal: comprimă tema economică într-un singur item mai radio-friendly
 - Text citit în audio:
 Ministrul Finanțelor a pus pe masă proiectul de buget pentru 2026, cu un deficit de 6,2% din PIB și investiții ridicate. În același timp, România a atras 4,7 miliarde de euro de pe piețele internaționale, dar la dobânzi mari. Tradus simplu, statul promite investiții, dar plătește scump ca să țină planul în picioare. Aici apare întrebarea anului: cât poți livra când banii te costă atât de mult.
@@ -100,8 +100,8 @@ Prețul petrolului a coborât sub 87 de dolari pe baril după discuțiile despre
 - Titlu radio: Autostrada Sibiu-Pitești rămâne blocată de mediu înainte să aducă un tunel nou
 - De ce intră în jurnal: încheie cu infrastructură și o miză practică ușor de reținut
 - Text citit în audio:
-Ministrul Transporturilor spune că prioritatea pe 2026 pentru autostrada Sibiu-Pitești este revizuirea acordului de mediu. Fără acest pas, unele autorizații nu pot merge mai departe, iar ritmul lucrărilor rămâne inegal. Tot pe acest traseu ar putea fi deschis în august primul tunel de autostradă din România. Pe scurt, drumul peste Carpați avansează, dar încă se luptă cu întârzieri și hârtii.
-- Citat scurt (opțional): Ministerul Transporturilor: „prioritatea pe 2026 este revizuirea acordului de mediu”
+Ministrul Transporturilor, Sorin Grindeanu, spune că prioritatea pe 2026 pentru autostrada Sibiu-Pitești este revizuirea acordului de mediu. Fără acest pas, unele autorizații nu pot merge mai departe, iar ritmul lucrărilor rămâne inegal. Tot pe acest traseu ar putea fi deschis în august primul tunel de autostradă din România. Pe scurt, drumul peste Carpați avansează, dar încă se luptă cu întârzieri și hârtii.
+- Citat scurt (opțional): Sorin Grindeanu: „prioritatea pe 2026 este revizuirea acordului de mediu”
 - Impact pentru cetățean: miza este o legătură rutieră mai bună și timp mai scurt pe una dintre cele mai importante axe din țară
 - Note editoriale: titlu clarificat cu numele complet al proiectului
 
