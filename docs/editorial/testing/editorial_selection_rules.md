@@ -48,6 +48,23 @@
 - Expert use is strongest when the story involves security, economics, law, infrastructure, or other topics that benefit from explanation.
 - Expert quotes should clarify the issue, not replace the underlying factual story.
 
+## User Personalization Rule
+- The user name may appear up to three times in a briefing.
+- Typical placement is intro, one mid-story reference, and outro.
+- The goal is to create a personal radio tone without sounding artificial or repetitive.
+- Example: "Pentru tine, Adrian, e și o veste simplă."
+
+## Avoid Meta Commentary Rule
+- Avoid sentences that comment on the news instead of describing it.
+- Avoid forms such as "aceasta este genul de știre care..." or "aceasta mută discuția despre..."
+- Prefer concrete facts, direct consequences, and named actors.
+- If a sentence can be replaced by a more practical effect, the practical effect should win.
+
+## Source Diversity Rule
+- Avoid repeating the same source attribution in consecutive stories when alternative credible sources exist.
+- If several stories use the same base source, vary the attribution when editorially justified through Reuters, AFP, BBC, ESPN, DigiSport, Variety, HotNews, presa internațională, presa spaniolă, and similar credible formulations.
+- The goal is not decorative variety, but a more natural editorial flow and a stronger perception of synthesis.
+
 ## Working Hypothesis
 ### Bulletin Structure
 - 8 standard stories
