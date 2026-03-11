@@ -1,4 +1,4 @@
-# Template Pilot Briefing OpenWave
+﻿# Template Pilot Briefing OpenWave
 
 ## Metadate
 - Data testului:
@@ -6,10 +6,20 @@
 - Durata estimata:
 - Numar itemuri:
 - Obiectiv editorial:
+- User name:
+- Presenter name:
+- Playback time:
+- Bulletin slot hour:
+- Greeting type: morning / day / evening
 
 ## INTRO
 - Rol:
+- Greeting:
+- User name:
+- Presenter name:
+- Bulletin slot hour:
 - Text citit in audio:
+- Formula recomandata: "{greeting}, {user_name}. Sunt {presenter_name}. Iata jurnalul tau de stiri de la ora {bulletin_hour}."
 - Note editoriale:
 
 ## ITEM 1
@@ -96,7 +106,14 @@
 
 ## OUTRO
 - Rol:
+- Bulletin slot hour:
+- User name:
+- Next update wording:
 - Text citit in audio:
+- Formula recomandata: "Acesta a fost jurnalul tau de la ora {bulletin_hour}, {user_name}. {next_update_wording}"
+- Variante next update wording:
+  - "Ne reauzim la urmatorul jurnal."
+  - "Revin cu un nou jurnal la urmatoarea actualizare."
 - Note editoriale:
 
 ## SURSE SCRISE
