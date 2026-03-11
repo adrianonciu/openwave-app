@@ -357,3 +357,47 @@ Improve visual grouping of the two Perspective segments in playlist.
 
 Editorial exploration:
 Test Romanian radio-style summaries for OpenWave.
+
+Task 20 completed and manually verified in app. Perspective Pair is now rendered as a single editorial block in the Flutter playlist, with working tap behavior and active-state highlight across both perspective segments. Backend section cue constant issue was also fixed so /briefing/today loads correctly again.
+
+Task 21 completed: polished Perspective Pair playlist tile in Flutter player with clearer editorial grouping, subtle bordered/tinted container, badge-style header, and divider between Supporters/Critics viewpoints. UI-only change; playback behavior unchanged.
+
+Task 22 completed: added a subtle progress indicator for the currently playing playlist segment, including correct support for grouped Perspective Pair blocks. UI-only change; playback logic unchanged.
+
+Task 23 completed: fixed player transition sequencing so intro advances correctly to the first editorial segment, segment narration uses narrationText when available, story-to-perspective transition flows directly, and no “Next story” cue is inserted inside a Perspective Pair.
+
+Task 25 completed: added playlist auto-scroll to keep the active visible item near the top of the playlist, including correct handling for grouped Perspective Pair tiles. Verified controller cleanup in player_screen.dart.
+
+Task 27 completed: extended story + perspective playlist grouping to also handle the real raw sequence with an intermediate section cue, and added bounds guards to keep the grouping logic safe.
+
+Task 29 completed: fixed story narration generation in backend so each news segment now starts with the article title before the summary, while avoiding duplicate-title narration.
+
+Task 31 completed: updated playlist numbering to use visible editorial blocks instead of raw segment indices, so grouped story + perspective items now consume a single playlist number and later items renumber correctly.
+
+Task 32 completed: tightened vertical spacing in player layout so the playlist appears higher on screen and more items are visible immediately, without changing player structure or playback behavior.
+
+Task 33 completed: simplified the top player area by removing the large Now Playing card and duplicated metadata, leaving only the current title, progress bar, timing, and transport controls so the playlist becomes the main visible focus.
+
+Task 34 completed: removed intro from visible playlist rendering while keeping intro audio playback intact, and replaced the top summary area with a compact single-line header showing total duration and real story count only.
+
+Task 35 completed: removed the redundant pre-player briefing preview screen and now open the Daily Brief directly in PlayerScreen while preserving existing loading and error handling in HomeScreen.
+
+Task 36 completed: restored intro playback by triggering it on the first explicit Play action after direct player entry, and fixed compact header story count by parsing the intended editorial count from the briefing headline when available.
+
+Task 37 completed: playlist taps now start playback immediately, Perspective blocks were simplified to compact label-only rows with internal active-state highlighting, and the compact header now uses the real computed story count.
+
+Task 38 completed: compact header now uses the real visible playlist block count, keeping duration/story summary aligned with the numbered playlist and excluding intro from the visible count.
+
+Task 39 completed: removed the spoken “Next story” TTS cue and switched regular story-to-story transitions to direct advancement, preserving intro handoff and no-separator behavior inside grouped editorial blocks.
+
+Task 40 completed: integrated a short asset-based news stinger between independent story blocks using audioplayers, while preserving intro flow and no-separator behavior inside grouped story/perspective blocks.
+
+Task 41 completed: updated stinger playback to trigger on transitions between visible editorial story blocks rather than only raw adjacent article segments, making story-to-story jingle behavior consistent while preserving separator-free grouped perspective playback.
+
+Task 42 completed: intro narration now uses the real story count, and stinger playback now triggers on transitions between visible story blocks only, skipping section cues and preserving separator-free grouped perspective playback.
+
+Task 44 completed: fixed stinger triggering by resolving both current and next playback positions through the same real story-block anchor helper, preventing separators inside grouped perspective blocks and restoring stinger playback before the next real story block.
+
+Task 45 completed: fixed the remaining final-story stinger transition and simplified the playlist to compact title-only rows, using an inline “(Two perspectives)” marker for stories with grouped perspective coverage.
+
+Task 46 completed: fixed stinger timing so the transition sound now plays only after completed story blocks, including the final story, while keeping grouped perspective transitions separator-free and updating the playlist marker to (⚖ Two perspectives).
