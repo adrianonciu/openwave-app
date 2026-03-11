@@ -48,7 +48,7 @@ Noul film SF de acțiune „War Machine”, cu Alan Ritchson în rolul principal
 - Titlu radio: Filme de Tudor Giurgiu și Cecilia Ștefănescu intră în festivalurile de la Salonic și Sofia
 - De ce intră în jurnal: aduce componenta românească de entertainment și cultură
 - Text citit în audio:
-Trei filme românești recente au fost selectate în festivalurile internaționale de la Salonic și Sofia. În centru sunt două nume cunoscute: Tudor Giurgiu și Cecilia Ștefănescu. AGERPRES notează că aceste selecții duc mai departe vizibilitatea cinemaului românesc într-un circuit internațional important. Pentru ascultător, e și o veste simplă: România nu apare doar în știrile politice, ci și în film.
+Trei filme românești recente au fost selectate în festivalurile internaționale de la Salonic și Sofia. În centru sunt două nume cunoscute: Tudor Giurgiu și Cecilia Ștefănescu. AGERPRES notează că aceste selecții duc mai departe vizibilitatea cinemaului românesc într-un circuit internațional important. Pentru tine, Adrian, e și o veste simplă: România nu apare doar în știrile politice, ci și în film.
 - Citat scurt (opțional): Transilvania Film: „festivaluri internaționale de la Salonic și Sofia”
 - Impact pentru cetățean: aduce o poveste culturală pozitivă și ușor de reținut din România
 - Note editoriale: item național de entertainment, bun pentru echilibru
@@ -57,8 +57,8 @@ Trei filme românești recente au fost selectate în festivalurile internaționa
 - Titlu radio: Real Madrid îl pierde pe Mbappe înaintea duelului cu Manchester City
 - De ce intră în jurnal: este cea mai mare poveste de fotbal din acest mix
 - Text citit în audio:
-Real Madrid nu se va baza pe Kylian Mbappe în meciul cu Manchester City din Liga Campionilor. AGERPRES notează că atacantul francez continuă recuperarea după accidentarea la genunchi. Absența lui schimbă imediat tonul unuia dintre cele mai așteptate dueluri din fotbalul european. Pentru publicul de sport, acesta este genul de știre care mută instant discuția despre favoriți.
-- Citat scurt (opțional): AGERPRES: „nu va conta pe starul său Kylian Mbappe”
+Real Madrid nu se va baza pe Kylian Mbappe în meciul cu Manchester City din Liga Campionilor. Presa spaniolă scrie că atacantul francez continuă recuperarea după accidentarea la genunchi. Absența lui schimbă imediat tonul unuia dintre cele mai așteptate dueluri din fotbalul european. Fără Mbappe, presiunea cade și mai mult pe Vinicius și Bellingham, iar Real intră în meci cu mai puțină viteză în atac.
+- Citat scurt (opțional): Presa spaniolă: „nu va conta pe starul său Kylian Mbappe”
 - Impact pentru cetățean: pentru fanii fotbalului, schimbă așteptările înaintea unui meci major din Liga Campionilor
 - Note editoriale: item sportiv mare, cu nume recognoscibil și miză clară
 
@@ -66,8 +66,8 @@ Real Madrid nu se va baza pe Kylian Mbappe în meciul cu Manchester City din Lig
 - Titlu radio: Jannik Sinner merge mai departe la Indian Wells după un meci greu cu Joao Fonseca
 - De ce intră în jurnal: menține partea sportivă pe o competiție mare și foarte recognoscibilă
 - Text citit în audio:
-Jannik Sinner s-a calificat în sferturile de finală de la Indian Wells, după o victorie grea cu brazilianul Joao Fonseca. AGERPRES notează că italianul a avut nevoie de două tiebreak-uri pentru a închide meciul. În același tablou, și Alexander Zverev merge mai departe, ceea ce ridică și mai mult nivelul fazei finale a turneului. Pentru fanii tenisului, Indian Wells începe să arate exact cum ar trebui: cu nume mari și meciuri grele.
-- Citat scurt (opțional): AGERPRES: „la mare luptă”
+Jannik Sinner s-a calificat în sferturile de finală de la Indian Wells, după o victorie grea cu brazilianul Joao Fonseca. Presa internațională notează că italianul a avut nevoie de două tiebreak-uri pentru a închide meciul. În același tablou, și Alexander Zverev merge mai departe, ceea ce ridică și mai mult nivelul fazei finale a turneului. Pentru fanii tenisului, Indian Wells începe să arate exact cum ar trebui: cu nume mari și meciuri grele.
+- Citat scurt (opțional): Presa internațională: „la mare luptă”
 - Impact pentru cetățean: oferă un reper clar despre ce se întâmplă într-unul dintre cele mai urmărite turnee ale momentului
 - Note editoriale: tenis internațional, bun pentru ritm și prestigiu sportiv
 
