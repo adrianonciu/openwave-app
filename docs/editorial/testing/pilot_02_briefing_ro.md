@@ -10,17 +10,17 @@
 ## INTRO
 - Rol: deschidere scurtă, clară, cu promisiunea unui jurnal util și bine ritmat
 - Text citit în audio:
-Bun găsit. Acesta este al doilea pilot editorial OpenWave. Deschidem cu concluziile ședinței CSAT, unde președintele Nicușor Dan a spus că statul urmărește atât efectele de securitate ale conflictului din Orientul Mijlociu, cât și efectele economice din România. Apoi trecem la știri care ating mai direct viața de zi cu zi: reguli noi în aeroport, locuri de muncă, programul Rabla, semne de slăbiciune în consum, o veste bună din educație și un termen nou pentru Autostrada Moldovei.
-- Note editoriale: intro ancorează clar lead-ul și promite un jurnal mai utilitar decât Pilot 01
+Bun găsit. Acesta este al doilea pilot editorial OpenWave. Deschidem cu mesajul transmis de Nicușor Dan după ședința CSAT: statul urmărește atât siguranța românilor din zona de conflict, cât și riscul ca prețurile să urce și în România. Apoi trecem la știri foarte practice: reguli noi în aeroport, locuri de muncă disponibile, programul Rabla, semne de slăbiciune în cumpărături, o veste bună din educație și un termen nou pentru Autostrada Moldovei.
+- Note editoriale: intro mai direct, cu impact rapid și promisiune clară de utilitate
 
 ## ITEM 1
 - Titlu radio: CSAT mută în prim-plan siguranța românilor și impactul economic al crizei din Orientul Mijlociu
 - De ce intră în jurnal: este povestea cu cea mai mare miză publică și cea mai bună ancoră de actualitate
 - Text citit în audio:
-La finalul ședinței CSAT de miercuri, 11 martie 2026, președintele Nicușor Dan a spus că statul urmărește trei lucruri: situația militară, românii aflați în zonă și efectele economice ale conflictului din Orientul Mijlociu. El a precizat că aproximativ 5.700 de oameni au revenit deja în România, iar circa 3.700 au fost ajutați de autorități. În același timp, CSAT a discutat și ce se poate întâmpla dacă prețul petrolului continuă să urce. Pentru public, acesta este momentul în care o criză externă începe să fie măsurată și în siguranță, și în bani.
+După ședința CSAT de miercuri, 11 martie 2026, președintele Nicușor Dan a spus că statul urmărește trei lucruri: situația militară, românii aflați în zonă și efectele economice ale conflictului din Orientul Mijlociu. El a precizat că aproximativ 5.700 de oameni au revenit deja în România, iar alte câteva mii au fost sprijinite de autorități. CSAT a discutat și ce se poate întâmpla dacă prețul petrolului continuă să urce. Cu alte cuvinte, o criză externă începe să fie măsurată nu doar în riscuri de securitate, ci și în bani.
 - Citat scurt (opțional): Nicușor Dan: „asta este una din preocupările noastre importante”
 - Impact pentru cetățean: leagă direct securitatea regională de protecția românilor și de riscul unor scumpiri interne
-- Note editoriale: lead factual, cu actor numit și efect clar pentru public
+- Note editoriale: lead simplificat și mai clar pe consecințele pentru public
 
 ## BLOC SPECIAL: TWO PERSPECTIVES
 
@@ -55,19 +55,19 @@ De astăzi, pasagerii care pleacă de pe aeroporturile Otopeni și Băneasa pot 
 - Titlu radio: ANOFM anunță peste 33.000 de locuri de muncă vacante în țară
 - De ce intră în jurnal: este o informație practică, ușor de folosit și relevantă pentru mulți ascultători
 - Text citit în audio:
-Agenția Națională pentru Ocuparea Forței de Muncă anunță 33.195 de locuri de muncă vacante în România și alte 119 în Spațiul Economic European. Cele mai multe posturi sunt pentru șoferi, curieri, muncitori necalificați, lucrători comerciali și manipulanti de marfă. Asta spune două lucruri dintr-o dată: unde există cerere și cât de greu este încă să găsești personal în unele zone ale economiei. Pentru cei aflați în căutarea unui job, e una dintre cele mai utile cifre ale zilei.
+În România sunt acum 33.195 de locuri de muncă vacante, anunță Agenția Națională pentru Ocuparea Forței de Muncă. Cele mai multe posturi sunt pentru șoferi, curieri, muncitori necalificați, lucrători comerciali și manipulanți de marfă. Asta arată unde există cerere și unde angajatorii găsesc încă greu personal. Pentru cei care își caută un job, e una dintre cele mai utile informații ale zilei.
 - Citat scurt (opțional): ANOFM: „33.195 de locuri de muncă vacante”
 - Impact pentru cetățean: oferă un reper direct pentru cei care caută de lucru sau vor să schimbe domeniul
-- Note editoriale: utilitate clară, bună după un item de transport
+- Note editoriale: deschidere mai scurtă și mai directă pentru audio
 
 ## ITEM 4
 - Titlu radio: Programul Rabla rămâne în așteptare până când se clarifică bugetul AFM
 - De ce intră în jurnal: subiect cu impact mare pentru consumatori și piața auto, dar încă fără decizie finală
 - Text citit în audio:
-Ministrul Mediului, Diana Buzoianu, spune că programul Rabla pentru 2026 depinde de bugetul Administrației Fondului pentru Mediu. Ea a explicat că negocierile cu Ministerul Finanțelor vor începe după adoptarea bugetului național și că abia apoi se va vedea ce bani există. Până atunci, mesajul este că proiectele deja începute au prioritate. Pentru cei care așteaptă lansarea unei noi sesiuni Rabla, răspunsul de acum este mai degrabă: încă nu știm, dar știm ce intră primul la plată.
+Ministrul Mediului, Diana Buzoianu, spune că programul Rabla pentru 2026 depinde de bugetul Fondului pentru Mediu. Pe scurt, fără bani clari, nu poate exista nici un calendar clar. Ministrul spune că proiectele deja începute vor avea prioritate. Pentru cei care așteaptă o nouă sesiune Rabla, mesajul de acum este simplu: programul nu este oprit, dar nici nu are încă undă verde.
 - Citat scurt (opțional): Diana Buzoianu: „Prioritatea zero sunt proiectele deja începute”
 - Impact pentru cetățean: influențează planurile de cumpărare și așteptările celor care mizau pe sprijinul de la stat
-- Note editoriale: bun item de consumator, cu incertitudine explicată clar
+- Note editoriale: item simplificat, mai puțin administrativ și mai clar pentru ascultător
 
 ## ITEM 5
 - Titlu radio: Comerțul cu amănuntul începe anul cu o scădere de 9,1%
@@ -99,5 +99,5 @@ Directorul CNAIR, Cristian Pistol, spune că circulația pe lotul Adjud-Răcăci
 ## OUTRO
 - Rol: închidere calmă, curată, fără reluarea tuturor titlurilor
 - Text citit în audio:
-Acesta a fost Pilot 02 pentru briefingul OpenWave. Structura rămâne aceeași, dar testul de azi a mers pe mai multă utilitate publică și pe un echilibru mai clar între securitate, consum, muncă, educație și infrastructură. Următorul pas va fi să vedem dacă această formulă rămâne la fel de clară și într-o zi cu un mix de știri și mai fragmentat.
-- Note editoriale: outro leagă pilotul de obiectivul de validare editorială
+Acesta a fost Pilot 02 pentru briefingul OpenWave. Testul de azi a arătat că aceeași structură poate ține împreună și securitatea, și știrile foarte practice. Dacă jurnalul rămâne clar și într-o zi cu un mix mai fragmentat, atunci formatul începe să semene cu un produs care poate merge mai departe. Pentru ascultător, asta ar trebui să însemne ceva simplu: mai puțin zgomot și mai multă claritate.
+- Note editoriale: outro mai memorabil și mai aproape de promisiunea de produs
