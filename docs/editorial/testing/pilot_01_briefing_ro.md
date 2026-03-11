@@ -10,103 +10,103 @@
 ## INTRO
 - Rol: deschidere scurtă, clară, cu promisiunea unui jurnal util și bine ritmat
 - Text citit în audio:
-Bun găsit. Acesta este pilotul editorial OpenWave, un jurnal audio construit pentru ascultare rapidă, cu știri care încearcă să spună repede ce s-a întâmplat și de ce contează pentru oameni. În ediția de astăzi avem bugetul pe 2026, vizita lui Volodîmîr Zelenski la București, semnele de presiune de pe piețele energiei, schimbări practice pentru pasagerii din aeroporturile Capitalei și un bloc special despre noua prezență militară americană în România.
-- Note editoriale: intro informativ, fără dramatizare; intră direct în subiecte
+Bun găsit. Acesta este pilotul editorial OpenWave. Deschidem cu decizia prin care Parlamentul a aprobat prezența unor capabilități defensive americane la Mihail Kogălniceanu, într-un moment în care președintele Nicușor Dan îl primește la București pe Volodîmîr Zelenski. Apoi trecem prin știri care ating direct viața de zi cu zi: reguli noi în aeroport, bani pentru sate, masă pentru elevi, buget, petrol și autostrada Sibiu-Pitești.
+- Note editoriale: intro ancorează clar lead-ul și promite varietate după blocul de securitate
 
 ## ITEM 1
-- Titlu radio: Bugetul pe 2026 merge pe deficit mai mic, dar cu investiții mari
-- De ce intră în jurnal: setează cadrul economic și politic pentru restul anului
+- Titlu radio: Parlamentul aprobă prezența unor capabilități defensive americane la Kogălniceanu
+- De ce intră în jurnal: este decizia cu cea mai mare miză strategică din această ediție
 - Text citit în audio:
-Ministerul Finanțelor a publicat proiectul de buget pentru 2026, construit pe un deficit estimat la 6,2% din PIB și pe un produs intern brut de peste 2.000 de miliarde de lei. Guvernul spune că vrea să reducă treptat dezechilibrul bugetar, dar în același timp să păstreze investițiile la un nivel ridicat. În proiect apar bani pentru infrastructură, pentru programul Masă Sănătoasă, pentru servicii sociale și pentru eventuale compensări la energie. Miza reală este dacă statul poate ține împreună disciplina fiscală și promisiunea că nu taie dezvoltarea.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: bugetul influențează direct investițiile publice, sprijinul social și spațiul pentru alte măsuri în cursul anului
-- Note editoriale: lead story; 4 fraze, ritm clar, fără jargon tehnic excesiv
-
-## ITEM 2
-- Titlu radio: România s-a împrumutat cu 4,7 miliarde de euro înainte să urce tensiunea din piețe
-- De ce intră în jurnal: explică de ce costul banilor rămâne o temă centrală pentru stat
-- Text citit în audio:
-La doar o zi înainte ca războiul din Orientul Mijlociu să împingă din nou în sus costurile de finanțare, România a atras 4,7 miliarde de euro de pe piețele internaționale. Cererea investitorilor a fost mare, ceea ce a ajutat statul să obțină condiții mai bune decât se temeau mulți analiști. Totuși, dobânzile au rămas ridicate, iar asta înseamnă că o parte tot mai mare din buget merge către plata datoriei. Pe scurt, statul încă găsește bani, dar nu îi găsește ieftin.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: dobânzile mari apasă pe buget și reduc spațiul pentru alte cheltuieli publice
-- Note editoriale: bună legătură după itemul de buget; concluzie simplă și memorabilă
-
-## ITEM 3
-- Titlu radio: Zelenski vine la București pentru discuții despre securitate și reconstrucție
-- De ce intră în jurnal: este o vizită cu miză diplomatică și economică pentru România
-- Text citit în audio:
-Președintele ucrainean Volodîmîr Zelenski ajunge joi, 12 martie 2026, la București, unde va avea consultări cu președintele Nicușor Dan la Palatul Cotroceni. Pe agendă sunt securitatea din regiune, cooperarea economică, proiectele de conectivitate și rolul României în reconstrucția Ucrainei. Administrația Prezidențială spune că vor fi discutate și drepturile minorității române din Ucraina. Vizita vine într-un moment în care România încearcă să joace simultan un rol de sprijin, de vecin pragmatic și de actor regional credibil.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: deciziile pot influența comerțul, infrastructura de frontieră, energia și poziția României în regiune
-- Note editoriale: extern explicat prin efecte concrete; fără formulări ceremoniale
-
-## ITEM 4
-- Titlu radio: Petrolul s-a calmat, dar pericolul pentru prețuri nu a dispărut
-- De ce intră în jurnal: leagă conflictul extern de costurile de acasă
-- Text citit în audio:
-Prețul petrolului a coborât sub 87 de dolari pe baril după ce Agenția Internațională a Energiei a discutat despre o posibilă eliberare masivă a rezervelor strategice. Mișcarea a liniștit temporar piețele, după salturile provocate de conflictul din Orientul Mijlociu și de riscul unui blocaj în Strâmtoarea Ormuz. Pentru România, asta nu înseamnă că pericolul a trecut, ci doar că șocul s-a mai domolit. Dacă tensiunea revine, carburanții, transportul și inflația pot simți repede efectele.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: prețurile la pompă și costurile de transport pot urca din nou dacă piața se dezechilibrează
-- Note editoriale: bun item de serviciu public economic; formulat simplu
-
-## ITEM 5
-- Titlu radio: La Otopeni și Băneasa se schimbă regula pentru lichidele din bagajul de mână
-- De ce intră în jurnal: este o schimbare imediată, concretă și ușor de reținut
-- Text citit în audio:
-De astăzi, pasagerii care pleacă de pe aeroporturile Otopeni și Băneasa pot avea în bagajul de mână lichide, aerosoli și geluri în recipiente individuale de până la 2 litri. Este o schimbare mare față de vechea limită de 100 de mililitri și vine după instalarea unor echipamente noi de control. Regula se aplică pentru călătoriile care încep în București, nu și pentru pasagerii aflați în tranzit sau transfer. Pentru mulți călători, e una dintre puținele știri care schimbă efectiv ceva chiar din ziua în care o auzi.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: călătoria devine mai simplă pentru pasagerii care pleacă din aeroporturile Capitalei
-- Note editoriale: item ușor, util, bun pentru aerisirea ritmului jurnalului
-
-## ITEM 6
-- Titlu radio: Comunitățile rurale primesc un avans pentru servicii sociale integrate
-- De ce intră în jurnal: aduce în centru o poveste cu impact direct în zone mai puțin vizibile
-- Text citit în audio:
-Ministerul Muncii a anunțat că a virat aproximativ 10 milioane de euro către comunități rurale pentru pornirea unor servicii sociale integrate. Banii sunt destinați localităților care intră într-un program mai amplu pentru sprijinirea persoanelor vulnerabile, de la acces la acte și servicii medicale până la prevenirea abandonului școlar. În total, proiectul vizează 2.000 de comunități rurale și peste 450.000 de persoane aflate în risc de sărăcie sau excluziune. E genul de măsură care nu sună spectaculos, dar poate conta mult dacă ajunge efectiv la oameni.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: acces mai bun la sprijin social, educație și sănătate în comunități mici
-- Note editoriale: ton calm și orientat spre efect concret, nu spre limbaj administrativ
-
-## ITEM 7
-- Titlu radio: Programul Masă Sănătoasă rămâne în 2026
-- De ce intră în jurnal: leagă bugetul de un beneficiu foarte ușor de înțeles pentru familii
-- Text citit în audio:
-Programul Masă Sănătoasă va continua și în 2026 pentru elevii din învățământul preuniversitar, în special pentru copiii din comunități vulnerabile. În practică, asta înseamnă că o parte dintre elevi vor primi în continuare o masă caldă sau un pachet alimentar în zilele de școală. Măsura nu rezolvă singură problemele din educație, dar poate reduce absența și presiunea asupra familiilor cu venituri mici. Într-un buget plin de cifre mari, acesta este unul dintre acele lucruri pe care oamenii îl pot înțelege imediat.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: sprijin direct pentru elevi și familii, mai ales în zone vulnerabile
-- Note editoriale: item uman, ușor de urmărit, bun înainte de infrastructură și blocul special
-
-## ITEM 8
-- Titlu radio: Sibiu-Pitești are ca prioritate revizuirea acordului de mediu
-- De ce intră în jurnal: este una dintre marile promisiuni de infrastructură cu relevanță națională
-- Text citit în audio:
-Ministerul Transporturilor spune că prioritatea pe 2026 pentru autostrada Sibiu-Pitești este revizuirea acordului de mediu, pas esențial pentru avansarea unor sectoare dificile. Oficialii spun că fără această etapă nu pot fi emise toate autorizațiile necesare, iar ritmul lucrărilor rămâne fragmentat. Tot pe acest traseu ar putea fi deschis în august și primul tunel de autostradă din România, între Curtea de Argeș și Tigveni. Pentru șoferi, transportatori și economie, povestea nu este doar despre hârtii, ci despre cât de repede trece în sfârșit o autostradă peste Carpați.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: conectivitate mai bună, timp redus de transport și efecte economice mai largi
-- Note editoriale: final de pachet standard cu infrastructură și miză practică
+Parlamentul a aprobat miercuri, 11 martie 2026, prezența temporară în România a unor capabilități defensive americane, la baza Mihail Kogălniceanu. Decizia vine în plină tensiune regională și mută subiectul din zona de semnal politic în zona unei prezențe militare concrete. Eurodeputatul Victor Negrescu a spus că vestea „este de bun augur” pentru securitatea României. Pentru public, întrebarea nu este doar ce vine la Kogălniceanu, ci ce înseamnă asta pentru siguranță, risc și relația cu Statele Unite.
+- Citat scurt (opțional): „este de bun augur”
+- Impact pentru cetățean: aduce mai multă protecție strategică, dar și o dezbatere legitimă despre expunere și limite
+- Note editoriale: lead story ancorat în fapt, dată și actor numit
 
 ## BLOC SPECIAL: TWO PERSPECTIVES
 
 ### Perspectiva A
-- Titlu radio: Argumentul pentru: capabilitățile americane întăresc descurajarea
-- De ce intră în jurnal: subiect cu miză mare, care cere mai mult decât o știre liniară
+- Titlu radio: Argumentul pentru: o prezență americană mai solidă poate descuraja criza
+- De ce intră în jurnal: explică de ce susținătorii văd decizia ca pe o garanție de securitate
 - Text citit în audio:
-Susținătorii deciziei spun că România are nevoie exact acum de capabilități defensive suplimentare și de o coordonare cât mai strânsă cu Statele Unite. Argumentul lor este că prezența americană întărește descurajarea într-un moment regional complicat și transmite că România nu rămâne singură într-o perioadă de tensiune. În această logică, nu e vorba despre aventură militară, ci despre consolidarea unei umbrele de securitate deja existente. Cu alte cuvinte, mesajul este că o postură mai solidă poate reduce, nu crește, riscul.
-- Citat scurt (opțional): „este de bun augur”
-- Impact pentru cetățean: promite mai multă protecție strategică într-un context regional instabil
-- Note editoriale: perspectivă formulată sobru, fără triumfalism
+Susținătorii spun că România are nevoie exact acum de o postură de apărare mai vizibilă. Victor Negrescu argumentează că noile capabilități defensive întăresc mesajul că România rămâne bine ancorată în parteneriatul cu Statele Unite. Ideea de fond este simplă: o prezență mai clară poate descuraja escaladarea. În această cheie, decizia este prezentată ca o măsură de protecție, nu ca un pas spre aventură militară.
+- Citat scurt (opțional): „România va dispune de capacități defensive suplimentare”
+- Impact pentru cetățean: perspectiva favorabilă spune că o descurajare mai puternică înseamnă mai multă siguranță
+- Note editoriale: perspectivă scurtă, directă, fără triumfalism
 
 ### Perspectiva B
-- Titlu radio: Argumentul de prudență: orice dislocare ridică și întrebări despre risc
-- De ce intră în jurnal: completează imaginea și evită un ton unilateral
+- Titlu radio: Argumentul de prudență: publicul are nevoie de explicații clare despre misiune și limite
+- De ce intră în jurnal: aduce contrast real și răspunde la întrebările firești despre risc
 - Text citit în audio:
-Vocea prudentă spune însă că orice suplimentare de forțe și echipamente trebuie explicată foarte clar publicului, inclusiv în ceea ce privește misiunea exactă și limitele ei. Unii experți atrag atenția că, dacă de pe teritoriul României s-ar desfășura operațiuni ofensive, ar apărea probleme de drept internațional și o expunere mai mare pentru țară. Chiar și atunci când capabilitățile sunt prezentate drept defensive, întrebările despre risc, control politic și transparență rămân legitime. Pentru ascultător, miza nu e doar dacă România primește sprijin, ci și în ce condiții îl primește.
-- Citat scurt (opțional): -
-- Impact pentru cetățean: clarifică de ce securitatea vine și cu întrebări despre limită, control și expunere
-- Note editoriale: contrast real, nu conflict artificial; bun test pentru formatul Two Perspectives
+Analistul militar Sandu Valentin Mateiu spune că discuția nu trebuie redusă la ideea că orice prezență militară este automat liniștitoare. El avertizează că, dacă de pe teritoriul României s-ar desfășura acțiuni ofensive, „apar elemente de drept internațional”. Asta înseamnă că publicul are nevoie de explicații simple despre rolul exact al acestor capabilități și despre limitele lor. Pe scurt, sprijinul strategic poate fi important, dar transparența devine la fel de importantă.
+- Citat scurt (opțional): „apar elemente de drept internațional”
+- Impact pentru cetățean: perspectiva prudentă cere claritate despre risc, control politic și expunere
+- Note editoriale: blocul special stă lipit de lead și funcționează ca extensie, nu ca anexă
+
+## ITEM 2
+- Titlu radio: Zelenski vine la București pentru discuții cu Nicușor Dan
+- De ce intră în jurnal: continuă logic deschiderea de securitate, dar mută accentul spre diplomație și reconstrucție
+- Text citit în audio:
+Volodîmîr Zelenski ajunge joi, 12 martie 2026, la București, pentru consultări cu președintele Nicușor Dan la Cotroceni. Cei doi vor discuta despre securitate, proiecte economice și rolul României în reconstrucția Ucrainei. Administrația Prezidențială spune că pe agendă intră și situația românilor din Ucraina. Pentru București, vizita contează și politic, și economic, nu doar simbolic.
+- Citat scurt (opțional): „pe agendă sunt securitatea din regiune și cooperarea economică”
+- Impact pentru cetățean: poate influența comerțul, infrastructura de frontieră și rolul României în regiune
+- Note editoriale: urmează natural după lead, dar schimbă registrul spre diplomație
+
+## ITEM 3
+- Titlu radio: La Otopeni și Băneasa se schimbă regula pentru lichidele din bagajul de mână
+- De ce intră în jurnal: aduce un item de serviciu imediat după două subiecte grele
+- Text citit în audio:
+De astăzi, pasagerii care pleacă de pe aeroporturile Otopeni și Băneasa pot lua în bagajul de mână lichide și geluri în recipiente de până la 2 litri. Schimbarea vine după instalarea unor echipamente noi de control. HotNews notează că vechea limită de 100 de mililitri dispare pentru cursele care pornesc din București. Pentru călători, e una dintre acele știri rare care schimbă ceva chiar în ziua în care o auzi.
+- Citat scurt (opțional): „cu ce ai voie de azi în bagajul de mână”
+- Impact pentru cetățean: simplifică pregătirea bagajului și reduce stresul din aeroport
+- Note editoriale: item scurt și util pentru a aerisi jurnalul
+
+## ITEM 4
+- Titlu radio: Simona Bucura-Oprescu trimite bani către sate pentru servicii sociale
+- De ce intră în jurnal: mută jurnalul spre impact social și zone rurale
+- Text citit în audio:
+Ministra Muncii, Simona Bucura-Oprescu, a anunțat virarea a aproape 10 milioane de euro către comunități rurale pentru servicii sociale integrate. Banii ar trebui să ajute localități mici să lege mai bine asistența socială, sprijinul medical și prevenirea abandonului școlar. Ministerul spune că programul vizează 2.000 de comunități și peste 450.000 de persoane vulnerabile. Nu sună spectaculos, dar pentru multe sate poate însemna ajutor mai aproape de casă.
+- Citat scurt (opțional): „circa 10 milioane de euro către comunitățile rurale”
+- Impact pentru cetățean: poate aduce acces mai bun la servicii de bază în zone slab acoperite
+- Note editoriale: person-first cu ministrul numit; limbaj simplificat
+
+## ITEM 5
+- Titlu radio: Programul Masă Sănătoasă rămâne în 2026
+- De ce intră în jurnal: continuă firul social cu o măsură ușor de înțeles pentru familii
+- Text citit în audio:
+Elevii din programul Masă Sănătoasă vor primi și în 2026 o masă caldă sau un pachet alimentar la școală. Decizia apare în proiectul de buget și păstrează una dintre măsurile cele mai ușor de înțeles pentru familiile cu venituri mici. Mesajul autorităților este clar: programul „va continua în 2026”. Pentru părinți și școli, asta înseamnă un sprijin concret, nu doar o promisiune abstractă.
+- Citat scurt (opțional): „va continua în 2026”
+- Impact pentru cetățean: sprijin direct pentru elevi și o presiune mai mică pe bugetul familiilor
+- Note editoriale: păstrează dimensiunea umană înainte de revenirea la economie
+
+## ITEM 6
+- Titlu radio: Bugetul pe 2026 promite mult, iar împrumuturile arată cât costă
+- De ce intră în jurnal: comprimă tema economică într-un singur item mai radio-friendly
+- Text citit în audio:
+Ministrul Finanțelor a pus pe masă proiectul de buget pentru 2026, construit pe un deficit de 6,2% din PIB și pe investiții ridicate. În același timp, România a atras 4,7 miliarde de euro de pe piețele internaționale, dar la dobânzi care rămân mari. Tradus simplu, statul promite investiții, dar plătește scump ca să țină tot planul în picioare. Aici este și întrebarea anului: cât livrezi, când banii te costă atât de mult.
+- Citat scurt (opțional): „deficitul estimat la 6,2% din PIB”
+- Impact pentru cetățean: influențează investițiile publice și arată cât de mult apasă datoria pe spațiul bugetar
+- Note editoriale: unifică cele două povești economice și evită aglomerarea de cifre
+
+## ITEM 7
+- Titlu radio: Petrolul s-a calmat, dar semnalul pentru carburanți rămâne fragil
+- De ce intră în jurnal: duce economia spre un efect foarte concret pentru public
+- Text citit în audio:
+Prețul petrolului a coborât sub 87 de dolari pe baril după discuțiile despre o posibilă eliberare a rezervelor strategice. Este doar o gură de aer, nu o garanție că piața se liniștește. Dacă tensiunea din Orientul Mijlociu revine, carburanții și transportul pot reacționa repede. Cu alte cuvinte, calmul de azi nu garantează facturi mai mici mâine.
+- Citat scurt (opțional): „petrolul scade sub 87 de dolari”
+- Impact pentru cetățean: poate influența costurile la pompă și prețurile transportului
+- Note editoriale: economie externă tradusă în limbaj de consumator
+
+## ITEM 8
+- Titlu radio: Sibiu-Pitești rămâne blocată de mediu înainte să aducă un tunel nou
+- De ce intră în jurnal: încheie cu infrastructură și o miză practică ușor de reținut
+- Text citit în audio:
+Ministrul Transporturilor spune că prioritatea pe 2026 pentru autostrada Sibiu-Pitești este revizuirea acordului de mediu. Fără acest pas, unele autorizații nu pot merge mai departe, iar ritmul lucrărilor rămâne inegal. Tot pe acest traseu ar putea fi deschis în august primul tunel de autostradă din România. Pentru șoferi și transportatori, povestea rămâne simplă: drumul peste Carpați avansează, dar încă se luptă cu întârzieri și hârtii.
+- Citat scurt (opțional): „prioritatea pe 2026 este revizuirea acordului de mediu”
+- Impact pentru cetățean: miza este o legătură rutieră mai bună și timp mai scurt pe una dintre cele mai importante axe din țară
+- Note editoriale: final concret, cu imagine clară și ritm de închidere
 
 ## OUTRO
 - Rol: închidere calmă, curată, fără reluarea tuturor titlurilor
 - Text citit în audio:
-Acesta a fost pilotul editorial OpenWave. Ideea rămâne simplă: mai puține cuvinte inutile, mai mult context care să ajute la prima audiție și un ritm care să sune firesc și în voce umană, și în TTS. În următorul test, miza va fi să vedem dacă selecția de subiecte și ordinea lor pot face jurnalul și mai clar, fără să piardă energie.
-- Note editoriale: outro scurt, reflexiv, pregătește testul următor
+Acesta a fost pilotul editorial OpenWave. În această versiune am pus mai devreme subiectul cu cea mai mare miză, am lipit de el blocul de perspective și am lăsat apoi jurnalul să respire prin alternanță între securitate, servicii, social, economie și infrastructură. Următorul test va arăta dacă această ordine sună mai firesc și mai aproape de un radio-jurnal real.
+- Note editoriale: outro leagă explicit rescrierea de obiectivul editorial
