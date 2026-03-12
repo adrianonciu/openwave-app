@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import router
+from app.services.tts_service import TtsService
 
+
+tts_service = TtsService()
 
 app = FastAPI(
     title="OpenWave Backend",
@@ -15,6 +19,12 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.mount(
+    "/audio/generated",
+    StaticFiles(directory=tts_service.generated_audio_directory),
+    name="generated-audio",
 )
 
 app.include_router(router)

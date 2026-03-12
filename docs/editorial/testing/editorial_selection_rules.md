@@ -74,3 +74,23 @@
 - Standard story: 3 to 5 sentences
 - Lead story: up to 6 sentences
 - Maximum 1 quote per story
+
+### Lead Story Continuity Rule
+
+If the main story of the day continues to evolve, OpenWave should
+track it across multiple bulletins during the same day.
+
+Major events often generate updates over time. When this happens,
+later bulletins should treat them as updates to the same story
+rather than completely new unrelated items.
+
+Editorial behavior:
+
+- the story may appear in several bulletins during the day
+- later bulletins should highlight new developments
+- the story should not be duplicated as separate unrelated items
+
+Purpose:
+
+This allows OpenWave to follow major events the way a newsroom does,
+keeping listeners informed as the story develops.

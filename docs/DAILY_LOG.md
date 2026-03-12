@@ -401,3 +401,50 @@ Task 44 completed: fixed stinger triggering by resolving both current and next p
 Task 45 completed: fixed the remaining final-story stinger transition and simplified the playlist to compact title-only rows, using an inline “(Two perspectives)” marker for stories with grouped perspective coverage.
 
 Task 46 completed: fixed stinger timing so the transition sound now plays only after completed story blocks, including the final story, while keeping grouped perspective transitions separator-free and updating the playlist marker to (⚖ Two perspectives).
+
+Defined and added the first full OpenWave editorial architecture docs set under docs/, covering editorial policy, radio writing rules, AI models, personalization, architecture, product vision, roadmap, and risks.
+
+### OpenWave — Daily Log
+
+**Date:** 11 March 2026
+
+**Main focus:** Finalizing the editorial model and documentation for the OpenWave news briefing format.
+
+**Work completed:**
+
+* Completed **Pilot 03**, testing a strongly personalized briefing (sport + entertainment profile, 30% national / 70% international).
+* Applied final refinements to Pilot 03:
+
+  * added mid-briefing user-name reference (“Pentru tine, Adrian…”)
+  * improved the closing of the Mbappé story with a concrete consequence
+  * diversified source attribution to avoid repeated Agerpres references.
+* Consolidated editorial documentation in the repository:
+
+  * extended `editorial_selection_rules.md` with:
+
+    * User Personalization Rule
+    * Avoid Meta Commentary Rule
+    * Source Diversity Rule
+  * created `openwave_radio_style.md` (OpenWave radio writing style guide)
+  * created `openwave_transitions_ro.md` (recommended Romanian transition phrases).
+* Confirmed product behavior for **personalized intro/outro and bulletin slot logic**.
+
+**Editorial status:**
+
+The OpenWave briefing format has now been validated through three pilots:
+
+* **Pilot 01** — general news structure
+* **Pilot 02** — rhythm and clarity improvements
+* **Pilot 03** — strong personalization scenario
+
+Documentation now fully reflects the editorial model used in the pilots.
+
+**Project status:**
+
+Editorial phase completed.
+Next steps (after break):
+
+* real audio testing with TTS
+* bulletin generation pipeline
+* lead story selection logic
+* presenter voice profile (“Corina”).

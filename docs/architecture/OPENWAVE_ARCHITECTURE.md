@@ -39,6 +39,47 @@ OpenWave se comporta ca o redactie automatizata:
 - titlurile urmeaza schema actor + verb + eveniment
 - rezumatele urmaresc impactul asupra cetatenilor
 
+### Story Continuity
+The system should support tracking evolving stories within the same day.
+
+Articles referring to the same major event should be grouped into a
+single story thread. Later bulletins may include updates to that story
+instead of treating each article as a completely new story.
+
+Example:
+
+Morning bulletin:
+Lead story - "Government announces emergency economic measures"
+
+Later bulletin:
+Update - "Details emerge about the economic measures"
+
+Both items belong to the same story thread.
+
+### TTS Testing Mode
+- sistemul poate genera audio direct din texte de briefing existente
+- acest mod este folosit pentru testarea vocii prezentatorului si a ritmului de livrare
+- este separat de viitorul pipeline automat de generare a bulletinurilor
+
+### Official TTS Test Integration
+- audio-ul de test pentru Corina foloseste un furnizor TTS oficial
+- ElevenLabs este providerul preferat pentru testele de ascultare
+- OpenAI TTS poate fi folosit ca fallback daca ElevenLabs nu este configurat
+- acest mod este doar pentru pilot listening tests
+- integrarea ramane separata de viitorul pipeline automat de generare a bulletinurilor
+
+Required environment variables:
+- TTS_PROVIDER
+- TTS_VOICE_ID
+- TTS_MODEL
+- TTS_OUTPUT_FORMAT
+- ELEVENLABS_API_KEY
+- ELEVENLABS_VOICE_ID
+- ELEVENLABS_MODEL_ID
+- OPENAI_API_KEY
+- OPENAI_TTS_MODEL
+- OPENAI_TTS_VOICE
+
 ## Nota Pentru Intro Si Outro Personalizat
 Pentru a genera un intro si un outro personalizat, sistemul trebuie sa transporte mai multe valori de context pana la etapa de audio generation.
 
