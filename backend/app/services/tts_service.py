@@ -45,7 +45,7 @@ class TtsService:
         raw_markdown = file_path.read_text(encoding="utf-8-sig")
         title = self._extract_title(raw_markdown)
         audio_blocks = self.extract_audio_blocks_from_markdown(raw_markdown)
-        briefing_text = self._pacing_formatter.format_blocks(audio_blocks)
+        briefing_text = self._pacing_formatter.format_text_for_tts(audio_blocks)
         audio = self.generate_audio(
             briefing_text=briefing_text,
             presenter_name=presenter_name,

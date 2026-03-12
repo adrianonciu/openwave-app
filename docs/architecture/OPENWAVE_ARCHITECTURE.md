@@ -61,6 +61,12 @@ Both items belong to the same story thread.
 - acest mod este folosit pentru testarea vocii prezentatorului si a ritmului de livrare
 - este separat de viitorul pipeline automat de generare a bulletinurilor
 
+### Editorial Speech Pacing
+- OpenWave introduce pauze editoriale mici intre segmente pentru a imbunatati claritatea si a imita ritmul radio
+- in TTS testing mode, textul este preformatat inainte de a fi trimis catre providerul TTS
+- regulile actuale includ pauza dupa intro, intre stiri, inainte de citate si inainte de outro
+- configuratia de pacing ramane usor de ajustat prin valorile TTS_PACING
+
 ### Official TTS Test Integration
 - audio-ul de test pentru Corina foloseste un furnizor TTS oficial
 - ElevenLabs este providerul preferat pentru testele de ascultare
