@@ -1,0 +1,482 @@
+{
+  "CSAT": {
+    "type": "editorial",
+    "first_mention": "Consiliul Suprem de Ap?rare a ??rii",
+    "later_mention": "consiliul",
+    "tts_hint": "Consiliul Suprem de Ap?rare a ??rii"
+  },
+  "MApN": {
+    "type": "editorial",
+    "first_mention": "Ministerul Ap?r?rii Na?ionale",
+    "later_mention": "ministerul ap?r?rii",
+    "tts_hint": "Ministerul Ap?r?rii Na?ionale"
+  },
+  "MAI": {
+    "type": "editorial",
+    "first_mention": "Ministerul Afacerilor Interne",
+    "later_mention": "ministerul de interne",
+    "tts_hint": "Ministerul Afacerilor Interne"
+  },
+  "MAE": {
+    "type": "editorial",
+    "first_mention": "Ministerul Afacerilor Externe",
+    "later_mention": "ministerul de externe",
+    "tts_hint": "Ministerul Afacerilor Externe"
+  },
+  "MJ": {
+    "type": "editorial",
+    "first_mention": "Ministerul Justi?iei",
+    "later_mention": "ministerul justi?iei",
+    "tts_hint": "Ministerul Justi?iei"
+  },
+  "ANAF": {
+    "type": "word",
+    "first_mention": "Agen?ia Na?ional? de Administrare Fiscal?",
+    "later_mention": "Fiscul",
+    "tts_hint": "Anaf"
+  },
+  "BNR": {
+    "type": "editorial",
+    "first_mention": "Banca Na?ional? a Rom?niei",
+    "later_mention": "banca central?",
+    "tts_hint": "Banca Na?ional? a Rom?niei"
+  },
+  "INS": {
+    "type": "editorial",
+    "first_mention": "Institutul Na?ional de Statistic?",
+    "later_mention": "institutul de statistic?",
+    "tts_hint": "Institutul Na?ional de Statistic?"
+  },
+  "ASF": {
+    "type": "editorial",
+    "first_mention": "Autoritatea de Supraveghere Financiar?",
+    "later_mention": "",
+    "tts_hint": "Autoritatea de Supraveghere Financiar?"
+  },
+  "CNA": {
+    "type": "letters",
+    "first_mention": "Consiliul Na?ional al Audiovizualului",
+    "later_mention": "CNA",
+    "tts_hint": "Ce Ne A"
+  },
+  "CNIR": {
+    "type": "editorial",
+    "first_mention": "Compania Na?ional? de Investi?ii Rutiere",
+    "later_mention": "compania de investi?ii rutiere",
+    "tts_hint": "Compania Na?ional? de Investi?ii Rutiere"
+  },
+  "CNAIR": {
+    "type": "editorial",
+    "first_mention": "Compania Na?ional? de Administrare a Infrastructurii Rutiere",
+    "later_mention": "compania de drumuri",
+    "tts_hint": "compania de drumuri"
+  },
+  "CNADR": {
+    "type": "editorial",
+    "first_mention": "Compania Na?ional? de Autostr?zi ?i Drumuri Na?ionale din Rom?nia",
+    "later_mention": "compania de drumuri",
+    "tts_hint": "Compania Na?ional? de Autostr?zi ?i Drumuri Na?ionale din Rom?nia"
+  },
+  "STS": {
+    "type": "editorial",
+    "first_mention": "Serviciul de Telecomunica?ii Speciale",
+    "later_mention": "serviciul",
+    "tts_hint": "Serviciul de Telecomunica?ii Speciale"
+  },
+  "SRI": {
+    "type": "editorial",
+    "first_mention": "Serviciul Rom?n de Informa?ii",
+    "later_mention": "serviciul",
+    "tts_hint": "Serviciul Rom?n de Informa?ii"
+  },
+  "SIE": {
+    "type": "editorial",
+    "first_mention": "Serviciul de Informa?ii Externe",
+    "later_mention": "serviciul",
+    "tts_hint": "Serviciul de Informa?ii Externe"
+  },
+  "DIICOT": {
+    "type": "word",
+    "first_mention": "Direc?ia de Investigare a Infrac?iunilor de Criminalitate Organizat? ?i Terorism",
+    "later_mention": "DIICOT",
+    "tts_hint": "Diicot"
+  },
+  "DNA": {
+    "type": "letters",
+    "first_mention": "Direc?ia Na?ional? Anticorup?ie",
+    "later_mention": "DNA",
+    "tts_hint": "De Ne A"
+  },
+  "ANI": {
+    "type": "word",
+    "first_mention": "Agen?ia Na?ional? de Integritate",
+    "later_mention": "ANI",
+    "tts_hint": "Ani"
+  },
+  "ANRE": {
+    "type": "editorial",
+    "first_mention": "Autoritatea Na?ional? de Reglementare ?n Energie",
+    "later_mention": "autoritatea de reglementare ?n energie",
+    "tts_hint": "Autoritatea Na?ional? de Reglementare ?n Energie"
+  },
+  "ANCOM": {
+    "type": "word",
+    "first_mention": "Autoritatea Na?ional? pentru Administrare ?i Reglementare ?n Comunica?ii",
+    "later_mention": "ANCOM",
+    "tts_hint": "Ancom"
+  },
+  "AEP": {
+    "type": "letters",
+    "first_mention": "Autoritatea Electoral? Permanent?",
+    "later_mention": "autoritatea electoral?",
+    "tts_hint": "A E Pe"
+  },
+  "CCR": {
+    "type": "editorial",
+    "first_mention": "Curtea Constitu?ional? a Rom?niei",
+    "later_mention": "Curtea Constitu?ional?",
+    "tts_hint": "Curtea Constitu?ional? a Rom?niei"
+  },
+  "CSM": {
+    "type": "editorial",
+    "first_mention": "Consiliul Superior al Magistraturii",
+    "later_mention": "consiliul",
+    "tts_hint": "Consiliul Superior al Magistraturii"
+  },
+  "ICCJ": {
+    "type": "editorial",
+    "first_mention": "?nalta Curte de Casa?ie ?i Justi?ie",
+    "later_mention": "?nalta Curte",
+    "tts_hint": "?nalta Curte de Casa?ie ?i Justi?ie"
+  },
+  "UE": {
+    "type": "letters",
+    "first_mention": "Uniunea European?",
+    "later_mention": "Uniunea",
+    "tts_hint": "U E"
+  },
+  "CE": {
+    "type": "letters",
+    "first_mention": "Comisia European?",
+    "later_mention": "Comisia",
+    "tts_hint": "Ce E"
+  },
+  "BCE": {
+    "type": "letters",
+    "first_mention": "Banca Central? European?",
+    "later_mention": "banca central? european?",
+    "tts_hint": "Be Ce E"
+  },
+  "BEI": {
+    "type": "letters",
+    "first_mention": "Banca European? de Investi?ii",
+    "later_mention": "banca european? de investi?ii",
+    "tts_hint": "Be E I"
+  },
+  "CJUE": {
+    "type": "letters",
+    "first_mention": "Curtea de Justi?ie a Uniunii Europene",
+    "later_mention": "Curtea de Justi?ie",
+    "tts_hint": "Curtea de Justi?ie a Uniunii Europene"
+  },
+  "Frontex": {
+    "type": "word",
+    "first_mention": "Frontex",
+    "later_mention": "Frontex",
+    "tts_hint": "Frontex"
+  },
+  "Eurostat": {
+    "type": "word",
+    "first_mention": "Eurostat",
+    "later_mention": "Eurostat",
+    "tts_hint": "Eurostat"
+  },
+  "EASA": {
+    "type": "editorial",
+    "first_mention": "Agen?ia European? pentru Siguran?a Avia?iei",
+    "later_mention": "agen?ia european? pentru siguran?a avia?iei",
+    "tts_hint": "Agen?ia European? pentru Siguran?a Avia?iei"
+  },
+  "ECDC": {
+    "type": "editorial",
+    "first_mention": "Centrul European de Prevenire ?i Control al Bolilor",
+    "later_mention": "centrul european",
+    "tts_hint": "Centrul European de Prevenire ?i Control al Bolilor"
+  },
+  "ONU": {
+    "type": "word",
+    "first_mention": "Organiza?ia Na?iunilor Unite",
+    "later_mention": "ONU",
+    "tts_hint": "ONU"
+  },
+  "NATO": {
+    "type": "word",
+    "first_mention": "NATO",
+    "later_mention": "NATO",
+    "tts_hint": "NATO"
+  },
+  "OSCE": {
+    "type": "letters",
+    "first_mention": "Organiza?ia pentru Securitate ?i Cooperare ?n Europa",
+    "later_mention": "OSCE",
+    "tts_hint": "O Se Ce E"
+  },
+  "FMI": {
+    "type": "letters",
+    "first_mention": "Fondul Monetar Interna?ional",
+    "later_mention": "FMI",
+    "tts_hint": "Fe Me I"
+  },
+  "BM": {
+    "type": "editorial",
+    "first_mention": "Banca Mondial?",
+    "later_mention": "Banca Mondial?",
+    "tts_hint": "Banca Mondial?"
+  },
+  "OMS": {
+    "type": "letters",
+    "first_mention": "Organiza?ia Mondial? a S?n?t??ii",
+    "later_mention": "OMS",
+    "tts_hint": "O Me Se"
+  },
+  "OMC": {
+    "type": "letters",
+    "first_mention": "Organiza?ia Mondial? a Comer?ului",
+    "later_mention": "OMC",
+    "tts_hint": "O Me Ce"
+  },
+  "UNESCO": {
+    "type": "word",
+    "first_mention": "UNESCO",
+    "later_mention": "UNESCO",
+    "tts_hint": "UNESCO"
+  },
+  "UNICEF": {
+    "type": "word",
+    "first_mention": "UNICEF",
+    "later_mention": "UNICEF",
+    "tts_hint": "UNICEF"
+  },
+  "OPEC": {
+    "type": "word",
+    "first_mention": "OPEC",
+    "later_mention": "OPEC",
+    "tts_hint": "OPEC"
+  },
+  "IAEA": {
+    "type": "editorial",
+    "first_mention": "Agen?ia Interna?ional? pentru Energie Atomic?",
+    "later_mention": "agen?ia pentru energie atomic?",
+    "tts_hint": "Agen?ia Interna?ional? pentru Energie Atomic?"
+  },
+  "INTERPOL": {
+    "type": "word",
+    "first_mention": "INTERPOL",
+    "later_mention": "INTERPOL",
+    "tts_hint": "Interpol"
+  },
+  "PSD": {
+    "type": "letters",
+    "tts_hint": "Pe Se De",
+    "first_mention": "Partidul Social Democrat",
+    "later_mention": "PSD"
+  },
+  "PNL": {
+    "type": "letters",
+    "tts_hint": "Pe Ne Le",
+    "first_mention": "Partidul Na?ional Liberal",
+    "later_mention": "PNL"
+  },
+  "UDMR": {
+    "type": "letters",
+    "tts_hint": "U De Me Re",
+    "first_mention": "Uniunea Democrat? Maghiar? din Rom?nia",
+    "later_mention": "UDMR"
+  },
+  "USR": {
+    "type": "letters",
+    "tts_hint": "U Se Re",
+    "first_mention": "Uniunea Salva?i Rom?nia",
+    "later_mention": "USR"
+  },
+  "POT": {
+    "type": "word",
+    "tts_hint": "Pot",
+    "first_mention": "Partidul Oamenilor Tineri",
+    "later_mention": "POT"
+  },
+  "AUR": {
+    "type": "word",
+    "tts_hint": "Aur",
+    "first_mention": "Alian?a pentru Unirea Rom?nilor",
+    "later_mention": "AUR"
+  },
+  "SOS": {
+    "type": "letters",
+    "tts_hint": "E So Es",
+    "first_mention": "SOS Rom?nia",
+    "later_mention": "SOS"
+  },
+  "BEC": {
+    "type": "editorial",
+    "first_mention": "Biroul Electoral Central",
+    "later_mention": "biroul electoral",
+    "tts_hint": "Biroul Electoral Central"
+  },
+  "INSP": {
+    "type": "editorial",
+    "first_mention": "Institutul Na?ional de S?n?tate Public?",
+    "later_mention": "institutul de s?n?tate public?",
+    "tts_hint": "Institutul Na?ional de S?n?tate Public?"
+  },
+  "CNAS": {
+    "type": "editorial",
+    "first_mention": "Casa Na?ional? de Asigur?ri de S?n?tate",
+    "later_mention": "casa de s?n?tate",
+    "tts_hint": "Casa Na?ional? de Asigur?ri de S?n?tate"
+  },
+  "CAS": {
+    "type": "editorial",
+    "first_mention": "casa de asigur?ri de s?n?tate",
+    "later_mention": "casa de s?n?tate",
+    "tts_hint": "casa de asigur?ri de s?n?tate"
+  },
+  "DSP": {
+    "type": "editorial",
+    "first_mention": "Direc?ia de S?n?tate Public?",
+    "later_mention": "direc?ia de s?n?tate public?",
+    "tts_hint": "Direc?ia de S?n?tate Public?"
+  },
+  "ANPC": {
+    "type": "editorial",
+    "first_mention": "Autoritatea Na?ional? pentru Protec?ia Consumatorilor",
+    "later_mention": "protec?ia consumatorilor",
+    "tts_hint": "Autoritatea Na?ional? pentru Protec?ia Consumatorilor"
+  },
+  "ANM": {
+    "type": "editorial",
+    "first_mention": "Administra?ia Na?ional? de Meteorologie",
+    "later_mention": "meteorologii",
+    "tts_hint": "Administra?ia Na?ional? de Meteorologie"
+  },
+  "APIA": {
+    "type": "letters",
+    "first_mention": "Agen?ia de Pl??i ?i Interven?ie pentru Agricultur?",
+    "later_mention": "APIA",
+    "tts_hint": "A Pi A"
+  },
+  "AFM": {
+    "type": "letters",
+    "first_mention": "Administra?ia Fondului pentru Mediu",
+    "later_mention": "AFM",
+    "tts_hint": "A Fe Me"
+  },
+  "IGPR": {
+    "type": "editorial",
+    "first_mention": "Inspectoratul General al Poli?iei Rom?ne",
+    "later_mention": "poli?ia rom?n?",
+    "tts_hint": "Inspectoratul General al Poli?iei Rom?ne"
+  },
+  "IGSU": {
+    "type": "editorial",
+    "first_mention": "Inspectoratul General pentru Situa?ii de Urgen??",
+    "later_mention": "Inspectoratul pentru Situa?ii de Urgen??",
+    "tts_hint": "Inspectoratul General pentru Situa?ii de Urgen??"
+  },
+  "ISU": {
+    "type": "editorial",
+    "first_mention": "Inspectoratul pentru Situa?ii de Urgen??",
+    "later_mention": "ISU",
+    "tts_hint": "I Se U"
+  },
+  "IPJ": {
+    "type": "editorial",
+    "first_mention": "Inspectoratul de Poli?ie Jude?ean",
+    "later_mention": "poli?ia jude?ean?",
+    "tts_hint": "Inspectoratul de Poli?ie Jude?ean"
+  },
+  "TAROM": {
+    "type": "word",
+    "first_mention": "TAROM",
+    "later_mention": "TAROM",
+    "tts_hint": "Tarom"
+  },
+  "CFR": {
+    "type": "letters",
+    "first_mention": "C?ile Ferate Rom?ne",
+    "later_mention": "CFR",
+    "tts_hint": "Ce Fe Re"
+  },
+  "Metrorex": {
+    "type": "word",
+    "first_mention": "Metrorex",
+    "later_mention": "Metrorex",
+    "tts_hint": "Metrorex"
+  },
+  "Hidroelectrica": {
+    "type": "word",
+    "first_mention": "Hidroelectrica",
+    "later_mention": "Hidroelectrica",
+    "tts_hint": "Hidroelectrica"
+  },
+  "Romgaz": {
+    "type": "word",
+    "first_mention": "Romgaz",
+    "later_mention": "Romgaz",
+    "tts_hint": "Romgaz"
+  },
+  "Nuclearelectrica": {
+    "type": "word",
+    "first_mention": "Nuclearelectrica",
+    "later_mention": "Nuclearelectrica",
+    "tts_hint": "Nuclearelectrica"
+  },
+  "Transelectrica": {
+    "type": "word",
+    "first_mention": "Transelectrica",
+    "later_mention": "Transelectrica",
+    "tts_hint": "Transelectrica"
+  },
+  "Transgaz": {
+    "type": "word",
+    "first_mention": "Transgaz",
+    "later_mention": "Transgaz",
+    "tts_hint": "Transgaz"
+  },
+  "G7": {
+    "type": "letters",
+    "first_mention": "Grupul celor ?apte state puternic industrializate",
+    "later_mention": "G7",
+    "tts_hint": "G ?apte"
+  },
+  "G20": {
+    "type": "letters",
+    "first_mention": "Grupul celor dou?zeci",
+    "later_mention": "G20",
+    "tts_hint": "G dou?zeci"
+  },
+  "AP": {
+    "type": "letters",
+    "first_mention": "Associated Press",
+    "later_mention": "AP",
+    "tts_hint": "A Pi"
+  },
+  "Reuters": {
+    "type": "word",
+    "first_mention": "Reuters",
+    "later_mention": "Reuters",
+    "tts_hint": "Reuters"
+  },
+  "AFP": {
+    "type": "letters",
+    "first_mention": "Agence France-Presse",
+    "later_mention": "AFP",
+    "tts_hint": "A Fe Pe"
+  },
+  "BBC": {
+    "type": "letters",
+    "first_mention": "BBC",
+    "later_mention": "BBC",
+    "tts_hint": "Bi Bi Si"
+  }
+}
