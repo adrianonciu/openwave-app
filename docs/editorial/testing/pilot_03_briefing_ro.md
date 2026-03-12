@@ -1,4 +1,4 @@
-﻿# Pilot 03 Briefing OpenWave (RO)
+﻿﻿# Pilot 03 Briefing OpenWave (RO)
 
 ## Metadate
 - Data testului: 11 martie 2026
@@ -7,7 +7,7 @@
 - Număr itemuri: 6 itemuri standard
 - Obiectiv editorial: testarea unei formule puternic personalizate pentru un ascultător interesat în egală măsură de sport și entertainment, cu accent mai mare pe internațional
 - User name: Adrian
-- Presenter name: Corina
+- Presenter name: Traian
 - Playback time: 12:05
 - Bulletin slot hour: 12:00
 - Greeting type: day
@@ -16,17 +16,17 @@
 - Rol: deschidere personalizată, clară și rapidă
 - Greeting: Bună ziua
 - User name: Adrian
-- Presenter name: Corina
+- Presenter name: Traian
 - Bulletin slot hour: 12
 - Text citit în audio:
-Bună ziua, Adrian. Sunt Corina. Iată jurnalul tău de știri de la ora 12. În ediția de azi avem un mix făcut special pentru tine: Netflix și Meghan Markle, un nou hit din streaming, fotbal mare în Liga Campionilor, tenis de top la Indian Wells și două povești românești, una din cinema și una din fotbal.
+Bună ziua, Adrian. Sunt Traian. Iată jurnalul tău de știri de la ora douăsprezece. În ediția de azi avem un mix făcut special pentru tine: Netflix și Meghan Markle, un nou hit din streaming, fotbal mare în Liga Campionilor, tenis de top la Indian Wells și două povești românești, una din cinema și una din fotbal.
 - Note editoriale: intro personalizat după playback_time, dar cu oră rostită după slotul publicat de la 12:00
 
 ## ITEM 1
 - Titlu radio: Netflix se desparte de Meghan Markle după mai puțin de un an
 - De ce intră în jurnal: este cea mai puternică poveste de entertainment și celebrity business din acest mix
 - Text citit în audio:
-Netflix a încheiat colaborarea cu brandul de lifestyle al lui Meghan Markle la 11 luni de la lansare. HotNews citează un purtător de cuvânt al platformei, care spune că ducesa își va dezvolta brandul independent. Povestea contează pentru că nu e doar despre un nume mare, ci și despre felul în care platformele își aleg tot mai atent pariurile pe zona de celebrity business. Pentru publicul de entertainment, e una dintre acele știri care arată cât de repede se schimbă jocul dintre vedete și streaming.
+Netflix a încheiat colaborarea cu brandul de lifestyle al lui Meghan Markle la unsprezece luni de la lansare. HotNews citează un purtător de cuvânt al platformei, care spune că ducesa își va dezvolta brandul independent. Povestea contează pentru că nu e doar despre un nume mare, ci și despre felul în care platformele își aleg tot mai atent pariurile pe zona de celebrity business. Pentru publicul de entertainment, e una dintre acele știri care arată cât de repede se schimbă jocul dintre vedete și streaming.
 - Citat scurt (opțional): Un purtător de cuvânt Netflix: „independent”
 - Impact pentru cetățean: oferă context despre cum se schimbă piața de streaming și brandurile construite în jurul vedetelor
 - Note editoriale: lead clar, person-first și foarte audio-friendly
@@ -75,7 +75,7 @@ Jannik Sinner s-a calificat în sferturile de finală de la Indian Wells, după 
 - Titlu radio: Mircea Lucescu își conturează lista de stranieri pentru meciul cu Turcia
 - De ce intră în jurnal: închide pachetul cu o poveste sportivă românească ușor de urmărit
 - Text citit în audio:
-Mircea Lucescu a stabilit, de principiu, lista de stranieri pentru meciul României cu Turcia din 26 martie. Digi24 notează că pe lista preliminară apar nume ca Ionuț Radu, Radu Drăgușin, Nicolae Stanciu și Ianis Hagi. Este o poveste bună pentru final pentru că aduce din nou jurnalul aproape de publicul român, fără să iasă din zona sportului mare. Cu alte cuvinte, după fotbalul european și tenisul mondial, jurnalul se închide cu o miză clară pentru suporterul român.
+Mircea Lucescu a stabilit, de principiu, lista de stranieri pentru meciul României cu Turcia din douăzeci și șase martie. Digi24 notează că pe lista preliminară apar nume ca Ionuț Radu, Radu Drăgușin, Nicolae Stanciu și Ianis Hagi. Este o poveste bună pentru final pentru că aduce din nou jurnalul aproape de publicul român, fără să iasă din zona sportului mare. Cu alte cuvinte, după fotbalul european și tenisul mondial, jurnalul se închide cu o miză clară pentru suporterul român.
 - Citat scurt (opțional): Digi Sport, citat de Digi24: „există posibilitatea să fie chemat”
 - Impact pentru cetățean: oferă un prim reper despre cum ar putea arăta România înaintea unui meci important
 - Note editoriale: bun final național, cu nume cunoscute și ritm de închidere
@@ -86,5 +86,5 @@ Mircea Lucescu a stabilit, de principiu, lista de stranieri pentru meciul Român
 - User name: Adrian
 - Next update wording: Ne reauzim la următorul jurnal.
 - Text citit în audio:
-Acesta a fost jurnalul tău de la ora 12, Adrian. Ne reauzim la următorul jurnal.
+Acesta a fost jurnalul tău de la ora douăsprezece, Adrian. Ne reauzim la următorul jurnal.
 - Note editoriale: outro personalizat după slotul publicat, nu după momentul exact al apasării Play

@@ -67,6 +67,14 @@ Both items belong to the same story thread.
 - regulile actuale includ pauza dupa intro, intre stiri, inainte de citate si inainte de outro
 - configuratia de pacing ramane usor de ajustat prin valorile TTS_PACING
 
+### TTS Pronunciation Normalization
+- Current Year Omission Rule: daca o data rostita include anul editorial curent, anul poate fi omis in varianta audio atunci cand contextul ramane clar
+- Acronym Expansion for TTS: acronime precum CSAT si CNAIR sunt extinse doar in textul trimis catre sinteza vocala
+- Large Number Normalization for TTS: numerele mari din zona miilor sunt rescrise in forme vorbite mai naturale
+- acest strat exista doar pentru a imbunatati varianta vorbita
+- textul editorial sursa ramane neschimbat, iar modificarile se aplica doar pe textul trimis catre TTS
+- configuratia vocii Corina poate fi ajustata din backend/.env prin voice id, model id si setarile de tuning ale providerului
+
 ### Official TTS Test Integration
 - audio-ul de test pentru Corina foloseste un furnizor TTS oficial
 - ElevenLabs este providerul preferat pentru testele de ascultare
@@ -85,6 +93,13 @@ Required environment variables:
 - OPENAI_API_KEY
 - OPENAI_TTS_MODEL
 - OPENAI_TTS_VOICE
+- TTS_SPEED
+- ELEVENLABS_STABILITY
+- ELEVENLABS_SIMILARITY_BOOST
+- ELEVENLABS_STYLE
+- ELEVENLABS_USE_SPEAKER_BOOST
+- ELEVENLABS_SPEED
+- OPENAI_TTS_SPEED
 
 ## Nota Pentru Intro Si Outro Personalizat
 Pentru a genera un intro si un outro personalizat, sistemul trebuie sa transporte mai multe valori de context pana la etapa de audio generation.

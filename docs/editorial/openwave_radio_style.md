@@ -55,3 +55,9 @@ Acest document consolideaza regulile de scriere radio validate prin pilotii edit
 - Numele utilizatorului poate aparea in briefing, dar limitat.
 - Uzual, numele apare in intro, eventual o data in corpul jurnalului, si in outro.
 - Personalizarea trebuie sa sune cald, nu insistenta sau artificiala.
+## 11. Spoken Audio Normalization
+- In varianta TTS, anumite forme trebuie adaptate pentru pronuntie mai naturala.
+- Current Year Omission Rule: cand o data se refera clar la anul editorial curent, anul poate fi omis in audio. Exemplu: "11 martie 2026" devine "11 martie".
+- Acronym Expansion for TTS: acronime precum CSAT si CNAIR se extind in textul trimis catre sinteza vocala.
+- Large Number Normalization for TTS: numerele din zona miilor se transforma in forme vorbite mai naturale.
+- Aceste ajustari exista doar pentru spoken output si nu modifica textul editorial sursa.

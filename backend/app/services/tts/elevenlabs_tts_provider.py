@@ -10,7 +10,13 @@ from app.services.tts.base_tts_provider import BaseTtsProvider
 
 
 class ElevenLabsTtsProvider(BaseTtsProvider):
-    provider_name = "elevenlabs"
+    provider_name = 'elevenlabs'
+    RADIO_VOICE_SETTINGS = {
+        'stability': 0.45,
+        'similarity_boost': 0.75,
+        'style': 0.40,
+        'use_speaker_boost': True,
+    }
 
     def __init__(self, presenter: PresenterConfig) -> None:
         self._settings = presenter.elevenlabs
@@ -33,33 +39,34 @@ class ElevenLabsTtsProvider(BaseTtsProvider):
     def synthesize(self, text: str, output_path: Path) -> None:
         if not self.is_configured():
             raise RuntimeError(
-                "ElevenLabs is not configured. Set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID."
+                'ElevenLabs is not configured. Set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID.'
             )
 
         payload = json.dumps(
             {
-                "text": text,
-                "model_id": self.model,
+                'text': text,
+                'model_id': self.model,
+                'voice_settings': self.RADIO_VOICE_SETTINGS,
             }
-        ).encode("utf-8")
+        ).encode('utf-8')
         request = urllib.request.Request(
-            url=f"https://api.elevenlabs.io/v1/text-to-speech/{self.voice_id}?output_format={self.output_format}",
+            url=f'https://api.elevenlabs.io/v1/text-to-speech/{self.voice_id}?output_format={self.output_format}',
             data=payload,
             headers={
-                "Accept": "audio/mpeg",
-                "Content-Type": "application/json",
-                "xi-api-key": self._settings.api_key,
+                'Accept': 'audio/mpeg',
+                'Content-Type': 'application/json',
+                'xi-api-key': self._settings.api_key,
             },
-            method="POST",
+            method='POST',
         )
 
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
                 output_path.write_bytes(response.read())
         except urllib.error.HTTPError as exc:
-            details = exc.read().decode("utf-8", errors="ignore")
+            details = exc.read().decode('utf-8', errors='ignore')
             raise RuntimeError(
-                f"ElevenLabs request failed: {exc.code} {details}".strip()
+                f'ElevenLabs request failed: {exc.code} {details}'.strip()
             ) from exc
         except urllib.error.URLError as exc:
-            raise RuntimeError(f"ElevenLabs request failed: {exc.reason}") from exc
+            raise RuntimeError(f'ElevenLabs request failed: {exc.reason}') from exc

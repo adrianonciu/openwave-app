@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app.config.env import load_backend_env
+
+load_backend_env()
+
 from app.api.routes import router
 from app.services.tts_service import TtsService
 

@@ -10,7 +10,7 @@ from app.services.tts.base_tts_provider import BaseTtsProvider
 
 
 class OpenAITtsProvider(BaseTtsProvider):
-    provider_name = "openai"
+    provider_name = 'openai'
 
     def __init__(self, presenter: PresenterConfig) -> None:
         self._settings = presenter.openai
@@ -33,34 +33,35 @@ class OpenAITtsProvider(BaseTtsProvider):
     def synthesize(self, text: str, output_path: Path) -> None:
         if not self.is_configured():
             raise RuntimeError(
-                "OpenAI TTS is not configured. Set OPENAI_API_KEY and OPENAI_TTS_VOICE."
+                'OpenAI TTS is not configured. Set OPENAI_API_KEY and OPENAI_TTS_VOICE.'
             )
 
         payload = json.dumps(
             {
-                "model": self.model,
-                "voice": self.voice_id,
-                "input": text,
-                "response_format": self.output_format,
+                'model': self.model,
+                'voice': self.voice_id,
+                'input': text,
+                'response_format': self.output_format,
+                'speed': self._settings.tuning.speed,
             }
-        ).encode("utf-8")
+        ).encode('utf-8')
         request = urllib.request.Request(
-            url="https://api.openai.com/v1/audio/speech",
+            url='https://api.openai.com/v1/audio/speech',
             data=payload,
             headers={
-                "Authorization": f"Bearer {self._settings.api_key}",
-                "Content-Type": "application/json",
+                'Authorization': f'Bearer {self._settings.api_key}',
+                'Content-Type': 'application/json',
             },
-            method="POST",
+            method='POST',
         )
 
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
                 output_path.write_bytes(response.read())
         except urllib.error.HTTPError as exc:
-            details = exc.read().decode("utf-8", errors="ignore")
+            details = exc.read().decode('utf-8', errors='ignore')
             raise RuntimeError(
-                f"OpenAI TTS request failed: {exc.code} {details}".strip()
+                f'OpenAI TTS request failed: {exc.code} {details}'.strip()
             ) from exc
         except urllib.error.URLError as exc:
-            raise RuntimeError(f"OpenAI TTS request failed: {exc.reason}") from exc
+            raise RuntimeError(f'OpenAI TTS request failed: {exc.reason}') from exc
