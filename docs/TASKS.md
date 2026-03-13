@@ -381,3 +381,21 @@ Still intentionally excluded from this task:
 - full summary generation
 - briefing assembly
 - TTS wording optimization
+
+### Story Summary Generator V1
+
+Backend now includes a conservative per-story summary generator guided by the summary policy.
+
+Current scope:
+
+- generate one Romanian radio-style story item at a time
+- use the representative cluster title as the primary basis
+- apply policy-compliance checks for sentence and word targets
+- keep wording template-based and conservative
+- remain independent from briefing assembly
+
+Still intentionally excluded from this task:
+
+- briefing assembly
+- audio generation
+- final bulletin duration optimization

@@ -1,0 +1,83 @@
+{
+  "spoken_words_per_minute": 150,
+  "banned_patterns": [
+    "in articol",
+    "autorul spune",
+    "a scris ca",
+    "\"",
+    "“",
+    "”"
+  ],
+  "topic_templates": {
+    "politics": {
+      "impact": "Miza este politica, pentru ca decizia poate schimba raportul de forte, ritmul negocierilor si urmatorii pasi institutionali din perioada imediat urmatoare.",
+      "detail": "In perioada urmatoare, atentia se muta spre reactiile politice, spre aplicarea masurii si spre eventualele ajustari cerute de opozitie sau de partenerii de coalitie."
+    },
+    "economy": {
+      "impact": "Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
+      "detail": "Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice."
+    },
+    "international_conflict": {
+      "impact": "Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
+      "detail": "De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile."
+    },
+    "sport": {
+      "impact": "Miza este sportiva, pentru ca rezultatul schimba tabloul competitiei, presiunea din clasament si asteptarile pentru urmatorul meci.",
+      "detail": "Pasul urmator este decisiv, iar echipa trebuie sa confirme acest rezultat in confruntarea care urmeaza si in lupta pentru obiectivul mai mare al turneului."
+    },
+    "general": {
+      "impact": "Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.",
+      "detail": "In perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale."
+    }
+  },
+  "english_to_romanian_terms": {
+    "government": "guvernul",
+    "approves": "aproba",
+    "approved": "a aprobat",
+    "new": "nou",
+    "fiscal": "fiscal",
+    "package": "pachet",
+    "for": "pentru",
+    "industry": "industrie",
+    "cuts": "reduce",
+    "cut": "a redus",
+    "amid": "pe fondul",
+    "weak": "slabe",
+    "growth": "crestere",
+    "outlook": "perspectivelor",
+    "warns": "avertizeaza",
+    "attack": "atac",
+    "on": "asupra",
+    "missile": "rachete",
+    "sanctions": "sanctiuni",
+    "after": "dupa",
+    "russian": "rusesc",
+    "strikes": "loveste",
+    "rates": "dobanzile",
+    "economy": "economia",
+    "election": "alegerile",
+    "trade": "comertul",
+    "wins": "castiga",
+    "victory": "victorie",
+    "reach": "atinge",
+    "european": "european",
+    "handball": "handbal",
+    "semifinals": "semifinalele",
+    "launch": "lansarea",
+    "delayed": "amanata",
+    "support": "sprijin",
+    "leaders": "liderii",
+    "bank": "banca",
+    "ukraine": "Ucraina",
+    "russia": "Rusia",
+    "europe": "Europa",
+    "turkey": "Turcia"
+  },
+  "topic_keywords": {
+    "politics": ["government", "parliament", "election", "president", "coalition", "cabinet"],
+    "economy": ["economy", "rates", "inflation", "bank", "budget", "trade", "tariff"],
+    "international_conflict": ["attack", "war", "missile", "sanctions", "ukraine", "russia", "ceasefire"],
+    "sport": ["wins", "victory", "match", "semifinal", "final", "league", "championship"],
+    "general": []
+  }
+}

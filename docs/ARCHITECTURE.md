@@ -1190,3 +1190,30 @@ This layer does not perform:
 - full summary generation
 - final briefing assembly
 - TTS optimization
+
+---
+
+# 18. Story Summary Generator V1
+
+After the summary policy, OpenWave now includes a conservative generator that
+produces one Romanian radio-style summary for one selected story cluster.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Summary Policy -> Story Summary Generator
+```
+
+Generation rules:
+
+- one story cluster in, one short summary out
+- follow the summary policy sentence structure
+- prefer omission over invented detail
+- use the representative cluster title as the primary basis
+- expose policy compliance checks alongside the summary
+
+This layer does not perform:
+
+- briefing assembly
+- audio generation
+- final bulletin duration optimization

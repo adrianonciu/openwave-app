@@ -10,6 +10,7 @@
 - added transparent story scoring with explicit weighted breakdowns for clustered stories
 - added bounded story selection with explicit selection and rejection explanations
 - added an explicit Romanian radio-style summary policy with machine-readable rules and examples
+- added a conservative story summary generator with explicit policy-compliance checks
 
 # OpenWave Development Log
 
@@ -620,6 +621,7 @@ In progress:
 
 1. voice tuning
 2. editorial automation pipeline
+
 
 
 

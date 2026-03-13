@@ -58,3 +58,5 @@ Current backend infrastructure also includes a story selection layer that turns 
 
 Current backend infrastructure also includes an explicit story summary policy layer that defines how one selected story should be compressed into a short Romanian radio-style item before any future automated summarization.
 
+Current backend infrastructure also includes a conservative story summary generator that turns one selected story cluster into one short Romanian radio-style item with explicit policy-compliance checks.
+
