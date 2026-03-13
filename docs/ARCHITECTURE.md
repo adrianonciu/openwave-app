@@ -1602,3 +1602,6 @@ Current behavior:
 - county-based Romanian local media registries are now available to the source watcher layer for region-first local monitoring
 - SourceWatcher can augment its operational source set with `local_county` configs when region is present and local preference is non-zero
 - summary generation can detect whether a cluster appeared in the previous bulletin and switch the lead wording to update-style phrasing
+
+- activated county local sources inside SourceWatcher monitoring so the watcher appends a capped region-based `local_county` source set to the normal monitored sources only when local preference is enabled
+

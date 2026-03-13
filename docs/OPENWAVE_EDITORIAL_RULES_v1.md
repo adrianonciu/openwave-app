@@ -185,7 +185,7 @@ Primary code areas:
 
 - `Implemented in code` County-based Romanian local news sources are available as a registry for the monitoring layer.
   Code area: `backend/app/config/romanian_local_sources_by_county.json`, `backend/app/services/local_source_registry_service.py`, `backend/app/services/source_watcher_service.py`
-  Current behavior: when a listener has a region and local geography preference is enabled, the pipeline can resolve county sources for that region and expose watcher-usable `local_county` source configs. City never drives this activation. Example for `Iasi`: `ziaruldeiasi.ro`, `bzi.ro`, `ieseanul.ro`.
+  Current behavior: when a listener has a region and local geography preference is enabled, the pipeline can resolve county sources for that region, cap them conservatively, and expose watcher-usable `local_county` source configs that SourceWatcher can actively monitor. City never drives this activation. Example for `Iasi`: `ziaruldeiasi.ro`, `bzi.ro`, `ieseanul.ro`.
 
 - `Implemented in code` Story selection can use the listener region as a soft local near-tie signal.
   Code area: `backend/app/services/story_selection_service.py`
@@ -257,4 +257,4 @@ Primary code areas:
 
 - `Implemented in code` Default fallback is visible in output explainability.
   Code area: `backend/app/models/final_editorial_briefing.py`, `backend/app/models/end_to_end_bulletin_result.py`
-  Current behavior: pipeline output exposes `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, `personalization_defaults_applied`, `local_editorial_anchor`, `local_editorial_anchor_scope`, `local_source_region_used`, `local_source_count`, `local_source_registry_used`, and `local_sources_enabled`.
+  Current behavior: pipeline output exposes `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, `personalization_defaults_applied`, `local_editorial_anchor`, `local_editorial_anchor_scope`, `local_source_region_used`, `local_source_count`, `local_source_registry_used`, `local_sources_enabled`, and `local_sources_monitored`.

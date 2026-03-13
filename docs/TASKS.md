@@ -725,3 +725,22 @@ Still intentionally excluded from this task:
 - continuity-aware selection or scoring changes
 - aggressive crawling or ingestion expansion across all county registry sources
 - city-driven local source activation
+- aggressive crawling across the county source registry
+
+### County Local Source Monitoring Activation
+
+Backend now activates county-based local sources inside SourceWatcher when local preference is enabled.
+
+Current scope:
+
+- resolve county sources from the canonical Romanian local-source registry
+- use listener region or county as the only local monitoring anchor
+- append a conservative capped set of `local_county` watcher configs to the normal monitored source list
+- expose whether county local monitoring was active through pipeline explainability
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- aggressive crawling
+- city-based source activation
+- replacement of the core national/international watcher set

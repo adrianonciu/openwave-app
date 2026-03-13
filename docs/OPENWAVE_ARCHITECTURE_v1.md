@@ -366,7 +366,8 @@ Current behavior:
 - local editorial anchoring is county or region based; city remains stored but is not the primary local news anchor
 - story selection can use region-matching coverage as a soft near-tie signal when local geography preference is enabled
 - a Romanian county-based local source registry is available to the source monitoring layer for region-first local personalization
-- SourceWatcher can operationally ingest county local sources when region is present and local preference is above zero
+- SourceWatcher appends up to 3 county local sources per region to the monitored source set when local preference is active
+- SourceWatcher can operationally ingest and actively monitor county local sources when region is present and local preference is above zero
 - story summaries can detect continuity against the previous bulletin and switch lead wording from `new_story` to `update` or `major_update`
 
 Example contract fixture:

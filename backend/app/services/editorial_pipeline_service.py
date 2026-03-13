@@ -51,7 +51,7 @@ class EditorialPipelineService:
         ) = resolved_personalization.explainability()
         local_editorial_anchor = resolved_personalization.local_editorial_anchor()
         local_editorial_anchor_scope = resolved_personalization.local_editorial_anchor_scope()
-        local_source_resolution = self.source_watcher_service.resolve_local_sources_for_personalization(
+        _, local_source_resolution = self.source_watcher_service.resolve_monitored_source_configs(
             resolved_personalization
         )
         continuity_records = self._load_previous_bulletin_clusters(previous_bulletin_clusters)
@@ -100,6 +100,7 @@ class EditorialPipelineService:
             local_source_count=local_source_resolution.source_count,
             local_source_registry_used=local_source_resolution.local_source_registry_used,
             local_sources_enabled=local_source_resolution.local_sources_enabled,
+            local_sources_monitored=local_source_resolution.local_sources_enabled,
             local_source_explanation=local_source_resolution.explanation,
         )
 
@@ -129,6 +130,7 @@ class EditorialPipelineService:
             local_source_count=local_source_resolution.source_count,
             local_source_registry_used=local_source_resolution.local_source_registry_used,
             local_sources_enabled=local_source_resolution.local_sources_enabled,
+            local_sources_monitored=local_source_resolution.local_sources_enabled,
             personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
             assembly_explanation=briefing_draft.assembly_explanation,
@@ -213,6 +215,7 @@ class EditorialPipelineService:
         local_source_count: int,
         local_source_registry_used: bool,
         local_sources_enabled: bool,
+        local_sources_monitored: bool,
         local_source_explanation: str,
     ) -> str:
         lower_bound = max(target_duration - tolerance, 0)
@@ -226,8 +229,8 @@ class EditorialPipelineService:
             else "No previous bulletin continuity records were available, so all stories were treated as new."
         )
         local_source_note = (
-            f"Loaded {local_source_count} county-based local source(s) for region '{local_source_region_used}'. {local_source_explanation}"
-            if local_source_registry_used and local_source_region_used and local_sources_enabled
+            f"SourceWatcher monitored {local_source_count} county-based local source(s) for region '{local_source_region_used}'. {local_source_explanation}"
+            if local_source_registry_used and local_source_region_used and local_sources_enabled and local_sources_monitored
             else local_source_explanation
         )
 

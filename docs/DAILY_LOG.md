@@ -749,3 +749,5 @@ Run full real-news bulletins and audit:
 - added lightweight bulletin continuity detection so recurring clusters can be marked as updates or major updates in summary leads without changing scoring or selection
 - added a Romanian county-based local source registry and made it available to the source watcher and editorial pipeline explainability for region-first local personalization
 - connected the county registry to SourceWatcher operational resolution so `local_county` sources activate only when region exists and local preference is above zero
+- activated county local sources inside SourceWatcher monitoring so region-based local media are appended conservatively to the monitored source set only when local preference is enabled
+

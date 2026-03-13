@@ -63,6 +63,7 @@
     "local_source_region_used": "Iasi County",
     "local_source_count": 3,
     "local_source_registry_used": true,
-    "local_sources_enabled": true
+    "local_sources_enabled": true,
+    "local_sources_monitored": true
   }
 }

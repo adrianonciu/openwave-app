@@ -29,6 +29,7 @@ REQUEST_TIMEOUT_SECONDS = 15
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "source_watchers.json"
 STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "source_watcher_state.json"
 RFC3339_DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
+MAX_LOCAL_SOURCES_PER_REGION = 3
 
 
 class _PageParser(HTMLParser):
@@ -153,6 +154,16 @@ class SourceWatcherService:
         if resolution.local_sources_enabled:
             source_configs.extend(resolution.resolved_sources)
         return source_configs
+
+    def resolve_monitored_source_configs(
+        self,
+        personalization: UserPersonalization | None = None,
+    ) -> tuple[list[SourceConfig], LocalSourceResolutionResult]:
+        resolution = self.resolve_local_sources_for_personalization(personalization)
+        source_configs = list(self.load_source_configs())
+        if resolution.local_sources_enabled:
+            source_configs.extend(resolution.resolved_sources)
+        return source_configs, resolution
 
     def resolve_local_sources_for_personalization(
         self,
@@ -288,10 +299,14 @@ class SourceWatcherService:
             item=self._to_detected_item(latest_item),
         )
 
-    def check_all_sources(self) -> SourceCheckSummary:
+    def check_all_sources(
+        self,
+        personalization: UserPersonalization | None = None,
+    ) -> SourceCheckSummary:
+        monitored_sources, _resolution = self.resolve_monitored_source_configs(personalization)
         results = [
             self.check_source_for_new_content(source_config)
-            for source_config in self.load_source_configs()
+            for source_config in monitored_sources
         ]
         return SourceCheckSummary(checked_at=datetime.now(UTC), results=results)
 
@@ -299,7 +314,7 @@ class SourceWatcherService:
         return self.local_source_registry_service.get_local_sources_for_region(region)
 
     def get_local_source_configs_for_region(self, region: str) -> list[SourceConfig]:
-        source_entries = self.get_local_sources_for_region(region)
+        source_entries = self.get_local_sources_for_region(region)[:MAX_LOCAL_SOURCES_PER_REGION]
         source_configs: list[SourceConfig] = []
         normalized_region = self._normalize_source_id_fragment(region) or "region"
         for entry in source_entries:

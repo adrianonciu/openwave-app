@@ -41,6 +41,7 @@ class FinalEditorialBriefingPackage(BaseModel):
     local_source_count: int = Field(default=0, ge=0)
     local_source_registry_used: bool = False
     local_sources_enabled: bool = False
+    local_sources_monitored: bool = False
     personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     selection_explanation: str
     assembly_explanation: str
