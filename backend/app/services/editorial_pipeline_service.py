@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from app.models.article_fetch import FetchedArticle
-from app.models.editorial_preferences import EditorialPreferenceProfile
+from app.models.user_personalization import UserPersonalization
 from app.models.final_editorial_briefing import (
     EditorialPipelineIntermediateCounts,
     FinalEditorialBriefingPackage,
@@ -31,22 +31,33 @@ class EditorialPipelineService:
         max_stories: int | None = None,
         target_duration_seconds: int | None = None,
         tolerance_seconds: int | None = None,
-        editorial_preferences: EditorialPreferenceProfile | None = None,
+        personalization: UserPersonalization | None = None,
     ) -> FinalEditorialBriefingPackage:
         created_at = datetime.now(UTC)
+        resolved_personalization = UserPersonalization.from_input(personalization=personalization)
+        (
+            personalization_used,
+            listener_profile_used,
+            editorial_preferences_used,
+            defaults_applied,
+            personalization_explanation,
+        ) = resolved_personalization.explainability()
         story_clusters = self.clustering_service.cluster_articles(articles)
         scored_clusters = self.scoring_service.score_clusters(story_clusters)
         selection_result = self.selection_service.select_stories(
             scored_clusters,
             max_stories=max_stories,
-            editorial_preferences=editorial_preferences,
+            editorial_preferences=resolved_personalization.editorial_preferences,
         )
         self.summary_generator_service.reset_variation_state()
         generated_summaries = [
             self.summary_generator_service.generate_story_summary(cluster)
             for cluster in selection_result.selected_clusters
         ]
-        briefing_draft = self.briefing_assembly_service.assemble_briefing(generated_summaries)
+        briefing_draft = self.briefing_assembly_service.assemble_briefing(
+            generated_summaries,
+            personalization=resolved_personalization,
+        )
         sized_briefing = self.bulletin_sizing_service.size_briefing(
             briefing_draft,
             target_duration_seconds=target_duration_seconds,
@@ -82,7 +93,13 @@ class EditorialPipelineService:
             tolerance_seconds=sized_briefing.tolerance_seconds,
             original_duration_seconds=sized_briefing.original_duration_seconds,
             intermediate_counts=intermediate_counts,
-            editorial_preferences=editorial_preferences,
+            personalization=resolved_personalization,
+            editorial_preferences=resolved_personalization.editorial_preferences,
+            personalization_used=personalization_used,
+            listener_profile_used=listener_profile_used,
+            editorial_preferences_used=editorial_preferences_used,
+            personalization_defaults_applied=defaults_applied,
+            personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
             assembly_explanation=briefing_draft.assembly_explanation,
             sizing_explanation=sized_briefing.sizing_explanation,
@@ -111,5 +128,5 @@ class EditorialPipelineService:
             f"{intermediate_counts.cluster_count} clusters, scored {intermediate_counts.scored_cluster_count} clusters, "
             f"selected {intermediate_counts.selected_story_count} stories, and generated {intermediate_counts.generated_summary_count} summaries. "
             f"Final draft duration is {sized_duration} seconds against a target window of {lower_bound}-{upper_bound} seconds. "
-            f"{trim_note} Preferences can now be passed into the editorial pipeline as soft targets for future scoring, selection, and briefing-composition adjustments."
+            f"{trim_note} Personalization is now a first-class pipeline contract; listener profile and editorial preferences are always resolved explicitly, with safe defaults visible in output explainability."
         )

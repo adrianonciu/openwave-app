@@ -234,3 +234,11 @@ Primary code areas:
 
 - `Not yet implemented` Randomized editorial language generation.
   Current state: variation is deterministic by design.
+
+- `Implemented in code` Personalization is a first-class pipeline contract, not a UI-only feature.
+  Code area: `backend/app/models/user_personalization.py`, `backend/app/services/end_to_end_bulletin_service.py`, `backend/app/services/editorial_pipeline_service.py`
+  Current behavior: listener profile and editorial preferences are always resolved explicitly, with neutral defaults when payload data is missing.
+
+- `Implemented in code` Default fallback is visible in output explainability.
+  Code area: `backend/app/models/final_editorial_briefing.py`, `backend/app/models/end_to_end_bulletin_result.py`
+  Current behavior: pipeline output exposes `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, and `personalization_defaults_applied`.

@@ -703,3 +703,22 @@ Still intentionally excluded from this task:
 - preference-weighted story scoring
 - quota-based editorial balancing
 - aggressive bulletin recomposition
+
+### User Personalization Contract
+
+Backend now treats personalization as a permanent pipeline contract.
+
+Current scope:
+
+- canonical top-level `UserPersonalization` object
+- listener identity and location fields carried through the pipeline
+- normalized editorial preference mixes carried through the pipeline
+- explicit explainability for personalization usage vs defaults
+- safe neutral defaults when no personalization payload is provided
+
+Still intentionally excluded from this task:
+
+- Flutter redesign
+- hard quotas
+- location-aware editorial ranking beyond existing preference flow
+- deeper listener-profile personalization logic

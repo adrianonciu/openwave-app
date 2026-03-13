@@ -1,0 +1,62 @@
+{
+  "request_payload": {
+    "bulletin_id": "briefing-adrian-iasi-001",
+    "presenter_name": "Andreea",
+    "personalization": {
+      "listener_profile": {
+        "first_name": "Adrian",
+        "country": "Romania",
+        "region": "Iasi",
+        "city": "Iasi"
+      },
+      "editorial_preferences": {
+        "geography": {
+          "local": 30,
+          "national": 40,
+          "international": 30
+        },
+        "domains": {
+          "politics": 20,
+          "economy": 15,
+          "sport": 20,
+          "entertainment": 10,
+          "education": 10,
+          "health": 10,
+          "tech": 15
+        }
+      }
+    }
+  },
+  "final_output_shape": {
+    "briefing_id": "briefing-adrian-iasi-001",
+    "personalization": {
+      "listener_profile": {
+        "first_name": "Adrian",
+        "country": "Romania",
+        "region": "Iasi",
+        "city": "Iasi"
+      },
+      "editorial_preferences": {
+        "geography": {
+          "local": 30.0,
+          "national": 40.0,
+          "international": 30.0
+        },
+        "domains": {
+          "politics": 20.0,
+          "economy": 15.0,
+          "sport": 20.0,
+          "entertainment": 10.0,
+          "education": 10.0,
+          "health": 10.0,
+          "tech": 15.0
+        }
+      }
+    },
+    "personalization_used": true,
+    "listener_profile_used": true,
+    "editorial_preferences_used": true,
+    "personalization_defaults_applied": false,
+    "personalization_explanation": "User personalization was provided and carried through the pipeline."
+  }
+}

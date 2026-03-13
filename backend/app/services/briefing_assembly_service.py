@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from app.models.generated_briefing_draft import BriefingStoryItem, GeneratedBriefingDraft
+from app.models.user_personalization import UserPersonalization
 from app.models.generated_story_summary import GeneratedStorySummary
 from app.models.segment import Segment
 from app.services.segment_service import SegmentService
@@ -19,7 +20,6 @@ class BriefingAssemblyService:
         self.spoken_words_per_minute: int = raw_config["spoken_words_per_minute"]
         self.female_presenter: str = raw_config["female_presenter"]
         self.male_presenter: str = raw_config["male_presenter"]
-        self.listener_first_name: str | None = raw_config.get("listener_first_name")
         self.intro_variants: list[dict[str, str]] = raw_config["intro_variants"]
         self.outro_variants: list[dict[str, str]] = raw_config["outro_variants"]
         self.pass_phrases: list[dict[str, str]] = raw_config["pass_phrases"]
@@ -36,14 +36,17 @@ class BriefingAssemblyService:
     def assemble_briefing(
         self,
         stories: list[GeneratedStorySummary],
+        personalization: UserPersonalization | None = None,
     ) -> GeneratedBriefingDraft:
         assembled_at = datetime.now(UTC)
+        resolved_personalization = UserPersonalization.from_input(personalization=personalization)
+        listener_first_name = resolved_personalization.listener_profile.first_name
         ordered_stories = self._order_stories(stories)
         briefing_seed = "|".join(story.cluster_id for story, _ in ordered_stories) or assembled_at.isoformat()
         intro_variant = self._pick_variant(self.intro_variants, briefing_seed)
         outro_variant = self._pick_variant(self.outro_variants, briefing_seed + ":outro")
-        intro_text, intro_mentions = self._personalize_intro(intro_variant["text"])
-        outro_text, outro_mentions = self._personalize_outro(outro_variant["text"], briefing_seed, intro_mentions)
+        intro_text, intro_mentions = self._personalize_intro(intro_variant["text"], listener_first_name)
+        outro_text, outro_mentions = self._personalize_outro(outro_variant["text"], briefing_seed, intro_mentions, listener_first_name)
         listener_name_mentions = intro_mentions + outro_mentions
         ordered_items = self._build_presenter_items(ordered_stories)
         estimated_total_word_count = self._estimate_total_word_count(
@@ -77,10 +80,10 @@ class BriefingAssemblyService:
             assembled_at=assembled_at,
         )
 
-    def _personalize_intro(self, intro_text: str) -> tuple[str, int]:
-        if not self.listener_first_name:
+    def _personalize_intro(self, intro_text: str, listener_first_name: str | None) -> tuple[str, int]:
+        if not listener_first_name:
             return intro_text, 0
-        listener = self.listener_first_name.strip()
+        listener = listener_first_name.strip()
         if not listener:
             return intro_text, 0
         if intro_text.startswith("Bun gasit."):
@@ -96,10 +99,11 @@ class BriefingAssemblyService:
         outro_text: str,
         seed: str,
         existing_mentions: int,
+        listener_first_name: str | None,
     ) -> tuple[str, int]:
-        if not self.listener_first_name or existing_mentions >= 2:
+        if not listener_first_name or existing_mentions >= 2:
             return outro_text, 0
-        listener = self.listener_first_name.strip()
+        listener = listener_first_name.strip()
         if not listener:
             return outro_text, 0
         use_name = sum(ord(char) for char in seed + ":listener_outro") % 2 == 0

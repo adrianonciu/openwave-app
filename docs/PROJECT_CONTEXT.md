@@ -89,3 +89,5 @@ The older demo-only perspective insertion in the legacy `BriefingService` path i
 Current backend infrastructure also includes a canonical editorial preference profile for geography and domain sliders. The modern end-to-end request path can now carry these values into the editorial pipeline and preserve them in the final editorial package, even though scoring, selection, and bulletin-composition weighting are still pending.
 
 Current backend infrastructure also applies editorial preferences conservatively inside story selection. Geography and domain sliders now act as soft near-tie signals in selection, while score remains the main driver and clearly stronger stories are not displaced just to satisfy the requested mix.
+
+Current backend infrastructure now treats personalization as a permanent pipeline contract through a canonical `UserPersonalization` object. Listener identity, listener location, and editorial preferences are resolved at request time, transported through the editorial pipeline, and exposed in final output together with explicit default/fallback explainability.

@@ -741,3 +741,6 @@ Run full real-news bulletins and audit:
 - applied editorial preferences conservatively inside story selection so geography and domain sliders now influence only near-tie decisions
 - kept score as the primary driver and avoided rigid quotas or preference overrides against clearly stronger stories
 - exposed preference influence in story-selection explanations and examples
+- promoted personalization to a first-class pipeline contract through a canonical `UserPersonalization` object
+- added safe defaults and normalization for listener profile plus editorial preference mixes
+- exposed explicit personalization usage and default fallback flags in final pipeline outputs

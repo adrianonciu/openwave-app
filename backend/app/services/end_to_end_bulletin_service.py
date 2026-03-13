@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from app.models.article_fetch import FetchedArticle
-from app.models.editorial_preferences import EditorialPreferenceProfile
+from app.models.user_personalization import EditorialPreferenceProfile, UserPersonalization
 from app.models.audio_generation_package import AudioGenerationPackage
 from app.models.end_to_end_bulletin_result import (
     EndToEndBulletinResult,
@@ -28,14 +28,19 @@ class EndToEndBulletinService:
         articles: list[FetchedArticle],
         bulletin_id: str | None = None,
         presenter_name: str | None = None,
+        personalization: UserPersonalization | None = None,
         editorial_preferences: EditorialPreferenceProfile | None = None,
     ) -> EndToEndBulletinResult:
         created_at = datetime.now(UTC)
+        resolved_personalization = UserPersonalization.from_input(
+            personalization=personalization,
+            editorial_preferences=editorial_preferences,
+        )
 
         try:
             final_editorial_briefing = self.editorial_pipeline_service.run_editorial_pipeline(
                 articles,
-                editorial_preferences=editorial_preferences,
+                personalization=resolved_personalization,
             )
         except Exception as exc:
             return self._error_result(
@@ -44,7 +49,8 @@ class EndToEndBulletinService:
                 message=str(exc),
                 input_article_count=len(articles),
                 created_at=created_at,
-                editorial_preferences=editorial_preferences,
+                editorial_preferences=resolved_personalization.editorial_preferences,
+                personalization=resolved_personalization,
             )
 
         effective_bulletin_id = (bulletin_id or final_editorial_briefing.briefing_id).strip()
@@ -66,7 +72,8 @@ class EndToEndBulletinService:
                 input_article_count=len(articles),
                 final_editorial_briefing=final_editorial_briefing,
                 created_at=created_at,
-                editorial_preferences=editorial_preferences,
+                editorial_preferences=resolved_personalization.editorial_preferences,
+                personalization=resolved_personalization,
             )
 
         audio_package = audio_package_result.package
@@ -89,7 +96,8 @@ class EndToEndBulletinService:
                 final_editorial_briefing=final_editorial_briefing,
                 audio_generation_package=audio_package,
                 created_at=created_at,
-                editorial_preferences=editorial_preferences,
+                editorial_preferences=resolved_personalization.editorial_preferences,
+                personalization=resolved_personalization,
             )
 
         generated_audio_segments = list(tts_result["segments"])
@@ -122,7 +130,13 @@ class EndToEndBulletinService:
             errors=[],
             execution_stats=execution_stats,
             presenter_name=tts_result.get("presenter_name"),
-            editorial_preferences=editorial_preferences,
+            personalization=final_editorial_briefing.personalization,
+            editorial_preferences=final_editorial_briefing.editorial_preferences,
+            personalization_used=final_editorial_briefing.personalization_used,
+            listener_profile_used=final_editorial_briefing.listener_profile_used,
+            editorial_preferences_used=final_editorial_briefing.editorial_preferences_used,
+            personalization_defaults_applied=final_editorial_briefing.personalization_defaults_applied,
+            personalization_explanation=final_editorial_briefing.personalization_explanation,
             tts_provider=tts_result.get("tts_provider"),
             tts_voice_id=tts_result.get("tts_voice_id"),
             created_at=created_at,
@@ -155,6 +169,7 @@ class EndToEndBulletinService:
         created_at: datetime,
         final_editorial_briefing: FinalEditorialBriefingPackage | None = None,
         audio_generation_package: AudioGenerationPackage | None = None,
+        personalization: UserPersonalization | None = None,
         editorial_preferences: EditorialPreferenceProfile | None = None,
     ) -> EndToEndBulletinResult:
         execution_stats = EndToEndExecutionStats(
@@ -196,7 +211,13 @@ class EndToEndBulletinService:
             errors=[EndToEndPipelineError(stage=stage, code=code, message=message)],
             execution_stats=execution_stats,
             presenter_name=None,
-            editorial_preferences=editorial_preferences,
+            personalization=personalization or UserPersonalization.from_input(editorial_preferences=editorial_preferences),
+            editorial_preferences=(editorial_preferences or UserPersonalization.from_input(personalization=personalization).editorial_preferences),
+            personalization_used=(final_editorial_briefing.personalization_used if final_editorial_briefing is not None else (personalization.personalization_used() if personalization else False)),
+            listener_profile_used=(final_editorial_briefing.listener_profile_used if final_editorial_briefing is not None else (personalization.listener_profile_used() if personalization else False)),
+            editorial_preferences_used=(final_editorial_briefing.editorial_preferences_used if final_editorial_briefing is not None else ((editorial_preferences is not None) or (personalization.editorial_preferences_used() if personalization else False))),
+            personalization_defaults_applied=(final_editorial_briefing.personalization_defaults_applied if final_editorial_briefing is not None else (not personalization.personalization_used() if personalization else True)),
+            personalization_explanation=(final_editorial_briefing.personalization_explanation if final_editorial_briefing is not None else ((personalization.explainability()[4]) if personalization else "Pipeline used safe neutral personalization defaults because no explicit personalization payload was provided.")),
             tts_provider=None,
             tts_voice_id=None,
             created_at=created_at,

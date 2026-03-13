@@ -1571,3 +1571,29 @@ Current influence points inside selection:
 - domain tie-breaking: `politics`, `economy`, `sport`, `entertainment`, `education`, `health`, `tech`
 
 Selection explanations now expose whether editorial preferences influenced a selected or rejected near-tie decision.
+
+---
+
+# 30. User Personalization Contract
+
+OpenWave now treats personalization as a first-class pipeline input instead of a demo-only concern.
+
+Canonical object:
+
+- `UserPersonalization`
+  - listener profile: `first_name`, `country`, `region`, `city`
+  - editorial preferences: geography + domain mixes
+
+Contract path:
+
+```
+API request -> EndToEndBulletinService -> EditorialPipelineService -> FinalEditorialBriefingPackage
+```
+
+Current behavior:
+
+- personalization is always resolved explicitly
+- safe neutral defaults are applied when personalization is missing
+- normalized preference mixes are preserved in output
+- output explainability shows whether explicit personalization or defaults were used
+- intro/outro name personalization now reads from the pipeline contract, not hidden config state

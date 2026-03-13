@@ -336,3 +336,32 @@ What it deliberately does not yet do:
 - run a commentary editorial package end-to-end
 - perform complex package optimization beyond the current conservative rules
 - redesign TTS internals or Flutter playback behavior inside the editorial architecture
+
+## 10. Personalization Contract
+
+Personalization is now a first-class backend contract, not a UI-only or demo-only feature.
+
+Canonical object:
+
+- `UserPersonalization`
+  - `listener_profile`
+    - `first_name`
+    - `country`
+    - `region`
+    - `city`
+  - `editorial_preferences`
+    - geography: `local`, `national`, `international`
+    - domains: `politics`, `economy`, `sport`, `entertainment`, `education`, `health`, `tech`
+
+Current contract path:
+
+`API request -> EndToEndBulletinService -> EditorialPipelineService -> BriefingAssemblyService -> FinalEditorialBriefingPackage -> EndToEndBulletinResult`
+
+Current behavior:
+- personalization is always resolved explicitly
+- if no payload is provided, the pipeline uses safe neutral defaults
+- defaults are visible in output through `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, and `personalization_defaults_applied`
+- listener first-name usage in intro/outro now comes from the personalization contract, not hidden config state
+
+Example contract fixture:
+- `backend/app/config/user_personalization_example.json`

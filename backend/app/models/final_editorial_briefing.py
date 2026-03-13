@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.models.editorial_preferences import EditorialPreferenceProfile
+from app.models.user_personalization import EditorialPreferenceProfile, UserPersonalization
 from app.models.generated_briefing_draft import BriefingStoryItem
 from app.models.sized_briefing_draft import BulletinSizingAction
 
@@ -29,7 +29,13 @@ class FinalEditorialBriefingPackage(BaseModel):
     tolerance_seconds: int = Field(ge=0)
     original_duration_seconds: int = Field(ge=0)
     intermediate_counts: EditorialPipelineIntermediateCounts
+    personalization: UserPersonalization = Field(default_factory=UserPersonalization)
     editorial_preferences: EditorialPreferenceProfile | None = None
+    personalization_used: bool = False
+    listener_profile_used: bool = False
+    editorial_preferences_used: bool = False
+    personalization_defaults_applied: bool = True
+    personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     selection_explanation: str
     assembly_explanation: str
     sizing_explanation: str
