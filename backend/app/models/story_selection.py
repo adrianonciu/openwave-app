@@ -12,7 +12,11 @@ class StorySelectionDecision(BaseModel):
     reason: str
     score_total: float = Field(ge=0.0)
     topic_label: str
+    domain_label: str = "general"
+    geography_label: str = "international"
     source_labels: list[str]
+    preference_influence_used: bool = False
+    preference_influence_summary: str | None = None
     explanation: str
 
 

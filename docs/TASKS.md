@@ -685,3 +685,21 @@ Still intentionally excluded from this task:
 - hard quotas
 - full personalization balancing logic
 - direct scoring or selection reweighting
+
+### Preference-Aware Story Selection
+
+Backend now applies editorial preferences conservatively inside story selection.
+
+Current scope:
+
+- use geography and domain preferences as soft near-tie tie-breakers
+- keep score as the primary decision signal
+- expose when a selection or rejection was influenced by editorial preferences
+- avoid rigid quotas and avoid displacing clearly stronger stories
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- preference-weighted story scoring
+- quota-based editorial balancing
+- aggressive bulletin recomposition

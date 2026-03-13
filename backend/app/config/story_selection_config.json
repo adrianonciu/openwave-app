@@ -14,11 +14,166 @@
     "why"
   ],
   "topic_labels": {
-    "war": ["war", "military", "missile", "attack", "ceasefire", "sanctions"],
-    "politics": ["election", "vote", "president", "prime minister", "parliament", "congress"],
-    "economy": ["economy", "inflation", "rates", "budget", "trade", "tariff", "central bank", "ecb"],
-    "disaster": ["earthquake", "quake", "flood", "wildfire", "storm"],
-    "science_space": ["launch", "rocket", "satellite", "space", "ariane"],
+    "war": [
+      "war",
+      "military",
+      "missile",
+      "attack",
+      "ceasefire",
+      "sanctions"
+    ],
+    "politics": [
+      "election",
+      "vote",
+      "president",
+      "prime minister",
+      "parliament",
+      "congress"
+    ],
+    "economy": [
+      "economy",
+      "inflation",
+      "rates",
+      "budget",
+      "trade",
+      "tariff",
+      "central bank",
+      "ecb"
+    ],
+    "disaster": [
+      "earthquake",
+      "quake",
+      "flood",
+      "wildfire",
+      "storm"
+    ],
+    "science_space": [
+      "launch",
+      "rocket",
+      "satellite",
+      "space",
+      "ariane"
+    ],
     "general": []
+  },
+  "preference_near_tie_tolerance": 4,
+  "preference_influence_strength": 0.35,
+  "max_preference_adjustment_per_story": 2.5,
+  "domain_labels": {
+    "politics": [
+      "election",
+      "vote",
+      "president",
+      "prime minister",
+      "parliament",
+      "congress",
+      "government",
+      "coalition",
+      "minister"
+    ],
+    "economy": [
+      "economy",
+      "inflation",
+      "rates",
+      "budget",
+      "trade",
+      "tariff",
+      "central bank",
+      "ecb",
+      "market",
+      "finance"
+    ],
+    "sport": [
+      "sport",
+      "football",
+      "soccer",
+      "tennis",
+      "match",
+      "goal",
+      "league",
+      "championship",
+      "olympic"
+    ],
+    "entertainment": [
+      "film",
+      "movie",
+      "netflix",
+      "festival",
+      "music",
+      "celebrity",
+      "streaming",
+      "oscar",
+      "show"
+    ],
+    "education": [
+      "school",
+      "education",
+      "university",
+      "student",
+      "teacher",
+      "exam",
+      "campus"
+    ],
+    "health": [
+      "health",
+      "hospital",
+      "medical",
+      "doctor",
+      "disease",
+      "virus",
+      "vaccine",
+      "patient"
+    ],
+    "tech": [
+      "tech",
+      "technology",
+      "ai",
+      "software",
+      "chip",
+      "cyber",
+      "startup",
+      "apple",
+      "google",
+      "microsoft"
+    ],
+    "general": []
+  },
+  "geography_labels": {
+    "local": [
+      "iasi",
+      "cluj",
+      "timisoara",
+      "constanta",
+      "brasov",
+      "sibiu",
+      "craiova",
+      "oradea",
+      "local",
+      "municipal",
+      "county",
+      "judet"
+    ],
+    "national": [
+      "romania",
+      "romanian",
+      "bucuresti",
+      "bucharest",
+      "guvernul romaniei",
+      "parlamentul romaniei",
+      "national"
+    ],
+    "international": [
+      "eu",
+      "european",
+      "nato",
+      "united states",
+      "u.s.",
+      "ukraine",
+      "russia",
+      "china",
+      "international",
+      "global",
+      "brussels"
+    ]
   }
 }

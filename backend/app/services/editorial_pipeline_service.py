@@ -39,6 +39,7 @@ class EditorialPipelineService:
         selection_result = self.selection_service.select_stories(
             scored_clusters,
             max_stories=max_stories,
+            editorial_preferences=editorial_preferences,
         )
         self.summary_generator_service.reset_variation_state()
         generated_summaries = [

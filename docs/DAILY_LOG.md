@@ -738,3 +738,6 @@ Run full real-news bulletins and audit:
 - audited the old user-preference slider concept and confirmed it was no longer connected to the modern editorial pipeline
 - added a canonical editorial preference profile for geography and domain sliders in backend models
 - reconnected preference flow from end-to-end API input into the editorial pipeline and final editorial package without yet changing scoring or selection behavior
+- applied editorial preferences conservatively inside story selection so geography and domain sliders now influence only near-tie decisions
+- kept score as the primary driver and avoided rigid quotas or preference overrides against clearly stronger stories
+- exposed preference influence in story-selection explanations and examples

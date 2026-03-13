@@ -3,22 +3,120 @@
     {
       "name": "straightforward_top_score_selection",
       "max_stories": 2,
-      "expected_selected_cluster_ids": ["cluster-high-001", "cluster-medium-001"],
-      "expected_rejected_cluster_ids": ["cluster-low-001"]
+      "expected_selected_cluster_ids": [
+        "cluster-high-001",
+        "cluster-medium-001"
+      ],
+      "expected_rejected_cluster_ids": [
+        "cluster-low-001"
+      ]
     },
     {
       "name": "diversity_keeps_lower_scoring_story",
       "max_stories": 3,
       "scenario": "If three war-topic clusters land within a few points of each other, the service can reject one under the topic soft cap and keep a slightly lower-scoring economy cluster for diversity.",
-      "expected_selected_cluster_ids": ["cluster-war-001", "cluster-war-002", "cluster-economy-001"],
-      "expected_rejected_cluster_ids": ["cluster-war-003"]
+      "expected_selected_cluster_ids": [
+        "cluster-war-001",
+        "cluster-war-002",
+        "cluster-economy-001"
+      ],
+      "expected_rejected_cluster_ids": [
+        "cluster-war-003"
+      ]
     },
     {
       "name": "low_score_story_rejected",
       "max_stories": 8,
       "scenario": "A commentary-like cluster below the editorial threshold is rejected even when capacity remains.",
-      "expected_selected_cluster_ids": ["cluster-high-001"],
-      "expected_rejected_cluster_ids": ["cluster-low-commentary-001"]
+      "expected_selected_cluster_ids": [
+        "cluster-high-001"
+      ],
+      "expected_rejected_cluster_ids": [
+        "cluster-low-commentary-001"
+      ]
+    },
+    {
+      "name": "geography_preference_breaks_near_tie",
+      "max_stories": 2,
+      "scenario": "Two near-tie clusters are both selectable, and the user preference leans toward national coverage, so the national story is preferred over an otherwise similar international story.",
+      "editorial_preferences": {
+        "geography": {
+          "local": 10,
+          "national": 80,
+          "international": 10
+        },
+        "domains": {
+          "politics": 20,
+          "economy": 20,
+          "sport": 20,
+          "entertainment": 10,
+          "education": 10,
+          "health": 10,
+          "tech": 10
+        }
+      },
+      "expected_selected_cluster_ids": [
+        "cluster-national-001",
+        "cluster-high-001"
+      ],
+      "expected_rejected_cluster_ids": [
+        "cluster-international-001"
+      ]
+    },
+    {
+      "name": "domain_preference_breaks_near_tie",
+      "max_stories": 2,
+      "scenario": "Two near-tie clusters remain after higher-scoring stories, and the user preference leans toward sport, so the sport cluster is preferred over a close-scoring politics cluster.",
+      "editorial_preferences": {
+        "geography": {
+          "local": 10,
+          "national": 30,
+          "international": 60
+        },
+        "domains": {
+          "politics": 5,
+          "economy": 10,
+          "sport": 70,
+          "entertainment": 5,
+          "education": 5,
+          "health": 2,
+          "tech": 3
+        }
+      },
+      "expected_selected_cluster_ids": [
+        "cluster-sport-001",
+        "cluster-high-001"
+      ],
+      "expected_rejected_cluster_ids": [
+        "cluster-politics-001"
+      ]
+    },
+    {
+      "name": "stronger_story_still_wins_over_preference",
+      "max_stories": 1,
+      "scenario": "A clearly stronger cluster stays selected even when user preferences favor another domain, because preferences only act as soft near-tie signals.",
+      "editorial_preferences": {
+        "geography": {
+          "local": 0,
+          "national": 20,
+          "international": 80
+        },
+        "domains": {
+          "politics": 5,
+          "economy": 5,
+          "sport": 80,
+          "entertainment": 5,
+          "education": 2,
+          "health": 1,
+          "tech": 2
+        }
+      },
+      "expected_selected_cluster_ids": [
+        "cluster-high-001"
+      ],
+      "expected_rejected_cluster_ids": [
+        "cluster-sport-close-001"
+      ]
     }
   ]
 }

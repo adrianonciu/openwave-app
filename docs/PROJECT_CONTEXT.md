@@ -87,3 +87,5 @@ Current backend infrastructure also reintegrates the `Two Perspectives` editoria
 The older demo-only perspective insertion in the legacy `BriefingService` path is no longer used, so perspective behavior now has one canonical integration point in the editorial pipeline.
 
 Current backend infrastructure also includes a canonical editorial preference profile for geography and domain sliders. The modern end-to-end request path can now carry these values into the editorial pipeline and preserve them in the final editorial package, even though scoring, selection, and bulletin-composition weighting are still pending.
+
+Current backend infrastructure also applies editorial preferences conservatively inside story selection. Geography and domain sliders now act as soft near-tie signals in selection, while score remains the main driver and clearly stronger stories are not displaced just to satisfy the requested mix.

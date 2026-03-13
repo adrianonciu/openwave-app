@@ -1553,3 +1553,21 @@ Planned influence points:
 - scoring: modest topic/geography boosts
 - selection: soft diversity and mix adjustments
 - briefing composition: better local-national-international and domain balance
+
+### Preference-Aware Story Selection
+
+Story selection now accepts editorial preferences as soft targets for geography and domain mix.
+
+Current rule:
+
+- score remains primary
+- preferences only act in near-tie situations
+- no rigid quotas are enforced
+- a clearly stronger story still wins over a preferred but weaker alternative
+
+Current influence points inside selection:
+
+- geography tie-breaking: `local`, `national`, `international`
+- domain tie-breaking: `politics`, `economy`, `sport`, `entertainment`, `education`, `health`, `tech`
+
+Selection explanations now expose whether editorial preferences influenced a selected or rejected near-tie decision.
