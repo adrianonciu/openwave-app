@@ -55,6 +55,9 @@ class EndToEndBulletinResult(BaseModel):
     personalization_defaults_applied: bool = True
     local_editorial_anchor: str | None = None
     local_editorial_anchor_scope: str = "none"
+    local_source_region_used: str | None = None
+    local_source_count: int = Field(default=0, ge=0)
+    local_source_registry_used: bool = False
     personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     tts_provider: str | None = None
     tts_voice_id: str | None = None

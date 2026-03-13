@@ -1,0 +1,850 @@
+{
+  "counties": [
+    {
+      "county_name": "Alba",
+      "source_entries": [
+        {
+          "source_name": "alba24.ro",
+          "source_url": "https://alba24.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stirialba.ro",
+          "source_url": "https://stirialba.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "realitatea24.ro",
+          "source_url": "https://realitatea24.ro",
+          "priority_rank": 3,
+          "notes": "sectiune Alba"
+        }
+      ]
+    },
+    {
+      "county_name": "Arad",
+      "source_entries": [
+        {
+          "source_name": "aradon.ro",
+          "source_url": "https://www.aradon.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "arq.ro",
+          "source_url": "https://arq.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "gls.ro",
+          "source_url": "https://gls.ro",
+          "priority_rank": 3,
+          "notes": "Gazeta de Sud - sectiune Arad"
+        }
+      ]
+    },
+    {
+      "county_name": "Arges",
+      "source_entries": [
+        {
+          "source_name": "argesexpres.ro",
+          "source_url": "https://argesexpres.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "realitateaarges.ro",
+          "source_url": "https://realitateaarges.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "gazetadearges.ro",
+          "source_url": "https://gazetadearges.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Bacau",
+      "source_entries": [
+        {
+          "source_name": "desteptarea.ro",
+          "source_url": "https://www.desteptarea.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "bacau.net",
+          "source_url": "https://www.bacau.net",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "ziaruldebacau.ro",
+          "source_url": "https://ziaruldebacau.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Bihor",
+      "source_entries": [
+        {
+          "source_name": "bihon.ro",
+          "source_url": "https://www.bihon.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "ebihoreanul.ro",
+          "source_url": "https://www.ebihoreanul.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "crisana.ro",
+          "source_url": "https://www.crisana.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Bistrita-Nasaud",
+      "source_entries": [
+        {
+          "source_name": "bistriteanul.ro",
+          "source_url": "https://www.bistriteanul.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "mesagerul.ro",
+          "source_url": "https://mesagerul.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stiridebistrita.ro",
+          "source_url": "https://stiridebistrita.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Botosani",
+      "source_entries": [
+        {
+          "source_name": "botosaninews.ro",
+          "source_url": "https://www.botosaninews.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "monitorulbt.ro",
+          "source_url": "https://monitorulbt.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "dorohoiul.ro",
+          "source_url": "https://www.dorohoiul.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Braila",
+      "source_entries": [
+        {
+          "source_name": "obiectivbr.ro",
+          "source_url": "https://obiectivbr.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "brailach.online",
+          "source_url": "https://brailach.online",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stiridabraila.ro",
+          "source_url": "https://stiridabraila.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Brasov",
+      "source_entries": [
+        {
+          "source_name": "bizbrasov.ro",
+          "source_url": "https://bizbrasov.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "transilvaniaexpres.ro",
+          "source_url": "https://transilvaniaexpres.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "brasov.net",
+          "source_url": "https://brasov.net",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Bucuresti",
+      "source_entries": [
+        {
+          "source_name": "bucuresteni.ro",
+          "source_url": "https://bucuresteni.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "hotnews.ro",
+          "source_url": "https://hotnews.ro",
+          "priority_rank": 2,
+          "notes": "sectiune Bucuresti"
+        },
+        {
+          "source_name": "ziarulbucuresti.ro",
+          "source_url": "https://ziarulbucuresti.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Buzau",
+      "source_entries": [
+        {
+          "source_name": "buzau.net",
+          "source_url": "https://www.buzau.net",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stiridebuzau.ro",
+          "source_url": "https://stiridebuzau.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "impact24.ro",
+          "source_url": "https://impact24.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Calarasi",
+      "source_entries": [
+        {
+          "source_name": "stiricalarasi.ro",
+          "source_url": "https://stiricalarasi.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "observatorulcalarasi.ro",
+          "source_url": "https://observatorulcalarasi.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "caleaeuropeana.ro",
+          "source_url": "https://caleaeuropeana.ro",
+          "priority_rank": 3,
+          "notes": "sectiune locala"
+        }
+      ]
+    },
+    {
+      "county_name": "Caras-Severin",
+      "source_entries": [
+        {
+          "source_name": "gazetadecaras.ro",
+          "source_url": "https://gazetadecaras.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "expressdebanat.ro",
+          "source_url": "https://expressdebanat.ro",
+          "priority_rank": 2,
+          "notes": "sectiune Caras"
+        },
+        {
+          "source_name": "csnews.ro",
+          "source_url": "https://csnews.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Cluj",
+      "source_entries": [
+        {
+          "source_name": "cluj.com",
+          "source_url": "https://cluj.com",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "monitorulcj.ro",
+          "source_url": "https://monitorulcj.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "actualdecluj.ro",
+          "source_url": "https://actualdecluj.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Constanta",
+      "source_entries": [
+        {
+          "source_name": "ziuaconstanta.ro",
+          "source_url": "https://www.ziuaconstanta.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "cugetliber.ro",
+          "source_url": "https://cugetliber.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "tomisnews.ro",
+          "source_url": "https://tomisnews.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Covasna",
+      "source_entries": [
+        {
+          "source_name": "covasnamedia.ro",
+          "source_url": "https://covasnamedia.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "szebenikronika.ro",
+          "source_url": "https://szebenikronika.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stiricovasna.ro",
+          "source_url": "https://stiricovasna.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Dambovita",
+      "source_entries": [
+        {
+          "source_name": "gazetadambovitei.ro",
+          "source_url": "https://www.gazetadambovitei.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "infodambovita.ro",
+          "source_url": "https://infodambovita.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "realitateadambovitei.ro",
+          "source_url": "https://realitateadambovitei.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Dolj",
+      "source_entries": [
+        {
+          "source_name": "gds.ro",
+          "source_url": "https://www.gds.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "craiovaforum.ro",
+          "source_url": "https://craiovaforum.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stiridinolt.ro",
+          "source_url": "https://stiridinolt.ro",
+          "priority_rank": 3,
+          "notes": "sectiune Dolj"
+        }
+      ]
+    },
+    {
+      "county_name": "Galati",
+      "source_entries": [
+        {
+          "source_name": "viata-libera.ro",
+          "source_url": "https://www.viata-libera.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "obiectivgalati.ro",
+          "source_url": "https://obiectivgalati.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stirigalati.ro",
+          "source_url": "https://stirigalati.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Giurgiu",
+      "source_entries": [
+        {
+          "source_name": "giurgiu-tribune.ro",
+          "source_url": "https://giurgiu-tribune.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stirigiurgiu.ro",
+          "source_url": "https://stirigiurgiu.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "realitateagiurgiu.ro",
+          "source_url": "https://realitateagiurgiu.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Gorj",
+      "source_entries": [
+        {
+          "source_name": "gorjeanul.ro",
+          "source_url": "https://www.gorjeanul.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "pandurul.ro",
+          "source_url": "https://pandurul.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "gorjonline.ro",
+          "source_url": "https://gorjonline.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Harghita",
+      "source_entries": [
+        {
+          "source_name": "hargita.ro",
+          "source_url": "https://hargita.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "szekelyhon.ro",
+          "source_url": "https://szekelyhon.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "hargitanepe.ro",
+          "source_url": "https://hargitanepe.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Hunedoara",
+      "source_entries": [
+        {
+          "source_name": "hd.ro",
+          "source_url": "https://hd.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "gazetadehunedoara.ro",
+          "source_url": "https://gazetadehunedoara.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "ziarulhunedorean.ro",
+          "source_url": "https://ziarulhunedorean.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Ialomita",
+      "source_entries": [
+        {
+          "source_name": "stiriialomita.ro",
+          "source_url": "https://stiriialomita.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "obiectiv-ialomita.ro",
+          "source_url": "https://obiectiv-ialomita.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "ziarulziuaialomita.ro",
+          "source_url": "https://ziarulziuaialomita.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Iasi",
+      "source_entries": [
+        {
+          "source_name": "ziaruldeiasi.ro",
+          "source_url": "https://www.ziaruldeiasi.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "bzi.ro",
+          "source_url": "https://www.bzi.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "ieseanul.ro",
+          "source_url": "https://www.ieseanul.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Ilfov",
+      "source_entries": [
+        {
+          "source_name": "ilfovest.ro",
+          "source_url": "https://ilfovest.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stiriilfov.ro",
+          "source_url": "https://stiriilfov.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "ilfovonline.ro",
+          "source_url": "https://ilfovonline.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Maramures",
+      "source_entries": [
+        {
+          "source_name": "graiul.ro",
+          "source_url": "https://www.graiul.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "maramures.ro",
+          "source_url": "https://maramures.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "emaramures.ro",
+          "source_url": "https://www.emaramures.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Mehedinti",
+      "source_entries": [
+        {
+          "source_name": "mehedinti.org",
+          "source_url": "https://mehedinti.org",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stiridemehedinti.ro",
+          "source_url": "https://stiridemehedinti.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "gazetademehedinti.ro",
+          "source_url": "https://gazetademehedinti.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Mures",
+      "source_entries": [
+        {
+          "source_name": "zi-de-zi.ro",
+          "source_url": "https://www.zi-de-zi.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "cst.ro",
+          "source_url": "https://cst.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "mesagerulmures.ro",
+          "source_url": "https://mesagerulmures.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Neamt",
+      "source_entries": [
+        {
+          "source_name": "mesagerulneamt.ro",
+          "source_url": "https://mesagerulneamt.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "ziarpiatraneamt.ro",
+          "source_url": "https://ziarpiatraneamt.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stirineamt.ro",
+          "source_url": "https://stirineamt.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Olt",
+      "source_entries": [
+        {
+          "source_name": "stiriolt.ro",
+          "source_url": "https://stiriolt.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "cotidianulolt.ro",
+          "source_url": "https://cotidianulolt.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "realitateaolt.ro",
+          "source_url": "https://realitateaolt.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Prahova",
+      "source_entries": [
+        {
+          "source_name": "ph-online.ro",
+          "source_url": "https://ph-online.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "ploiestinews.ro",
+          "source_url": "https://ploiestinews.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "gazetaprahovei.ro",
+          "source_url": "https://gazetaprahovei.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Satu Mare",
+      "source_entries": [
+        {
+          "source_name": "informatiasm.ro",
+          "source_url": "https://informatiasm.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "satumareonline.ro",
+          "source_url": "https://www.satumareonline.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stiridesatumare.ro",
+          "source_url": "https://stiridesatumare.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Salaj",
+      "source_entries": [
+        {
+          "source_name": "maghiarhon.ro",
+          "source_url": "https://maghiarhon.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "poroltv.ro",
+          "source_url": "https://poroltv.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "salajmonitor.ro",
+          "source_url": "https://salajmonitor.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Sibiu",
+      "source_entries": [
+        {
+          "source_name": "turnulsfatului.ro",
+          "source_url": "https://www.turnulsfatului.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "sibiu100.ro",
+          "source_url": "https://sibiu100.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "tribuna.ro",
+          "source_url": "https://www.tribuna.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Suceava",
+      "source_entries": [
+        {
+          "source_name": "monitorulsv.ro",
+          "source_url": "https://www.monitorulsv.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "crai-nou.ro",
+          "source_url": "https://www.crai-nou.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "svnews.ro",
+          "source_url": "https://www.svnews.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Teleorman",
+      "source_entries": [
+        {
+          "source_name": "stiriteleorman.ro",
+          "source_url": "https://stiriteleorman.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "ziarulteleormanul.ro",
+          "source_url": "https://ziarulteleormanul.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "realitateteleorman.ro",
+          "source_url": "https://realitateteleorman.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Timis",
+      "source_entries": [
+        {
+          "source_name": "opiniatimisoarei.ro",
+          "source_url": "https://www.opiniatimisoarei.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "timponline.ro",
+          "source_url": "https://www.timponline.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "banatulazi.ro",
+          "source_url": "https://banatulazi.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Tulcea",
+      "source_entries": [
+        {
+          "source_name": "stiridetulcea.ro",
+          "source_url": "https://stiridetulcea.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "delta-dobrogea.ro",
+          "source_url": "https://delta-dobrogea.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "independentul-tulcea.ro",
+          "source_url": "https://independentul-tulcea.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Valcea",
+      "source_entries": [
+        {
+          "source_name": "realitateavalcea.net",
+          "source_url": "https://realitateavalcea.net",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stirivalcea.ro",
+          "source_url": "https://stirivalcea.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "valceaziarul.ro",
+          "source_url": "https://valceaziarul.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Vaslui",
+      "source_entries": [
+        {
+          "source_name": "vnews.ro",
+          "source_url": "https://www.vnews.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "stirivasluiene.ro",
+          "source_url": "https://stirivasluiene.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "cotidianulvaslui.ro",
+          "source_url": "https://cotidianulvaslui.ro",
+          "priority_rank": 3
+        }
+      ]
+    },
+    {
+      "county_name": "Vrancea",
+      "source_entries": [
+        {
+          "source_name": "ziaruldevrancea.ro",
+          "source_url": "https://www.ziaruldevrancea.ro",
+          "priority_rank": 1
+        },
+        {
+          "source_name": "monitoruldevrancea.ro",
+          "source_url": "https://monitoruldevrancea.ro",
+          "priority_rank": 2
+        },
+        {
+          "source_name": "stirivrancea.ro",
+          "source_url": "https://stirivrancea.ro",
+          "priority_rank": 3
+        }
+      ]
+    }
+  ]
+}

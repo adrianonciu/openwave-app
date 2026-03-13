@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
+from app.models.local_source_registry import LocalSourceEntry
 from app.models.source_watcher import (
     DetectedContentItem,
     LatestContentItem,
@@ -19,6 +20,7 @@ from app.models.source_watcher import (
     SourceConfig,
     SourceWatcherState,
 )
+from app.services.local_source_registry_service import LocalSourceRegistryService
 
 USER_AGENT = "OpenWaveSourceWatcher/1.0"
 REQUEST_TIMEOUT_SECONDS = 15
@@ -133,6 +135,9 @@ class _ListingParser(HTMLParser):
 
 
 class SourceWatcherService:
+    def __init__(self) -> None:
+        self.local_source_registry_service = LocalSourceRegistryService()
+
     def load_source_configs(self) -> list[SourceConfig]:
         raw_data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
         return [SourceConfig(**item) for item in raw_data.get("sources", [])]
@@ -235,6 +240,26 @@ class SourceWatcherService:
             for source_config in self.load_source_configs()
         ]
         return SourceCheckSummary(checked_at=datetime.now(UTC), results=results)
+
+    def get_local_sources_for_region(self, region: str) -> list[LocalSourceEntry]:
+        return self.local_source_registry_service.get_local_sources_for_region(region)
+
+    def get_local_source_configs_for_region(self, region: str) -> list[SourceConfig]:
+        source_entries = self.get_local_sources_for_region(region)
+        source_configs: list[SourceConfig] = []
+        normalized_region = self._normalize_source_id_fragment(region) or "region"
+        for entry in source_entries:
+            source_configs.append(
+                SourceConfig(
+                    source_id=f"local-{normalized_region}-{self._normalize_source_id_fragment(entry.source_name)}",
+                    source_name=entry.source_name,
+                    source_type="news",
+                    source_url=entry.source_url,
+                    parser_type="auto",
+                    check_interval_minutes=30,
+                )
+            )
+        return source_configs
 
     def _get_latest_from_rss(self, source_config: SourceConfig) -> LatestContentItem | None:
         if not source_config.rss_url:
@@ -592,6 +617,11 @@ class SourceWatcherService:
             if element is not None and element.text:
                 return element.text.strip()
         return ""
+
+    def _normalize_source_id_fragment(self, value: str) -> str:
+        lowered = value.strip().lower()
+        lowered = re.sub(r"[^a-z0-9]+", "-", lowered)
+        return lowered.strip("-")
 
     def _parse_datetime(self, raw_value: str) -> datetime | None:
         value = raw_value.strip()

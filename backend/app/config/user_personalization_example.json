@@ -59,6 +59,9 @@
     "personalization_defaults_applied": false,
     "personalization_explanation": "User personalization was provided and carried through the pipeline. Local editorial anchor uses listener region or county 'Iasi County' as the primary local reference.",
     "local_editorial_anchor": "Iasi County",
-    "local_editorial_anchor_scope": "region"
+    "local_editorial_anchor_scope": "region",
+    "local_source_region_used": "Iasi County",
+    "local_source_count": 3,
+    "local_source_registry_used": true
   }
 }

@@ -747,3 +747,4 @@ Run full real-news bulletins and audit:
 - made the local personalization anchor explicit: listener region/county is now the primary local editorial anchor, while city remains stored only as secondary metadata and fallback
 - applied the regional anchor conservatively in story selection so region-matching local coverage can win only in near-ties when local preference is enabled
 - added lightweight bulletin continuity detection so recurring clusters can be marked as updates or major updates in summary leads without changing scoring or selection
+- added a Romanian county-based local source registry and made it available to the source watcher and editorial pipeline explainability for region-first local personalization

@@ -1599,4 +1599,5 @@ Current behavior:
 - intro/outro name personalization now reads from the pipeline contract, not hidden config state
 - local editorial anchoring is region or county first, with city kept only as fallback metadata when region is unavailable
 - story selection can favor region-matching local coverage in near-ties when the local geography preference is non-zero
+- county-based Romanian local media registries are now available to the source watcher layer for region-first local monitoring
 - summary generation can detect whether a cluster appeared in the previous bulletin and switch the lead wording to update-style phrasing
