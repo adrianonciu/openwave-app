@@ -44,7 +44,9 @@
           "attribution_variant": "potrivit",
           "summary_variation_used": false
         },
-        "pacing_label": "medium"
+        "pacing_label": "medium",
+        "presenter_voice": "female",
+        "pass_phrase_used": null
       },
       {
         "position": 2,
@@ -86,7 +88,9 @@
           "attribution_variant": "arata_ca",
           "summary_variation_used": true
         },
-        "pacing_label": "medium"
+        "pacing_label": "medium",
+        "presenter_voice": "male",
+        "pass_phrase_used": "Mai departe, Mihai."
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
@@ -114,7 +118,9 @@
     ],
     "trimmed": false,
     "pipeline_explanation": "Example pipeline explanation.",
-    "created_at": "2026-03-13T17:00:00+00:00"
+    "created_at": "2026-03-13T17:00:00+00:00",
+    "intro_variant": "intro_01",
+    "outro_variant": "outro_02"
   },
   "expected_audio_generation_package": {
     "briefing_id": "briefing-example-001",

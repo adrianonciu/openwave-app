@@ -596,3 +596,20 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - random language generation
+
+### Dual Presenter Bulletin Mode
+
+Backend now supports a dual-presenter assembly mode for briefing drafts.
+
+Current scope:
+
+- alternate female and male presenters across ordered stories
+- choose intro and outro from deterministic variant lists
+- insert at most two short microphone-pass phrases between suitable topic shifts
+- expose `presenter_voice`, `pass_phrase_used`, `intro_variant`, and `outro_variant` in briefing outputs
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- audio-generation redesign

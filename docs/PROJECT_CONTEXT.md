@@ -75,3 +75,5 @@ Current backend infrastructure also includes radio lead generation in the story 
 Current backend infrastructure also filters radio summaries more aggressively by keeping memorable short quotes, removing secondary numbers, and exposing simple pacing labels in briefing assembly so bulletins sound more balanced in audio.
 
 Current backend infrastructure also includes a deterministic variation layer inside the story summary generator so attribution-first lines can rotate between equivalent radio-safe phrasings without introducing randomness.
+
+Current backend infrastructure also supports a dual-presenter bulletin draft mode in briefing assembly, with alternating female/male story voices, deterministic intro/outro variants, and short pass-phrase markers kept separate from TTS generation for now.

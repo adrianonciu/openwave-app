@@ -1,13 +1,73 @@
 {
   "spoken_words_per_minute": 150,
-  "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
-  "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-  "lighter_topics": ["sport", "general"],
-  "heavier_topics": ["international_conflict", "politics", "economy"],
-  "medium_topics": ["economy", "politics"],
+  "female_presenter": "Andreea",
+  "male_presenter": "Mihai",
+  "intro_variants": [
+    {
+      "id": "intro_01",
+      "text": "Bun gasit. Ascultati briefingul OpenWave."
+    },
+    {
+      "id": "intro_02",
+      "text": "Buna ziua. Iata principalele stiri ale momentului."
+    },
+    {
+      "id": "intro_03",
+      "text": "Acesta este jurnalul OpenWave cu cele mai importante informatii."
+    }
+  ],
+  "outro_variants": [
+    {
+      "id": "outro_01",
+      "text": "Atat pentru acest buletin. Revenim in curand."
+    },
+    {
+      "id": "outro_02",
+      "text": "Ati ascultat jurnalul OpenWave."
+    },
+    {
+      "id": "outro_03",
+      "text": "Acestea au fost principalele stiri ale momentului."
+    }
+  ],
+  "pass_phrases": [
+    {
+      "id": "pass_01",
+      "template": "Mai departe, {presenter}."
+    },
+    {
+      "id": "pass_02",
+      "template": "Acum, {presenter}."
+    },
+    {
+      "id": "pass_03",
+      "template": "Cu alta stire, {presenter}."
+    }
+  ],
+  "max_passes_per_bulletin": 2,
+  "lighter_topics": [
+    "sport",
+    "general"
+  ],
+  "heavier_topics": [
+    "international_conflict",
+    "politics",
+    "economy"
+  ],
+  "medium_topics": [
+    "economy",
+    "politics"
+  ],
   "similarity_soft_groups": {
-    "hard_news": ["international_conflict", "politics", "economy"],
-    "lighter": ["sport", "general"]
+    "hard_news": [
+      "international_conflict",
+      "politics",
+      "economy"
+    ],
+    "lighter": [
+      "sport",
+      "general"
+    ]
   },
   "max_consecutive_heavy": 2,
   "too_short_seconds": 150,

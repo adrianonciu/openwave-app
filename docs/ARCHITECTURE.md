@@ -1476,3 +1476,7 @@ The briefing assembly layer now assigns a simple pacing label (`heavy`, `medium`
 ### Variation Engine For Radio Language
 
 The story summary generator now rotates attribution-first phrasing deterministically across consecutive stories. It keeps a short in-memory history per bulletin run and switches away from a repeated structure when the same opening would otherwise appear for a third consecutive item.
+
+### Dual Presenter Bulletin Mode
+
+The briefing assembly layer now supports an optional dual-presenter pattern for text drafts. Stories alternate female/male presenter voices, intro and outro lines are chosen from deterministic template variants, and at most two short microphone-pass phrases can be inserted between strong topic shifts without breaking pacing.

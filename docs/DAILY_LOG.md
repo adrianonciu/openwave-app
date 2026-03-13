@@ -643,3 +643,5 @@ In progress:
 - refined briefing assembly with simple heavy/medium/light pacing labels and a secondary flow rule that avoids long runs of heavy stories when alternatives exist
 
 - added a deterministic radio-language variation layer so summary attribution openings now rotate between equivalent attribution-first structures instead of repeating `Potrivit ...` across consecutive items
+
+- added dual-presenter bulletin draft support so briefing assembly now alternates female and male presenter voices, picks intro/outro variants deterministically, and inserts at most two short microphone-pass phrases between suitable story transitions

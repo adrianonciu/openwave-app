@@ -47,6 +47,13 @@
       "cluster-ecb",
       "cluster-romania-final"
     ],
-    "pipeline_explanation": "Editorial pipeline processed 4 fetched articles into 3 clusters, selected 3 stories, assembled a Romanian bulletin draft, and kept it inside the target duration window without trimming."
+    "pipeline_explanation": "Editorial pipeline processed 4 fetched articles into 3 clusters, selected 3 stories, assembled a Romanian bulletin draft, and kept it inside the target duration window without trimming.",
+    "intro_variant": "intro_01",
+    "outro_variant": "outro_02",
+    "story_presenter_voices": [
+      "female",
+      "male",
+      "female"
+    ]
   }
 }

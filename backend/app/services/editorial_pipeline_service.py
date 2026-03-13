@@ -68,8 +68,10 @@ class EditorialPipelineService:
         return FinalEditorialBriefingPackage(
             briefing_id=sized_briefing.briefing_id,
             intro_text=sized_briefing.intro_text,
+            intro_variant=sized_briefing.intro_variant,
             story_items=sized_briefing.story_items,
             outro_text=sized_briefing.outro_text,
+            outro_variant=sized_briefing.outro_variant,
             estimated_total_word_count=sized_briefing.estimated_total_word_count,
             estimated_total_duration_seconds=sized_briefing.estimated_total_duration_seconds,
             target_duration_seconds=sized_briefing.target_duration_seconds,

@@ -17,8 +17,10 @@ class EditorialPipelineIntermediateCounts(BaseModel):
 class FinalEditorialBriefingPackage(BaseModel):
     briefing_id: str
     intro_text: str
+    intro_variant: str = "intro_01"
     story_items: list[BriefingStoryItem]
     outro_text: str
+    outro_variant: str = "outro_01"
     estimated_total_word_count: int = Field(ge=0)
     estimated_total_duration_seconds: int = Field(ge=0)
     target_duration_seconds: int = Field(ge=0)
