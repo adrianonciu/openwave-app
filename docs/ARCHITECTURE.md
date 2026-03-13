@@ -1038,3 +1038,32 @@ This layer does not perform:
 - clustering
 - audio generation
 - TTS orchestration
+
+---
+
+# 13. Article Fetch And Clean Layer
+
+After source detection, OpenWave now includes a dedicated fetch layer that turns
+an article page into clean editorial text.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> Future Editorial Pipeline
+```
+
+Responsibilities:
+
+- download article HTML
+- extract metadata such as title, author, published date, and source
+- prefer JSON-LD article body extraction
+- fall back to `<article>` text extraction
+- fall back to heuristic paragraph/block extraction
+- reject weak extractions below a minimum content threshold
+
+This layer does not perform:
+
+- summarization
+- clustering
+- editorial ranking
+- briefing assembly

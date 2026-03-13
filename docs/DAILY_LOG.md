@@ -5,6 +5,7 @@
 - enforced latest-by-publication-time detection instead of homepage prominence
 - added JSON-backed watcher state persistence for last seen content
 - exposed a minimal backend endpoint for running all watcher checks
+- added an article fetch-and-clean service for extracting readable editorial text from article pages
 
 # OpenWave Development Log
 
@@ -615,3 +616,4 @@ In progress:
 
 1. voice tuning
 2. editorial automation pipeline
+

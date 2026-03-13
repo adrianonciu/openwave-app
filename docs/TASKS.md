@@ -288,3 +288,24 @@ Still intentionally excluded from this task:
 - clustering
 - TTS integration
 - audio generation changes
+
+### Article Fetch And Clean Layer
+
+Backend now includes a fetch-and-clean layer for detected articles.
+
+Current scope:
+
+- download article HTML
+- extract main article text
+- prefer JSON-LD article body when available
+- fall back to `<article>` extraction
+- fall back to heuristic block extraction
+- clean paragraph text for future editorial pipelines
+- reject very small or broken extractions
+
+Still intentionally excluded from this task:
+
+- summarization
+- clustering
+- editorial scoring
+- briefing assembly
