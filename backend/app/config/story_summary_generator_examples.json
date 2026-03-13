@@ -1,130 +1,81 @@
 {
   "examples": [
     {
-      "category": "impact_lead",
-      "lead_type": "impact",
+      "category": "memorable_quote_kept",
       "input_cluster": {
-        "cluster_id": "cluster-impact-001",
-        "representative_title": "Missile attack kills 7 and injures 40 in southern Ukraine",
+        "cluster_id": "cluster-quote-001",
+        "representative_title": "Defense minister says \"nu e nevoie de piloti kamikaze\" after drone debate",
         "member_articles": [
           {
-            "url": "https://example.com/impact/1",
-            "title": "Missile attack kills 7 and injures 40 in southern Ukraine",
-            "source": "Reuters",
+            "url": "https://example.com/quote/1",
+            "title": "Defense minister says \"nu e nevoie de piloti kamikaze\" after drone debate",
+            "source": "HotNews",
             "published_at": "2026-03-13T11:10:00+00:00"
           }
         ],
         "created_at": "2026-03-13T11:10:00+00:00",
         "latest_published_at": "2026-03-13T11:10:00+00:00"
       },
-      "short_headline": "Atac cu victime Ucraina",
-      "generated_summary": "Un atac in southern Ucraina s-a soldat cu 7 morti si aproximativ 40 de raniti. Potrivit Reuters, acesta este cadrul comun in care este urmarit subiectul, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului. Miza este imediata, pentru ca episodul creste tensiunea si poate aduce reactii politice sau militare rapide.",
-      "policy_compliance_notes": ["lead_type_impact", "casualties_prioritized"]
+      "short_headline": "Mesaj dur despre drone",
+      "lead_type": "decision",
+      "memorable_quote_used": true,
+      "generated_summary": "Ministerul a luat o decizie importanta dupa drone debate. Potrivit HotNews, mesajul-cheie este simplu: \"nu e nevoie de piloti kamikaze\", iar in perioada imediat urmatoare atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.",
+      "policy_compliance_notes": [
+        "memorable_quote_kept",
+        "attribution_first"
+      ]
     },
     {
-      "category": "decision_lead",
-      "lead_type": "decision",
+      "category": "excess_numbers_removed",
       "input_cluster": {
-        "cluster_id": "cluster-decision-001",
-        "representative_title": "Government approves new budget package after coalition talks",
+        "cluster_id": "cluster-numbers-001",
+        "representative_title": "Central bank warns inflation could hit 5.4% in Q3 after 12 meetings and 3 revised forecasts",
         "member_articles": [
           {
-            "url": "https://example.com/decision/1",
-            "title": "Government approves new budget package after coalition talks",
-            "source": "AP",
+            "url": "https://example.com/numbers/1",
+            "title": "Central bank warns inflation could hit 5.4% in Q3 after 12 meetings and 3 revised forecasts",
+            "source": "Financial Times",
             "published_at": "2026-03-13T09:00:00+00:00"
           }
         ],
         "created_at": "2026-03-13T09:00:00+00:00",
         "latest_published_at": "2026-03-13T09:00:00+00:00"
       },
-      "short_headline": "Buget dupa negocieri",
-      "generated_summary": "Guvernul a aprobat bugetul pentru perioada urmatoare dupa coalition talks. Potrivit AP, aceasta este forma cea mai clara a evenimentului in acest moment, iar in perioada urmatoare atentia se muta spre reactiile politice si spre aplicarea masurii. Miza este politica, pentru ca decizia poate schimba raportul de forte si urmatorii pasi institutionali.",
-      "policy_compliance_notes": ["lead_type_decision", "institution_decision_context"]
-    },
-    {
-      "category": "warning_lead",
-      "lead_type": "warning",
-      "input_cluster": {
-        "cluster_id": "cluster-warning-001",
-        "representative_title": "Inflation may rise again in Romania, warns central bank",
-        "member_articles": [
-          {
-            "url": "https://example.com/warning/1",
-            "title": "Inflation may rise again in Romania, warns central bank",
-            "source": "FT",
-            "published_at": "2026-03-13T08:30:00+00:00"
-          }
-        ],
-        "created_at": "2026-03-13T08:30:00+00:00",
-        "latest_published_at": "2026-03-13T08:30:00+00:00"
-      },
       "short_headline": "Avertisment despre inflatie",
-      "generated_summary": "Inflatia ar putea creste din nou in Romania, avertizeaza Banca centrala. Potrivit FT, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile si asteptarile investitorilor pentru urmatoarele luni.",
-      "policy_compliance_notes": ["lead_type_warning", "warning_actor_domain"]
+      "lead_type": "warning",
+      "essential_numbers_kept": true,
+      "nonessential_numbers_removed": true,
+      "generated_summary": "Inflatia ar putea creste din nou, avertizeaza Financial Times. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
+      "policy_compliance_notes": [
+        "secondary_numbers_removed",
+        "meaning_changing_percentage_kept"
+      ]
     },
     {
-      "category": "conflict_lead",
-      "lead_type": "conflict",
+      "category": "essential_casualty_number_preserved",
       "input_cluster": {
-        "cluster_id": "cluster-conflict-001",
-        "representative_title": "Coalition tensions rise after PSD studies scenarios for replacing the prime minister",
+        "cluster_id": "cluster-casualty-001",
+        "representative_title": "Explosion kills 2 and injures 14 at fuel depot after 3 earlier alarms",
         "member_articles": [
           {
-            "url": "https://example.com/conflict/1",
-            "title": "Coalition tensions rise after PSD studies scenarios for replacing the prime minister",
-            "source": "HotNews",
-            "published_at": "2026-03-13T10:40:00+00:00"
+            "url": "https://example.com/casualty/1",
+            "title": "Explosion kills 2 and injures 14 at fuel depot after 3 earlier alarms",
+            "source": "Reuters",
+            "published_at": "2026-03-13T08:20:00+00:00"
           }
         ],
-        "created_at": "2026-03-13T10:40:00+00:00",
-        "latest_published_at": "2026-03-13T10:40:00+00:00"
+        "created_at": "2026-03-13T08:20:00+00:00",
+        "latest_published_at": "2026-03-13T08:20:00+00:00"
       },
-      "short_headline": "Tensiuni in coalitie",
-      "generated_summary": "Tensiunile cresc in coalitia de guvernare dupa psd studies scenarios for replacing the prime minister. Potrivit HotNews, acesta este cadrul comun in care este urmarit subiectul, iar in perioada urmatoare atentia se muta spre reactiile politice si spre eventualele ajustari cerute de partenerii de coalitie. Miza este politica, pentru ca decizia poate schimba raportul de forte si urmatorii pasi institutionali.",
-      "policy_compliance_notes": ["lead_type_conflict", "actors_and_cause_present"]
-    },
-    {
-      "category": "change_lead",
-      "lead_type": "change",
-      "input_cluster": {
-        "cluster_id": "cluster-change-001",
-        "representative_title": "Housing prices rise again in major Romanian cities",
-        "member_articles": [
-          {
-            "url": "https://example.com/change/1",
-            "title": "Housing prices rise again in major Romanian cities",
-            "source": "Digi24",
-            "published_at": "2026-03-13T07:50:00+00:00"
-          }
-        ],
-        "created_at": "2026-03-13T07:50:00+00:00",
-        "latest_published_at": "2026-03-13T07:50:00+00:00"
-      },
-      "short_headline": "Preturile cresc din nou",
-      "generated_summary": "Preturile au crescut din nou in major Romanian cities. Potrivit Digi24, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca evolutia poate influenta costurile si asteptarile din piata.",
-      "policy_compliance_notes": ["lead_type_change", "indicator_change_context"]
-    },
-    {
-      "category": "event_lead",
-      "lead_type": "event",
-      "input_cluster": {
-        "cluster_id": "cluster-event-001",
-        "representative_title": "EU leaders meet in Brussels to discuss new sanctions against Russia",
-        "member_articles": [
-          {
-            "url": "https://example.com/event/1",
-            "title": "EU leaders meet in Brussels to discuss new sanctions against Russia",
-            "source": "BBC",
-            "published_at": "2026-03-13T06:30:00+00:00"
-          }
-        ],
-        "created_at": "2026-03-13T06:30:00+00:00",
-        "latest_published_at": "2026-03-13T06:30:00+00:00"
-      },
-      "short_headline": "Summit pentru sanctiuni",
-      "generated_summary": "Liderii se reunesc astazi pentru discuss new sanctiuni against Russia. Potrivit BBC, acesta este cadrul comun in care este urmarit subiectul, iar de aici atentia merge spre reactiile oficiale si spre eventualele masuri de raspuns. Miza este imediata, pentru ca episodul poate aduce reactii politice rapide.",
-      "policy_compliance_notes": ["lead_type_event", "participants_and_purpose_present"]
+      "short_headline": "Explozie la depozit",
+      "lead_type": "impact",
+      "essential_numbers_kept": true,
+      "nonessential_numbers_removed": true,
+      "generated_summary": "O explozia s-a soldat cu 2 morti si aproximativ 14 de raniti. Potrivit Reuters, acesta este cadrul comun in care este urmarit subiectul, iar in perioada imediat urmatoare atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.",
+      "policy_compliance_notes": [
+        "casualty_numbers_kept",
+        "nonessential_alarm_count_removed"
+      ]
     }
   ]
 }

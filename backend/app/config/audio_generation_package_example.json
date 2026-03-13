@@ -14,7 +14,10 @@
           "sentence_count": 3,
           "word_count": 57,
           "topic_label": "international_conflict",
-          "source_labels": ["BBC", "Reuters"],
+          "source_labels": [
+            "BBC",
+            "Reuters"
+          ],
           "attribution_type": "official_statement",
           "quote_line": null,
           "expanded_summary_used": false,
@@ -28,12 +31,18 @@
             "structure_ok": true,
             "banned_patterns_found": [],
             "estimated_duration_seconds": 23,
-            "notes": ["duration_outside_target_range"]
+            "notes": [
+              "duration_outside_target_range"
+            ]
           },
           "generation_explanation": "Example summary.",
           "generated_at": "2026-03-13T17:00:00+00:00",
-          "source_basis": "scored_story_cluster"
-        }
+          "source_basis": "scored_story_cluster",
+          "memorable_quote_used": false,
+          "essential_numbers_kept": false,
+          "nonessential_numbers_removed": false
+        },
+        "pacing_label": "medium"
       },
       {
         "position": 2,
@@ -46,7 +55,9 @@
           "sentence_count": 3,
           "word_count": 51,
           "topic_label": "economy",
-          "source_labels": ["Financial Times"],
+          "source_labels": [
+            "Financial Times"
+          ],
           "attribution_type": "source_attribution",
           "quote_line": null,
           "expanded_summary_used": false,
@@ -60,12 +71,18 @@
             "structure_ok": true,
             "banned_patterns_found": [],
             "estimated_duration_seconds": 20,
-            "notes": ["duration_outside_target_range"]
+            "notes": [
+              "duration_outside_target_range"
+            ]
           },
           "generation_explanation": "Example summary.",
           "generated_at": "2026-03-13T17:00:00+00:00",
-          "source_basis": "scored_story_cluster"
-        }
+          "source_basis": "scored_story_cluster",
+          "memorable_quote_used": false,
+          "essential_numbers_kept": false,
+          "nonessential_numbers_removed": false
+        },
+        "pacing_label": "medium"
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
@@ -103,23 +120,40 @@
         "segment_id": "story_01",
         "story_text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
         "topic_label": "international_conflict",
-        "source_labels": ["BBC", "Reuters"]
+        "source_labels": [
+          "BBC",
+          "Reuters"
+        ]
       },
       {
         "segment_id": "story_02",
         "story_text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
         "topic_label": "economy",
-        "source_labels": ["Financial Times"]
+        "source_labels": [
+          "Financial Times"
+        ]
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
     "segment_count": 4,
     "estimated_duration_seconds": 48,
     "tts_segment_blocks": [
-      {"segment_name": "intro", "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."},
-      {"segment_name": "story_01", "text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."},
-      {"segment_name": "story_02", "text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."},
-      {"segment_name": "outro", "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."}
+      {
+        "segment_name": "intro",
+        "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."
+      },
+      {
+        "segment_name": "story_01",
+        "text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."
+      },
+      {
+        "segment_name": "story_02",
+        "text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."
+      },
+      {
+        "segment_name": "outro",
+        "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."
+      }
     ]
   }
 }

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -8,6 +9,7 @@ from app.models.generated_story_summary import GeneratedStorySummary
 class BriefingStoryItem(BaseModel):
     position: int = Field(ge=1)
     story: GeneratedStorySummary
+    pacing_label: Literal["heavy", "medium", "light"] = "medium"
     ordering_reason: str
 
 

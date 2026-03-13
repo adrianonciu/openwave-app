@@ -4,10 +4,12 @@
   "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
   "lighter_topics": ["sport", "general"],
   "heavier_topics": ["international_conflict", "politics", "economy"],
+  "medium_topics": ["economy", "politics"],
   "similarity_soft_groups": {
     "hard_news": ["international_conflict", "politics", "economy"],
     "lighter": ["sport", "general"]
   },
+  "max_consecutive_heavy": 2,
   "too_short_seconds": 150,
   "too_long_seconds": 480
 }

@@ -1,54 +1,40 @@
 {
   "examples": [
     {
-      "name": "five_story_briefing",
-      "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
+      "name": "before_pacing_refinement",
       "ordered_story_cluster_ids": [
-        "cluster-conflict-001",
-        "cluster-economy-001",
-        "cluster-politics-001",
-        "cluster-general-001",
-        "cluster-sport-001"
-      ],
-      "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-      "estimated_total_duration_seconds": 210,
-      "notes": "Deschide cu cel mai puternic subiect de conflict, evita trei itemi grei la rand si inchide cu sport."
-    },
-    {
-      "name": "eight_story_briefing",
-      "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
-      "ordered_story_cluster_ids": [
-        "cluster-high-001",
-        "cluster-economy-001",
-        "cluster-politics-001",
+        "cluster-war-001",
         "cluster-war-002",
-        "cluster-general-001",
-        "cluster-economy-002",
-        "cluster-politics-002",
+        "cluster-politics-001",
+        "cluster-economy-001",
         "cluster-sport-001"
       ],
-      "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-      "estimated_total_duration_seconds": 335,
-      "notes": "Pastreaza logica score-first, dar incearca sa alterneze intre zone tematice mai grele si momente mai respirabile."
+      "pacing_labels": [
+        "heavy",
+        "heavy",
+        "heavy",
+        "heavy",
+        "light"
+      ],
+      "notes": "Before pacing refinement, the bulletin could stack several heavy items in a row."
     },
     {
-      "name": "ten_story_briefing_candidate",
-      "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
+      "name": "after_pacing_refinement",
       "ordered_story_cluster_ids": [
         "cluster-war-001",
         "cluster-economy-001",
-        "cluster-politics-001",
         "cluster-war-002",
-        "cluster-general-001",
-        "cluster-politics-002",
-        "cluster-economy-002",
-        "cluster-war-003",
-        "cluster-general-002",
-        "cluster-sport-001"
+        "cluster-sport-001",
+        "cluster-politics-001"
       ],
-      "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-      "estimated_total_duration_seconds": 420,
-      "notes": "Un draft mai lung care tot incearca sa nu aglomereze blocurile de hard news si sa lase un final mai usor."
+      "pacing_labels": [
+        "heavy",
+        "medium",
+        "heavy",
+        "light",
+        "heavy"
+      ],
+      "notes": "After pacing refinement, score still leads but the flow avoids a long uninterrupted run of heavy stories when alternatives exist."
     }
   ]
 }

@@ -638,3 +638,6 @@ In progress:
 - refined story summaries again so major stories can expand to 4-5 sentences and must mention casualties when deaths or injuries are clearly present
 - added an attribution-first radio rule so generated summary lines now begin with the speaker, institution, or source instead of using post-attributed audio-ambiguous phrasing
 - added structured radio lead generation so sentence one now follows one of six editorial lead types instead of mostly mirroring the representative title
+
+- refined story summaries to preserve only short memorable quotes and to remove non-essential numbers more aggressively
+- refined briefing assembly with simple heavy/medium/light pacing labels and a secondary flow rule that avoids long runs of heavy stories when alternatives exist

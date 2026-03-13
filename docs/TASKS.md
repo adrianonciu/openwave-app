@@ -566,3 +566,17 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - wider editorial redesign
+
+### Editorial Refinement V5
+
+Backend now refines story summaries and briefing flow with:
+
+- memorable short quote preservation when the quote improves radio clarity
+- aggressive removal of secondary numbers that do not change story meaning
+- pacing-aware bulletin ordering with `heavy`, `medium`, and `light` labels
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- wider editorial redesign

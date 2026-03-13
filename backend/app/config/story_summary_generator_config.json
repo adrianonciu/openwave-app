@@ -47,6 +47,16 @@
     "nou",
     "noile"
   ],
+  "memorable_quote_max_words": 8,
+  "memorable_quote_terms": [
+    "nu", "nici", "fara", "imediat", "acum", "criza", "razboi", "kamikaze", "blocaj", "soc", "urgent"
+  ],
+  "bureaucratic_quote_terms": [
+    "implementare", "procedura", "mecanism", "cadru", "instituțional", "institutional", "coordonare", "consolidare"
+  ],
+  "essential_number_keywords": [
+    "morti", "decese", "raniti", "procent", "%", "lei", "euro", "dolari", "deadline", "termen", "azi", "maine", "luni", "marti", "miercuri", "joi", "vineri", "sambata", "duminica"
+  ],
   "lead_type_keywords": {
     "decision": ["approve", "approved", "aproba", "adopta", "adoptat", "decision", "budget", "sanctions", "agreement", "deal", "law", "measure"],
     "warning": ["warn", "warning", "risk", "risks", "inflation", "security", "energy", "forecast", "deficit", "avertizeaza"],

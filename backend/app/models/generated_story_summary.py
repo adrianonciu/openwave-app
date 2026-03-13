@@ -24,6 +24,9 @@ class GeneratedStorySummary(BaseModel):
     source_labels: list[str] = Field(default_factory=list)
     attribution_type: Literal["direct_quote", "official_statement", "source_attribution"]
     quote_line: str | None = None
+    memorable_quote_used: bool = False
+    essential_numbers_kept: bool = False
+    nonessential_numbers_removed: bool = False
     expanded_summary_used: bool = False
     casualty_line_included: bool = False
     context_line_included: bool = False

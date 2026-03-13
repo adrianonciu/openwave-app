@@ -71,3 +71,5 @@ Current backend infrastructure also includes a refined story summary generator t
 Current backend infrastructure also includes a further refined story summary generator that can expand major stories to 4 or 5 sentences and must mention casualties when deaths or injuries are clearly present in high-priority conflict, attack, disaster, or accident coverage.
 Current backend infrastructure also applies an attribution-first radio rule in story summaries so generated statements begin with the speaker, institution, or source instead of using post-attributed audio-ambiguous forms.
 Current backend infrastructure also includes radio lead generation in the story summary generator, so sentence one is now built from a configurable lead type heuristic instead of mostly mirroring the representative article title.
+
+Current backend infrastructure also filters radio summaries more aggressively by keeping memorable short quotes, removing secondary numbers, and exposing simple pacing labels in briefing assembly so bulletins sound more balanced in audio.

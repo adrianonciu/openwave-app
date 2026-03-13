@@ -1466,3 +1466,9 @@ Rule:
 - lead type selection is heuristic and configurable
 
 This keeps the summary generator explainable while making the opening line sound more like a real radio bulletin.
+
+### Editorial Refinement V5
+
+The story summary generator now preserves short memorable quotes only when they are vivid and audio-friendly, and it filters out secondary numbers unless they change the meaning of the story.
+
+The briefing assembly layer now assigns a simple pacing label (`heavy`, `medium`, `light`) to each story and uses pacing as a secondary ordering adjustment to avoid long runs of heavy items when suitable alternatives exist.

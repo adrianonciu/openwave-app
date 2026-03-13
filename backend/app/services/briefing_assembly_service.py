@@ -19,7 +19,9 @@ class BriefingAssemblyService:
         self.outro_text: str = raw_config["outro_text"]
         self.lighter_topics: list[str] = raw_config["lighter_topics"]
         self.heavier_topics: list[str] = raw_config["heavier_topics"]
+        self.medium_topics: list[str] = raw_config.get("medium_topics", [])
         self.similarity_soft_groups: dict[str, list[str]] = raw_config["similarity_soft_groups"]
+        self.max_consecutive_heavy: int = raw_config.get("max_consecutive_heavy", 2)
         self.too_short_seconds: int = raw_config["too_short_seconds"]
         self.too_long_seconds: int = raw_config["too_long_seconds"]
 
@@ -33,6 +35,7 @@ class BriefingAssemblyService:
             BriefingStoryItem(
                 position=index,
                 story=story,
+                pacing_label=self._pacing_label(story),
                 ordering_reason=reason,
             )
             for index, (story, reason) in enumerate(ordered_stories, start=1)
@@ -72,12 +75,11 @@ class BriefingAssemblyService:
         ordered.append((opener, "opened_bulletin_as_strongest_available_story"))
 
         while remaining:
-            previous_story = ordered[-1][0]
-            next_story = self._pick_next_story(previous_story, remaining)
+            next_story = self._pick_next_story(ordered, remaining)
             remaining.remove(next_story)
-            ordered.append((next_story, self._ordering_reason(previous_story, next_story, len(ordered) + 1)))
+            ordered.append((next_story, self._ordering_reason(ordered, next_story, len(ordered) + 1)))
 
-        if len(ordered) >= 2 and ordered[-1][0].topic_label in self.heavier_topics:
+        if len(ordered) >= 2 and self._pacing_label(ordered[-1][0]) == "heavy":
             lighter_candidate = self._last_lighter_story_index(ordered)
             if lighter_candidate is not None and lighter_candidate != len(ordered) - 1:
                 ordered[lighter_candidate], ordered[-1] = ordered[-1], ordered[lighter_candidate]
@@ -88,30 +90,64 @@ class BriefingAssemblyService:
 
     def _pick_next_story(
         self,
-        previous_story: GeneratedStorySummary,
+        ordered: list[tuple[GeneratedStorySummary, str]],
         remaining: list[GeneratedStorySummary],
     ) -> GeneratedStorySummary:
-        def candidate_key(story: GeneratedStorySummary) -> tuple[float, float, str]:
+        previous_story = ordered[-1][0]
+
+        def candidate_key(story: GeneratedStorySummary) -> tuple[float, float, float, str]:
             similarity_penalty = 1.0 if self._same_soft_group(previous_story, story) else 0.0
-            heaviness_penalty = 1.0 if previous_story.topic_label == story.topic_label else 0.0
+            same_topic_penalty = 1.0 if previous_story.topic_label == story.topic_label else 0.0
+            pacing_penalty = self._pacing_penalty(ordered, story)
             score_value = -(story.score_total or 0.0)
-            return (similarity_penalty, heaviness_penalty, score_value)
+            return (pacing_penalty, similarity_penalty, same_topic_penalty, score_value)
 
         return min(remaining, key=candidate_key)
 
+    def _pacing_penalty(
+        self,
+        ordered: list[tuple[GeneratedStorySummary, str]],
+        story: GeneratedStorySummary,
+    ) -> float:
+        label = self._pacing_label(story)
+        if label != "heavy":
+            return 0.0
+        recent_labels = [self._pacing_label(item[0]) for item in ordered[-self.max_consecutive_heavy :]]
+        if recent_labels and all(recent == "heavy" for recent in recent_labels):
+            return 2.0
+        if recent_labels and recent_labels[-1] == "heavy":
+            return 0.75
+        return 0.0
+
     def _ordering_reason(
         self,
-        previous_story: GeneratedStorySummary,
+        ordered: list[tuple[GeneratedStorySummary, str]],
         current_story: GeneratedStorySummary,
         position: int,
     ) -> str:
         if position == 1:
             return "opened_bulletin_as_strongest_available_story"
+        previous_story = ordered[-1][0]
+        if self._pacing_penalty(ordered, current_story) == 0 and self._pacing_label(previous_story) == "heavy":
+            return "placed_here_to_relieve_bulletin_pacing_after_a_heavier_story"
         if not self._same_soft_group(previous_story, current_story):
             return "placed_here_to_improve_topic_flow_and_reduce_back_to_back_similarity"
         if previous_story.topic_label != current_story.topic_label:
             return "placed_here_as_next_best_story_with_related_but_not_identical_weight"
         return "placed_here_by_remaining_priority_after_flow_checks"
+
+    def _pacing_label(self, story: GeneratedStorySummary) -> str:
+        if story.casualty_line_included or story.lead_type == "impact" or story.topic_label in self.heavier_topics:
+            return "heavy"
+        if story.topic_label in self.lighter_topics:
+            return "light"
+        if story.topic_label in self.medium_topics:
+            return "medium"
+        if (story.score_total or 0.0) >= 70:
+            return "heavy"
+        if (story.score_total or 0.0) <= 35:
+            return "light"
+        return "medium"
 
     def _same_soft_group(
         self,
@@ -128,14 +164,14 @@ class BriefingAssemblyService:
         ordered: list[tuple[GeneratedStorySummary, str]],
     ) -> int | None:
         for index in range(len(ordered) - 1, -1, -1):
-            if ordered[index][0].topic_label in self.lighter_topics:
+            if self._pacing_label(ordered[index][0]) == "light":
                 return index
         return None
 
     def _story_rank_key(self, story: GeneratedStorySummary) -> tuple[float, int, str]:
         return (
             -(story.score_total or 0.0),
-            0 if story.topic_label in self.heavier_topics else 1,
+            0 if self._pacing_label(story) == "heavy" else 1,
             story.cluster_id,
         )
 
@@ -169,7 +205,8 @@ class BriefingAssemblyService:
         elif estimated_total_duration_seconds > self.too_long_seconds:
             duration_note = "longer than a typical briefing candidate"
 
+        pacing_trace = ", ".join(item.pacing_label for item in ordered_items)
         return (
-            f"Bulletin opens with '{opener}' as the strongest available item, then tries to avoid stacking very similar topics back to back. "
-            f"Estimated total duration is {estimated_total_duration_seconds} seconds, which is {duration_note}."
+            f"Bulletin opens with '{opener}' as the strongest available item, then keeps score as the primary ordering rule while trying to avoid long heavy-heavy-heavy runs when lighter alternatives exist. "
+            f"Pacing labels across the bulletin are: {pacing_trace}. Estimated total duration is {estimated_total_duration_seconds} seconds, which is {duration_note}."
         )

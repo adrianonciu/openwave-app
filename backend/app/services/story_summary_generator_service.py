@@ -16,9 +16,14 @@ from app.services.story_summary_policy_service import StorySummaryPolicyService
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "story_summary_generator_config.json"
 WORD_PATTERN = re.compile(r"\b\w+\b", re.UNICODE)
 SENTENCE_SPLIT_PATTERN = re.compile(r"(?<=[.!?])\s+")
-NON_ALPHA_PATTERN = re.compile(r"[^A-Za-z0-9\s-]")
+NON_ALPHA_PATTERN = re.compile(r'[^A-Za-z0-9\s\-"]')
 QUOTE_PATTERN = re.compile(r'["](.{3,120}?)["]')
 TOKEN_PATTERN = re.compile(r"[A-Za-z0-9-]+")
+NUMBER_PATTERN = re.compile(r"\b\d+(?:[.,]\d+)?%?\b")
+KEEP_NUMBER_WINDOW_PATTERN = re.compile(
+    r"\b\d+(?:[.,]\d+)?%?\b(?:\s+(?:de|la|din|pana|pentru|in|pe|aproximativ))?(?:\s+[A-Za-z%-]+){0,3}",
+    re.UNICODE,
+)
 COUNT_KEYWORD_PATTERN = re.compile(
     r"(?P<count>\d+)\s+(?P<kind>killed|dead|deaths|morti|decese|injured|wounded|raniti|ranite)"
 )
@@ -40,6 +45,16 @@ class StorySummaryGeneratorService:
         self.expansion_keywords: list[str] = raw_config["expansion_keywords"]
         self.casualty_priority_keywords: list[str] = raw_config["casualty_priority_keywords"]
         self.context_trigger_keywords: list[str] = raw_config["context_trigger_keywords"]
+        self.memorable_quote_max_words: int = raw_config["memorable_quote_max_words"]
+        self.memorable_quote_terms: set[str] = {
+            term.lower() for term in raw_config["memorable_quote_terms"]
+        }
+        self.bureaucratic_quote_terms: set[str] = {
+            term.lower() for term in raw_config["bureaucratic_quote_terms"]
+        }
+        self.essential_number_keywords: set[str] = {
+            term.lower() for term in raw_config["essential_number_keywords"]
+        }
         self.lead_type_keywords: dict[str, list[str]] = raw_config["lead_type_keywords"]
         self.lead_phrase_maps: dict[str, dict[str, str]] = raw_config["lead_phrase_maps"]
         self.topic_templates: dict[str, dict[str, str]] = raw_config["topic_templates"]
@@ -67,7 +82,7 @@ class StorySummaryGeneratorService:
         generated_at = datetime.now(UTC)
         topic = self._infer_topic(normalized_cluster)
         short_headline = self._build_short_headline(normalized_cluster)
-        quote_line = self._extract_quote_line(normalized_cluster)
+        quote_line = self._extract_memorable_quote_line(normalized_cluster)
         attribution_type = self._determine_attribution_type(normalized_cluster, quote_line)
         casualty_line = self._extract_casualty_line(normalized_cluster)
         lead_type = self._detect_lead_type(normalized_cluster, topic, casualty_line)
@@ -110,7 +125,11 @@ class StorySummaryGeneratorService:
         else:
             sentences.append(consequence_sentence)
 
-        summary_text = " ".join(sentence for sentence in sentences if sentence).strip()
+        filtered_sentences, essential_numbers_kept, nonessential_numbers_removed = self._filter_sentence_numbers(
+            sentences,
+            casualty_line=casualty_line,
+        )
+        summary_text = " ".join(sentence for sentence in filtered_sentences if sentence).strip()
         summary_text = self._expand_if_needed(summary_text, topic)
         sentence_count = len(
             [sentence for sentence in SENTENCE_SPLIT_PATTERN.split(summary_text) if sentence.strip()]
@@ -119,6 +138,7 @@ class StorySummaryGeneratorService:
         expanded_summary_used = sentence_count > self.policy.preferred_sentence_count
         casualty_line_included = casualty_line is not None
         context_line_included = context_line is not None and sentence_count >= 5
+        memorable_quote_used = quote_line is not None and attribution_type == "direct_quote"
         compliance = self._build_compliance_report(
             summary_text=summary_text,
             sentence_count=sentence_count,
@@ -135,6 +155,9 @@ class StorySummaryGeneratorService:
             expanded_summary_used=expanded_summary_used,
             casualty_line_included=casualty_line_included,
             context_line_included=context_line_included,
+            memorable_quote_used=memorable_quote_used,
+            essential_numbers_kept=essential_numbers_kept,
+            nonessential_numbers_removed=nonessential_numbers_removed,
         )
 
         return GeneratedStorySummary(
@@ -148,6 +171,9 @@ class StorySummaryGeneratorService:
             source_labels=sorted({member.source for member in normalized_cluster.member_articles}),
             attribution_type=attribution_type,
             quote_line=quote_line,
+            memorable_quote_used=memorable_quote_used,
+            essential_numbers_kept=essential_numbers_kept,
+            nonessential_numbers_removed=nonessential_numbers_removed,
             expanded_summary_used=expanded_summary_used,
             casualty_line_included=casualty_line_included,
             context_line_included=context_line_included,
@@ -227,15 +253,28 @@ class StorySummaryGeneratorService:
         headline = " ".join(words)
         return headline[0].upper() + headline[1:] if headline else "Subiect important acum"
 
-    def _extract_quote_line(self, cluster: StoryCluster) -> str | None:
+    def _extract_memorable_quote_line(self, cluster: StoryCluster) -> str | None:
         for title in [cluster.representative_title, *[member.title for member in cluster.member_articles]]:
             match = QUOTE_PATTERN.search(title)
             if not match:
                 continue
-            candidate = " ".join(match.group(1).split()).strip()
-            if 3 <= len(candidate.split()) <= 12:
-                return candidate.rstrip(".?!")
+            candidate = " ".join(match.group(1).split()).strip().rstrip(".?!")
+            if self._is_memorable_quote(candidate):
+                return candidate
         return None
+
+    def _is_memorable_quote(self, candidate: str) -> bool:
+        words = candidate.split()
+        lowered = candidate.lower()
+        if not (2 <= len(words) <= self.memorable_quote_max_words):
+            return False
+        if any(term in lowered for term in self.bureaucratic_quote_terms):
+            return False
+        if len(candidate) > 60:
+            return False
+        if any(term in lowered for term in self.memorable_quote_terms):
+            return True
+        return any(len(word) >= 7 for word in words)
 
     def _determine_attribution_type(
         self,
@@ -495,7 +534,7 @@ class StorySummaryGeneratorService:
         source = self._primary_source(cluster)
 
         if attribution_type == "direct_quote" and quote_line:
-            return f'Potrivit {source}, formula-cheie este "{quote_line}", iar {detail.lower()}.'
+            return f'Potrivit {source}, mesajul-cheie este simplu: "{quote_line}", iar {detail.lower()}.'
 
         if attribution_type == "official_statement":
             attribution = self._pick_template(
@@ -512,6 +551,72 @@ class StorySummaryGeneratorService:
 
     def _build_consequence_sentence(self, topic: str) -> str:
         return self.topic_templates.get(topic, self.topic_templates["general"])["impact"]
+
+    def _filter_sentence_numbers(
+        self,
+        sentences: list[str],
+        casualty_line: str | None,
+    ) -> tuple[list[str], bool, bool]:
+        filtered: list[str] = []
+        essential_numbers_kept = False
+        nonessential_numbers_removed = False
+        casualty_text = casualty_line or ""
+
+        for sentence in sentences:
+            if not sentence:
+                continue
+            if sentence == casualty_text:
+                filtered.append(sentence)
+                if NUMBER_PATTERN.search(sentence):
+                    essential_numbers_kept = True
+                continue
+
+            new_sentence, kept_essential, removed_nonessential = self._filter_numbers_in_sentence(sentence)
+            filtered.append(new_sentence)
+            essential_numbers_kept = essential_numbers_kept or kept_essential
+            nonessential_numbers_removed = nonessential_numbers_removed or removed_nonessential
+
+        return filtered, essential_numbers_kept, nonessential_numbers_removed
+
+    def _filter_numbers_in_sentence(self, sentence: str) -> tuple[str, bool, bool]:
+        original_numbers = NUMBER_PATTERN.findall(sentence)
+        if not original_numbers:
+            return sentence, False, False
+
+        kept_essential = False
+
+        def replace_match(match: re.Match[str]) -> str:
+            nonlocal kept_essential
+            snippet = match.group(0)
+            if self._number_snippet_is_essential(snippet, sentence):
+                kept_essential = True
+                return snippet
+            return ""
+
+        filtered = KEEP_NUMBER_WINDOW_PATTERN.sub(replace_match, sentence)
+        filtered = re.sub(r"\s+,", ",", filtered)
+        filtered = re.sub(r",\s*,", ", ", filtered)
+        filtered = re.sub(r"\s{2,}", " ", filtered)
+        filtered = re.sub(r"\s+([.,;:])", r"\1", filtered)
+        filtered = filtered.strip()
+        if filtered and filtered[-1] not in ".!?":
+            filtered += "."
+
+        removed_nonessential = len(NUMBER_PATTERN.findall(filtered)) < len(original_numbers)
+        return filtered or sentence, kept_essential, removed_nonessential
+
+    def _number_snippet_is_essential(self, snippet: str, sentence: str) -> bool:
+        lowered_snippet = snippet.lower()
+        lowered_sentence = sentence.lower()
+        if any(keyword in lowered_snippet for keyword in self.essential_number_keywords):
+            return True
+        if "%" in snippet or any(currency in lowered_snippet for currency in ["lei", "euro", "dolari"]):
+            return True
+        if any(keyword in lowered_sentence for keyword in ["morti", "decese", "raniti", "ucis", "rani", "bilant"]):
+            return True
+        if any(keyword in lowered_sentence for keyword in ["buget", "cost", "inflatie", "dobanzi", "preturi", "deadline", "termen"]):
+            return True
+        return False
 
     def _expand_if_needed(self, summary_text: str, topic: str) -> str:
         if self._word_count(summary_text) >= self.policy.target_word_count_min:
@@ -614,10 +719,15 @@ class StorySummaryGeneratorService:
         expanded_summary_used: bool,
         casualty_line_included: bool,
         context_line_included: bool,
+        memorable_quote_used: bool,
+        essential_numbers_kept: bool,
+        nonessential_numbers_removed: bool,
     ) -> str:
         return (
             f"Summary for cluster '{cluster.representative_title}' was generated with short headline '{short_headline}', "
             f"lead type '{lead_type}', topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, "
-            f"expanded={expanded_summary_used}, casualties={casualty_line_included}, context={context_line_included}. "
+            f"expanded={expanded_summary_used}, casualties={casualty_line_included}, context={context_line_included}, "
+            f"memorable_quote={memorable_quote_used}, essential_numbers_kept={essential_numbers_kept}, "
+            f"nonessential_numbers_removed={nonessential_numbers_removed}. "
             f"Compliance notes: {', '.join(compliance.notes)}."
         )
