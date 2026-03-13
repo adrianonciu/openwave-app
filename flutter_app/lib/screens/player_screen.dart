@@ -5,13 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 import '../models/daily_brief.dart';
+import '../models/user_personalization.dart';
+import 'personalization_flow_screen.dart';
 
 class PlayerScreen extends StatefulWidget {
   final DailyBrief dailyBrief;
+  final UserPersonalization? personalization;
+  final ValueChanged<UserPersonalization>? onPersonalizationChanged;
 
   const PlayerScreen({
     super.key,
     required this.dailyBrief,
+    this.personalization,
+    this.onPersonalizationChanged,
   });
 
   @override
@@ -33,6 +39,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   bool _hasPlayedIntro = false;
   int? _queuedPlaybackIndex;
   int _lastScrolledPlaylistIndex = -1;
+  UserPersonalization? _personalization;
 
   List<_PlaybackItem> get _playlistItems {
     final segments = widget.dailyBrief.segments;
@@ -49,6 +56,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   void initState() {
     super.initState();
+    _personalization = widget.personalization;
     _flutterTts.setCompletionHandler(() {
       _handleTtsCompletion();
     });
@@ -589,6 +597,38 @@ class _PlayerScreenState extends State<PlayerScreen> {
     super.dispose();
   }
 
+
+  Future<void> _openSettings() async {
+    final currentPersonalization = _personalization;
+    if (currentPersonalization == null || widget.onPersonalizationChanged == null) {
+      return;
+    }
+
+    final updated = await Navigator.of(context).push<UserPersonalization>(
+      MaterialPageRoute<UserPersonalization>(
+        builder: (_) => PersonalizationFlowScreen(
+          isOnboarding: false,
+          initialPersonalization: currentPersonalization,
+        ),
+      ),
+    );
+
+    if (updated == null || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _personalization = updated;
+    });
+
+    widget.onPersonalizationChanged?.call(updated);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Settings saved. They will apply to the next generated bulletin.'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = _playlistItems;
@@ -621,6 +661,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Brief Player'),
+        actions: [
+          if (_personalization != null && widget.onPersonalizationChanged != null)
+            IconButton(
+              onPressed: _openSettings,
+              icon: const Icon(Icons.settings),
+              tooltip: 'Edit personalization',
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),

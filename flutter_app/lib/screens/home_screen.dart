@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../models/tts_pilot.dart';
+import '../models/daily_brief.dart';
+import '../models/user_personalization.dart';
 import '../services/api_service.dart';
-import 'pilot_tts_player_screen.dart';
+import 'personalization_flow_screen.dart';
+import 'player_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+    required this.personalization,
+    required this.onPersonalizationChanged,
+  });
+
+  final UserPersonalization personalization;
+  final ValueChanged<UserPersonalization> onPersonalizationChanged;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -13,122 +22,155 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
-
-  List<TtsPilotSummary> _pilots = const [];
+  bool _isGenerating = false;
   String? _error;
-  String? _loadingPilotId;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadPilots();
-  }
+  Future<void> _openPersonalizationSettings() async {
+    final updated = await Navigator.of(context).push<UserPersonalization>(
+      MaterialPageRoute<UserPersonalization>(
+        builder: (_) => PersonalizationFlowScreen(
+          isOnboarding: false,
+          initialPersonalization: widget.personalization,
+        ),
+      ),
+    );
 
-  Future<void> _loadPilots() async {
-    try {
-      final pilots = await _apiService.getTtsPilots();
-
-      if (!mounted) return;
-
-      setState(() {
-        _pilots = pilots;
-        _error = null;
-      });
-    } catch (e) {
-      debugPrint('TTS pilot load error: $e');
-
-      if (!mounted) return;
-
-      setState(() {
-        _error = 'Failed to load Corina TTS pilots.';
-      });
+    if (updated == null || !mounted) {
+      return;
     }
+
+    widget.onPersonalizationChanged(updated);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Personalization updated. It will apply to the next bulletin.'),
+      ),
+    );
   }
 
-  Future<void> _openPilot(TtsPilotSummary pilot) async {
+  Future<void> _generateBulletin() async {
     setState(() {
-      _loadingPilotId = pilot.pilotId;
+      _isGenerating = true;
+      _error = null;
     });
 
     try {
-      final generatedAudio = await _apiService.generatePilotAudio(pilot.pilotId);
+      final dailyBrief = await _apiService.generatePersonalizedBulletin(
+        widget.personalization,
+      );
 
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              PilotTtsPlayerScreen(generatedPilotAudio: generatedAudio),
+          builder: (_) => PlayerScreen(
+            dailyBrief: dailyBrief,
+            personalization: widget.personalization,
+            onPersonalizationChanged: widget.onPersonalizationChanged,
+          ),
         ),
       );
-    } catch (e) {
-      debugPrint('Pilot audio generation error: $e');
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to generate pilot audio.'),
-        ),
-      );
-    } finally {
-      if (!mounted) return;
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
-        _loadingPilotId = null;
+        _error = error.toString();
+      });
+    } finally {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isGenerating = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_error != null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('OpenWave')),
-        body: Center(child: Text(_error!)),
-      );
-    }
-
-    if (_pilots.isEmpty) {
-      return const Scaffold(
-        appBar: AppBar(title: Text('OpenWave')),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    final personalization = widget.personalization;
+    final geography = personalization.editorialPreferences.geography;
+    final domains = personalization.editorialPreferences.domains.rankedEntries();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('OpenWave')),
+      appBar: AppBar(
+        title: const Text('OpenWave'),
+        actions: [
+          IconButton(
+            onPressed: _openPersonalizationSettings,
+            icon: const Icon(Icons.settings),
+            tooltip: 'Personalization settings',
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            'Corina TTS testing pilots',
+            'Your personalized briefing',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           Text(
-            'Generate backend audio for the editorial pilots and play it in the OpenWave player.',
+            'OpenWave will reuse your profile and editorial mix for the next generated bulletin.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 16),
-          for (final pilot in _pilots)
-            Card(
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                title: Text(pilot.title),
-                subtitle: Text('Presenter: ${pilot.presenterName}'),
-                trailing: _loadingPilotId == pilot.pilotId
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.play_circle_fill),
-                onTap: _loadingPilotId == null ? () => _openPilot(pilot) : null,
+          const SizedBox(height: 20),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    personalization.listenerProfile.firstName,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(personalization.locationSummary),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Geography: local ${geography.local} / national ${geography.national} / international ${geography.international}',
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Top domains: ${domains.take(3).map((entry) => '${entry.key} ${entry.value}').join(' | ')}',
+                  ),
+                ],
               ),
             ),
+          ),
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            onPressed: _isGenerating ? null : _generateBulletin,
+            icon: _isGenerating
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.play_circle_fill),
+            label: Text(_isGenerating
+                ? 'Generating briefing...'
+                : 'Generate next bulletin'),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _openPersonalizationSettings,
+            icon: const Icon(Icons.tune),
+            label: const Text('Edit personalization'),
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              _error!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -95,3 +95,5 @@ Current backend infrastructure now treats personalization as a permanent pipelin
 Current backend infrastructure also includes a canonical Romanian county-based local source registry used by the source monitoring layer. When a listener region is available and local preference is enabled, SourceWatcher can operationally ingest and actively monitor region-first local media sources such as `ziaruldeiasi.ro`, `bzi.ro`, and `ieseanul.ro` for Iasi, with a conservative per-region cap. City remains metadata only and does not activate local source monitoring.
 
 Current backend infrastructure also keeps a lightweight continuity state for the most recent bulletin so recurring clusters can be marked as updates in later summaries without affecting scoring or selection.
+Current Flutter app infrastructure now includes a real personalization flow with a two-step onboarding wizard, reusable settings editing, local device persistence, and request payload integration for backend bulletin generation. Listener profile and editorial preferences are now captured in-app and reused for future briefings without interrupting the current playback session.
+

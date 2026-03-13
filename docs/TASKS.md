@@ -744,3 +744,22 @@ Still intentionally excluded from this task:
 - aggressive crawling
 - city-based source activation
 - replacement of the core national/international watcher set
+### Flutter Personalization Onboarding
+
+Flutter now includes a production-oriented personalization flow.
+
+Current scope:
+
+- step 1 onboarding for first name, country, county or region, and optional city
+- step 2 onboarding for geography and domain preference mixes
+- local persistence of the canonical personalization object
+- settings access from the player screen without breaking the current playback session
+- request payload integration for the existing backend end-to-end bulletin generation contract
+
+Still intentionally excluded from this task:
+
+- Flutter player redesign
+- backend contract redesign
+- TTS logic changes
+- new editorial rules
+

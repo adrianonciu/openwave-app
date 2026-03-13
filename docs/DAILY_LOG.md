@@ -750,4 +750,7 @@ Run full real-news bulletins and audit:
 - added a Romanian county-based local source registry and made it available to the source watcher and editorial pipeline explainability for region-first local personalization
 - connected the county registry to SourceWatcher operational resolution so `local_county` sources activate only when region exists and local preference is above zero
 - activated county local sources inside SourceWatcher monitoring so region-based local media are appended conservatively to the monitored source set only when local preference is enabled
+- added a real Flutter personalization flow with two-step onboarding, reusable settings, and local persistence for the canonical backend personalization contract
+- connected Flutter bulletin generation requests to send listener profile plus editorial preferences to the existing end-to-end backend payload
+- added player-screen settings access so personalization changes are saved for the next bulletin without interrupting the current playback session
 

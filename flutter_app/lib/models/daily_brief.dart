@@ -37,6 +37,111 @@ class DailyBrief {
                 .toList(),
     );
   }
+
+  factory DailyBrief.fromEditorialPackage(Map<String, dynamic> json) {
+    final createdAt = DateTime.tryParse(json['created_at'] as String? ?? '') ??
+        DateTime.now();
+    final storyItems = (json['story_items'] as List<dynamic>? ?? const <dynamic>[])
+        .map((item) => Map<String, dynamic>.from(item as Map))
+        .toList();
+
+    final articles = <DailyBriefArticle>[];
+    final segments = <DailyBriefSegment>[
+      DailyBriefSegment(
+        id: 0,
+        type: 'intro',
+        title: 'OpenWave intro',
+        summary: json['intro_text'] as String? ?? '',
+        source: 'OpenWave',
+        estimatedDurationSeconds: 10,
+        tags: const ['intro'],
+        articleId: 0,
+        narrationText: json['intro_text'] as String? ?? '',
+        section: 'Intro',
+      ),
+    ];
+
+    for (var index = 0; index < storyItems.length; index++) {
+      final item = storyItems[index];
+      final story = Map<String, dynamic>.from(item['story'] as Map? ?? const {});
+      final title = story['short_headline'] as String? ??
+          story['representative_title'] as String? ??
+          'OpenWave story';
+      final summary = story['summary_text'] as String? ?? '';
+      final sourceLabels =
+          (story['source_labels'] as List<dynamic>? ?? const <dynamic>[])
+              .map((entry) => entry.toString())
+              .toList();
+      final policyCompliance = Map<String, dynamic>.from(
+        story['policy_compliance'] as Map? ?? const {},
+      );
+      final topicLabel = story['topic_label'] as String? ?? 'general';
+      final sourceLabel =
+          sourceLabels.isEmpty ? 'OpenWave' : sourceLabels.join(', ');
+      final passPhrase = item['pass_phrase_used'] as String?;
+      final narrationText = passPhrase == null || passPhrase.trim().isEmpty
+          ? summary
+          : '${passPhrase.trim()} $summary';
+
+      articles.add(
+        DailyBriefArticle(
+          id: index + 1,
+          title: title,
+          source: sourceLabel,
+          summary: summary,
+          url: '',
+          publishedAt: createdAt,
+        ),
+      );
+
+      segments.add(
+        DailyBriefSegment(
+          id: index + 1,
+          type: 'article',
+          title: title,
+          summary: summary,
+          source: sourceLabel,
+          estimatedDurationSeconds:
+              policyCompliance['estimated_duration_seconds'] as int? ?? 30,
+          tags: [topicLabel],
+          articleId: index + 1,
+          narrationText: narrationText,
+          section: topicLabel,
+        ),
+      );
+
+      final perspectiveSegments =
+          (item['perspective_segments'] as List<dynamic>? ?? const <dynamic>[])
+              .map((entry) => Map<String, dynamic>.from(entry as Map))
+              .toList();
+      for (final perspective in perspectiveSegments) {
+        segments.add(DailyBriefSegment.fromJson(perspective));
+      }
+    }
+
+    segments.add(
+      DailyBriefSegment(
+        id: storyItems.length + 1,
+        type: 'outro',
+        title: 'OpenWave outro',
+        summary: json['outro_text'] as String? ?? '',
+        source: 'OpenWave',
+        estimatedDurationSeconds: 10,
+        tags: const ['outro'],
+        articleId: 0,
+        narrationText: json['outro_text'] as String? ?? '',
+        section: 'Outro',
+      ),
+    );
+
+    return DailyBrief(
+      date: createdAt,
+      headline: 'OpenWave personalized briefing',
+      highlights: articles.map((article) => article.title).toList(),
+      articles: articles,
+      segments: segments,
+    );
+  }
 }
 
 class DailyBriefArticle {
