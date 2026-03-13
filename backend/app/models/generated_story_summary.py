@@ -23,6 +23,9 @@ class GeneratedStorySummary(BaseModel):
     source_labels: list[str] = Field(default_factory=list)
     attribution_type: Literal["direct_quote", "official_statement", "source_attribution"]
     quote_line: str | None = None
+    expanded_summary_used: bool = False
+    casualty_line_included: bool = False
+    context_line_included: bool = False
     representative_title: str | None = None
     score_total: float | None = Field(default=None, ge=0.0)
     policy_compliance: SummaryComplianceReport

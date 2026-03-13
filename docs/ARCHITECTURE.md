@@ -1400,3 +1400,28 @@ The generator keeps the same three-sentence structure:
 - sentence 3: consequence or context
 
 This refinement remains conservative and does not redesign the wider editorial pipeline.
+
+---
+
+# 25. Story Summary Refinement V3
+
+The story summary generator now supports controlled expansion for major stories
+and explicit victim mention when casualties are clearly present in source titles.
+
+New rules:
+
+- deaths and injuries must be mentioned when clearly present
+- this rule has priority for war, attack, disaster, and accident coverage
+- 3 sentences remain the default
+- 4 sentences are allowed for major stories that need casualty mention or one extra essential line
+- 5 sentences are allowed only when both casualties and short relevant context improve understanding
+
+Summary priority order for expanded stories:
+
+- sentence 1: event
+- sentence 2: detail plus attribution
+- sentence 3: casualties
+- sentence 4: consequence or reaction
+- sentence 5: short relevant context
+
+This refinement remains conservative and does not introduce new infrastructure.

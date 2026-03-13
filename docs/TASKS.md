@@ -514,3 +514,21 @@ Still intentionally excluded from this task:
 - TTS provider changes
 - wider editorial pipeline redesign
 - aggressive rewriting beyond summary generation
+
+### Story Summary Refinement V3
+
+Backend now includes a second refinement pass for per-story summary generation.
+
+Current scope:
+
+- include deaths and injuries when clearly present in source titles
+- allow 4-sentence summaries for major stories when needed
+- allow 5-sentence summaries only for casualties plus short essential context
+- expose flags for expanded summary, casualty line, and context line
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- editorial pipeline redesign
+- background explainer generation

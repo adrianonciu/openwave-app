@@ -6,26 +6,72 @@
     "a scris ca",
     "autorul arata"
   ],
+  "expanded_max_sentences": 5,
+  "expansion_score_threshold": 70,
+  "expansion_topics": [
+    "international_conflict",
+    "politics"
+  ],
+  "expansion_keywords": [
+    "attack",
+    "missile",
+    "explosion",
+    "crash",
+    "earthquake",
+    "flood",
+    "fire",
+    "coalition"
+  ],
+  "casualty_priority_keywords": [
+    "attack",
+    "strike",
+    "missile",
+    "explosion",
+    "crash",
+    "earthquake",
+    "flood",
+    "fire",
+    "disaster",
+    "accident"
+  ],
+  "context_trigger_keywords": [
+    "again",
+    "latest",
+    "new",
+    "renewed",
+    "another",
+    "further",
+    "after",
+    "dupa",
+    "noi",
+    "nou",
+    "noile"
+  ],
   "topic_templates": {
     "politics": {
       "impact": "Miza este politica, pentru ca decizia poate schimba raportul de forte, ritmul negocierilor si urmatorii pasi institutionali din perioada imediat urmatoare.",
-      "detail": "In perioada urmatoare, atentia se muta spre reactiile politice, spre aplicarea masurii si spre eventualele ajustari cerute de opozitie sau de partenerii de coalitie."
+      "detail": "In perioada urmatoare, atentia se muta spre reactiile politice, spre aplicarea masurii si spre eventualele ajustari cerute de opozitie sau de partenerii de coalitie.",
+      "context": "Momentul vine dupa tensiuni acumulate recent, iar acest lucru creste presiunea pentru o decizie rapida."
     },
     "economy": {
       "impact": "Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
-      "detail": "Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice."
+      "detail": "Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice.",
+      "context": "Contextul imediat este dat de seria recenta de date si avertismente care au schimbat asteptarile pietei."
     },
     "international_conflict": {
       "impact": "Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
-      "detail": "De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile."
+      "detail": "De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile.",
+      "context": "Este unul dintre cele mai noi episoade dintr-o succesiune de atacuri si reactii urmarite deja in ultimele zile."
     },
     "sport": {
       "impact": "Miza este sportiva, pentru ca rezultatul schimba tabloul competitiei, presiunea din clasament si asteptarile pentru urmatorul meci.",
-      "detail": "Pasul urmator este decisiv, iar echipa trebuie sa confirme acest rezultat in confruntarea care urmeaza si in lupta pentru obiectivul mai mare al turneului."
+      "detail": "Pasul urmator este decisiv, iar echipa trebuie sa confirme acest rezultat in confruntarea care urmeaza si in lupta pentru obiectivul mai mare al turneului.",
+      "context": "Contextul ramane legat de seria de rezultate recente care a schimbat asteptarile pentru faza urmatoare."
     },
     "general": {
       "impact": "Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.",
-      "detail": "In perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale."
+      "detail": "In perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.",
+      "context": "Contextul imediat arata ca episodul se inscrie intr-o serie mai larga de evolutii recente pe acelasi subiect."
     }
   },
   "english_to_romanian_terms": {
@@ -45,6 +91,7 @@
     "outlook": "perspectivelor",
     "warns": "avertizeaza",
     "attack": "atac",
+    "attacks": "atacuri",
     "on": "asupra",
     "missile": "rachete",
     "sanctions": "sanctiuni",
@@ -69,7 +116,14 @@
     "ukraine": "Ucraina",
     "russia": "Rusia",
     "europe": "Europa",
-    "turkey": "Turcia"
+    "turkey": "Turcia",
+    "killed": "ucis",
+    "dead": "morti",
+    "deaths": "decese",
+    "injured": "raniti",
+    "wounded": "raniti",
+    "people": "persoane",
+    "person": "persoana"
   },
   "topic_keywords": {
     "politics": ["government", "parliament", "election", "president", "coalition", "cabinet"],

@@ -8,11 +8,17 @@
         "ordering_reason": "opened_bulletin_as_strongest_available_story",
         "story": {
           "cluster_id": "cluster-sanctions",
-          "summary_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Decizia conteaza imediat, pentru ca mareste presiunea politica si economica asupra Moscovei. Oficialii europeni pregatesc acum urmatorii pasi si noi clarificari privind aplicarea masurilor.",
+          "short_headline": "Sanctiuni dupa atac",
+          "summary_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
           "sentence_count": 3,
-          "word_count": 38,
+          "word_count": 56,
           "topic_label": "international_conflict",
           "source_labels": ["BBC", "Reuters"],
+          "attribution_type": "official_statement",
+          "quote_line": null,
+          "expanded_summary_used": false,
+          "casualty_line_included": false,
+          "context_line_included": false,
           "representative_title": "EU approves new sanctions after Russian missile attack on Ukraine",
           "score_total": 82.5,
           "policy_compliance": {
@@ -20,7 +26,7 @@
             "word_count_ok": false,
             "structure_ok": true,
             "banned_patterns_found": [],
-            "estimated_duration_seconds": 15,
+            "estimated_duration_seconds": 22,
             "notes": ["duration_outside_target_range"]
           },
           "generation_explanation": "Example summary.",
@@ -33,11 +39,17 @@
         "ordering_reason": "placed_here_to_improve_topic_flow_and_reduce_back_to_back_similarity",
         "story": {
           "cluster_id": "cluster-ecb",
-          "summary_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Mesajul conteaza pentru costurile de finantare, investitii si asteptarile pietei in urmatoarele saptamani. Atentia se muta acum spre urmatoarele date despre inflatie si spre noile semnale venite de la Frankfurt.",
+          "short_headline": "Prudenta la dobanzi",
+          "summary_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
           "sentence_count": 3,
-          "word_count": 39,
+          "word_count": 58,
           "topic_label": "economy",
           "source_labels": ["Financial Times"],
+          "attribution_type": "source_attribution",
+          "quote_line": null,
+          "expanded_summary_used": false,
+          "casualty_line_included": false,
+          "context_line_included": false,
           "representative_title": "ECB signals caution on rate cuts as inflation risks persist",
           "score_total": 63.0,
           "policy_compliance": {
@@ -45,7 +57,7 @@
             "word_count_ok": false,
             "structure_ok": true,
             "banned_patterns_found": [],
-            "estimated_duration_seconds": 16,
+            "estimated_duration_seconds": 23,
             "notes": ["duration_outside_target_range"]
           },
           "generation_explanation": "Example summary.",
@@ -55,11 +67,11 @@
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-    "estimated_total_word_count": 95,
-    "estimated_total_duration_seconds": 38,
+    "estimated_total_word_count": 125,
+    "estimated_total_duration_seconds": 50,
     "target_duration_seconds": 540,
     "tolerance_seconds": 90,
-    "original_duration_seconds": 38,
+    "original_duration_seconds": 50,
     "intermediate_counts": {
       "article_count": 3,
       "cluster_count": 2,
@@ -69,7 +81,7 @@
     },
     "selection_explanation": "Selected 2 of 2 scored clusters.",
     "assembly_explanation": "Bulletin opens with the strongest story and alternates topics where possible.",
-    "sizing_explanation": "Briefing remains below the target window at 38 seconds.",
+    "sizing_explanation": "Briefing remains below the target window at 50 seconds.",
     "sizing_actions": [
       {
         "action": "below_target_duration",
@@ -87,24 +99,24 @@
     "story_segments": [
       {
         "segment_id": "story_01",
-        "story_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Decizia conteaza imediat, pentru ca mareste presiunea politica si economica asupra Moscovei. Oficialii europeni pregatesc acum urmatorii pasi si noi clarificari privind aplicarea masurilor.",
+        "story_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
         "topic_label": "international_conflict",
         "source_labels": ["BBC", "Reuters"]
       },
       {
         "segment_id": "story_02",
-        "story_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Mesajul conteaza pentru costurile de finantare, investitii si asteptarile pietei in urmatoarele saptamani. Atentia se muta acum spre urmatoarele date despre inflatie si spre noile semnale venite de la Frankfurt.",
+        "story_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
         "topic_label": "economy",
         "source_labels": ["Financial Times"]
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
     "segment_count": 4,
-    "estimated_duration_seconds": 38,
+    "estimated_duration_seconds": 50,
     "tts_segment_blocks": [
       {"segment_name": "intro", "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."},
-      {"segment_name": "story_01", "text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Decizia conteaza imediat, pentru ca mareste presiunea politica si economica asupra Moscovei. Oficialii europeni pregatesc acum urmatorii pasi si noi clarificari privind aplicarea masurilor."},
-      {"segment_name": "story_02", "text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Mesajul conteaza pentru costurile de finantare, investitii si asteptarile pietei in urmatoarele saptamani. Atentia se muta acum spre urmatoarele date despre inflatie si spre noile semnale venite de la Frankfurt."},
+      {"segment_name": "story_01", "text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."},
+      {"segment_name": "story_02", "text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."},
       {"segment_name": "outro", "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."}
     ]
   }
