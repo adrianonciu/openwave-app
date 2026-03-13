@@ -1271,3 +1271,40 @@ This layer does not perform:
 - audio generation
 - TTS changes
 - story rewriting
+
+---
+
+# 21. Editorial Pipeline Integration V1
+
+OpenWave now includes an orchestration layer that connects the existing
+editorial services into one backend-only text pipeline.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Story Summary Generator -> Briefing Assembly -> Bulletin Sizing -> Final Editorial Briefing Package
+```
+
+Orchestration flow:
+
+- cluster fetched articles
+- score resulting story clusters
+- select a bounded candidate set
+- generate one Romanian radio-style summary per selected cluster
+- assemble a coherent briefing draft
+- size the draft to the target duration window
+
+Explainability exposed by the final package:
+
+- input article count
+- formed cluster count
+- selected story count
+- whether the bulletin was trimmed during sizing
+- selection, assembly, and sizing explanations carried forward from prior layers
+
+This layer does not perform:
+
+- audio generation
+- TTS redesign
+- Flutter integration changes
+- commentary pipeline orchestration

@@ -1,0 +1,52 @@
+{
+  "input_fetched_articles": [
+    {
+      "url": "https://example.com/world/eu-sanctions-1",
+      "title": "EU approves new sanctions after Russian missile attack on Ukraine",
+      "author": "Reporter One",
+      "published_at": "2026-03-13T07:30:00+00:00",
+      "source": "Reuters",
+      "content_text": "European Union leaders approved a new sanctions package after a Russian missile attack on Ukraine. Officials say the measures focus on finance, logistics, and military supply chains. The move is presented as an immediate political response while diplomats prepare more talks and national governments review implementation steps. Member states expect the package to raise pressure on Moscow and shape the next round of coordination with allies."
+    },
+    {
+      "url": "https://example.com/world/eu-sanctions-2",
+      "title": "Europe backs fresh sanctions package following attack in Ukraine",
+      "author": "Reporter Two",
+      "published_at": "2026-03-13T08:10:00+00:00",
+      "source": "BBC",
+      "content_text": "European governments backed a fresh sanctions package after the latest attack in Ukraine. Officials say the decision is meant to raise pressure quickly and show alignment between capitals. The package still needs implementation steps in member states, but the main political line is already clear. Diplomats and ministers now expect responses from Moscow and further announcements from European institutions."
+    },
+    {
+      "url": "https://example.com/economy/ecb-rates",
+      "title": "ECB signals caution on rate cuts as inflation risks persist",
+      "author": "Economy Desk",
+      "published_at": "2026-03-13T06:40:00+00:00",
+      "source": "Financial Times",
+      "content_text": "The European Central Bank signaled caution on rate cuts, arguing that inflation risks remain active across services and wages. Markets are now recalibrating expectations for the next meetings. The signal matters for borrowing costs, investment decisions, and the broader pace of recovery across the euro area. Analysts say the next inflation data and policy remarks will shape near-term expectations."
+    },
+    {
+      "url": "https://example.com/sport/romania-win",
+      "title": "Romania reaches the final after a late win in the semifinal",
+      "author": "Sports Desk",
+      "published_at": "2026-03-13T09:00:00+00:00",
+      "source": "Agerpres",
+      "content_text": "Romania reached the final after a late win in the semifinal, keeping public attention on the decisive match ahead. Coaches and players described the result as important for confidence and momentum. The focus now shifts to recovery, selection decisions, and the tactical plan for the final. Supporters are already looking at the title chance and the wider impact of the run."
+    }
+  ],
+  "expected_output_shape": {
+    "briefing_id": "briefing-example-001",
+    "intermediate_counts": {
+      "article_count": 4,
+      "cluster_count": 3,
+      "selected_story_count": 3
+    },
+    "trimmed": false,
+    "estimated_total_duration_seconds": 95,
+    "story_cluster_ids": [
+      "cluster-sanctions",
+      "cluster-ecb",
+      "cluster-romania-final"
+    ],
+    "pipeline_explanation": "Editorial pipeline processed 4 fetched articles into 3 clusters, selected 3 stories, assembled a Romanian bulletin draft, and kept it inside the target duration window without trimming."
+  }
+}

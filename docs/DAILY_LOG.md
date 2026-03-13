@@ -631,3 +631,4 @@ In progress:
 
 
 
+- added editorial pipeline orchestration to connect clustering, scoring, selection, summary generation, assembly, and sizing into one final text briefing package

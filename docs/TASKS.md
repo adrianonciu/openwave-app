@@ -435,3 +435,25 @@ Still intentionally excluded from this task:
 - audio generation
 - TTS integration changes
 - story text rewriting
+
+### Editorial Pipeline Integration V1
+
+Backend now includes an end-to-end orchestration layer for the editorial text pipeline.
+
+Current scope:
+
+- run clustering on fetched articles
+- score clusters with the existing explainable scoring service
+- select a bounded story set
+- generate one Romanian radio-style summary per selected cluster
+- assemble the summaries into a draft briefing
+- size the draft to the target duration window
+- expose final counts and sizing status in one package
+
+Still intentionally excluded from this task:
+
+- audio generation
+- TTS redesign
+- Flutter changes
+- commentary pipeline integration
+- advanced scheduling
