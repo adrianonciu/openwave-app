@@ -652,3 +652,86 @@ In progress:
 - reintegrated the legacy `Two Perspectives` feature into the modern editorial pipeline by moving perspective insertion to briefing assembly for controversial stories
 - limited perspective output to one supporters-vs-critics pair per bulletin and preserved the existing perspective segment model for downstream audio
 - removed demo-only perspective insertion from the legacy `BriefingService` playback path so perspective behavior now has one canonical integration point
+
+## 2026-03-13
+
+### Major progress
+Implemented and connected the full OpenWave editorial backend pipeline end-to-end.
+
+### Backend editorial pipeline completed
+Added or finalized:
+- unified source watcher
+- article fetch and clean layer
+- conservative news clustering
+- transparent story scoring
+- bounded story selection
+- summary policy
+- story summary generator
+- briefing assembly
+- bulletin sizing
+- editorial pipeline orchestration
+- editorial-to-audio bridge
+- end-to-end bulletin generation
+
+### Editorial refinements implemented
+Added or refined:
+- short editorial headlines
+- attribution-first rule
+- source attribution fallback
+- memorable short quote support
+- aggressive non-essential number filtering
+- mandatory casualty mention when clearly present
+- 4–5 sentence expansion for major stories
+- radio lead generation with 6 lead types:
+  - impact
+  - decision
+  - warning
+  - conflict
+  - change
+  - event
+- pacing labels inside briefing assembly:
+  - heavy
+  - medium
+  - light
+
+### Perspective feature
+Audited the old “Two Perspectives” feature.
+Confirmed it was legacy/demo in the old briefing flow.
+Reconnected it properly into the modern assembly pipeline:
+- only for controversial/disputed stories
+- maximum one pair per bulletin
+- order:
+  - main story
+  - perspective_supporters
+  - perspective_critics
+
+### Documentation added
+Created canonical project documentation:
+- `docs/OPENWAVE_EDITORIAL_RULES_v1.md`
+- `docs/OPENWAVE_ARCHITECTURE_v1.md`
+
+### Current status
+OpenWave now has:
+- MVP editorial backend completed
+- end-to-end backend bulletin generation completed
+- editorial rules documented
+- architecture documented
+
+### Remaining work
+Still open:
+- real end-to-end live-content validation
+- commentary pipeline
+- dual presenter mode
+- intro/outro variation
+- attribution variation engine
+- stinger / micro-transition logic
+- final voice tuning
+- beta testing workflow
+
+### Next recommended step
+Run full real-news bulletins and audit:
+- story quality
+- pacing
+- attribution quality
+- audio realism
+- summary completeness
