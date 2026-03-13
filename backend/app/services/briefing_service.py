@@ -107,54 +107,10 @@ class BriefingService:
 
         return segments_with_cues
 
-    def _insert_demo_perspective_pair_after_first_article(self, playback_segments: list[Segment]) -> list[Segment]:
-        first_article_index = next(
-            (index for index, segment in enumerate(playback_segments) if segment.article_id > 0),
-            -1,
-        )
-        if first_article_index < 0:
-            return playback_segments
-
-        first_article_segment = playback_segments[first_article_index]
-        allowed_sections = {"Top story", "International", "Economy"}
-        if first_article_segment.section not in allowed_sections:
-            return playback_segments
-
-        article_summary = first_article_segment.summary.strip()
-        supporters_text = (
-            "Supporters say this development could be positive."
-            if not article_summary
-            else f"Supporters say this development could be positive. {article_summary}"
-        )
-        critics_text = (
-            "Critics argue the situation could be problematic."
-            if not article_summary
-            else f"Critics argue the situation could be problematic. {article_summary}"
-        )
-        next_segment_id = max(segment.id for segment in playback_segments) + 1
-        perspective_supporters = self.segment_service.create_perspective_segment(
-            title="Supporters say",
-            narration_text=supporters_text,
-            segment_id=next_segment_id,
-            section=first_article_segment.section,
-        )
-        perspective_critics = self.segment_service.create_perspective_segment(
-            title="Critics argue",
-            narration_text=critics_text,
-            segment_id=next_segment_id + 1,
-            section=first_article_segment.section,
-        )
-
-        return [
-            *playback_segments[: first_article_index + 1],
-            perspective_supporters,
-            perspective_critics,
-            *playback_segments[first_article_index + 1 :],
-        ]
-
     def _build_internal_playback_segments(self, article_segments: list[Segment]) -> list[Segment]:
-        segments_with_cues = self._insert_section_cues(article_segments)
-        return self._insert_demo_perspective_pair_after_first_article(segments_with_cues)
+        # Perspective pairs now live in the modern briefing assembly pipeline;
+        # the legacy briefing path keeps only section cues.
+        return self._insert_section_cues(article_segments)
 
     def _prepend_intro_segment(self, playback_segments: list[Segment], headline: str) -> list[Segment]:
         next_segment_id = (

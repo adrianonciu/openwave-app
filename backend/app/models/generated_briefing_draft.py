@@ -4,11 +4,13 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.models.generated_story_summary import GeneratedStorySummary
+from app.models.segment import Segment
 
 
 class BriefingStoryItem(BaseModel):
     position: int = Field(ge=1)
     story: GeneratedStorySummary
+    perspective_segments: list[Segment] = Field(default_factory=list)
     presenter_voice: Literal["female", "male"] = "female"
     pass_phrase_used: str | None = None
     pacing_label: Literal["heavy", "medium", "light"] = "medium"

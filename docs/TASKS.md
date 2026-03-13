@@ -648,3 +648,22 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - long jingles or music-bed logic
+
+### Two Perspectives Reintegration
+
+Backend now reconnects the `Two Perspectives` feature to the modern editorial pipeline.
+
+Current scope:
+
+- perspective pairs are assembled only for controversial or disputed stories
+- reuse the existing perspective segment model and creator helper
+- allow at most one supporters-vs-critics pair per bulletin
+- place the pair immediately after the triggering main story
+- keep the legacy `/briefing/today` path free of demo-only perspective insertion
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- multiple perspective pairs per bulletin
+- perspective generation outside briefing assembly

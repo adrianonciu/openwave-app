@@ -81,3 +81,7 @@ Current backend infrastructure also supports a dual-presenter bulletin draft mod
 Current backend infrastructure also supports optional listener first-name personalization in briefing assembly, but only for intro/outro lines and with a hard cap of two mentions per bulletin.
 
 Current backend infrastructure also supports optional short news stingers in the audio-generation package, inserted only between stories and kept configurable without changing TTS provider internals.
+
+Current backend infrastructure also reintegrates the `Two Perspectives` editorial feature into the modern assembly pipeline. Perspective pairs are now decided in briefing assembly, are limited to one pair per bulletin, appear only for controversial or disputed stories, and are carried forward as existing `Segment.TYPE_PERSPECTIVE` blocks for downstream audio generation.
+
+The older demo-only perspective insertion in the legacy `BriefingService` path is no longer used, so perspective behavior now has one canonical integration point in the editorial pipeline.

@@ -62,6 +62,7 @@ class EditorialToAudioService:
             intro_text=intro_text,
             story_segments=story_segments,
             outro_text=outro_text,
+            briefing_story_items=briefing.story_items,
         )
 
         package = AudioGenerationPackage(
@@ -85,6 +86,7 @@ class EditorialToAudioService:
         intro_text: str,
         story_segments: list[AudioStorySegment],
         outro_text: str,
+        briefing_story_items=None,
     ) -> list[AudioSegmentBlock]:
         ordered_segments: list[AudioSegmentBlock] = [
             AudioSegmentBlock(
@@ -94,6 +96,7 @@ class EditorialToAudioService:
             )
         ]
 
+        source_items = list(briefing_story_items or [])
         stinger_count = 0
         previous_stinger_file: str | None = None
         for index, story in enumerate(story_segments, start=1):
@@ -106,6 +109,17 @@ class EditorialToAudioService:
                     source_labels=story.source_labels,
                 )
             )
+            source_item = source_items[index - 1] if index - 1 < len(source_items) else None
+            for perspective_index, perspective in enumerate((source_item.perspective_segments if source_item else []), start=1):
+                ordered_segments.append(
+                    AudioSegmentBlock(
+                        segment_name=f"perspective_{index:02d}_{perspective_index:02d}",
+                        segment_type="perspective",
+                        text=perspective.narration_text,
+                        topic_label=story.topic_label,
+                        source_labels=[perspective.source],
+                    )
+                )
             is_last_story = index == len(story_segments)
             if is_last_story:
                 continue

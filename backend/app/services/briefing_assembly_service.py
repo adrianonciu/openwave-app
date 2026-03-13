@@ -7,6 +7,8 @@ from pathlib import Path
 
 from app.models.generated_briefing_draft import BriefingStoryItem, GeneratedBriefingDraft
 from app.models.generated_story_summary import GeneratedStorySummary
+from app.models.segment import Segment
+from app.services.segment_service import SegmentService
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "briefing_assembly_config.json"
 
@@ -29,6 +31,7 @@ class BriefingAssemblyService:
         self.max_consecutive_heavy: int = raw_config.get("max_consecutive_heavy", 2)
         self.too_short_seconds: int = raw_config["too_short_seconds"]
         self.too_long_seconds: int = raw_config["too_long_seconds"]
+        self.segment_service = SegmentService()
 
     def assemble_briefing(
         self,
@@ -114,8 +117,12 @@ class BriefingAssemblyService:
         self,
         ordered_stories: list[tuple[GeneratedStorySummary, str]],
     ) -> list[BriefingStoryItem]:
+        # Perspective pairs are assembled here in the modern pipeline so downstream audio keeps
+        # the stable story -> supporters -> critics order without relying on legacy demo insertion.
         items: list[BriefingStoryItem] = []
         passes_used = 0
+        perspective_pair_used = False
+        next_perspective_segment_id = 1000
 
         for index, (story, reason) in enumerate(ordered_stories, start=1):
             presenter_voice = "female" if index % 2 == 1 else "male"
@@ -126,10 +133,21 @@ class BriefingAssemblyService:
                     pass_phrase_used = self._pick_pass_phrase(story.cluster_id, presenter_voice)
                     passes_used += 1
 
+            perspective_segments: list[Segment] = []
+            if not perspective_pair_used and self._story_is_controversial(story):
+                perspective_segments = self._build_perspective_pair(
+                    story=story,
+                    segment_id_start=next_perspective_segment_id,
+                )
+                if perspective_segments:
+                    perspective_pair_used = True
+                    next_perspective_segment_id += len(perspective_segments)
+
             items.append(
                 BriefingStoryItem(
                     position=index,
                     story=story,
+                    perspective_segments=perspective_segments,
                     presenter_voice=presenter_voice,
                     pass_phrase_used=pass_phrase_used,
                     pacing_label=self._pacing_label(story),
@@ -138,6 +156,56 @@ class BriefingAssemblyService:
             )
 
         return items
+
+    def _story_is_controversial(self, story: GeneratedStorySummary) -> bool:
+        title = (story.representative_title or "").lower()
+        decision_keywords = ["budget", "reform", "tax", "sanctions", "law", "measure", "coalition"]
+        if story.lead_type == "conflict":
+            return True
+        if story.topic_label == "politics" and story.lead_type in {"decision", "conflict"}:
+            return True
+        if story.topic_label == "economy" and story.lead_type == "decision" and any(keyword in title for keyword in decision_keywords):
+            return True
+        return False
+
+    def _build_perspective_pair(
+        self,
+        story: GeneratedStorySummary,
+        segment_id_start: int,
+    ) -> list[Segment]:
+        supporters_text, critics_text = self._perspective_texts(story)
+        if not supporters_text or not critics_text:
+            return []
+        section = story.topic_label.replace("_", " ").title()
+        supporters = self.segment_service.create_perspective_segment(
+            title="Perspective A",
+            narration_text=supporters_text,
+            segment_id=segment_id_start,
+            section=section,
+        )
+        critics = self.segment_service.create_perspective_segment(
+            title="Perspective B",
+            narration_text=critics_text,
+            segment_id=segment_id_start + 1,
+            section=section,
+        )
+        return [supporters, critics]
+
+    def _perspective_texts(self, story: GeneratedStorySummary) -> tuple[str, str]:
+        if story.lead_type == "conflict":
+            return (
+                "Sustinatorii spun ca o clarificare rapida poate restabili directia politica.",
+                "Criticii spun ca tensiunea actuala poate adanci blocajul si poate slabi increderea.",
+            )
+        if story.topic_label == "economy":
+            return (
+                "Sustinatorii spun ca masura poate stabiliza bugetul si poate trimite un semnal de disciplina.",
+                "Criticii spun ca decizia poate aduce costuri mai mari si presiune suplimentara pentru consumatori.",
+            )
+        return (
+            "Sustinatorii spun ca decizia poate aduce mai multa claritate si stabilitate pe termen scurt.",
+            "Criticii spun ca masura poate genera costuri politice si efecte secundare greu de controlat.",
+        )
 
     def _should_insert_pass(
         self,
@@ -291,9 +359,14 @@ class BriefingAssemblyService:
     ) -> int:
         story_words = sum(item.story.word_count for item in ordered_items)
         pass_words = sum(len((item.pass_phrase_used or "").split()) for item in ordered_items)
+        perspective_words = sum(
+            len(segment.narration_text.split())
+            for item in ordered_items
+            for segment in item.perspective_segments
+        )
         intro_words = len(intro_text.split())
         outro_words = len(outro_text.split())
-        return story_words + pass_words + intro_words + outro_words
+        return story_words + pass_words + perspective_words + intro_words + outro_words
 
     def _build_briefing_id(
         self,
@@ -325,9 +398,10 @@ class BriefingAssemblyService:
         pacing_trace = ", ".join(item.pacing_label for item in ordered_items)
         presenter_trace = ", ".join(item.presenter_voice for item in ordered_items)
         pass_count = sum(1 for item in ordered_items if item.pass_phrase_used)
+        perspective_pair_count = sum(1 for item in ordered_items if item.perspective_segments)
         return (
             f"Bulletin opens with '{opener}' as the strongest available item, keeps score as the primary ordering rule, and alternates presenters female/male across stories. "
             f"Pacing labels are: {pacing_trace}. Presenter sequence is: {presenter_trace}. "
-            f"Intro variant={intro_variant}, outro variant={outro_variant}, listener_name_mentions={listener_name_mentions}, passes_used={pass_count}. "
+            f"Intro variant={intro_variant}, outro variant={outro_variant}, listener_name_mentions={listener_name_mentions}, passes_used={pass_count}, perspective_pairs={perspective_pair_count}. "
             f"Estimated total duration is {estimated_total_duration_seconds} seconds, which is {duration_note}."
         )

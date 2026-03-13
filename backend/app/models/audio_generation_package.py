@@ -13,7 +13,7 @@ class AudioStorySegment(BaseModel):
 
 class AudioSegmentBlock(BaseModel):
     segment_name: str
-    segment_type: Literal["intro", "story", "stinger", "outro"]
+    segment_type: Literal["intro", "story", "perspective", "stinger", "outro"]
     text: str | None = None
     audio_file: str | None = None
     topic_label: str | None = None

@@ -1488,3 +1488,37 @@ The briefing assembly layer now supports optional listener first-name personaliz
 ### News Stingers And Micro-Transitions
 
 The editorial-to-audio layer now supports optional `stinger` segments between story items. Stingers are configured separately, rotate lightly without consecutive repetition, are never inserted after the intro or before the outro, and remain outside TTS provider synthesis.
+
+---
+
+# 28. Two Perspectives Reintegration
+
+OpenWave now treats `Two Perspectives` as an editorial assembly feature in the
+modern pipeline, not as a legacy playback demo.
+
+Pipeline position:
+
+```
+Story Summary Generator -> Briefing Assembly -> Bulletin Sizing -> Editorial To Audio
+```
+
+Rules:
+
+- perspective pairs are created only in `briefing_assembly_service.py`
+- they are limited to controversial or disputed stories
+- at most one perspective pair can appear in a bulletin
+- the pair is inserted immediately after the main story item
+- the existing `Segment.TYPE_PERSPECTIVE` model and `create_perspective_segment(...)` helper are reused
+
+Audio order for an eligible story:
+
+```
+story
+perspective_supporters
+perspective_critics
+```
+
+Legacy note:
+
+- the old demo insertion in `BriefingService` is no longer used for perspective playback
+- the legacy briefing path now keeps only section cues

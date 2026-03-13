@@ -166,6 +166,7 @@ class BulletinSizingService:
             BriefingStoryItem(
                 position=index,
                 story=item.story,
+                perspective_segments=item.perspective_segments,
                 presenter_voice=item.presenter_voice,
                 pass_phrase_used=item.pass_phrase_used,
                 pacing_label=item.pacing_label,
@@ -180,9 +181,15 @@ class BulletinSizingService:
         outro_text: str,
         story_items: Iterable[BriefingStoryItem],
     ) -> int:
+        story_items = list(story_items)
         story_words = sum(item.story.word_count for item in story_items)
         pass_words = sum(len((item.pass_phrase_used or "").split()) for item in story_items)
-        return story_words + pass_words + len(intro_text.split()) + len(outro_text.split())
+        perspective_words = sum(
+            len(segment.narration_text.split())
+            for item in story_items
+            for segment in item.perspective_segments
+        )
+        return story_words + pass_words + perspective_words + len(intro_text.split()) + len(outro_text.split())
 
     def _estimate_duration_seconds(self, total_word_count: int) -> int:
         return round((total_word_count / self.speaking_rate_wpm) * 60)

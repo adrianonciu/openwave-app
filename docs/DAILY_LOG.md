@@ -649,3 +649,6 @@ In progress:
 - added optional listener first-name personalization in briefing assembly so intro and optional outro can mention the listener by name at most twice per bulletin, while story summaries remain unchanged
 
 - added optional short stinger support in the editorial-to-audio layer so audio packages can now include configurable `stinger` segments between stories without changing the TTS provider flow
+- reintegrated the legacy `Two Perspectives` feature into the modern editorial pipeline by moving perspective insertion to briefing assembly for controversial stories
+- limited perspective output to one supporters-vs-critics pair per bulletin and preserved the existing perspective segment model for downstream audio
+- removed demo-only perspective insertion from the legacy `BriefingService` playback path so perspective behavior now has one canonical integration point
