@@ -1442,3 +1442,27 @@ Rule:
   - `X a transmis ca ...`
 
 This keeps attribution clear at the start of the sentence and reduces listener confusion in audio.
+
+---
+
+# 27. Radio Lead Generation V4
+
+The story summary generator now classifies stories before sentence generation and builds
+radio-style leads based on the most important editorial angle.
+
+Lead types:
+
+- impact
+- decision
+- warning
+- conflict
+- change
+- event
+
+Rule:
+
+- sentence 1 should no longer mostly mirror the representative title
+- sentence 1 should prioritize the key angle of the story for audio clarity
+- lead type selection is heuristic and configurable
+
+This keeps the summary generator explainable while making the opening line sound more like a real radio bulletin.

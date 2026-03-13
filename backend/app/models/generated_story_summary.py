@@ -16,6 +16,7 @@ class SummaryComplianceReport(BaseModel):
 class GeneratedStorySummary(BaseModel):
     cluster_id: str
     short_headline: str
+    lead_type: Literal["impact", "decision", "warning", "conflict", "change", "event"]
     summary_text: str
     sentence_count: int = Field(ge=0)
     word_count: int = Field(ge=0)

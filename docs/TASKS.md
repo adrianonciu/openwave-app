@@ -549,3 +549,20 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - wider editorial redesign
+
+### Radio Lead Generation V4
+
+Backend now includes structured radio lead generation in per-story summaries.
+
+Current scope:
+
+- classify stories into six lead types before sentence generation
+- generate sentence one from the selected radio lead type
+- keep attribution-first and expansion rules in place
+- expose `lead_type` on generated summaries
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- wider editorial redesign

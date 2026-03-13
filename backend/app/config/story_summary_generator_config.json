@@ -47,6 +47,49 @@
     "nou",
     "noile"
   ],
+  "lead_type_keywords": {
+    "decision": ["approve", "approved", "aproba", "adopta", "adoptat", "decision", "budget", "sanctions", "agreement", "deal", "law", "measure"],
+    "warning": ["warn", "warning", "risk", "risks", "inflation", "security", "energy", "forecast", "deficit", "avertizeaza"],
+    "conflict": ["coalition", "crisis", "dispute", "tensions", "row", "premier", "government", "parliament", "conflict", "standoff"],
+    "change": ["prices", "grew", "growth", "rose", "rise", "fell", "drop", "indicator", "statistics", "market", "deficit", "dobanzi", "preturi"],
+    "event": ["summit", "meeting", "visit", "conference", "talks", "match", "final", "semifinal", "leaders", "reunesc"]
+  },
+  "lead_phrase_maps": {
+    "decision_objects": {
+      "budget": "bugetul pentru perioada urmatoare",
+      "sanctions": "noi sanctiuni",
+      "package": "un nou pachet de masuri",
+      "law": "o noua masura legislativa",
+      "measure": "o noua decizie"
+    },
+    "warning_subjects": {
+      "inflation": "Inflatia ar putea creste din nou",
+      "energy": "Presiunea din energie ramane ridicata",
+      "security": "Riscurile de securitate cresc",
+      "deficit": "Presiunea pe deficit ramane ridicata",
+      "economy": "Apar noi riscuri in economie"
+    },
+    "change_subjects": {
+      "prices": "Preturile au crescut din nou",
+      "housing": "Preturile locuintelor au crescut din nou",
+      "market": "Piata s-a schimbat din nou",
+      "rates": "Dobanzile se modifica din nou",
+      "indicator": "Indicatorii economici se schimba din nou"
+    },
+    "conflict_subjects": {
+      "coalition": "Tensiunile cresc in coalitia de guvernare",
+      "government": "Conflictul politic se accentueaza in interiorul guvernarii",
+      "parliament": "Disputa dintre institutii se adanceste",
+      "president": "Tensiunile politice cresc la varful statului"
+    },
+    "event_subjects": {
+      "leaders": "Liderii se reunesc astazi",
+      "summit": "Un nou summit are loc astazi",
+      "meeting": "O reuniune importanta are loc astazi",
+      "match": "Un nou meci important are loc astazi",
+      "final": "Finala se joaca astazi"
+    }
+  },
   "topic_templates": {
     "politics": {
       "impact": "Miza este politica, pentru ca decizia poate schimba raportul de forte, ritmul negocierilor si urmatorii pasi institutionali din perioada imediat urmatoare.",
@@ -90,6 +133,7 @@
     "growth": "crestere",
     "outlook": "perspectivelor",
     "warns": "avertizeaza",
+    "warning": "avertisment",
     "attack": "atac",
     "attacks": "atacuri",
     "on": "asupra",
@@ -123,7 +167,14 @@
     "injured": "raniti",
     "wounded": "raniti",
     "people": "persoane",
-    "person": "persoana"
+    "person": "persoana",
+    "meeting": "reuniune",
+    "summit": "summit",
+    "conference": "conferinta",
+    "visit": "vizita",
+    "forecast": "prognoza",
+    "risk": "risc",
+    "prices": "preturi"
   },
   "topic_keywords": {
     "politics": ["government", "parliament", "election", "president", "coalition", "cabinet"],
@@ -136,7 +187,7 @@
     "si", "sau", "iar", "care", "dupa", "pentru", "asupra", "fondul", "urmatorul", "urmatoarea", "este", "sunt", "din", "prin", "noi", "nou", "noua", "the", "and", "after", "amid", "with", "from"
   ],
   "official_actor_terms": [
-    "guvern", "guvernul", "presedintia", "presedintele", "ministerul", "minister", "executivul", "coalitia", "parlamentul", "banca centrala", "uniunea europeana", "comisia europeana", "armata", "autoritatile", "oficialii", "liderii", "clubul", "federatia"
+    "guvern", "guvernul", "presedintia", "presedintele", "ministerul", "minister", "executivul", "coalitia", "parlamentul", "banca centrala", "uniunea europeana", "comisia europeana", "armata", "autoritatile", "oficialii", "liderii", "clubul", "federatia", "nato"
   ],
   "attribution_verbs": [
     "spune", "declara", "anunta", "avertizeaza", "sustine", "precizeaza", "transmite", "confirma", "acusa", "cere", "promite"

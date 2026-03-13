@@ -1,85 +1,130 @@
 {
   "examples": [
     {
-      "category": "bad_post_attributed_form",
-      "bad_form": "Statele occidentale poarta intreaga responsabilitate, a transmis Ministerul rus de Externe.",
-      "corrected_form": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate."
-    },
-    {
-      "category": "official_statement_case",
+      "category": "impact_lead",
+      "lead_type": "impact",
       "input_cluster": {
-        "cluster_id": "cluster-official-001",
-        "representative_title": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate",
+        "cluster_id": "cluster-impact-001",
+        "representative_title": "Missile attack kills 7 and injures 40 in southern Ukraine",
         "member_articles": [
           {
-            "url": "https://example.com/world/official-1",
-            "title": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate",
+            "url": "https://example.com/impact/1",
+            "title": "Missile attack kills 7 and injures 40 in southern Ukraine",
             "source": "Reuters",
-            "published_at": "2026-03-13T14:00:00+00:00"
+            "published_at": "2026-03-13T11:10:00+00:00"
           }
         ],
-        "created_at": "2026-03-13T14:00:00+00:00",
-        "latest_published_at": "2026-03-13T14:00:00+00:00"
+        "created_at": "2026-03-13T11:10:00+00:00",
+        "latest_published_at": "2026-03-13T11:10:00+00:00"
       },
-      "short_headline": "Mesaj dur al Moscovei",
-      "attribution_type": "official_statement",
-      "generated_summary": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea si poate aduce reactii politice sau militare rapide.",
-      "policy_compliance_notes": [
-        "attribution_first_used",
-        "official_statement_used",
-        "post_attribution_avoided"
-      ]
+      "short_headline": "Atac cu victime Ucraina",
+      "generated_summary": "Un atac in southern Ucraina s-a soldat cu 7 morti si aproximativ 40 de raniti. Potrivit Reuters, acesta este cadrul comun in care este urmarit subiectul, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului. Miza este imediata, pentru ca episodul creste tensiunea si poate aduce reactii politice sau militare rapide.",
+      "policy_compliance_notes": ["lead_type_impact", "casualties_prioritized"]
     },
     {
-      "category": "source_attribution_case",
+      "category": "decision_lead",
+      "lead_type": "decision",
       "input_cluster": {
-        "cluster_id": "cluster-source-001",
-        "representative_title": "Presiune pe bugetul de stat dupa noi estimari de deficit",
+        "cluster_id": "cluster-decision-001",
+        "representative_title": "Government approves new budget package after coalition talks",
         "member_articles": [
           {
-            "url": "https://example.com/economy/1",
-            "title": "Presiune pe bugetul de stat dupa noi estimari de deficit",
-            "source": "HotNews",
+            "url": "https://example.com/decision/1",
+            "title": "Government approves new budget package after coalition talks",
+            "source": "AP",
             "published_at": "2026-03-13T09:00:00+00:00"
           }
         ],
         "created_at": "2026-03-13T09:00:00+00:00",
         "latest_published_at": "2026-03-13T09:00:00+00:00"
       },
-      "short_headline": "Presiune pe buget",
-      "attribution_type": "source_attribution",
-      "generated_summary": "Presiune pe bugetul de stat dupa noi estimari de deficit. Potrivit HotNews, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
-      "policy_compliance_notes": [
-        "attribution_first_used",
-        "source_mentioned_once",
-        "post_attribution_avoided"
-      ]
+      "short_headline": "Buget dupa negocieri",
+      "generated_summary": "Guvernul a aprobat bugetul pentru perioada urmatoare dupa coalition talks. Potrivit AP, aceasta este forma cea mai clara a evenimentului in acest moment, iar in perioada urmatoare atentia se muta spre reactiile politice si spre aplicarea masurii. Miza este politica, pentru ca decizia poate schimba raportul de forte si urmatorii pasi institutionali.",
+      "policy_compliance_notes": ["lead_type_decision", "institution_decision_context"]
     },
     {
-      "category": "direct_quote_case",
+      "category": "warning_lead",
+      "lead_type": "warning",
       "input_cluster": {
-        "cluster_id": "cluster-quote-001",
-        "representative_title": "Premierul: \"Nu renuntam la reforma\" dupa sedinta coalitiei",
+        "cluster_id": "cluster-warning-001",
+        "representative_title": "Inflation may rise again in Romania, warns central bank",
         "member_articles": [
           {
-            "url": "https://example.com/politics/quote-1",
-            "title": "Premierul: \"Nu renuntam la reforma\" dupa sedinta coalitiei",
-            "source": "HotNews",
-            "published_at": "2026-03-13T10:00:00+00:00"
+            "url": "https://example.com/warning/1",
+            "title": "Inflation may rise again in Romania, warns central bank",
+            "source": "FT",
+            "published_at": "2026-03-13T08:30:00+00:00"
           }
         ],
-        "created_at": "2026-03-13T10:00:00+00:00",
-        "latest_published_at": "2026-03-13T10:00:00+00:00"
+        "created_at": "2026-03-13T08:30:00+00:00",
+        "latest_published_at": "2026-03-13T08:30:00+00:00"
       },
-      "short_headline": "Premier despre reforma",
-      "attribution_type": "direct_quote",
-      "quote_line": "Nu renuntam la reforma",
-      "generated_summary": "Premierul vorbeste despre continuarea reformei dupa sedinta coalitiei. Potrivit HotNews, formula-cheie este \"Nu renuntam la reforma\", iar in perioada urmatoare atentia se muta spre reactiile politice si spre aplicarea masurii. Miza este politica, pentru ca decizia poate schimba raportul de forte si urmatorii pasi institutionali.",
-      "policy_compliance_notes": [
-        "attribution_first_used",
-        "short_quote_kept",
-        "post_attribution_avoided"
-      ]
+      "short_headline": "Avertisment despre inflatie",
+      "generated_summary": "Inflatia ar putea creste din nou in Romania, avertizeaza Banca centrala. Potrivit FT, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile si asteptarile investitorilor pentru urmatoarele luni.",
+      "policy_compliance_notes": ["lead_type_warning", "warning_actor_domain"]
+    },
+    {
+      "category": "conflict_lead",
+      "lead_type": "conflict",
+      "input_cluster": {
+        "cluster_id": "cluster-conflict-001",
+        "representative_title": "Coalition tensions rise after PSD studies scenarios for replacing the prime minister",
+        "member_articles": [
+          {
+            "url": "https://example.com/conflict/1",
+            "title": "Coalition tensions rise after PSD studies scenarios for replacing the prime minister",
+            "source": "HotNews",
+            "published_at": "2026-03-13T10:40:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T10:40:00+00:00",
+        "latest_published_at": "2026-03-13T10:40:00+00:00"
+      },
+      "short_headline": "Tensiuni in coalitie",
+      "generated_summary": "Tensiunile cresc in coalitia de guvernare dupa psd studies scenarios for replacing the prime minister. Potrivit HotNews, acesta este cadrul comun in care este urmarit subiectul, iar in perioada urmatoare atentia se muta spre reactiile politice si spre eventualele ajustari cerute de partenerii de coalitie. Miza este politica, pentru ca decizia poate schimba raportul de forte si urmatorii pasi institutionali.",
+      "policy_compliance_notes": ["lead_type_conflict", "actors_and_cause_present"]
+    },
+    {
+      "category": "change_lead",
+      "lead_type": "change",
+      "input_cluster": {
+        "cluster_id": "cluster-change-001",
+        "representative_title": "Housing prices rise again in major Romanian cities",
+        "member_articles": [
+          {
+            "url": "https://example.com/change/1",
+            "title": "Housing prices rise again in major Romanian cities",
+            "source": "Digi24",
+            "published_at": "2026-03-13T07:50:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T07:50:00+00:00",
+        "latest_published_at": "2026-03-13T07:50:00+00:00"
+      },
+      "short_headline": "Preturile cresc din nou",
+      "generated_summary": "Preturile au crescut din nou in major Romanian cities. Potrivit Digi24, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca evolutia poate influenta costurile si asteptarile din piata.",
+      "policy_compliance_notes": ["lead_type_change", "indicator_change_context"]
+    },
+    {
+      "category": "event_lead",
+      "lead_type": "event",
+      "input_cluster": {
+        "cluster_id": "cluster-event-001",
+        "representative_title": "EU leaders meet in Brussels to discuss new sanctions against Russia",
+        "member_articles": [
+          {
+            "url": "https://example.com/event/1",
+            "title": "EU leaders meet in Brussels to discuss new sanctions against Russia",
+            "source": "BBC",
+            "published_at": "2026-03-13T06:30:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T06:30:00+00:00",
+        "latest_published_at": "2026-03-13T06:30:00+00:00"
+      },
+      "short_headline": "Summit pentru sanctiuni",
+      "generated_summary": "Liderii se reunesc astazi pentru discuss new sanctiuni against Russia. Potrivit BBC, acesta este cadrul comun in care este urmarit subiectul, iar de aici atentia merge spre reactiile oficiale si spre eventualele masuri de raspuns. Miza este imediata, pentru ca episodul poate aduce reactii politice rapide.",
+      "policy_compliance_notes": ["lead_type_event", "participants_and_purpose_present"]
     }
   ]
 }

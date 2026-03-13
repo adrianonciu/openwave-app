@@ -40,6 +40,8 @@ class StorySummaryGeneratorService:
         self.expansion_keywords: list[str] = raw_config["expansion_keywords"]
         self.casualty_priority_keywords: list[str] = raw_config["casualty_priority_keywords"]
         self.context_trigger_keywords: list[str] = raw_config["context_trigger_keywords"]
+        self.lead_type_keywords: dict[str, list[str]] = raw_config["lead_type_keywords"]
+        self.lead_phrase_maps: dict[str, dict[str, str]] = raw_config["lead_phrase_maps"]
         self.topic_templates: dict[str, dict[str, str]] = raw_config["topic_templates"]
         self.english_to_romanian_terms: dict[str, str] = raw_config[
             "english_to_romanian_terms"
@@ -68,6 +70,7 @@ class StorySummaryGeneratorService:
         quote_line = self._extract_quote_line(normalized_cluster)
         attribution_type = self._determine_attribution_type(normalized_cluster, quote_line)
         casualty_line = self._extract_casualty_line(normalized_cluster)
+        lead_type = self._detect_lead_type(normalized_cluster, topic, casualty_line)
         importance_triggered = self._is_important_story(
             cluster=normalized_cluster,
             topic=topic,
@@ -81,7 +84,12 @@ class StorySummaryGeneratorService:
             casualty_line=casualty_line,
         )
 
-        lead_sentence = self._build_lead_sentence(normalized_cluster)
+        lead_sentence = self._build_lead_sentence(
+            cluster=normalized_cluster,
+            topic=topic,
+            lead_type=lead_type,
+            casualty_line=casualty_line,
+        )
         detail_sentence = self._build_detail_sentence(
             cluster=normalized_cluster,
             topic=topic,
@@ -91,7 +99,7 @@ class StorySummaryGeneratorService:
         consequence_sentence = self._build_consequence_sentence(topic)
 
         sentences = [lead_sentence, detail_sentence]
-        if casualty_line:
+        if casualty_line and lead_type != "impact":
             sentences.append(casualty_line)
         if importance_triggered and (casualty_line or context_line):
             sentences.append(consequence_sentence)
@@ -120,6 +128,7 @@ class StorySummaryGeneratorService:
         explanation = self._build_generation_explanation(
             cluster=normalized_cluster,
             topic=topic,
+            lead_type=lead_type,
             attribution_type=attribution_type,
             short_headline=short_headline,
             compliance=compliance,
@@ -131,6 +140,7 @@ class StorySummaryGeneratorService:
         return GeneratedStorySummary(
             cluster_id=normalized_cluster.cluster_id,
             short_headline=short_headline,
+            lead_type=lead_type,
             summary_text=summary_text,
             sentence_count=sentence_count,
             word_count=word_count,
@@ -169,6 +179,27 @@ class StorySummaryGeneratorService:
                 best_matches = matches
                 best_topic = topic
         return best_topic
+
+    def _detect_lead_type(
+        self,
+        cluster: StoryCluster,
+        topic: str,
+        casualty_line: str | None,
+    ) -> str:
+        if casualty_line:
+            return "impact"
+
+        cluster_text = self._cluster_text(cluster)
+        for lead_type in ["decision", "warning", "conflict", "change"]:
+            if any(keyword in cluster_text for keyword in self.lead_type_keywords[lead_type]):
+                return lead_type
+
+        if any(keyword in cluster_text for keyword in self.lead_type_keywords["event"]):
+            return "event"
+
+        if topic == "sport":
+            return "event"
+        return "event"
 
     def _build_short_headline(self, cluster: StoryCluster) -> str:
         translated_title = self._light_translate_title(cluster.representative_title)
@@ -284,6 +315,143 @@ class StorySummaryGeneratorService:
             return "cutremurul"
         return "atacul"
 
+    def _build_lead_sentence(
+        self,
+        cluster: StoryCluster,
+        topic: str,
+        lead_type: str,
+        casualty_line: str | None,
+    ) -> str:
+        translated_title = self._light_translate_title(cluster.representative_title)
+        if lead_type == "impact":
+            return self._build_impact_lead(cluster, translated_title)
+        if lead_type == "decision":
+            return self._build_decision_lead(translated_title)
+        if lead_type == "warning":
+            return self._build_warning_lead(cluster, translated_title)
+        if lead_type == "conflict":
+            return self._build_conflict_lead(translated_title)
+        if lead_type == "change":
+            return self._build_change_lead(translated_title)
+        return self._build_event_lead(cluster, translated_title, topic)
+
+    def _build_impact_lead(self, cluster: StoryCluster, translated_title: str) -> str:
+        deaths, injuries = self._extract_casualty_counts(cluster)
+        event_label = self._event_label(self._cluster_text(cluster))
+        location = self._extract_location_phrase(translated_title)
+        parts: list[str] = []
+        if deaths is not None:
+            victim_word = "mort" if deaths == 1 else "morti"
+            parts.append(f"{deaths} {victim_word}")
+        if injuries is not None:
+            parts.append(f"aproximativ {injuries} de raniti" if injuries >= 10 else f"{injuries} raniti")
+        consequence = " si ".join(parts) if parts else "victime"
+        location_phrase = f" {location}" if location else ""
+        article = "Un"
+        if event_label in {"explozia", "reuniunea"}:
+            article = "O"
+        return f"{article} {event_label}{location_phrase} s-a soldat cu {consequence}."
+
+    def _build_decision_lead(self, translated_title: str) -> str:
+        institution = self._extract_institution(translated_title) or "Autoritatile"
+        decision_phrase = self._extract_decision_phrase(translated_title)
+        context_phrase = self._extract_after_phrase(translated_title)
+        sentence = f"{institution} {decision_phrase}"
+        if context_phrase:
+            sentence += f" {context_phrase}"
+        return sentence.rstrip(".?!") + "."
+
+    def _build_warning_lead(self, cluster: StoryCluster, translated_title: str) -> str:
+        subject = self._match_phrase_map(translated_title, self.lead_phrase_maps["warning_subjects"]) or "Apar noi riscuri"
+        institution = self._extract_institution(translated_title) or self._primary_source(cluster)
+        domain = self._extract_location_phrase(translated_title)
+        domain_phrase = f" {domain}" if domain else ""
+        return f"{subject}{domain_phrase}, avertizeaza {institution}."
+
+    def _build_conflict_lead(self, translated_title: str) -> str:
+        subject = self._match_phrase_map(translated_title, self.lead_phrase_maps["conflict_subjects"]) or "Tensiunile politice cresc"
+        cause = self._extract_after_phrase(translated_title)
+        if cause:
+            return f"{subject} {cause}."
+        return f"{subject}."
+
+    def _build_change_lead(self, translated_title: str) -> str:
+        subject = self._match_phrase_map(translated_title, self.lead_phrase_maps["change_subjects"]) or "Indicatorii se schimba din nou"
+        location = self._extract_location_phrase(translated_title)
+        if location:
+            return f"{subject}{location}."
+        return f"{subject}."
+
+    def _build_event_lead(self, cluster: StoryCluster, translated_title: str, topic: str) -> str:
+        subject = self._match_phrase_map(translated_title, self.lead_phrase_maps["event_subjects"])
+        if subject is None:
+            institution = self._extract_institution(translated_title)
+            if institution:
+                subject = f"{institution} participa la un eveniment important"
+            elif topic == "sport":
+                subject = "Un eveniment sportiv important are loc"
+            else:
+                subject = "Un eveniment important are loc"
+        purpose = self._extract_purpose_phrase(translated_title)
+        if purpose:
+            return f"{subject} {purpose}."
+        return f"{subject}."
+
+    def _extract_institution(self, translated_title: str) -> str | None:
+        lowered = translated_title.lower()
+        for term in sorted(self.official_actor_terms, key=len, reverse=True):
+            if term.lower() in lowered:
+                return term.capitalize() if term.islower() else term
+        if translated_title.startswith("Liderii"):
+            return "Liderii"
+        return None
+
+    def _extract_decision_phrase(self, translated_title: str) -> str:
+        lowered = translated_title.lower()
+        for keyword, phrase in self.lead_phrase_maps["decision_objects"].items():
+            if keyword in lowered:
+                return f"a aprobat {phrase}"
+        if "aproba" in lowered or "approved" in lowered:
+            return "a aprobat o decizie importanta"
+        if "adopt" in lowered:
+            return "a adoptat o noua masura"
+        if "sanctiuni" in lowered:
+            return "a aprobat noi sanctiuni"
+        return "a luat o decizie importanta"
+
+    def _extract_after_phrase(self, translated_title: str) -> str | None:
+        lowered = translated_title.lower()
+        for trigger in [" dupa ", " pe fondul "]:
+            if trigger in lowered:
+                phrase = lowered.split(trigger, 1)[1].strip()
+                if phrase:
+                    return trigger.strip() + " " + phrase[:80].rstrip(".?!")
+        return None
+
+    def _extract_location_phrase(self, translated_title: str) -> str | None:
+        match = re.search(r"\b(in|la|din|spre|pe)\s+([A-Za-z0-9\s-]{3,40})", translated_title, re.IGNORECASE)
+        if not match:
+            return None
+        preposition = match.group(1).lower()
+        location = " ".join(match.group(2).split()[:5]).rstrip(".?!")
+        return f"{preposition} {location}"
+
+    def _extract_purpose_phrase(self, translated_title: str) -> str | None:
+        lowered = translated_title.lower()
+        for trigger in [" pentru ", " ca sa ", " to "]:
+            if trigger in lowered:
+                phrase = lowered.split(trigger, 1)[1].strip()
+                if phrase:
+                    return trigger.strip() + " " + phrase[:80].rstrip(".?!")
+        return self._extract_after_phrase(translated_title)
+
+    def _match_phrase_map(self, translated_title: str, phrase_map: dict[str, str]) -> str | None:
+        lowered = translated_title.lower()
+        for keyword, phrase in phrase_map.items():
+            if keyword in lowered:
+                return phrase
+        return None
+
     def _is_important_story(
         self,
         cluster: StoryCluster,
@@ -315,13 +483,6 @@ class StorySummaryGeneratorService:
         if casualty_line is None and len(cluster.member_articles) < 2:
             return None
         return self.topic_templates.get(topic, self.topic_templates["general"]).get("context")
-
-    def _build_lead_sentence(self, cluster: StoryCluster) -> str:
-        title = cluster.representative_title.strip()
-        translated = self._light_translate_title(title)
-        translated = translated[0].upper() + translated[1:] if translated else title
-        translated = translated.rstrip(".?!")
-        return f"{translated}."
 
     def _build_detail_sentence(
         self,
@@ -446,6 +607,7 @@ class StorySummaryGeneratorService:
         self,
         cluster: StoryCluster,
         topic: str,
+        lead_type: str,
         attribution_type: str,
         short_headline: str,
         compliance: SummaryComplianceReport,
@@ -455,6 +617,7 @@ class StorySummaryGeneratorService:
     ) -> str:
         return (
             f"Summary for cluster '{cluster.representative_title}' was generated with short headline '{short_headline}', "
-            f"topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, expanded={expanded_summary_used}, "
-            f"casualties={casualty_line_included}, context={context_line_included}. Compliance notes: {', '.join(compliance.notes)}."
+            f"lead type '{lead_type}', topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, "
+            f"expanded={expanded_summary_used}, casualties={casualty_line_included}, context={context_line_included}. "
+            f"Compliance notes: {', '.join(compliance.notes)}."
         )

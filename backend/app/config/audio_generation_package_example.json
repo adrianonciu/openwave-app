@@ -9,9 +9,10 @@
         "story": {
           "cluster_id": "cluster-sanctions",
           "short_headline": "Sanctiuni dupa atac",
-          "summary_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
+          "lead_type": "decision",
+          "summary_text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
           "sentence_count": 3,
-          "word_count": 56,
+          "word_count": 57,
           "topic_label": "international_conflict",
           "source_labels": ["BBC", "Reuters"],
           "attribution_type": "official_statement",
@@ -26,7 +27,7 @@
             "word_count_ok": false,
             "structure_ok": true,
             "banned_patterns_found": [],
-            "estimated_duration_seconds": 22,
+            "estimated_duration_seconds": 23,
             "notes": ["duration_outside_target_range"]
           },
           "generation_explanation": "Example summary.",
@@ -40,9 +41,10 @@
         "story": {
           "cluster_id": "cluster-ecb",
           "short_headline": "Prudenta la dobanzi",
-          "summary_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
+          "lead_type": "warning",
+          "summary_text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
           "sentence_count": 3,
-          "word_count": 58,
+          "word_count": 51,
           "topic_label": "economy",
           "source_labels": ["Financial Times"],
           "attribution_type": "source_attribution",
@@ -57,7 +59,7 @@
             "word_count_ok": false,
             "structure_ok": true,
             "banned_patterns_found": [],
-            "estimated_duration_seconds": 23,
+            "estimated_duration_seconds": 20,
             "notes": ["duration_outside_target_range"]
           },
           "generation_explanation": "Example summary.",
@@ -67,11 +69,11 @@
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-    "estimated_total_word_count": 125,
-    "estimated_total_duration_seconds": 50,
+    "estimated_total_word_count": 119,
+    "estimated_total_duration_seconds": 48,
     "target_duration_seconds": 540,
     "tolerance_seconds": 90,
-    "original_duration_seconds": 50,
+    "original_duration_seconds": 48,
     "intermediate_counts": {
       "article_count": 3,
       "cluster_count": 2,
@@ -81,7 +83,7 @@
     },
     "selection_explanation": "Selected 2 of 2 scored clusters.",
     "assembly_explanation": "Bulletin opens with the strongest story and alternates topics where possible.",
-    "sizing_explanation": "Briefing remains below the target window at 50 seconds.",
+    "sizing_explanation": "Briefing remains below the target window at 48 seconds.",
     "sizing_actions": [
       {
         "action": "below_target_duration",
@@ -99,24 +101,24 @@
     "story_segments": [
       {
         "segment_id": "story_01",
-        "story_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
+        "story_text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
         "topic_label": "international_conflict",
         "source_labels": ["BBC", "Reuters"]
       },
       {
         "segment_id": "story_02",
-        "story_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
+        "story_text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
         "topic_label": "economy",
         "source_labels": ["Financial Times"]
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
     "segment_count": 4,
-    "estimated_duration_seconds": 50,
+    "estimated_duration_seconds": 48,
     "tts_segment_blocks": [
       {"segment_name": "intro", "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."},
-      {"segment_name": "story_01", "text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."},
-      {"segment_name": "story_02", "text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."},
+      {"segment_name": "story_01", "text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."},
+      {"segment_name": "story_02", "text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."},
       {"segment_name": "outro", "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."}
     ]
   }

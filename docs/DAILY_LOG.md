@@ -637,3 +637,4 @@ In progress:
 - refined story summaries with short editorial headlines and conservative attribution logic for quotes, official statements, or source fallback
 - refined story summaries again so major stories can expand to 4-5 sentences and must mention casualties when deaths or injuries are clearly present
 - added an attribution-first radio rule so generated summary lines now begin with the speaker, institution, or source instead of using post-attributed audio-ambiguous phrasing
+- added structured radio lead generation so sentence one now follows one of six editorial lead types instead of mostly mirroring the representative title
