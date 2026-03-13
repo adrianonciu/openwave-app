@@ -744,3 +744,4 @@ Run full real-news bulletins and audit:
 - promoted personalization to a first-class pipeline contract through a canonical `UserPersonalization` object
 - added safe defaults and normalization for listener profile plus editorial preference mixes
 - exposed explicit personalization usage and default fallback flags in final pipeline outputs
+- made the local personalization anchor explicit: listener region/county is now the primary local editorial anchor, while city remains stored only as secondary metadata and fallback

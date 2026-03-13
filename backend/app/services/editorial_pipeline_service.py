@@ -42,6 +42,8 @@ class EditorialPipelineService:
             defaults_applied,
             personalization_explanation,
         ) = resolved_personalization.explainability()
+        local_editorial_anchor = resolved_personalization.local_editorial_anchor()
+        local_editorial_anchor_scope = resolved_personalization.local_editorial_anchor_scope()
         story_clusters = self.clustering_service.cluster_articles(articles)
         scored_clusters = self.scoring_service.score_clusters(story_clusters)
         selection_result = self.selection_service.select_stories(
@@ -99,6 +101,8 @@ class EditorialPipelineService:
             listener_profile_used=listener_profile_used,
             editorial_preferences_used=editorial_preferences_used,
             personalization_defaults_applied=defaults_applied,
+            local_editorial_anchor=local_editorial_anchor,
+            local_editorial_anchor_scope=local_editorial_anchor_scope,
             personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
             assembly_explanation=briefing_draft.assembly_explanation,

@@ -49,6 +49,31 @@ class ListenerProfile(BaseModel):
             for value in [self.first_name, self.country, self.region, self.city]
         )
 
+    def primary_local_anchor(self) -> str | None:
+        region = (self.region or '').strip()
+        if region:
+            return region
+        city = (self.city or '').strip()
+        if city:
+            return city
+        return None
+
+    def primary_local_anchor_scope(self) -> str:
+        if (self.region or '').strip():
+            return 'region'
+        if (self.city or '').strip():
+            return 'city_fallback'
+        return 'none'
+
+    def primary_local_anchor_explanation(self) -> str:
+        scope = self.primary_local_anchor_scope()
+        anchor = self.primary_local_anchor()
+        if scope == 'region' and anchor:
+            return f"Local editorial anchor uses listener region or county '{anchor}' as the primary local reference."
+        if scope == 'city_fallback' and anchor:
+            return f"Listener city '{anchor}' is stored and used only as a fallback because no region or county was provided."
+        return 'No local editorial anchor was provided in the listener profile.'
+
 
 class GeographyPreferenceMix(BaseModel):
     local: float = Field(default=0.0, ge=0.0, le=100.0)
@@ -105,13 +130,23 @@ class UserPersonalization(BaseModel):
     def defaults_applied(self) -> bool:
         return not self.personalization_used()
 
+    def local_editorial_anchor(self) -> str | None:
+        return self.listener_profile.primary_local_anchor()
+
+    def local_editorial_anchor_scope(self) -> str:
+        return self.listener_profile.primary_local_anchor_scope()
+
+    def local_editorial_anchor_explanation(self) -> str:
+        return self.listener_profile.primary_local_anchor_explanation()
+
     def explainability(self) -> tuple[bool, bool, bool, bool, str]:
         personalization_used = self.personalization_used()
         listener_profile_used = self.listener_profile_used()
         editorial_preferences_used = self.editorial_preferences_used()
         defaults_applied = self.defaults_applied()
+        local_anchor_note = self.local_editorial_anchor_explanation()
         explanation = (
-            "User personalization was provided and carried through the pipeline."
+            f"User personalization was provided and carried through the pipeline. {local_anchor_note}"
             if personalization_used
             else "Pipeline used safe neutral personalization defaults because no explicit personalization payload was provided."
         )

@@ -349,6 +349,7 @@ Canonical object:
     - `country`
     - `region`
     - `city`
+  - local editorial anchor: `region` first, `city` only as fallback metadata
   - `editorial_preferences`
     - geography: `local`, `national`, `international`
     - domains: `politics`, `economy`, `sport`, `entertainment`, `education`, `health`, `tech`
@@ -362,6 +363,7 @@ Current behavior:
 - if no payload is provided, the pipeline uses safe neutral defaults
 - defaults are visible in output through `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, and `personalization_defaults_applied`
 - listener first-name usage in intro/outro now comes from the personalization contract, not hidden config state
+- local editorial anchoring is county or region based; city remains stored but is not the primary local news anchor
 
 Example contract fixture:
 - `backend/app/config/user_personalization_example.json`

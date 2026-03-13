@@ -53,6 +53,8 @@ class EndToEndBulletinResult(BaseModel):
     listener_profile_used: bool = False
     editorial_preferences_used: bool = False
     personalization_defaults_applied: bool = True
+    local_editorial_anchor: str | None = None
+    local_editorial_anchor_scope: str = "none"
     personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     tts_provider: str | None = None
     tts_voice_id: str | None = None

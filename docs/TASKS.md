@@ -720,5 +720,5 @@ Still intentionally excluded from this task:
 
 - Flutter redesign
 - hard quotas
-- location-aware editorial ranking beyond existing preference flow
+- location-aware editorial ranking beyond the current region-first local anchor contract
 - deeper listener-profile personalization logic

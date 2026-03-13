@@ -1597,3 +1597,4 @@ Current behavior:
 - normalized preference mixes are preserved in output
 - output explainability shows whether explicit personalization or defaults were used
 - intro/outro name personalization now reads from the pipeline contract, not hidden config state
+- local editorial anchoring is region or county first, with city kept only as fallback metadata when region is unavailable

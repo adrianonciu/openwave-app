@@ -179,6 +179,10 @@ Primary code areas:
 - `Implemented in code` Listener first-name personalization is optional.
   Code area: `backend/app/services/briefing_assembly_service.py`
 
+- `Implemented in code` Local personalization uses the listener region or county as the primary local editorial anchor.
+  Code area: `backend/app/models/user_personalization.py`, `backend/app/services/editorial_pipeline_service.py`
+  Current behavior: `city` is preserved in the listener profile, but the pipeline exposes `region` first for any local editorial anchoring and only falls back to city when region is missing.
+
 - `Implemented in code` The listener name may appear at most twice per bulletin.
   Code area: `backend/app/services/briefing_assembly_service.py`
   Current behavior: once in intro, optionally once in outro, never inside story summaries.
@@ -241,4 +245,4 @@ Primary code areas:
 
 - `Implemented in code` Default fallback is visible in output explainability.
   Code area: `backend/app/models/final_editorial_briefing.py`, `backend/app/models/end_to_end_bulletin_result.py`
-  Current behavior: pipeline output exposes `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, and `personalization_defaults_applied`.
+  Current behavior: pipeline output exposes `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, `personalization_defaults_applied`, `local_editorial_anchor`, and `local_editorial_anchor_scope`.
