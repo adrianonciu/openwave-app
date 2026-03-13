@@ -226,6 +226,10 @@ Primary code areas:
 - `Implemented in code` Audio-friendly phrasing principles are enforced indirectly through banned-pattern checks, attribution-first templates, short-context templates, and number filtering.
   Code area: `backend/app/services/story_summary_generator_service.py`
 
+- `Implemented in code` Story continuity is detected against the previous bulletin and changes only the lead wording.
+  Code area: `backend/app/services/editorial_pipeline_service.py`, `backend/app/services/story_summary_generator_service.py`
+  Current behavior: if a cluster appeared in the previous bulletin it is marked as `update`; if it returns with a clearly higher score or more sources it can be marked as `major_update`; otherwise it stays `new_story`. Continuity does not change scoring or selection.
+
 ## L. Features Discussed But Not Yet Implemented
 
 - `Not yet implemented` Commentary pipeline integration in the editorial pipeline.

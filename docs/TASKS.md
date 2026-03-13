@@ -722,3 +722,4 @@ Still intentionally excluded from this task:
 - hard quotas
 - city-based local ranking
 - deeper listener-profile personalization logic
+- continuity-aware selection or scoring changes

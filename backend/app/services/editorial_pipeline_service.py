@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import json
+from pathlib import Path
 
 from app.models.article_fetch import FetchedArticle
 from app.models.user_personalization import UserPersonalization
@@ -14,6 +16,8 @@ from app.services.news_clustering_service import NewsClusteringService
 from app.services.story_scoring_service import StoryScoringService
 from app.services.story_selection_service import StorySelectionService
 from app.services.story_summary_generator_service import StorySummaryGeneratorService
+
+CONTINUITY_STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "bulletin_continuity_state.json"
 
 
 class EditorialPipelineService:
@@ -32,6 +36,7 @@ class EditorialPipelineService:
         target_duration_seconds: int | None = None,
         tolerance_seconds: int | None = None,
         personalization: UserPersonalization | None = None,
+        previous_bulletin_clusters: list[str | dict[str, object]] | None = None,
     ) -> FinalEditorialBriefingPackage:
         created_at = datetime.now(UTC)
         resolved_personalization = UserPersonalization.from_input(personalization=personalization)
@@ -44,6 +49,7 @@ class EditorialPipelineService:
         ) = resolved_personalization.explainability()
         local_editorial_anchor = resolved_personalization.local_editorial_anchor()
         local_editorial_anchor_scope = resolved_personalization.local_editorial_anchor_scope()
+        continuity_records = self._load_previous_bulletin_clusters(previous_bulletin_clusters)
         story_clusters = self.clustering_service.cluster_articles(articles)
         scored_clusters = self.scoring_service.score_clusters(story_clusters)
         selection_result = self.selection_service.select_stories(
@@ -54,7 +60,10 @@ class EditorialPipelineService:
         )
         self.summary_generator_service.reset_variation_state()
         generated_summaries = [
-            self.summary_generator_service.generate_story_summary(cluster)
+            self.summary_generator_service.generate_story_summary(
+                cluster,
+                previous_bulletin_clusters=continuity_records,
+            )
             for cluster in selection_result.selected_clusters
         ]
         briefing_draft = self.briefing_assembly_service.assemble_briefing(
@@ -66,6 +75,7 @@ class EditorialPipelineService:
             target_duration_seconds=target_duration_seconds,
             tolerance_seconds=tolerance_seconds,
         )
+        self._persist_current_bulletin_clusters(sized_briefing.story_items)
 
         intermediate_counts = EditorialPipelineIntermediateCounts(
             article_count=len(articles),
@@ -80,6 +90,7 @@ class EditorialPipelineService:
             sized_duration=sized_briefing.estimated_total_duration_seconds,
             target_duration=sized_briefing.target_duration_seconds,
             tolerance=sized_briefing.tolerance_seconds,
+            continuity_record_count=len(continuity_records),
         )
 
         return FinalEditorialBriefingPackage(
@@ -114,6 +125,68 @@ class EditorialPipelineService:
             created_at=created_at,
         )
 
+    def _load_previous_bulletin_clusters(
+        self,
+        previous_bulletin_clusters: list[str | dict[str, object]] | None,
+    ) -> list[dict[str, object]]:
+        if previous_bulletin_clusters is not None:
+            return self._normalize_previous_bulletin_clusters(previous_bulletin_clusters)
+        if not CONTINUITY_STATE_PATH.exists():
+            return []
+        try:
+            payload = json.loads(CONTINUITY_STATE_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+        return self._normalize_previous_bulletin_clusters(
+            payload.get("latest_bulletin_clusters", [])
+        )
+
+    def _normalize_previous_bulletin_clusters(
+        self,
+        previous_bulletin_clusters: list[str | dict[str, object]],
+    ) -> list[dict[str, object]]:
+        normalized: list[dict[str, object]] = []
+        seen_cluster_ids: set[str] = set()
+        for item in previous_bulletin_clusters:
+            if isinstance(item, str):
+                cluster_id = item.strip()
+                if cluster_id and cluster_id not in seen_cluster_ids:
+                    normalized.append({"cluster_id": cluster_id})
+                    seen_cluster_ids.add(cluster_id)
+                continue
+            if not isinstance(item, dict):
+                continue
+            cluster_id = str(item.get("cluster_id") or "").strip()
+            if not cluster_id or cluster_id in seen_cluster_ids:
+                continue
+            normalized.append(
+                {
+                    "cluster_id": cluster_id,
+                    "score_total": item.get("score_total"),
+                    "source_count": item.get("source_count"),
+                }
+            )
+            seen_cluster_ids.add(cluster_id)
+        return normalized
+
+    def _persist_current_bulletin_clusters(self, story_items: list) -> None:
+        CONTINUITY_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "updated_at": datetime.now(UTC).isoformat(),
+            "latest_bulletin_clusters": [
+                {
+                    "cluster_id": item.story.cluster_id,
+                    "score_total": item.story.score_total,
+                    "source_count": len(item.story.source_labels),
+                }
+                for item in story_items
+            ],
+        }
+        CONTINUITY_STATE_PATH.write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
     def _build_pipeline_explanation(
         self,
         intermediate_counts: EditorialPipelineIntermediateCounts,
@@ -121,17 +194,23 @@ class EditorialPipelineService:
         sized_duration: int,
         target_duration: int,
         tolerance: int,
+        continuity_record_count: int,
     ) -> str:
         lower_bound = max(target_duration - tolerance, 0)
         upper_bound = target_duration + tolerance
         trim_note = "The sized bulletin kept all assembled stories."
         if trimmed:
             trim_note = "The sized bulletin trimmed trailing lower-priority stories to fit the target window."
+        continuity_note = (
+            f"Loaded {continuity_record_count} cluster record(s) from the previous bulletin to detect story updates."
+            if continuity_record_count
+            else "No previous bulletin continuity records were available, so all stories were treated as new."
+        )
 
         return (
             f"Editorial pipeline processed {intermediate_counts.article_count} fetched articles into "
             f"{intermediate_counts.cluster_count} clusters, scored {intermediate_counts.scored_cluster_count} clusters, "
             f"selected {intermediate_counts.selected_story_count} stories, and generated {intermediate_counts.generated_summary_count} summaries. "
             f"Final draft duration is {sized_duration} seconds against a target window of {lower_bound}-{upper_bound} seconds. "
-            f"{trim_note} Personalization is now a first-class pipeline contract; listener profile and editorial preferences are always resolved explicitly, with safe defaults visible in output explainability."
+            f"{trim_note} {continuity_note} Personalization is now a first-class pipeline contract; listener profile and editorial preferences are always resolved explicitly, with safe defaults visible in output explainability."
         )

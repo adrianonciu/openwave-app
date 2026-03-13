@@ -455,5 +455,7 @@
         "template": "{actor} sustine ca {detail}."
       }
     ]
-  }
+  },
+  "continuity_major_update_score_delta": 8.0,
+  "continuity_major_update_source_delta": 1
 }

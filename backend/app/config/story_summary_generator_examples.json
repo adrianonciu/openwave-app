@@ -83,6 +83,117 @@
         "source_attribution_varied",
         "attribution_first"
       ]
+    },
+    {
+      "category": "continuity_new_story",
+      "input_cluster": {
+        "cluster_id": "cluster-ecb-001",
+        "representative_title": "ECB signals caution on rate cuts as inflation risks persist",
+        "member_articles": [
+          {
+            "url": "https://example.com/economy/ecb-1",
+            "title": "ECB signals caution on rate cuts as inflation risks persist",
+            "source": "Reuters",
+            "published_at": "2026-03-13T08:00:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T08:00:00+00:00",
+        "latest_published_at": "2026-03-13T08:00:00+00:00"
+      },
+      "previous_bulletin_clusters": [
+        "cluster-war-001"
+      ],
+      "story_continuity_type": "new_story",
+      "continuity_detected": false,
+      "continuity_explanation": "Cluster did not appear in the previous bulletin.",
+      "generated_summary_opening": "Inflatia ar putea creste din nou, avertizeaza Reuters.",
+      "policy_compliance_notes": [
+        "new_story_detected",
+        "default_lead_used"
+      ]
+    },
+    {
+      "category": "continuity_update",
+      "input_cluster": {
+        "cluster_id": "cluster-factory-attack-001",
+        "representative_title": "Russia accuses France and Britain after attack on arms factory",
+        "member_articles": [
+          {
+            "url": "https://example.com/world/factory-1",
+            "title": "Russia accuses France and Britain after attack on arms factory",
+            "source": "HotNews",
+            "published_at": "2026-03-13T10:00:00+00:00"
+          },
+          {
+            "url": "https://example.com/world/factory-2",
+            "title": "New reaction after attack on Russian arms factory",
+            "source": "Reuters",
+            "published_at": "2026-03-13T10:30:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T10:00:00+00:00",
+        "latest_published_at": "2026-03-13T10:30:00+00:00"
+      },
+      "previous_bulletin_clusters": [
+        {
+          "cluster_id": "cluster-factory-attack-001",
+          "score_total": 68.0,
+          "source_count": 2
+        }
+      ],
+      "story_continuity_type": "update",
+      "continuity_detected": true,
+      "continuity_explanation": "Cluster appeared in previous bulletin.",
+      "generated_summary_opening": "Revenim la russia accuses france and britain dupa atac asupra arms factory.",
+      "policy_compliance_notes": [
+        "continuity_update_detected",
+        "update_lead_used"
+      ]
+    },
+    {
+      "category": "continuity_major_update",
+      "input_cluster": {
+        "cluster_id": "cluster-sanctions-001",
+        "representative_title": "EU approves wider sanctions package after latest Russian strike in Ukraine",
+        "member_articles": [
+          {
+            "url": "https://example.com/world/sanctions-1",
+            "title": "EU approves wider sanctions package after latest Russian strike in Ukraine",
+            "source": "Reuters",
+            "published_at": "2026-03-13T09:00:00+00:00"
+          },
+          {
+            "url": "https://example.com/world/sanctions-2",
+            "title": "More capitals back a broader sanctions move after strike in Ukraine",
+            "source": "BBC",
+            "published_at": "2026-03-13T09:20:00+00:00"
+          },
+          {
+            "url": "https://example.com/world/sanctions-3",
+            "title": "Third source confirms wider sanctions push after Russian strike",
+            "source": "AP",
+            "published_at": "2026-03-13T09:35:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T09:00:00+00:00",
+        "latest_published_at": "2026-03-13T09:35:00+00:00"
+      },
+      "previous_bulletin_clusters": [
+        {
+          "cluster_id": "cluster-sanctions-001",
+          "score_total": 60.0,
+          "source_count": 2
+        }
+      ],
+      "current_score_total": 72.5,
+      "story_continuity_type": "major_update",
+      "continuity_detected": true,
+      "continuity_explanation": "Cluster appeared in previous bulletin and now qualifies as a major update; score increased by 12.5 points; source count increased from 2 to 3.",
+      "generated_summary_opening": "Noi informatii despre eu aproba wider sanctiuni package dupa latest rusesc strike in Ucraina.",
+      "policy_compliance_notes": [
+        "continuity_major_update_detected",
+        "major_update_lead_used"
+      ]
     }
   ]
 }

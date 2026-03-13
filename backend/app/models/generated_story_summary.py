@@ -17,6 +17,9 @@ class GeneratedStorySummary(BaseModel):
     cluster_id: str
     short_headline: str
     lead_type: Literal["impact", "decision", "warning", "conflict", "change", "event"]
+    story_continuity_type: Literal["new_story", "update", "major_update"] = "new_story"
+    continuity_detected: bool = False
+    continuity_explanation: str = "Cluster did not appear in the previous bulletin."
     summary_text: str
     sentence_count: int = Field(ge=0)
     word_count: int = Field(ge=0)

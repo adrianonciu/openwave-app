@@ -76,6 +76,14 @@ class StorySummaryGeneratorService:
         self.attribution_variants: dict[str, list[dict[str, str]]] = raw_config[
             "attribution_variants"
         ]
+        self.continuity_major_update_score_delta: float = raw_config.get(
+            "continuity_major_update_score_delta",
+            8.0,
+        )
+        self.continuity_major_update_source_delta: int = raw_config.get(
+            "continuity_major_update_source_delta",
+            1,
+        )
         self.recent_attribution_variants: list[str] = []
 
     def reset_variation_state(self) -> None:
@@ -84,11 +92,21 @@ class StorySummaryGeneratorService:
     def generate_story_summary(
         self,
         cluster: StoryCluster | ScoredStoryCluster,
+        previous_bulletin_clusters: list[str | dict[str, object]] | None = None,
     ) -> GeneratedStorySummary:
         normalized_cluster, source_basis, score_total = self._normalize_cluster(cluster)
         generated_at = datetime.now(UTC)
         topic = self._infer_topic(normalized_cluster)
         short_headline = self._build_short_headline(normalized_cluster)
+        (
+            story_continuity_type,
+            continuity_detected,
+            continuity_explanation,
+        ) = self._detect_story_continuity(
+            cluster=normalized_cluster,
+            score_total=score_total,
+            previous_bulletin_clusters=previous_bulletin_clusters,
+        )
         quote_line = self._extract_memorable_quote_line(normalized_cluster)
         attribution_type = self._determine_attribution_type(normalized_cluster, quote_line)
         casualty_line = self._extract_casualty_line(normalized_cluster)
@@ -111,6 +129,7 @@ class StorySummaryGeneratorService:
             topic=topic,
             lead_type=lead_type,
             casualty_line=casualty_line,
+            story_continuity_type=story_continuity_type,
         )
         detail_sentence, attribution_variant, summary_variation_used = self._build_detail_sentence(
             cluster=normalized_cluster,
@@ -156,6 +175,8 @@ class StorySummaryGeneratorService:
             cluster=normalized_cluster,
             topic=topic,
             lead_type=lead_type,
+            story_continuity_type=story_continuity_type,
+            continuity_explanation=continuity_explanation,
             attribution_type=attribution_type,
             short_headline=short_headline,
             compliance=compliance,
@@ -173,6 +194,9 @@ class StorySummaryGeneratorService:
             cluster_id=normalized_cluster.cluster_id,
             short_headline=short_headline,
             lead_type=lead_type,
+            story_continuity_type=story_continuity_type,
+            continuity_detected=continuity_detected,
+            continuity_explanation=continuity_explanation,
             summary_text=summary_text,
             sentence_count=sentence_count,
             word_count=word_count,
@@ -237,6 +261,80 @@ class StorySummaryGeneratorService:
         if topic == "sport":
             return "event"
         return "event"
+
+    def _detect_story_continuity(
+        self,
+        cluster: StoryCluster,
+        score_total: float | None,
+        previous_bulletin_clusters: list[str | dict[str, object]] | None,
+    ) -> tuple[str, bool, str]:
+        previous_record = self._previous_cluster_record(
+            cluster.cluster_id,
+            previous_bulletin_clusters,
+        )
+        if previous_record is None:
+            return "new_story", False, "Cluster did not appear in the previous bulletin."
+
+        previous_score = self._coerce_float(previous_record.get("score_total"))
+        previous_source_count = self._coerce_int(previous_record.get("source_count"))
+        current_source_count = len(cluster.member_articles)
+        score_delta = (
+            score_total - previous_score
+            if score_total is not None and previous_score is not None
+            else None
+        )
+        source_delta = (
+            current_source_count - previous_source_count
+            if previous_source_count is not None
+            else None
+        )
+        if (
+            score_delta is not None and score_delta >= self.continuity_major_update_score_delta
+        ) or (
+            source_delta is not None and source_delta >= self.continuity_major_update_source_delta
+        ):
+            explanation_parts = ["Cluster appeared in previous bulletin and now qualifies as a major update"]
+            if score_delta is not None and score_delta >= self.continuity_major_update_score_delta:
+                explanation_parts.append(
+                    f"score increased by {round(score_delta, 1)} points"
+                )
+            if source_delta is not None and source_delta >= self.continuity_major_update_source_delta:
+                explanation_parts.append(
+                    f"source count increased from {previous_source_count} to {current_source_count}"
+                )
+            return "major_update", True, "; ".join(explanation_parts) + "."
+
+        return "update", True, "Cluster appeared in previous bulletin."
+
+    def _previous_cluster_record(
+        self,
+        cluster_id: str,
+        previous_bulletin_clusters: list[str | dict[str, object]] | None,
+    ) -> dict[str, object] | None:
+        for item in previous_bulletin_clusters or []:
+            if isinstance(item, str):
+                if item == cluster_id:
+                    return {"cluster_id": item}
+                continue
+            if isinstance(item, dict) and item.get("cluster_id") == cluster_id:
+                return item
+        return None
+
+    def _coerce_float(self, value: object) -> float | None:
+        try:
+            if value is None:
+                return None
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    def _coerce_int(self, value: object) -> int | None:
+        try:
+            if value is None:
+                return None
+            return int(value)
+        except (TypeError, ValueError):
+            return None
 
     def _build_short_headline(self, cluster: StoryCluster) -> str:
         translated_title = self._light_translate_title(cluster.representative_title)
@@ -371,8 +469,15 @@ class StorySummaryGeneratorService:
         topic: str,
         lead_type: str,
         casualty_line: str | None,
+        story_continuity_type: str,
     ) -> str:
         translated_title = self._light_translate_title(cluster.representative_title)
+        continuity_lead = self._build_continuity_lead(
+            translated_title=translated_title,
+            story_continuity_type=story_continuity_type,
+        )
+        if continuity_lead is not None:
+            return continuity_lead
         if lead_type == "impact":
             return self._build_impact_lead(cluster, translated_title)
         if lead_type == "decision":
@@ -384,6 +489,27 @@ class StorySummaryGeneratorService:
         if lead_type == "change":
             return self._build_change_lead(translated_title)
         return self._build_event_lead(cluster, translated_title, topic)
+
+    def _build_continuity_lead(
+        self,
+        translated_title: str,
+        story_continuity_type: str,
+    ) -> str | None:
+        if story_continuity_type == "new_story":
+            return None
+        subject = self._continuity_subject(translated_title)
+        if story_continuity_type == "major_update":
+            return f"Noi informatii despre {subject}."
+        return f"Revenim la {subject}."
+
+    def _continuity_subject(self, translated_title: str) -> str:
+        subject = translated_title.strip().rstrip('.!?')
+        words = subject.split()
+        if len(words) > 12:
+            subject = " ".join(words[:12])
+        if not subject:
+            return "subiectul urmarit"
+        return subject[0].lower() + subject[1:]
 
     def _build_impact_lead(self, cluster: StoryCluster, translated_title: str) -> str:
         deaths, injuries = self._extract_casualty_counts(cluster)
@@ -749,6 +875,8 @@ class StorySummaryGeneratorService:
         cluster: StoryCluster,
         topic: str,
         lead_type: str,
+        story_continuity_type: str,
+        continuity_explanation: str,
         attribution_type: str,
         short_headline: str,
         compliance: SummaryComplianceReport,
@@ -763,9 +891,9 @@ class StorySummaryGeneratorService:
     ) -> str:
         return (
             f"Summary for cluster '{cluster.representative_title}' was generated with short headline '{short_headline}', "
-            f"lead type '{lead_type}', topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, "
+            f"lead type '{lead_type}', continuity '{story_continuity_type}', topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, "
             f"attribution_variant={attribution_variant}, variation_used={summary_variation_used}, expanded={expanded_summary_used}, "
             f"casualties={casualty_line_included}, context={context_line_included}, memorable_quote={memorable_quote_used}, "
             f"essential_numbers_kept={essential_numbers_kept}, nonessential_numbers_removed={nonessential_numbers_removed}. "
-            f"Compliance notes: {', '.join(compliance.notes)}."
+            f"Continuity: {continuity_explanation} Compliance notes: {', '.join(compliance.notes)}."
         )
