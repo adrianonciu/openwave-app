@@ -667,3 +667,21 @@ Still intentionally excluded from this task:
 - TTS provider changes
 - multiple perspective pairs per bulletin
 - perspective generation outside briefing assembly
+
+### User Preference Reconnection
+
+Backend now includes a canonical editorial preference profile for the modern pipeline.
+
+Current scope:
+
+- define one canonical model for geography and domain slider values
+- accept preferences in the end-to-end bulletin generation request
+- propagate preferences into the editorial pipeline and final editorial package
+- document future influence points for scoring, selection, and briefing composition
+
+Still intentionally excluded from this task:
+
+- Flutter UI rewrite
+- hard quotas
+- full personalization balancing logic
+- direct scoring or selection reweighting

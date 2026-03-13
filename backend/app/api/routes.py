@@ -88,5 +88,6 @@ def generate_end_to_end_bulletin(
         articles=payload.articles,
         bulletin_id=payload.bulletin_id,
         presenter_name=payload.presenter_name,
+        editorial_preferences=payload.editorial_preferences,
     )
     return result

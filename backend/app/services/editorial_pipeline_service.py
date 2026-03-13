@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from app.models.article_fetch import FetchedArticle
+from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.final_editorial_briefing import (
     EditorialPipelineIntermediateCounts,
     FinalEditorialBriefingPackage,
@@ -30,6 +31,7 @@ class EditorialPipelineService:
         max_stories: int | None = None,
         target_duration_seconds: int | None = None,
         tolerance_seconds: int | None = None,
+        editorial_preferences: EditorialPreferenceProfile | None = None,
     ) -> FinalEditorialBriefingPackage:
         created_at = datetime.now(UTC)
         story_clusters = self.clustering_service.cluster_articles(articles)
@@ -79,6 +81,7 @@ class EditorialPipelineService:
             tolerance_seconds=sized_briefing.tolerance_seconds,
             original_duration_seconds=sized_briefing.original_duration_seconds,
             intermediate_counts=intermediate_counts,
+            editorial_preferences=editorial_preferences,
             selection_explanation=selection_result.selection_explanation,
             assembly_explanation=briefing_draft.assembly_explanation,
             sizing_explanation=sized_briefing.sizing_explanation,
@@ -107,5 +110,5 @@ class EditorialPipelineService:
             f"{intermediate_counts.cluster_count} clusters, scored {intermediate_counts.scored_cluster_count} clusters, "
             f"selected {intermediate_counts.selected_story_count} stories, and generated {intermediate_counts.generated_summary_count} summaries. "
             f"Final draft duration is {sized_duration} seconds against a target window of {lower_bound}-{upper_bound} seconds. "
-            f"{trim_note}"
+            f"{trim_note} Preferences can now be passed into the editorial pipeline as soft targets for future scoring, selection, and briefing-composition adjustments."
         )

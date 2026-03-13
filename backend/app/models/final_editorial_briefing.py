@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.generated_briefing_draft import BriefingStoryItem
 from app.models.sized_briefing_draft import BulletinSizingAction
 
@@ -28,6 +29,7 @@ class FinalEditorialBriefingPackage(BaseModel):
     tolerance_seconds: int = Field(ge=0)
     original_duration_seconds: int = Field(ge=0)
     intermediate_counts: EditorialPipelineIntermediateCounts
+    editorial_preferences: EditorialPreferenceProfile | None = None
     selection_explanation: str
     assembly_explanation: str
     sizing_explanation: str

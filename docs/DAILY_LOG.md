@@ -735,3 +735,6 @@ Run full real-news bulletins and audit:
 - attribution quality
 - audio realism
 - summary completeness
+- audited the old user-preference slider concept and confirmed it was no longer connected to the modern editorial pipeline
+- added a canonical editorial preference profile for geography and domain sliders in backend models
+- reconnected preference flow from end-to-end API input into the editorial pipeline and final editorial package without yet changing scoring or selection behavior

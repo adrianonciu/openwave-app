@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.models.article_fetch import FetchedArticle
+from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.audio_generation_package import AudioGenerationPackage
 from app.models.final_editorial_briefing import FinalEditorialBriefingPackage
 
@@ -30,6 +31,7 @@ class EndToEndBulletinGenerationRequest(BaseModel):
     articles: list[FetchedArticle] = Field(min_length=1)
     bulletin_id: str | None = None
     presenter_name: str | None = None
+    editorial_preferences: EditorialPreferenceProfile | None = None
 
 
 class EndToEndBulletinResult(BaseModel):
@@ -44,6 +46,7 @@ class EndToEndBulletinResult(BaseModel):
     errors: list[EndToEndPipelineError] = Field(default_factory=list)
     execution_stats: EndToEndExecutionStats | None = None
     presenter_name: str | None = None
+    editorial_preferences: EditorialPreferenceProfile | None = None
     tts_provider: str | None = None
     tts_voice_id: str | None = None
     created_at: datetime

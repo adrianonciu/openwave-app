@@ -1522,3 +1522,34 @@ Legacy note:
 
 - the old demo insertion in `BriefingService` is no longer used for perspective playback
 - the legacy briefing path now keeps only section cues
+
+---
+
+# 29. User Preference Reconnection
+
+OpenWave now includes a canonical editorial preference profile that can travel
+through the modern backend pipeline even though full balancing logic is not yet
+implemented.
+
+Canonical preference groups:
+
+- geography: `local`, `national`, `international`
+- domains: `politics`, `economy`, `sport`, `entertainment`, `education`, `health`, `tech`
+
+Current implemented flow:
+
+```
+API request -> EndToEndBulletinService -> EditorialPipelineService -> FinalEditorialBriefingPackage
+```
+
+Current scope:
+
+- preferences are accepted as soft targets
+- preferences are preserved in the final editorial package and end-to-end result
+- preferences are not yet directly changing story scoring or story selection weights
+
+Planned influence points:
+
+- scoring: modest topic/geography boosts
+- selection: soft diversity and mix adjustments
+- briefing composition: better local-national-international and domain balance
