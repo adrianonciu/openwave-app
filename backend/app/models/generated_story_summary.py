@@ -18,6 +18,10 @@ class GeneratedStorySummary(BaseModel):
     summary_text: str
     sentence_count: int = Field(ge=0)
     word_count: int = Field(ge=0)
+    topic_label: str = "general"
+    source_labels: list[str] = Field(default_factory=list)
+    representative_title: str | None = None
+    score_total: float | None = Field(default=None, ge=0.0)
     policy_compliance: SummaryComplianceReport
     generation_explanation: str
     generated_at: datetime

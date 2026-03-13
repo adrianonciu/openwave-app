@@ -36,7 +36,7 @@ class StorySummaryGeneratorService:
         self,
         cluster: StoryCluster | ScoredStoryCluster,
     ) -> GeneratedStorySummary:
-        normalized_cluster, source_basis = self._normalize_cluster(cluster)
+        normalized_cluster, source_basis, score_total = self._normalize_cluster(cluster)
         generated_at = datetime.now(UTC)
         topic = self._infer_topic(normalized_cluster)
         lead_sentence = self._build_lead_sentence(normalized_cluster)
@@ -56,6 +56,10 @@ class StorySummaryGeneratorService:
             summary_text=summary_text,
             sentence_count=sentence_count,
             word_count=word_count,
+            topic_label=topic,
+            source_labels=sorted({member.source for member in normalized_cluster.member_articles}),
+            representative_title=normalized_cluster.representative_title,
+            score_total=score_total,
             policy_compliance=compliance,
             generation_explanation=explanation,
             generated_at=generated_at,
@@ -65,10 +69,10 @@ class StorySummaryGeneratorService:
     def _normalize_cluster(
         self,
         cluster: StoryCluster | ScoredStoryCluster,
-    ) -> tuple[StoryCluster, str]:
+    ) -> tuple[StoryCluster, str, float | None]:
         if isinstance(cluster, ScoredStoryCluster):
-            return cluster.cluster, "scored_story_cluster"
-        return cluster, "story_cluster"
+            return cluster.cluster, "scored_story_cluster", cluster.score_total
+        return cluster, "story_cluster", None
 
     def _infer_topic(self, cluster: StoryCluster) -> str:
         text = self._cluster_text(cluster)
@@ -187,4 +191,3 @@ class StorySummaryGeneratorService:
             f"Summary for cluster '{cluster.representative_title}' was generated from the representative title "
             f"with topic template '{topic}'. Compliance notes: {', '.join(compliance.notes)}."
         )
-

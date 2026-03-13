@@ -1217,3 +1217,30 @@ This layer does not perform:
 - briefing assembly
 - audio generation
 - final bulletin duration optimization
+
+---
+
+# 19. Briefing Assembly V1
+
+After per-story summary generation, OpenWave now includes a text-only briefing
+assembly layer that turns selected story items into a coherent bulletin draft.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Summary Policy -> Story Summary Generator -> Briefing Assembly
+```
+
+Assembly rules:
+
+- open with the strongest available story
+- use simple flow adjustments to avoid stacking very similar items
+- add a short Romanian intro and outro
+- estimate duration from the assembled word count
+- expose ordering reasons and total bulletin estimate
+
+This layer does not perform:
+
+- audio generation
+- TTS orchestration
+- aggressive duration optimization

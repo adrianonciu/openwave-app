@@ -11,6 +11,7 @@
 - added bounded story selection with explicit selection and rejection explanations
 - added an explicit Romanian radio-style summary policy with machine-readable rules and examples
 - added a conservative story summary generator with explicit policy-compliance checks
+- added text-only briefing assembly with intro, outro, ordering rationale, and estimated duration
 
 # OpenWave Development Log
 
@@ -621,6 +622,7 @@ In progress:
 
 1. voice tuning
 2. editorial automation pipeline
+
 
 
 

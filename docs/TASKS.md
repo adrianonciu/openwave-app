@@ -399,3 +399,21 @@ Still intentionally excluded from this task:
 - briefing assembly
 - audio generation
 - final bulletin duration optimization
+
+### Briefing Assembly V1
+
+Backend now includes a text-only briefing assembly layer for generated story summaries.
+
+Current scope:
+
+- assemble summaries into one Romanian radio-style bulletin draft
+- open with the strongest available story
+- use simple flow adjustments to avoid stacking very similar stories
+- add templated intro and outro lines
+- estimate total duration from total word count
+
+Still intentionally excluded from this task:
+
+- audio generation
+- TTS integration changes
+- aggressive bulletin duration optimization

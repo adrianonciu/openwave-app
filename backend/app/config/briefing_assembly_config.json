@@ -1,0 +1,13 @@
+{
+  "spoken_words_per_minute": 150,
+  "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
+  "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
+  "lighter_topics": ["sport", "general"],
+  "heavier_topics": ["international_conflict", "politics", "economy"],
+  "similarity_soft_groups": {
+    "hard_news": ["international_conflict", "politics", "economy"],
+    "lighter": ["sport", "general"]
+  },
+  "too_short_seconds": 150,
+  "too_long_seconds": 480
+}

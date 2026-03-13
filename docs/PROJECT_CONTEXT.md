@@ -60,3 +60,5 @@ Current backend infrastructure also includes an explicit story summary policy la
 
 Current backend infrastructure also includes a conservative story summary generator that turns one selected story cluster into one short Romanian radio-style item with explicit policy-compliance checks.
 
+Current backend infrastructure also includes a briefing assembly layer that turns generated story summaries into a coherent Romanian radio-style bulletin draft with intro, outro, ordering rationale, and estimated duration.
+
