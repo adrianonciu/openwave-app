@@ -1161,3 +1161,32 @@ This layer does not perform:
 - summarization
 - final briefing assembly
 - radio ordering
+
+---
+
+# 17. Story Summary Policy V1
+
+After story selection, OpenWave now includes an explicit summary policy layer
+that defines how one selected story should be compressed into a Romanian
+radio-style news item.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Summary Policy -> Future Summary Generation
+```
+
+Policy rules:
+
+- summarize the story, not the article
+- prefer a 3-sentence structure
+- keep story items around 30-45 seconds and 60-90 words
+- prioritize the event, main actor, consequence, and relevance now
+- avoid long quotes, excessive background, and bureaucratic phrasing
+- keep attribution short and natural
+
+This layer does not perform:
+
+- full summary generation
+- final briefing assembly
+- TTS optimization

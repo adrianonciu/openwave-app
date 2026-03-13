@@ -56,3 +56,5 @@ Current backend infrastructure also includes a transparent story scoring layer t
 
 Current backend infrastructure also includes a story selection layer that turns scored clusters into a bounded candidate set with explicit selection and rejection reasons before later briefing assembly.
 
+Current backend infrastructure also includes an explicit story summary policy layer that defines how one selected story should be compressed into a short Romanian radio-style item before any future automated summarization.
+

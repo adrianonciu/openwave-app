@@ -363,3 +363,21 @@ Still intentionally excluded from this task:
 - summarization
 - briefing assembly
 - final radio ordering
+
+### Story Summary Policy V1
+
+Backend now includes an explicit editorial summary policy for selected stories.
+
+Current scope:
+
+- define Romanian radio-style structure for one story item
+- prefer story compression over article compression
+- define sentence and word-count targets
+- define attribution and conflict-handling rules
+- provide concrete examples by story category
+
+Still intentionally excluded from this task:
+
+- full summary generation
+- briefing assembly
+- TTS wording optimization

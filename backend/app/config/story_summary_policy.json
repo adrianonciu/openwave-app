@@ -1,0 +1,82 @@
+{
+  "policy": {
+    "editorial_principle": "Nu rezuma articolul. Rezuma povestea.",
+    "preferred_sentence_count": 3,
+    "min_sentence_count": 2,
+    "max_sentence_count": 4,
+    "target_duration_seconds_min": 30,
+    "target_duration_seconds_max": 45,
+    "target_word_count_min": 60,
+    "target_word_count_max": 90,
+    "attribution_style": "Atribuirea trebuie sa fie scurta, naturala si folosita doar cand este necesara pentru claritate sau credibilitate.",
+    "allow_quotes": false,
+    "summary_structure": [
+      "Fraza 1: ce s-a intamplat si cine este actorul principal.",
+      "Fraza 2: de ce conteaza acum sau care este consecinta imediata.",
+      "Fraza 3: detaliul-cheie, urmatorul pas sau reactia relevanta."
+    ],
+    "priority_information": [
+      "evenimentul central",
+      "actorul principal sau institutia cheie",
+      "consecinta imediata",
+      "de ce conteaza acum"
+    ],
+    "avoid_rules": [
+      "fara citate lungi",
+      "fara fundal istoric excesiv",
+      "fara prea multe cifre intr-un singur item",
+      "fara nume secundare care nu ajuta intelegerea",
+      "fara formulare birocratica",
+      "fara artefacte de tipul 'in articol, autorul spune'"
+    ],
+    "conflict_policy": [
+      "include actiunea si reactia daca sunt esentiale pentru intelegerea tensiunii",
+      "nu comprima prea multe tabere intr-un item scurt",
+      "prefer o singura linie clara de tensiune in locul unei dezbateri complete"
+    ],
+    "category_variations": {
+      "politics": [
+        "accent pe decizie, actor si efect politic imediat",
+        "evita jargonul institutional inutil"
+      ],
+      "economy": [
+        "accent pe masura, impact si consecinta practica",
+        "reduce numarul de cifre la strictul necesar"
+      ],
+      "international_conflict": [
+        "accent pe actiune, reactie si risc imediat",
+        "mentine tonul sobru si clar"
+      ],
+      "sport": [
+        "accent pe rezultat, miza si urmatorul pas",
+        "foloseste ritm mai alert dar fara superlative gratuite"
+      ]
+    }
+  },
+  "examples": [
+    {
+      "category": "politics",
+      "raw_story_description": "Guvernul german a aprobat un nou pachet fiscal pentru industrie, dupa saptamani de negocieri in coalitie. Masura include stimulente pentru investitii si reduceri de taxe pentru companiile cu consum mare de energie. Opozitia spune ca planul este insuficient.",
+      "policy_compliant_summary": "Guvernul german a aprobat un nou pachet fiscal pentru industrie, dupa saptamani de negocieri in coalitie. Executivul spune ca masura ar trebui sa sprijine investitiile si sa reduca presiunea costurilor la companiile mari consumatoare de energie. Opozitia sustine insa ca planul este prea limitat si cere masuri mai ample.",
+      "explanation": "Rezumatul urmeaza structura in trei fraze: decizia, relevanta economica imediata si reactia politica esentiala, fara fundal inutil sau detalii tehnice in exces."
+    },
+    {
+      "category": "economy",
+      "raw_story_description": "Banca Centrala Europeana a redus dobanda-cheie cu 25 de puncte de baza, invocand inflatia in scadere si cresterea economica slaba din zona euro. Pietele asteapta acum indicii despre urmatoarele miscari ale bancii.",
+      "policy_compliant_summary": "Banca Centrala Europeana a redus dobanda-cheie cu un sfert de punct procentual. Decizia vine pe fondul inflatiei in scadere si al unei economii europene care ramane slaba. Investitorii urmaresc acum daca banca va continua seria reducerilor in lunile urmatoare.",
+      "explanation": "Rezumatul pastreaza evenimentul central, motivul imediat si urmatorul pas relevant, cu cifre putine si limbaj clar, potrivit pentru un item radio scurt."
+    },
+    {
+      "category": "international_conflict",
+      "raw_story_description": "Rusia a lansat un nou atac cu rachete asupra infrastructurii energetice din Ucraina, potrivit autoritatilor de la Kiev. Atacul a provocat pene de curent in mai multe regiuni. Aliatii occidentali au condamnat operatiunea si au promis sprijin suplimentar.",
+      "policy_compliant_summary": "Rusia a lansat un nou atac cu rachete asupra infrastructurii energetice din Ucraina, potrivit autoritatilor de la Kiev. Loviturile au provocat pene de curent in mai multe regiuni si cresc presiunea asupra sistemului energetic inaintea unei noi perioade reci. Aliatii occidentali au condamnat atacul si au anuntat sprijin suplimentar pentru Ucraina.",
+      "explanation": "Rezumatul include actiunea, consecinta directa si reactia relevanta, fara a aglomera itemul cu prea multe parti sau detalii militare secundare."
+    },
+    {
+      "category": "sport",
+      "raw_story_description": "Romania s-a calificat in semifinalele Campionatului European de handbal feminin dupa o victorie la doua goluri in fata Suediei. Selectionerul a spus ca echipa a gestionat bine finalul de meci si se pregateste acum pentru duelul cu Franta.",
+      "policy_compliant_summary": "Romania s-a calificat in semifinalele Campionatului European de handbal feminin, dupa victoria cu doua goluri in fata Suediei. Rezultatul mentine echipa in lupta pentru medalii si confirma unul dintre cele mai bune parcursuri ale turneului. Urmatorul meci va fi cu Franta, intr-un duel decisiv pentru accederea in finala.",
+      "explanation": "Rezumatul pune accent pe rezultat, miza si pasul urmator, intr-un ritm potrivit pentru radio, fara declaratii lungi sau detalii de joc prea fine."
+    }
+  ]
+}

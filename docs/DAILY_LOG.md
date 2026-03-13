@@ -9,6 +9,7 @@
 - added conservative news clustering to group clearly related articles without editorial ranking
 - added transparent story scoring with explicit weighted breakdowns for clustered stories
 - added bounded story selection with explicit selection and rejection explanations
+- added an explicit Romanian radio-style summary policy with machine-readable rules and examples
 
 # OpenWave Development Log
 
@@ -619,6 +620,7 @@ In progress:
 
 1. voice tuning
 2. editorial automation pipeline
+
 
 
 
