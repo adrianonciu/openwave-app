@@ -1343,3 +1343,37 @@ This layer does not perform:
 - normalization changes
 - pacing changes
 - Flutter changes
+
+---
+
+# 23. End-To-End Automatic Bulletin Generation V1
+
+OpenWave now includes a backend orchestration layer that runs one complete
+bulletin generation from fetched articles to segmented audio outputs.
+
+Pipeline position:
+
+```
+Fetched Articles -> Editorial Pipeline -> Audio Generation Package -> Existing Segmented TTS Generation -> Generated Audio Segments
+```
+
+Execution flow:
+
+- run the existing editorial pipeline orchestration
+- convert the final editorial briefing into an audio generation package
+- reuse the existing segmented TTS generation flow
+- return the final text briefing, audio package, generated segment URLs, and file paths
+
+Naming convention:
+
+- generated files reuse the existing segmented TTS pattern
+- `<bulletin_id>_intro.<ext>`
+- `<bulletin_id>_story_01.<ext>` ... `<bulletin_id>_story_n.<ext>`
+- `<bulletin_id>_outro.<ext>`
+
+This layer does not perform:
+
+- TTS provider redesign
+- editorial policy redesign
+- Flutter integration changes
+- new audio normalization logic

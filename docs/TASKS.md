@@ -476,3 +476,23 @@ Still intentionally excluded from this task:
 - audio file generation changes
 - Flutter changes
 - normalization or pacing changes
+
+### End-To-End Automatic Bulletin Generation V1
+
+Backend now includes a minimal end-to-end orchestrator for automatic bulletin generation.
+
+Current scope:
+
+- run the existing editorial pipeline on fetched articles
+- convert the final briefing into an audio generation package
+- reuse the existing segmented TTS generation flow
+- return generated segment URLs and filesystem paths with execution stats
+- expose a lightweight backend route for developer-facing end-to-end runs
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider redesign
+- editorial policy redesign
+- commentary integration
+- scheduling automation

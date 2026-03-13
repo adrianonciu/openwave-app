@@ -2,6 +2,10 @@ from fastapi import APIRouter, HTTPException
 
 from app.models.article import Article
 from app.models.briefing import DailyBriefing
+from app.models.end_to_end_bulletin_result import (
+    EndToEndBulletinGenerationRequest,
+    EndToEndBulletinResult,
+)
 from app.models.source_watcher import SourceCheckSummary
 from app.models.tts import (
     TtsGenerationRequest,
@@ -12,6 +16,7 @@ from app.models.tts import (
 )
 from app.services.article_service import ArticleService
 from app.services.briefing_service import BriefingService
+from app.services.end_to_end_bulletin_service import EndToEndBulletinService
 from app.services.source_watcher_service import SourceWatcherService
 from app.services.tts_service import TtsService
 
@@ -21,6 +26,7 @@ article_service = ArticleService()
 briefing_service = BriefingService(article_service=article_service)
 source_watcher_service = SourceWatcherService()
 tts_service = TtsService()
+end_to_end_bulletin_service = EndToEndBulletinService()
 
 
 @router.get("/articles", response_model=list[Article])
@@ -72,3 +78,15 @@ def generate_tts_audio_from_pilot(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return TtsPilotAudioResponse(**result)
+
+
+@router.post("/api/bulletins/generate-end-to-end", response_model=EndToEndBulletinResult)
+def generate_end_to_end_bulletin(
+    payload: EndToEndBulletinGenerationRequest,
+) -> EndToEndBulletinResult:
+    result = end_to_end_bulletin_service.run_end_to_end_bulletin_generation(
+        articles=payload.articles,
+        bulletin_id=payload.bulletin_id,
+        presenter_name=payload.presenter_name,
+    )
+    return result
