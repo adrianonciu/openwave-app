@@ -448,3 +448,162 @@ Next steps (after break):
 * bulletin generation pipeline
 * lead story selection logic
 * presenter voice profile (“Corina”).
+
+## 2026-03-12
+
+### Major milestone
+First end-to-end OpenWave audio test completed.
+
+Editorial pilots were converted into real audio using the backend TTS pipeline and played through the Flutter player.
+
+Pipeline validated:
+
+RSS / editorial pilot  
+→ speech pacing  
+→ TTS provider (ElevenLabs)  
+→ audio generation  
+→ saved file  
+→ playback in app
+
+### Editorial work
+Reviewed and tested Pilot 01, Pilot 02 and Pilot 03.
+
+Observations:
+- Pilot 02 currently has the best general-news structure.
+- Pilot 03 works well for personalization tests.
+- Pilot 01 remains mainly a technical reference.
+
+New editorial rules confirmed:
+- Lead Story Continuity Rule
+- Current Year Omission Rule
+- Acronym Expansion Rule
+- Numbers Spoken Rule (all numbers written in words in audio scripts)
+
+### TTS / audio system
+Implemented working TTS generation for editorial pilots.
+
+New endpoint:
+POST /api/tts/generate-from-pilot
+
+Audio files now saved in:
+backend/generated_audio/
+
+Speech pacing system added:
+- pause_after_intro
+- pause_between_stories
+- pause_before_quotes
+- pause_before_outro
+
+### Voice tests
+Tested two voices:
+
+Corina
+- Moldovan accent
+- flat prosody
+- not ideal for news
+
+Traian
+- more professional tone
+- closer to radio presenter
+- slightly slow speed
+
+Voice tuning parameters adjusted in ElevenLabs.
+
+### Audio test results
+Generated audio for pilots.
+
+Approximate durations:
+- Pilot 02: < 5 minutes
+- Pilot 03: ~3:40
+
+Conclusion:
+current pilots are still shorter than the target 7–8 minute briefing.
+
+### Issues discovered
+TTS struggles with:
+- Romanian acronyms (CSAT, CNAIR)
+- large numbers
+- some abbreviations
+
+Planned solution:
+TTS normalization layer for:
+- acronyms
+- numbers
+- dates
+
+### Next steps
+1. Implement TTS normalization layer.
+2. Generate segmented audio (intro / stories / outro).
+3. Integrate news stinger between stories.
+4. Finalize presenter voice.
+5. Start automated briefing builder.
+
+### Project status
+OpenWave reached the stage of a working AI radio prototype with real audio generation and playback.
+
+# OpenWave — Daily Log
+Date: 2026-03-12
+
+## Work completed
+
+### TTS normalization layer
+
+Implemented Romanian TTS normalization pipeline:
+
+1. romanian_audio_lexicon
+- institutions
+- political parties
+
+2. romanian_numbers_normalizer
+supports:
+- numbers
+- percentages
+- decimal percentages
+- years
+- simple money amounts
+- millions / billions
+- simple times
+- compact dates
+
+Examples:
+3,5% -> trei virgulă cinci la sută
+14:30 -> paisprezece și treizeci
+12.03.2026 -> douăsprezece martie
+
+### Editorial rules implemented
+
+- do not pronounce current year in news
+- pronounce year only if different from current year
+
+### TTS pipeline order
+
+text
+→ romanian_numbers_normalizer
+→ romanian_audio_lexicon
+→ romanian_tts_normalizer
+→ ElevenLabs TTS
+
+### Audio architecture
+
+segmented audio:
+intro
+stories
+outro
+
+news stinger between stories implemented in Flutter.
+
+## Current project status
+
+Completed:
+- TTS normalization layer
+- segmented audio generation
+- news stinger integration
+
+In progress:
+- voice tuning
+- editorial automation
+
+## Next steps
+
+1. voice tuning
+2. editorial automation pipeline

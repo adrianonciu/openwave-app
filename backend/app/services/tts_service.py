@@ -5,7 +5,12 @@ import re
 from pathlib import Path
 
 from app.config.presenter import get_presenter_config
-from app.services.tts.pronunciation_normalizer import PronunciationNormalizer
+from app.services.tts.editorial_entity_formatter import (
+    apply_romanian_editorial_lexicon,
+    apply_romanian_editorial_lexicon_to_text,
+)
+from app.services.tts.romanian_numbers_normalizer import normalize_romanian_numbers_for_tts
+from app.services.tts.romanian_tts_normalizer import normalize_for_romanian_tts
 from app.services.tts.speech_pacing_formatter import SpeechPacingFormatter
 from app.services.tts.tts_factory import create_tts_provider
 
@@ -22,7 +27,6 @@ class TtsService:
             'pilot_03': Path('docs/editorial/testing/pilot_03_briefing_ro.md'),
         }
         self._pacing_formatter = SpeechPacingFormatter()
-        self._pronunciation_normalizer = PronunciationNormalizer()
 
     def get_pilot_summaries(self) -> list[dict[str, str]]:
         summaries: list[dict[str, str]] = []
@@ -69,6 +73,10 @@ class TtsService:
         if not cleaned_text:
             raise ValueError('briefing_text must not be empty.')
 
+        cleaned_text = normalize_romanian_numbers_for_tts(cleaned_text)
+        cleaned_text = apply_romanian_editorial_lexicon_to_text(cleaned_text)
+        cleaned_text = normalize_for_romanian_tts(cleaned_text)
+
         presenter = get_presenter_config(presenter_name)
         provider = create_tts_provider(presenter)
         safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
@@ -104,14 +112,17 @@ class TtsService:
         provider = create_tts_provider(presenter)
         safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
         segment_urls: list[str] = []
+        editorial_blocks = apply_romanian_editorial_lexicon([segment['text'] for segment in segment_blocks])
 
-        for segment in segment_blocks:
-            normalized = self._pronunciation_normalizer.normalize(
-                self._pacing_formatter.format_text_for_tts([segment['text']])
+        for segment, editorial_text in zip(segment_blocks, editorial_blocks):
+            cleaned_text = self._clean_briefing_text(
+                self._pacing_formatter.format_text_for_tts([editorial_text])
             )
-            cleaned_text = self._clean_briefing_text(normalized.text)
             if not cleaned_text:
                 continue
+
+            cleaned_text = normalize_romanian_numbers_for_tts(cleaned_text)
+            cleaned_text = normalize_for_romanian_tts(cleaned_text)
 
             segment_name = self._safe_stem(segment['segment_name'])
             file_name = f'{safe_stem}_{segment_name}.{provider.output_extension}'
