@@ -1472,3 +1472,7 @@ This keeps the summary generator explainable while making the opening line sound
 The story summary generator now preserves short memorable quotes only when they are vivid and audio-friendly, and it filters out secondary numbers unless they change the meaning of the story.
 
 The briefing assembly layer now assigns a simple pacing label (`heavy`, `medium`, `light`) to each story and uses pacing as a secondary ordering adjustment to avoid long runs of heavy items when suitable alternatives exist.
+
+### Variation Engine For Radio Language
+
+The story summary generator now rotates attribution-first phrasing deterministically across consecutive stories. It keeps a short in-memory history per bulletin run and switches away from a repeated structure when the same opening would otherwise appear for a third consecutive item.

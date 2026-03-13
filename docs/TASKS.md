@@ -580,3 +580,19 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - wider editorial redesign
+
+### Variation Engine For Radio Language
+
+Backend now refines per-story summaries with deterministic attribution variation.
+
+Current scope:
+
+- rotate between attribution-first phrasings such as `Potrivit X`, `X spune ca`, `X afirma ca`, and `X arata ca`
+- avoid a third consecutive repetition of the same attribution structure inside one bulletin run
+- expose `attribution_variant` and `summary_variation_used` on generated summaries
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- random language generation

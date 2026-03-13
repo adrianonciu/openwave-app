@@ -18,6 +18,8 @@
       },
       "short_headline": "Mesaj dur despre drone",
       "lead_type": "decision",
+      "attribution_variant": "potrivit",
+      "summary_variation_used": false,
       "memorable_quote_used": true,
       "generated_summary": "Ministerul a luat o decizie importanta dupa drone debate. Potrivit HotNews, mesajul-cheie este simplu: \"nu e nevoie de piloti kamikaze\", iar in perioada imediat urmatoare atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.",
       "policy_compliance_notes": [
@@ -26,55 +28,60 @@
       ]
     },
     {
-      "category": "excess_numbers_removed",
+      "category": "variation_sequence_repeated_sources",
+      "description": "Three consecutive summaries rotate attribution-first phrasing deterministically after two matching openings.",
+      "generated_sequence": [
+        {
+          "source": "BNR",
+          "attribution_variant": "potrivit",
+          "summary_variation_used": false,
+          "summary_opening": "Potrivit BNR, urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal."
+        },
+        {
+          "source": "Ministerul Finantelor",
+          "attribution_variant": "potrivit",
+          "summary_variation_used": false,
+          "summary_opening": "Potrivit Ministerul Finantelor, in perioada urmatoare atentia se muta spre reactiile politice si spre aplicarea masurii."
+        },
+        {
+          "source": "INS",
+          "attribution_variant": "arata_ca",
+          "summary_variation_used": true,
+          "summary_opening": "INS arata ca urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal."
+        }
+      ],
+      "policy_compliance_notes": [
+        "deterministic_variation",
+        "no_third_repeated_potrivit",
+        "attribution_first_preserved"
+      ]
+    },
+    {
+      "category": "source_variation_without_randomness",
       "input_cluster": {
-        "cluster_id": "cluster-numbers-001",
-        "representative_title": "Central bank warns inflation could hit 5.4% in Q3 after 12 meetings and 3 revised forecasts",
+        "cluster_id": "cluster-source-001",
+        "representative_title": "Statistics office says home prices rose again in major cities",
         "member_articles": [
           {
-            "url": "https://example.com/numbers/1",
-            "title": "Central bank warns inflation could hit 5.4% in Q3 after 12 meetings and 3 revised forecasts",
-            "source": "Financial Times",
+            "url": "https://example.com/source/1",
+            "title": "Statistics office says home prices rose again in major cities",
+            "source": "INS",
             "published_at": "2026-03-13T09:00:00+00:00"
           }
         ],
         "created_at": "2026-03-13T09:00:00+00:00",
         "latest_published_at": "2026-03-13T09:00:00+00:00"
       },
-      "short_headline": "Avertisment despre inflatie",
-      "lead_type": "warning",
-      "essential_numbers_kept": true,
-      "nonessential_numbers_removed": true,
-      "generated_summary": "Inflatia ar putea creste din nou, avertizeaza Financial Times. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
+      "short_headline": "Preturi din nou sus",
+      "lead_type": "change",
+      "attribution_variant": "arata_ca",
+      "summary_variation_used": true,
+      "essential_numbers_kept": false,
+      "nonessential_numbers_removed": false,
+      "generated_summary": "Preturile au crescut din nou. INS arata ca urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
       "policy_compliance_notes": [
-        "secondary_numbers_removed",
-        "meaning_changing_percentage_kept"
-      ]
-    },
-    {
-      "category": "essential_casualty_number_preserved",
-      "input_cluster": {
-        "cluster_id": "cluster-casualty-001",
-        "representative_title": "Explosion kills 2 and injures 14 at fuel depot after 3 earlier alarms",
-        "member_articles": [
-          {
-            "url": "https://example.com/casualty/1",
-            "title": "Explosion kills 2 and injures 14 at fuel depot after 3 earlier alarms",
-            "source": "Reuters",
-            "published_at": "2026-03-13T08:20:00+00:00"
-          }
-        ],
-        "created_at": "2026-03-13T08:20:00+00:00",
-        "latest_published_at": "2026-03-13T08:20:00+00:00"
-      },
-      "short_headline": "Explozie la depozit",
-      "lead_type": "impact",
-      "essential_numbers_kept": true,
-      "nonessential_numbers_removed": true,
-      "generated_summary": "O explozia s-a soldat cu 2 morti si aproximativ 14 de raniti. Potrivit Reuters, acesta este cadrul comun in care este urmarit subiectul, iar in perioada imediat urmatoare atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.",
-      "policy_compliance_notes": [
-        "casualty_numbers_kept",
-        "nonessential_alarm_count_removed"
+        "source_attribution_varied",
+        "attribution_first"
       ]
     }
   ]

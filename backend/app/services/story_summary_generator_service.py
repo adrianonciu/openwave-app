@@ -73,6 +73,13 @@ class StorySummaryGeneratorService:
         self.official_attribution_templates: list[str] = raw_config[
             "official_attribution_templates"
         ]
+        self.attribution_variants: dict[str, list[dict[str, str]]] = raw_config[
+            "attribution_variants"
+        ]
+        self.recent_attribution_variants: list[str] = []
+
+    def reset_variation_state(self) -> None:
+        self.recent_attribution_variants = []
 
     def generate_story_summary(
         self,
@@ -105,7 +112,7 @@ class StorySummaryGeneratorService:
             lead_type=lead_type,
             casualty_line=casualty_line,
         )
-        detail_sentence = self._build_detail_sentence(
+        detail_sentence, attribution_variant, summary_variation_used = self._build_detail_sentence(
             cluster=normalized_cluster,
             topic=topic,
             attribution_type=attribution_type,
@@ -158,6 +165,8 @@ class StorySummaryGeneratorService:
             memorable_quote_used=memorable_quote_used,
             essential_numbers_kept=essential_numbers_kept,
             nonessential_numbers_removed=nonessential_numbers_removed,
+            attribution_variant=attribution_variant,
+            summary_variation_used=summary_variation_used,
         )
 
         return GeneratedStorySummary(
@@ -170,6 +179,8 @@ class StorySummaryGeneratorService:
             topic_label=topic,
             source_labels=sorted({member.source for member in normalized_cluster.member_articles}),
             attribution_type=attribution_type,
+            attribution_variant=attribution_variant,
+            summary_variation_used=summary_variation_used,
             quote_line=quote_line,
             memorable_quote_used=memorable_quote_used,
             essential_numbers_kept=essential_numbers_kept,
@@ -529,25 +540,50 @@ class StorySummaryGeneratorService:
         topic: str,
         attribution_type: str,
         quote_line: str | None,
-    ) -> str:
-        detail = self.topic_templates.get(topic, self.topic_templates["general"])["detail"].rstrip(".?!")
-        source = self._primary_source(cluster)
+    ) -> tuple[str, str, bool]:
+        detail = self.topic_templates.get(topic, self.topic_templates["general"])["detail"].rstrip(".?!").lower()
+        actor = self._attribution_actor(cluster, attribution_type)
+        variant = self._select_attribution_variant(cluster.cluster_id, attribution_type)
+        template = variant["template"]
+        sentence = template.format(
+            actor=actor,
+            detail=detail,
+            quote=(quote_line or "mesaj scurt"),
+        )
+        self._remember_attribution_variant(variant["id"])
+        return sentence, variant["id"], variant["id"] != "potrivit"
 
-        if attribution_type == "direct_quote" and quote_line:
-            return f'Potrivit {source}, mesajul-cheie este simplu: "{quote_line}", iar {detail.lower()}.'
-
+    def _attribution_actor(self, cluster: StoryCluster, attribution_type: str) -> str:
         if attribution_type == "official_statement":
-            attribution = self._pick_template(
-                self.official_attribution_templates,
-                cluster.cluster_id,
-            ).rstrip(".?!")
-            return f"{attribution}, iar {detail.lower()}."
+            translated_title = self._light_translate_title(cluster.representative_title)
+            return self._extract_institution(translated_title) or self._primary_source(cluster)
+        return self._primary_source(cluster)
 
-        attribution = self._pick_template(
-            self.source_attribution_templates,
-            source,
-        ).format(source=source).rstrip(".?!")
-        return f"{attribution}, iar {detail.lower()}."
+    def _select_attribution_variant(
+        self,
+        cluster_id: str,
+        attribution_type: str,
+    ) -> dict[str, str]:
+        variants = self.attribution_variants.get(
+            attribution_type,
+            self.attribution_variants["source_attribution"],
+        )
+        disallowed: set[str] = set()
+        if len(self.recent_attribution_variants) >= 2:
+            last_two = self.recent_attribution_variants[-2:]
+            if last_two[0] == last_two[1]:
+                disallowed.add(last_two[0])
+
+        start_index = sum(ord(char) for char in f"{cluster_id}:{attribution_type}") % len(variants)
+        rotated = variants[start_index:] + variants[:start_index]
+        for variant in rotated:
+            if variant["id"] not in disallowed:
+                return variant
+        return rotated[0]
+
+    def _remember_attribution_variant(self, variant_id: str) -> None:
+        self.recent_attribution_variants.append(variant_id)
+        self.recent_attribution_variants = self.recent_attribution_variants[-2:]
 
     def _build_consequence_sentence(self, topic: str) -> str:
         return self.topic_templates.get(topic, self.topic_templates["general"])["impact"]
@@ -722,12 +758,14 @@ class StorySummaryGeneratorService:
         memorable_quote_used: bool,
         essential_numbers_kept: bool,
         nonessential_numbers_removed: bool,
+        attribution_variant: str,
+        summary_variation_used: bool,
     ) -> str:
         return (
             f"Summary for cluster '{cluster.representative_title}' was generated with short headline '{short_headline}', "
             f"lead type '{lead_type}', topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, "
-            f"expanded={expanded_summary_used}, casualties={casualty_line_included}, context={context_line_included}, "
-            f"memorable_quote={memorable_quote_used}, essential_numbers_kept={essential_numbers_kept}, "
-            f"nonessential_numbers_removed={nonessential_numbers_removed}. "
+            f"attribution_variant={attribution_variant}, variation_used={summary_variation_used}, expanded={expanded_summary_used}, "
+            f"casualties={casualty_line_included}, context={context_line_included}, memorable_quote={memorable_quote_used}, "
+            f"essential_numbers_kept={essential_numbers_kept}, nonessential_numbers_removed={nonessential_numbers_removed}. "
             f"Compliance notes: {', '.join(compliance.notes)}."
         )

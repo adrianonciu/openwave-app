@@ -73,3 +73,5 @@ Current backend infrastructure also applies an attribution-first radio rule in s
 Current backend infrastructure also includes radio lead generation in the story summary generator, so sentence one is now built from a configurable lead type heuristic instead of mostly mirroring the representative article title.
 
 Current backend infrastructure also filters radio summaries more aggressively by keeping memorable short quotes, removing secondary numbers, and exposing simple pacing labels in briefing assembly so bulletins sound more balanced in audio.
+
+Current backend infrastructure also includes a deterministic variation layer inside the story summary generator so attribution-first lines can rotate between equivalent radio-safe phrasings without introducing randomness.

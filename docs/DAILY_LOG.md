@@ -641,3 +641,5 @@ In progress:
 
 - refined story summaries to preserve only short memorable quotes and to remove non-essential numbers more aggressively
 - refined briefing assembly with simple heavy/medium/light pacing labels and a secondary flow rule that avoids long runs of heavy stories when alternatives exist
+
+- added a deterministic radio-language variation layer so summary attribution openings now rotate between equivalent attribution-first structures instead of repeating `Potrivit ...` across consecutive items

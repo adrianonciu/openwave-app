@@ -40,7 +40,9 @@
           "source_basis": "scored_story_cluster",
           "memorable_quote_used": false,
           "essential_numbers_kept": false,
-          "nonessential_numbers_removed": false
+          "nonessential_numbers_removed": false,
+          "attribution_variant": "potrivit",
+          "summary_variation_used": false
         },
         "pacing_label": "medium"
       },
@@ -80,7 +82,9 @@
           "source_basis": "scored_story_cluster",
           "memorable_quote_used": false,
           "essential_numbers_kept": false,
-          "nonessential_numbers_removed": false
+          "nonessential_numbers_removed": false,
+          "attribution_variant": "arata_ca",
+          "summary_variation_used": true
         },
         "pacing_label": "medium"
       }

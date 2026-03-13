@@ -49,20 +49,115 @@
   ],
   "memorable_quote_max_words": 8,
   "memorable_quote_terms": [
-    "nu", "nici", "fara", "imediat", "acum", "criza", "razboi", "kamikaze", "blocaj", "soc", "urgent"
+    "nu",
+    "nici",
+    "fara",
+    "imediat",
+    "acum",
+    "criza",
+    "razboi",
+    "kamikaze",
+    "blocaj",
+    "soc",
+    "urgent"
   ],
   "bureaucratic_quote_terms": [
-    "implementare", "procedura", "mecanism", "cadru", "instituțional", "institutional", "coordonare", "consolidare"
+    "implementare",
+    "procedura",
+    "mecanism",
+    "cadru",
+    "instituțional",
+    "institutional",
+    "coordonare",
+    "consolidare"
   ],
   "essential_number_keywords": [
-    "morti", "decese", "raniti", "procent", "%", "lei", "euro", "dolari", "deadline", "termen", "azi", "maine", "luni", "marti", "miercuri", "joi", "vineri", "sambata", "duminica"
+    "morti",
+    "decese",
+    "raniti",
+    "procent",
+    "%",
+    "lei",
+    "euro",
+    "dolari",
+    "deadline",
+    "termen",
+    "azi",
+    "maine",
+    "luni",
+    "marti",
+    "miercuri",
+    "joi",
+    "vineri",
+    "sambata",
+    "duminica"
   ],
   "lead_type_keywords": {
-    "decision": ["approve", "approved", "aproba", "adopta", "adoptat", "decision", "budget", "sanctions", "agreement", "deal", "law", "measure"],
-    "warning": ["warn", "warning", "risk", "risks", "inflation", "security", "energy", "forecast", "deficit", "avertizeaza"],
-    "conflict": ["coalition", "crisis", "dispute", "tensions", "row", "premier", "government", "parliament", "conflict", "standoff"],
-    "change": ["prices", "grew", "growth", "rose", "rise", "fell", "drop", "indicator", "statistics", "market", "deficit", "dobanzi", "preturi"],
-    "event": ["summit", "meeting", "visit", "conference", "talks", "match", "final", "semifinal", "leaders", "reunesc"]
+    "decision": [
+      "approve",
+      "approved",
+      "aproba",
+      "adopta",
+      "adoptat",
+      "decision",
+      "budget",
+      "sanctions",
+      "agreement",
+      "deal",
+      "law",
+      "measure"
+    ],
+    "warning": [
+      "warn",
+      "warning",
+      "risk",
+      "risks",
+      "inflation",
+      "security",
+      "energy",
+      "forecast",
+      "deficit",
+      "avertizeaza"
+    ],
+    "conflict": [
+      "coalition",
+      "crisis",
+      "dispute",
+      "tensions",
+      "row",
+      "premier",
+      "government",
+      "parliament",
+      "conflict",
+      "standoff"
+    ],
+    "change": [
+      "prices",
+      "grew",
+      "growth",
+      "rose",
+      "rise",
+      "fell",
+      "drop",
+      "indicator",
+      "statistics",
+      "market",
+      "deficit",
+      "dobanzi",
+      "preturi"
+    ],
+    "event": [
+      "summit",
+      "meeting",
+      "visit",
+      "conference",
+      "talks",
+      "match",
+      "final",
+      "semifinal",
+      "leaders",
+      "reunesc"
+    ]
   },
   "lead_phrase_maps": {
     "decision_objects": {
@@ -187,20 +282,101 @@
     "prices": "preturi"
   },
   "topic_keywords": {
-    "politics": ["government", "parliament", "election", "president", "coalition", "cabinet"],
-    "economy": ["economy", "rates", "inflation", "bank", "budget", "trade", "tariff"],
-    "international_conflict": ["attack", "war", "missile", "sanctions", "ukraine", "russia", "ceasefire"],
-    "sport": ["wins", "victory", "match", "semifinal", "final", "league", "championship"],
+    "politics": [
+      "government",
+      "parliament",
+      "election",
+      "president",
+      "coalition",
+      "cabinet"
+    ],
+    "economy": [
+      "economy",
+      "rates",
+      "inflation",
+      "bank",
+      "budget",
+      "trade",
+      "tariff"
+    ],
+    "international_conflict": [
+      "attack",
+      "war",
+      "missile",
+      "sanctions",
+      "ukraine",
+      "russia",
+      "ceasefire"
+    ],
+    "sport": [
+      "wins",
+      "victory",
+      "match",
+      "semifinal",
+      "final",
+      "league",
+      "championship"
+    ],
     "general": []
   },
   "headline_stopwords": [
-    "si", "sau", "iar", "care", "dupa", "pentru", "asupra", "fondul", "urmatorul", "urmatoarea", "este", "sunt", "din", "prin", "noi", "nou", "noua", "the", "and", "after", "amid", "with", "from"
+    "si",
+    "sau",
+    "iar",
+    "care",
+    "dupa",
+    "pentru",
+    "asupra",
+    "fondul",
+    "urmatorul",
+    "urmatoarea",
+    "este",
+    "sunt",
+    "din",
+    "prin",
+    "noi",
+    "nou",
+    "noua",
+    "the",
+    "and",
+    "after",
+    "amid",
+    "with",
+    "from"
   ],
   "official_actor_terms": [
-    "guvern", "guvernul", "presedintia", "presedintele", "ministerul", "minister", "executivul", "coalitia", "parlamentul", "banca centrala", "uniunea europeana", "comisia europeana", "armata", "autoritatile", "oficialii", "liderii", "clubul", "federatia", "nato"
+    "guvern",
+    "guvernul",
+    "presedintia",
+    "presedintele",
+    "ministerul",
+    "minister",
+    "executivul",
+    "coalitia",
+    "parlamentul",
+    "banca centrala",
+    "uniunea europeana",
+    "comisia europeana",
+    "armata",
+    "autoritatile",
+    "oficialii",
+    "liderii",
+    "clubul",
+    "federatia",
+    "nato"
   ],
   "attribution_verbs": [
-    "spune", "declara", "anunta", "avertizeaza", "sustine", "precizeaza", "transmite", "confirma", "acusa", "cere", "promite"
+    "spune",
+    "declara",
+    "anunta",
+    "avertizeaza",
+    "sustine",
+    "precizeaza",
+    "transmite",
+    "confirma",
+    "acusa",
+    "cere",
+    "promite"
   ],
   "source_attribution_templates": [
     "Potrivit {source}, detaliile converg spre aceeasi linie a evenimentului.",
@@ -211,5 +387,73 @@
     "Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza.",
     "Din pozitia oficiala reiese ca urmatoarele ore sunt importante pentru punerea in practica a deciziei.",
     "Mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare."
-  ]
+  ],
+  "attribution_variants": {
+    "direct_quote": [
+      {
+        "id": "potrivit",
+        "template": "Potrivit {actor}, mesajul-cheie este simplu: \"{quote}\", iar {detail}."
+      },
+      {
+        "id": "spune_ca",
+        "template": "{actor} spune ca mesajul-cheie este simplu: \"{quote}\", iar {detail}."
+      },
+      {
+        "id": "transmite_ca",
+        "template": "{actor} transmite ca mesajul-cheie este simplu: \"{quote}\", iar {detail}."
+      }
+    ],
+    "official_statement": [
+      {
+        "id": "potrivit",
+        "template": "Potrivit {actor}, {detail}."
+      },
+      {
+        "id": "spune_ca",
+        "template": "{actor} spune ca {detail}."
+      },
+      {
+        "id": "afirma_ca",
+        "template": "{actor} afirma ca {detail}."
+      },
+      {
+        "id": "transmite_ca",
+        "template": "{actor} transmite ca {detail}."
+      },
+      {
+        "id": "avertizeaza_ca",
+        "template": "{actor} avertizeaza ca {detail}."
+      },
+      {
+        "id": "arata_ca",
+        "template": "{actor} arata ca {detail}."
+      }
+    ],
+    "source_attribution": [
+      {
+        "id": "potrivit",
+        "template": "Potrivit {actor}, {detail}."
+      },
+      {
+        "id": "spune_ca",
+        "template": "{actor} spune ca {detail}."
+      },
+      {
+        "id": "afirma_ca",
+        "template": "{actor} afirma ca {detail}."
+      },
+      {
+        "id": "transmite_ca",
+        "template": "{actor} transmite ca {detail}."
+      },
+      {
+        "id": "arata_ca",
+        "template": "{actor} arata ca {detail}."
+      },
+      {
+        "id": "sustine_ca",
+        "template": "{actor} sustine ca {detail}."
+      }
+    ]
+  }
 }

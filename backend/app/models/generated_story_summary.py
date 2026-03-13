@@ -23,6 +23,8 @@ class GeneratedStorySummary(BaseModel):
     topic_label: str = "general"
     source_labels: list[str] = Field(default_factory=list)
     attribution_type: Literal["direct_quote", "official_statement", "source_attribution"]
+    attribution_variant: str = "potrivit"
+    summary_variation_used: bool = False
     quote_line: str | None = None
     memorable_quote_used: bool = False
     essential_numbers_kept: bool = False

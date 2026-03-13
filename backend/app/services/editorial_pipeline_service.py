@@ -38,6 +38,7 @@ class EditorialPipelineService:
             scored_clusters,
             max_stories=max_stories,
         )
+        self.summary_generator_service.reset_variation_state()
         generated_summaries = [
             self.summary_generator_service.generate_story_summary(cluster)
             for cluster in selection_result.selected_clusters
