@@ -345,3 +345,21 @@ Still intentionally excluded from this task:
 - story selection
 - summarization
 - briefing assembly
+
+### Story Selection V1
+
+Backend now includes a bounded story selection layer for scored clusters.
+
+Current scope:
+
+- select clusters primarily by score descending
+- apply a minimum score threshold
+- enforce a simple story-count limit
+- use modest source and topic diversity soft caps
+- expose explicit selection and rejection reasons
+
+Still intentionally excluded from this task:
+
+- summarization
+- briefing assembly
+- final radio ordering

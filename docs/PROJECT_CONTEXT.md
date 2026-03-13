@@ -54,3 +54,5 @@ Current backend infrastructure also includes a conservative news clustering laye
 
 Current backend infrastructure also includes a transparent story scoring layer that assigns editorial priority scores and score breakdowns to story clusters before later selection decisions.
 
+Current backend infrastructure also includes a story selection layer that turns scored clusters into a bounded candidate set with explicit selection and rejection reasons before later briefing assembly.
+

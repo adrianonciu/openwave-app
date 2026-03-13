@@ -1,0 +1,24 @@
+{
+  "default_max_stories": 8,
+  "minimum_score_threshold": 28,
+  "max_source_repeat": 2,
+  "max_topic_repeat": 3,
+  "diversity_score_tolerance": 6,
+  "commentary_like_title_penalty_trigger": 38,
+  "commentary_like_title_terms": [
+    "commentary",
+    "analysis",
+    "opinion",
+    "what",
+    "could",
+    "why"
+  ],
+  "topic_labels": {
+    "war": ["war", "military", "missile", "attack", "ceasefire", "sanctions"],
+    "politics": ["election", "vote", "president", "prime minister", "parliament", "congress"],
+    "economy": ["economy", "inflation", "rates", "budget", "trade", "tariff", "central bank", "ecb"],
+    "disaster": ["earthquake", "quake", "flood", "wildfire", "storm"],
+    "science_space": ["launch", "rocket", "satellite", "space", "ariane"],
+    "general": []
+  }
+}

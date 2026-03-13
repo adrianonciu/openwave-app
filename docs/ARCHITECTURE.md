@@ -1134,3 +1134,30 @@ This layer does not perform:
 - story selection
 - summarization
 - briefing assembly
+
+---
+
+# 16. Story Selection V1
+
+After scoring, OpenWave now includes a bounded story selection layer that turns
+scored clusters into a candidate set for a future briefing.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Future Editorial Pipeline
+```
+
+Selection rules:
+
+- score remains the primary ordering signal
+- minimum score threshold filters weak stories
+- simple count limit bounds the candidate set
+- modest topic and source diversity soft caps can reject close-scoring duplicates
+- every selected and rejected cluster carries an explicit reason
+
+This layer does not perform:
+
+- summarization
+- final briefing assembly
+- radio ordering

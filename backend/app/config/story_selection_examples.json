@@ -1,0 +1,24 @@
+{
+  "examples": [
+    {
+      "name": "straightforward_top_score_selection",
+      "max_stories": 2,
+      "expected_selected_cluster_ids": ["cluster-high-001", "cluster-medium-001"],
+      "expected_rejected_cluster_ids": ["cluster-low-001"]
+    },
+    {
+      "name": "diversity_keeps_lower_scoring_story",
+      "max_stories": 3,
+      "scenario": "If three war-topic clusters land within a few points of each other, the service can reject one under the topic soft cap and keep a slightly lower-scoring economy cluster for diversity.",
+      "expected_selected_cluster_ids": ["cluster-war-001", "cluster-war-002", "cluster-economy-001"],
+      "expected_rejected_cluster_ids": ["cluster-war-003"]
+    },
+    {
+      "name": "low_score_story_rejected",
+      "max_stories": 8,
+      "scenario": "A commentary-like cluster below the editorial threshold is rejected even when capacity remains.",
+      "expected_selected_cluster_ids": ["cluster-high-001"],
+      "expected_rejected_cluster_ids": ["cluster-low-commentary-001"]
+    }
+  ]
+}

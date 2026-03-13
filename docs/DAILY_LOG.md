@@ -8,6 +8,7 @@
 - added an article fetch-and-clean service for extracting readable editorial text from article pages
 - added conservative news clustering to group clearly related articles without editorial ranking
 - added transparent story scoring with explicit weighted breakdowns for clustered stories
+- added bounded story selection with explicit selection and rejection explanations
 
 # OpenWave Development Log
 
@@ -618,6 +619,7 @@ In progress:
 
 1. voice tuning
 2. editorial automation pipeline
+
 
 
 
