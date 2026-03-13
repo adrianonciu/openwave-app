@@ -44,3 +44,7 @@ docs/
 
 Next goal:
 Generate Daily Brief from real RSS news articles.
+Current backend infrastructure also includes a unified source watcher layer for
+detecting the newest published content across news and commentary sources.
+This layer is intentionally limited to content detection and state tracking.
+

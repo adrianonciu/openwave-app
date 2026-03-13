@@ -262,3 +262,29 @@ The priority order is:
 6. personalization
 
 Avoid implementing complex systems too early.
+
+---
+
+## Completed Infrastructure
+
+### Unified Source Watcher
+
+Backend now includes a unified source watcher for:
+
+- news
+- commentary
+
+Current scope:
+
+- prefer RSS when available
+- fall back to listing page detection
+- fall back to page metadata parsing
+- detect latest content by publication time
+- persist watcher state in JSON
+
+Still intentionally excluded from this task:
+
+- summarization
+- clustering
+- TTS integration
+- audio generation changes

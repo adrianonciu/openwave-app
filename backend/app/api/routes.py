@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.models.article import Article
 from app.models.briefing import DailyBriefing
+from app.models.source_watcher import SourceCheckSummary
 from app.models.tts import (
     TtsGenerationRequest,
     TtsGenerationResponse,
@@ -11,12 +12,14 @@ from app.models.tts import (
 )
 from app.services.article_service import ArticleService
 from app.services.briefing_service import BriefingService
+from app.services.source_watcher_service import SourceWatcherService
 from app.services.tts_service import TtsService
 
 router = APIRouter()
 
 article_service = ArticleService()
 briefing_service = BriefingService(article_service=article_service)
+source_watcher_service = SourceWatcherService()
 tts_service = TtsService()
 
 
@@ -28,6 +31,11 @@ def get_articles() -> list[Article]:
 @router.get("/briefing/today", response_model=DailyBriefing)
 def get_today_briefing() -> DailyBriefing:
     return briefing_service.get_today_briefing()
+
+
+@router.get("/sources/watch/check", response_model=SourceCheckSummary)
+def check_all_sources() -> SourceCheckSummary:
+    return source_watcher_service.check_all_sources()
 
 
 @router.get("/api/tts/pilots", response_model=list[TtsPilotSummary])

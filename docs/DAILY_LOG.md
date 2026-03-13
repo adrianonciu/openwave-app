@@ -1,3 +1,11 @@
+## 2026-03-13
+
+- resumed backend-only work on source discovery infrastructure
+- added a unified source watcher for news and commentary
+- enforced latest-by-publication-time detection instead of homepage prominence
+- added JSON-backed watcher state persistence for last seen content
+- exposed a minimal backend endpoint for running all watcher checks
+
 # OpenWave Development Log
 
 This file records important milestones and architectural decisions during the development of OpenWave.

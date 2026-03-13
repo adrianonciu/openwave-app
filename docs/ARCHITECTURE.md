@@ -997,3 +997,44 @@ Build audio briefings from structured segments.
 ```
 
 
+
+---
+
+# 12. Unified Source Watcher
+
+OpenWave now includes a backend-only source watcher layer that sits before
+article ingestion and future editorial pipelines.
+
+Purpose:
+
+- detect the newest published content from a configured source
+- support both `news` and `commentary`
+- prefer `RSS`
+- fall back to `listing page` parsing
+- fall back to `page metadata` parsing
+
+Design rule:
+
+```
+latest_by_publication_time
+```
+
+not:
+
+```
+homepage_prominence
+```
+
+Minimal state is stored per source:
+
+- `last_seen_url`
+- `last_seen_title`
+- `last_seen_published_at`
+- `last_checked_at`
+
+This layer does not perform:
+
+- summarization
+- clustering
+- audio generation
+- TTS orchestration

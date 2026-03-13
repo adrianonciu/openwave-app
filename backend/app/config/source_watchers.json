@@ -1,0 +1,38 @@
+{
+  "sources": [
+    {
+      "source_id": "bbc-world-news",
+      "source_name": "BBC World",
+      "source_type": "news",
+      "source_url": "https://www.bbc.com/news/world",
+      "rss_url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "parser_type": "auto",
+      "check_interval_minutes": 15
+    },
+    {
+      "source_id": "dw-world-news",
+      "source_name": "DW World",
+      "source_type": "news",
+      "source_url": "https://www.dw.com/en/top-stories/s-9097",
+      "rss_url": "https://rss.dw.com/xml/rss-en-world",
+      "parser_type": "auto",
+      "check_interval_minutes": 15
+    },
+    {
+      "source_id": "commentary-foreign-affairs",
+      "source_name": "Foreign Affairs",
+      "source_type": "commentary",
+      "source_url": "https://www.foreignaffairs.com/latest",
+      "parser_type": "html_listing",
+      "check_interval_minutes": 30
+    },
+    {
+      "source_id": "commentary-brookings",
+      "source_name": "Brookings Commentary",
+      "source_type": "commentary",
+      "source_url": "https://www.brookings.edu/articles/",
+      "parser_type": "html_listing",
+      "check_interval_minutes": 30
+    }
+  ]
+}
