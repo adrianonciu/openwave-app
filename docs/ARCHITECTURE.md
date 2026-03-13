@@ -1308,3 +1308,38 @@ This layer does not perform:
 - TTS redesign
 - Flutter integration changes
 - commentary pipeline orchestration
+
+---
+
+# 22. Editorial To Audio Integration V1
+
+OpenWave now includes a small bridge layer between the text-only editorial
+pipeline and the already existing segmented TTS pipeline.
+
+Pipeline position:
+
+```
+Final Editorial Briefing Package -> Audio Generation Package -> Existing TTS Segment Generation
+```
+
+Mapping rules:
+
+- `intro_text` becomes the intro audio segment
+- each briefing story item becomes one story audio segment
+- `outro_text` becomes the outro audio segment
+- story metadata such as `topic_label` and `source_labels` is preserved
+
+Validation rules:
+
+- intro text must exist
+- at least one story segment must exist
+- outro text must exist
+- failures return structured preparation errors instead of calling TTS
+
+This layer does not perform:
+
+- ElevenLabs calls
+- audio file generation
+- normalization changes
+- pacing changes
+- Flutter changes

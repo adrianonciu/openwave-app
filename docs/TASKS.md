@@ -457,3 +457,22 @@ Still intentionally excluded from this task:
 - Flutter changes
 - commentary pipeline integration
 - advanced scheduling
+
+### Editorial To Audio Integration V1
+
+Backend now includes a minimal bridge from the editorial pipeline output to segmented audio-generation input.
+
+Current scope:
+
+- convert a final editorial briefing package into intro, story, and outro audio segments
+- preserve topic and source metadata on story segments
+- expose a package shape that can be consumed by the existing segmented TTS flow
+- validate missing intro, story, or outro text with structured errors
+
+Still intentionally excluded from this task:
+
+- TTS provider changes
+- ElevenLabs integration changes
+- audio file generation changes
+- Flutter changes
+- normalization or pacing changes

@@ -65,3 +65,4 @@ Current backend infrastructure also includes a briefing assembly layer that turn
 Current backend infrastructure also includes a bulletin sizing layer that enforces a target duration window on briefing drafts and reports explicit keep/remove sizing actions.
 
 Current backend infrastructure also includes an editorial pipeline orchestration layer that turns fetched articles into a final sized text briefing package, carrying forward counts and explanations from clustering through sizing and staying ready for later segmented audio generation.
+Current backend infrastructure also includes an editorial-to-audio bridge layer that converts a final sized editorial briefing into a segmented audio-generation package with intro, per-story segments, outro, and preserved topic/source metadata for the existing TTS pipeline.

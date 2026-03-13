@@ -1,0 +1,111 @@
+{
+  "input_final_editorial_briefing_package": {
+    "briefing_id": "briefing-example-001",
+    "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
+    "story_items": [
+      {
+        "position": 1,
+        "ordering_reason": "opened_bulletin_as_strongest_available_story",
+        "story": {
+          "cluster_id": "cluster-sanctions",
+          "summary_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Decizia conteaza imediat, pentru ca mareste presiunea politica si economica asupra Moscovei. Oficialii europeni pregatesc acum urmatorii pasi si noi clarificari privind aplicarea masurilor.",
+          "sentence_count": 3,
+          "word_count": 38,
+          "topic_label": "international_conflict",
+          "source_labels": ["BBC", "Reuters"],
+          "representative_title": "EU approves new sanctions after Russian missile attack on Ukraine",
+          "score_total": 82.5,
+          "policy_compliance": {
+            "sentence_count_ok": true,
+            "word_count_ok": false,
+            "structure_ok": true,
+            "banned_patterns_found": [],
+            "estimated_duration_seconds": 15,
+            "notes": ["duration_outside_target_range"]
+          },
+          "generation_explanation": "Example summary.",
+          "generated_at": "2026-03-13T17:00:00+00:00",
+          "source_basis": "scored_story_cluster"
+        }
+      },
+      {
+        "position": 2,
+        "ordering_reason": "placed_here_to_improve_topic_flow_and_reduce_back_to_back_similarity",
+        "story": {
+          "cluster_id": "cluster-ecb",
+          "summary_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Mesajul conteaza pentru costurile de finantare, investitii si asteptarile pietei in urmatoarele saptamani. Atentia se muta acum spre urmatoarele date despre inflatie si spre noile semnale venite de la Frankfurt.",
+          "sentence_count": 3,
+          "word_count": 39,
+          "topic_label": "economy",
+          "source_labels": ["Financial Times"],
+          "representative_title": "ECB signals caution on rate cuts as inflation risks persist",
+          "score_total": 63.0,
+          "policy_compliance": {
+            "sentence_count_ok": true,
+            "word_count_ok": false,
+            "structure_ok": true,
+            "banned_patterns_found": [],
+            "estimated_duration_seconds": 16,
+            "notes": ["duration_outside_target_range"]
+          },
+          "generation_explanation": "Example summary.",
+          "generated_at": "2026-03-13T17:00:00+00:00",
+          "source_basis": "scored_story_cluster"
+        }
+      }
+    ],
+    "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
+    "estimated_total_word_count": 95,
+    "estimated_total_duration_seconds": 38,
+    "target_duration_seconds": 540,
+    "tolerance_seconds": 90,
+    "original_duration_seconds": 38,
+    "intermediate_counts": {
+      "article_count": 3,
+      "cluster_count": 2,
+      "scored_cluster_count": 2,
+      "selected_story_count": 2,
+      "generated_summary_count": 2
+    },
+    "selection_explanation": "Selected 2 of 2 scored clusters.",
+    "assembly_explanation": "Bulletin opens with the strongest story and alternates topics where possible.",
+    "sizing_explanation": "Briefing remains below the target window at 38 seconds.",
+    "sizing_actions": [
+      {
+        "action": "below_target_duration",
+        "story_cluster_ids": [],
+        "explanation": "Briefing draft is shorter than the target window."
+      }
+    ],
+    "trimmed": false,
+    "pipeline_explanation": "Example pipeline explanation.",
+    "created_at": "2026-03-13T17:00:00+00:00"
+  },
+  "expected_audio_generation_package": {
+    "briefing_id": "briefing-example-001",
+    "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
+    "story_segments": [
+      {
+        "segment_id": "story_01",
+        "story_text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Decizia conteaza imediat, pentru ca mareste presiunea politica si economica asupra Moscovei. Oficialii europeni pregatesc acum urmatorii pasi si noi clarificari privind aplicarea masurilor.",
+        "topic_label": "international_conflict",
+        "source_labels": ["BBC", "Reuters"]
+      },
+      {
+        "segment_id": "story_02",
+        "story_text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Mesajul conteaza pentru costurile de finantare, investitii si asteptarile pietei in urmatoarele saptamani. Atentia se muta acum spre urmatoarele date despre inflatie si spre noile semnale venite de la Frankfurt.",
+        "topic_label": "economy",
+        "source_labels": ["Financial Times"]
+      }
+    ],
+    "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
+    "segment_count": 4,
+    "estimated_duration_seconds": 38,
+    "tts_segment_blocks": [
+      {"segment_name": "intro", "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."},
+      {"segment_name": "story_01", "text": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Decizia conteaza imediat, pentru ca mareste presiunea politica si economica asupra Moscovei. Oficialii europeni pregatesc acum urmatorii pasi si noi clarificari privind aplicarea masurilor."},
+      {"segment_name": "story_02", "text": "Banca Centrala Europeana semnaleaza prudenta privind reducerea dobanzilor. Mesajul conteaza pentru costurile de finantare, investitii si asteptarile pietei in urmatoarele saptamani. Atentia se muta acum spre urmatoarele date despre inflatie si spre noile semnale venite de la Frankfurt."},
+      {"segment_name": "outro", "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."}
+    ]
+  }
+}

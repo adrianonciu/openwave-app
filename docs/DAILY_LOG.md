@@ -632,3 +632,4 @@ In progress:
 
 
 - added editorial pipeline orchestration to connect clustering, scoring, selection, summary generation, assembly, and sizing into one final text briefing package
+- added an editorial-to-audio bridge that converts final editorial briefings into segmented audio-generation packages for the existing TTS pipeline
