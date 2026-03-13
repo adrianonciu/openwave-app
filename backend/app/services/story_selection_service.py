@@ -4,6 +4,7 @@ from collections import Counter
 from datetime import UTC, datetime
 import json
 from pathlib import Path
+import re
 
 from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.story_score import ScoredStoryCluster
@@ -12,6 +13,7 @@ from app.models.story_selection import (
     StorySelectionResult,
     StorySelectionStats,
 )
+from app.models.user_personalization import UserPersonalization
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "story_selection_config.json"
 
@@ -45,12 +47,17 @@ class StorySelectionService:
             "max_preference_adjustment_per_story",
             2.5,
         )
+        self.regional_preference_influence_strength: float = raw_config.get(
+            "regional_preference_influence_strength",
+            1.0,
+        )
 
     def select_stories(
         self,
         scored_clusters: list[ScoredStoryCluster],
         max_stories: int | None = None,
         editorial_preferences: EditorialPreferenceProfile | None = None,
+        personalization: UserPersonalization | None = None,
     ) -> StorySelectionResult:
         effective_max_stories = max_stories or self.default_max_stories
         selected_at = datetime.now(UTC)
@@ -58,6 +65,10 @@ class StorySelectionService:
             scored_clusters,
             key=lambda cluster: cluster.score_total,
             reverse=True,
+        )
+        resolved_preferences = (
+            editorial_preferences
+            or (personalization.editorial_preferences if personalization is not None else None)
         )
 
         selected: list[ScoredStoryCluster] = []
@@ -73,13 +84,21 @@ class StorySelectionService:
             topic_label = self._infer_topic(cluster)
             domain_label = self._infer_domain(cluster)
             geography_label = self._infer_geography(cluster)
+            regional_relevance = self._infer_regional_relevance(cluster, personalization)
             source_labels = self._source_labels(cluster)
             preference_summary = self._preference_summary(
                 cluster=cluster,
                 selected=selected,
                 domain_counter=domain_counter,
                 geography_counter=geography_counter,
-                editorial_preferences=editorial_preferences,
+                editorial_preferences=resolved_preferences,
+                personalization=personalization,
+                top_score=top_score,
+            )
+            regional_preference_summary = self._regional_preference_summary(
+                cluster=cluster,
+                editorial_preferences=resolved_preferences,
+                personalization=personalization,
                 top_score=top_score,
             )
 
@@ -94,9 +113,12 @@ class StorySelectionService:
                         topic_label=topic_label,
                         domain_label=domain_label,
                         geography_label=geography_label,
+                        regional_relevance=regional_relevance,
                         source_labels=source_labels,
                         preference_influence_used=False,
                         preference_influence_summary=preference_summary,
+                        regional_preference_used=False,
+                        regional_preference_summary=None,
                     )
                 )
                 continue
@@ -119,19 +141,28 @@ class StorySelectionService:
                         topic_label=topic_label,
                         domain_label=domain_label,
                         geography_label=geography_label,
+                        regional_relevance=regional_relevance,
                         source_labels=source_labels,
                         preference_influence_used=False,
                         preference_influence_summary=preference_summary,
+                        regional_preference_used=False,
+                        regional_preference_summary=None,
                     )
                 )
                 continue
 
-            preferred, displacement_reason = self._preference_displacement_reason(
+            (
+                preferred,
+                displacement_reason,
+                displacement_regional_used,
+                displacement_regional_summary,
+            ) = self._preference_displacement_reason(
                 cluster=cluster,
                 selected=selected,
                 domain_counter=domain_counter,
                 geography_counter=geography_counter,
-                editorial_preferences=editorial_preferences,
+                editorial_preferences=resolved_preferences,
+                personalization=personalization,
                 max_stories=effective_max_stories,
             )
             if preferred and displacement_reason is not None:
@@ -139,6 +170,10 @@ class StorySelectionService:
                 displaced_topic = self._infer_topic(displaced_cluster)
                 displaced_domain = self._infer_domain(displaced_cluster)
                 displaced_geography = self._infer_geography(displaced_cluster)
+                displaced_regional_relevance = self._infer_regional_relevance(
+                    displaced_cluster,
+                    personalization,
+                )
                 displaced_sources = self._source_labels(displaced_cluster)
                 self._decrement_mix_counters(
                     domain_counter,
@@ -159,9 +194,12 @@ class StorySelectionService:
                         topic_label=displaced_topic,
                         domain_label=displaced_domain,
                         geography_label=displaced_geography,
+                        regional_relevance=displaced_regional_relevance,
                         source_labels=displaced_sources,
                         preference_influence_used=True,
                         preference_influence_summary=displacement_reason,
+                        regional_preference_used=displacement_regional_used,
+                        regional_preference_summary=displacement_regional_summary,
                     )
                 )
 
@@ -175,9 +213,12 @@ class StorySelectionService:
                         topic_label=topic_label,
                         domain_label=domain_label,
                         geography_label=geography_label,
+                        regional_relevance=regional_relevance,
                         source_labels=source_labels,
                         preference_influence_used=False,
                         preference_influence_summary=preference_summary,
+                        regional_preference_used=False,
+                        regional_preference_summary=None,
                     )
                 )
                 continue
@@ -196,9 +237,12 @@ class StorySelectionService:
                     topic_label=topic_label,
                     domain_label=domain_label,
                     geography_label=geography_label,
+                    regional_relevance=regional_relevance,
                     source_labels=source_labels,
                     preference_influence_used=preferred,
                     preference_influence_summary=preference_summary if preferred else None,
+                    regional_preference_used=bool(preferred and regional_preference_summary),
+                    regional_preference_summary=regional_preference_summary if preferred else None,
                 )
             )
 
@@ -214,7 +258,8 @@ class StorySelectionService:
             selected,
             rejected,
             stats,
-            editorial_preferences,
+            resolved_preferences,
+            personalization,
         )
         return StorySelectionResult(
             selected_clusters=selected,
@@ -264,35 +309,51 @@ class StorySelectionService:
         domain_counter: Counter[str],
         geography_counter: Counter[str],
         editorial_preferences: EditorialPreferenceProfile | None,
+        personalization: UserPersonalization | None,
         max_stories: int,
-    ) -> tuple[bool, str | None]:
-        if editorial_preferences is None or not selected:
-            return False, None
+    ) -> tuple[bool, str | None, bool, str | None]:
+        if editorial_preferences is None or editorial_preferences.is_neutral() or not selected:
+            return False, None, False, None
         if len(selected) < max_stories:
-            return self._preference_match_score(
-                cluster,
-                domain_counter,
-                geography_counter,
-                editorial_preferences,
-            ) > 0, self._preference_summary(
+            candidate_summary = self._preference_summary(
                 cluster,
                 selected,
                 domain_counter,
                 geography_counter,
                 editorial_preferences,
+                personalization,
                 top_score=selected[0].score_total if selected else cluster.score_total,
+            )
+            regional_summary = self._regional_preference_summary(
+                cluster,
+                editorial_preferences,
+                personalization,
+                top_score=selected[0].score_total if selected else cluster.score_total,
+            )
+            return (
+                self._preference_match_score(
+                    cluster,
+                    domain_counter,
+                    geography_counter,
+                    editorial_preferences,
+                    personalization,
+                ) > 0,
+                candidate_summary,
+                regional_summary is not None,
+                regional_summary,
             )
 
         lowest_selected = min(selected, key=lambda item: item.score_total)
         score_gap = lowest_selected.score_total - cluster.score_total
         if score_gap < 0 or score_gap > self.preference_near_tie_tolerance:
-            return False, None
+            return False, None, False, None
 
         candidate_score = self._preference_match_score(
             cluster,
             domain_counter,
             geography_counter,
             editorial_preferences,
+            personalization,
         )
         baseline_domain_counter = Counter(domain_counter)
         baseline_geography_counter = Counter(geography_counter)
@@ -303,16 +364,25 @@ class StorySelectionService:
             baseline_domain_counter,
             baseline_geography_counter,
             editorial_preferences,
+            personalization,
         )
         if candidate_score <= displaced_score:
-            return False, None
+            return False, None, False, None
 
+        regional_summary = self._regional_preference_summary(
+            cluster,
+            editorial_preferences,
+            personalization,
+            top_score=lowest_selected.score_total,
+        )
         summary = (
             f"Editorial preferences favored this near-tie because it improves the requested mix for "
             f"geography '{self._infer_geography(cluster)}' and domain '{self._infer_domain(cluster)}' more than "
             f"the displaced cluster."
         )
-        return True, summary
+        if regional_summary:
+            summary = f"{summary} {regional_summary}"
+        return True, summary, regional_summary is not None, regional_summary
 
     def _preference_match_score(
         self,
@@ -320,14 +390,20 @@ class StorySelectionService:
         domain_counter: Counter[str],
         geography_counter: Counter[str],
         editorial_preferences: EditorialPreferenceProfile,
+        personalization: UserPersonalization | None,
     ) -> float:
         domain_label = self._infer_domain(cluster)
         geography_label = self._infer_geography(cluster)
         domain_weight = getattr(editorial_preferences.domains, domain_label, 0.0)
         geography_weight = getattr(editorial_preferences.geography, geography_label, 0.0)
+        regional_bonus = self._regional_preference_bonus(
+            cluster,
+            editorial_preferences,
+            personalization,
+        )
         domain_penalty = domain_counter[domain_label] * self.preference_influence_strength
         geography_penalty = geography_counter[geography_label] * self.preference_influence_strength
-        raw_score = (domain_weight + geography_weight) - (domain_penalty + geography_penalty)
+        raw_score = (domain_weight + geography_weight + regional_bonus) - (domain_penalty + geography_penalty)
         return max(min(raw_score, self.max_preference_adjustment_per_story), 0.0)
 
     def _preference_summary(
@@ -337,9 +413,10 @@ class StorySelectionService:
         domain_counter: Counter[str],
         geography_counter: Counter[str],
         editorial_preferences: EditorialPreferenceProfile | None,
+        personalization: UserPersonalization | None,
         top_score: float,
     ) -> str | None:
-        if editorial_preferences is None:
+        if editorial_preferences is None or editorial_preferences.is_neutral():
             return None
         score_gap = max(top_score - cluster.score_total, 0.0)
         if score_gap > self.preference_near_tie_tolerance:
@@ -348,13 +425,73 @@ class StorySelectionService:
         geography_label = self._infer_geography(cluster)
         domain_weight = getattr(editorial_preferences.domains, domain_label, 0.0)
         geography_weight = getattr(editorial_preferences.geography, geography_label, 0.0)
-        if domain_weight <= 0 and geography_weight <= 0:
+        regional_bonus = self._regional_preference_bonus(
+            cluster,
+            editorial_preferences,
+            personalization,
+        )
+        if domain_weight <= 0 and geography_weight <= 0 and regional_bonus <= 0:
             return None
-        return (
+        summary = (
             f"Near-tie preference signal: domain '{domain_label}' weight={domain_weight}, "
             f"geography '{geography_label}' weight={geography_weight}, current_domain_count={domain_counter[domain_label]}, "
             f"current_geography_count={geography_counter[geography_label]}."
         )
+        regional_summary = self._regional_preference_summary(
+            cluster,
+            editorial_preferences,
+            personalization,
+            top_score,
+        )
+        if regional_summary:
+            summary = f"{summary} {regional_summary}"
+        return summary
+
+    def _regional_preference_bonus(
+        self,
+        cluster: ScoredStoryCluster,
+        editorial_preferences: EditorialPreferenceProfile | None,
+        personalization: UserPersonalization | None,
+    ) -> float:
+        if not self._regional_preference_applies(editorial_preferences, personalization):
+            return 0.0
+        if self._infer_regional_relevance(cluster, personalization) != "region_match":
+            return 0.0
+        local_weight = editorial_preferences.geography.local if editorial_preferences is not None else 0.0
+        return min(
+            (local_weight / 100.0) * self.regional_preference_influence_strength,
+            self.max_preference_adjustment_per_story,
+        )
+
+    def _regional_preference_applies(
+        self,
+        editorial_preferences: EditorialPreferenceProfile | None,
+        personalization: UserPersonalization | None,
+    ) -> bool:
+        if editorial_preferences is None or editorial_preferences.is_neutral() or personalization is None:
+            return False
+        if editorial_preferences.geography.local <= 0:
+            return False
+        return personalization.local_editorial_anchor_scope() == "region"
+
+    def _regional_preference_summary(
+        self,
+        cluster: ScoredStoryCluster,
+        editorial_preferences: EditorialPreferenceProfile | None,
+        personalization: UserPersonalization | None,
+        top_score: float,
+    ) -> str | None:
+        if not self._regional_preference_applies(editorial_preferences, personalization):
+            return None
+        score_gap = max(top_score - cluster.score_total, 0.0)
+        if score_gap > self.preference_near_tie_tolerance:
+            return None
+        if self._infer_regional_relevance(cluster, personalization) != "region_match":
+            return None
+        region = personalization.local_editorial_anchor()
+        if not region:
+            return None
+        return f"Cluster favored because it matched user's region: {region}."
 
     def _decrement_mix_counters(
         self,
@@ -413,12 +550,53 @@ class StorySelectionService:
                 best_label = geography
         return best_label
 
+    def _infer_regional_relevance(
+        self,
+        cluster: ScoredStoryCluster,
+        personalization: UserPersonalization | None,
+    ) -> str:
+        if personalization is None or personalization.local_editorial_anchor_scope() != "region":
+            return "unknown"
+        anchor = personalization.local_editorial_anchor()
+        if not anchor:
+            return "unknown"
+        text = self._cluster_text(cluster)
+        for alias in self._regional_aliases(anchor):
+            if alias in text:
+                return "region_match"
+        geography_label = self._infer_geography(cluster)
+        if geography_label == "national":
+            return "national"
+        if geography_label == "international":
+            return "international"
+        return "unknown"
+
+    def _regional_aliases(self, region: str) -> set[str]:
+        normalized = self._normalize_text(region)
+        aliases = {normalized}
+        stripped = normalized
+        for token in ["county", "judetul", "judet", "region", "regiunea"]:
+            stripped = stripped.replace(token, " ")
+        stripped = " ".join(stripped.split())
+        if stripped:
+            aliases.add(stripped)
+        return {alias for alias in aliases if alias}
+
     def _source_labels(self, cluster: ScoredStoryCluster) -> list[str]:
         return sorted({member.source for member in cluster.cluster.member_articles})
 
     def _cluster_text(self, cluster: ScoredStoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.cluster.member_articles)
-        return f"{cluster.cluster.representative_title} {titles}".lower()
+        urls = " ".join(member.url for member in cluster.cluster.member_articles)
+        sources = " ".join(member.source for member in cluster.cluster.member_articles)
+        return self._normalize_text(
+            f"{cluster.cluster.representative_title} {titles} {urls} {sources}"
+        )
+
+    def _normalize_text(self, text: str) -> str:
+        lowered = text.lower()
+        lowered = lowered.replace("-", " ").replace("_", " ").replace("/", " ")
+        return re.sub(r"\s+", " ", lowered).strip()
 
     def _is_commentary_like(self, cluster: ScoredStoryCluster) -> bool:
         title = cluster.cluster.representative_title.lower()
@@ -432,9 +610,12 @@ class StorySelectionService:
         topic_label: str,
         domain_label: str,
         geography_label: str,
+        regional_relevance: str,
         source_labels: list[str],
         preference_influence_used: bool,
         preference_influence_summary: str | None,
+        regional_preference_used: bool,
+        regional_preference_summary: str | None,
     ) -> StorySelectionDecision:
         explanation = self._decision_explanation(
             cluster=cluster,
@@ -443,9 +624,12 @@ class StorySelectionService:
             topic_label=topic_label,
             domain_label=domain_label,
             geography_label=geography_label,
+            regional_relevance=regional_relevance,
             source_labels=source_labels,
             preference_influence_used=preference_influence_used,
             preference_influence_summary=preference_influence_summary,
+            regional_preference_used=regional_preference_used,
+            regional_preference_summary=regional_preference_summary,
         )
         return StorySelectionDecision(
             cluster_id=cluster.cluster.cluster_id,
@@ -455,9 +639,12 @@ class StorySelectionService:
             topic_label=topic_label,
             domain_label=domain_label,
             geography_label=geography_label,
+            regional_relevance=regional_relevance,
             source_labels=source_labels,
             preference_influence_used=preference_influence_used,
             preference_influence_summary=preference_influence_summary,
+            regional_preference_used=regional_preference_used,
+            regional_preference_summary=regional_preference_summary,
             explanation=explanation,
         )
 
@@ -469,21 +656,28 @@ class StorySelectionService:
         topic_label: str,
         domain_label: str,
         geography_label: str,
+        regional_relevance: str,
         source_labels: list[str],
         preference_influence_used: bool,
         preference_influence_summary: str | None,
+        regional_preference_used: bool,
+        regional_preference_summary: str | None,
     ) -> str:
         title = cluster.cluster.representative_title
         sources = ", ".join(source_labels) or "unknown source"
         preference_clause = ""
         if preference_influence_used and preference_influence_summary:
             preference_clause = f" Preference influence: {preference_influence_summary}"
+        regional_clause = ""
+        if regional_preference_used and regional_preference_summary:
+            regional_clause = f" Regional preference: {regional_preference_summary}"
 
         if status == "selected":
             return (
                 f"Selected '{title}' because it cleared the score threshold with {cluster.score_total} points "
-                f"and fit the current mix for topic '{topic_label}', domain '{domain_label}', geography '{geography_label}' across sources {sources}."
-                f"{preference_clause}"
+                f"and fit the current mix for topic '{topic_label}', domain '{domain_label}', geography '{geography_label}', "
+                f"regional relevance '{regional_relevance}' across sources {sources}."
+                f"{preference_clause}{regional_clause}"
             )
 
         reason_map = {
@@ -497,8 +691,8 @@ class StorySelectionService:
         detail = reason_map.get(reason, reason)
         return (
             f"Rejected '{title}' because {detail}. The cluster scored {cluster.score_total} points, "
-            f"topic '{topic_label}', domain '{domain_label}', geography '{geography_label}', sources {sources}."
-            f"{preference_clause}"
+            f"topic '{topic_label}', domain '{domain_label}', geography '{geography_label}', regional relevance '{regional_relevance}', "
+            f"sources {sources}.{preference_clause}{regional_clause}"
         )
 
     def _build_selection_explanation(
@@ -507,6 +701,7 @@ class StorySelectionService:
         rejected: list[ScoredStoryCluster],
         stats: StorySelectionStats,
         editorial_preferences: EditorialPreferenceProfile | None,
+        personalization: UserPersonalization | None,
     ) -> str:
         if not selected:
             return (
@@ -518,13 +713,19 @@ class StorySelectionService:
             cluster.cluster.representative_title for cluster in selected[:3]
         )
         preference_note = "Preferences were not applied."
-        if editorial_preferences is not None:
+        if editorial_preferences is not None and not editorial_preferences.is_neutral():
             preference_note = (
                 "Preferences were applied conservatively as soft near-tie signals for geography and domain mix, "
                 "without overriding clearly stronger stories."
             )
+        regional_note = ""
+        if self._regional_preference_applies(editorial_preferences, personalization):
+            regional_note = (
+                f" Regional local matching was also available as a county or region-first soft signal for "
+                f"'{personalization.local_editorial_anchor()}'."
+            )
         return (
             f"Selected {stats.selected_count} of {stats.total_input_clusters} scored clusters using a "
             f"minimum score of {stats.minimum_score_threshold} and a limit of {stats.max_stories}. "
-            f"Top selected titles: {top_titles}. {preference_note}"
+            f"Top selected titles: {top_titles}. {preference_note}{regional_note}"
         )

@@ -364,6 +364,7 @@ Current behavior:
 - defaults are visible in output through `personalization_used`, `listener_profile_used`, `editorial_preferences_used`, and `personalization_defaults_applied`
 - listener first-name usage in intro/outro now comes from the personalization contract, not hidden config state
 - local editorial anchoring is county or region based; city remains stored but is not the primary local news anchor
+- story selection can use region-matching coverage as a soft near-tie signal when local geography preference is enabled
 
 Example contract fixture:
 - `backend/app/config/user_personalization_example.json`

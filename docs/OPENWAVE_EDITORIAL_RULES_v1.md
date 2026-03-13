@@ -183,6 +183,10 @@ Primary code areas:
   Code area: `backend/app/models/user_personalization.py`, `backend/app/services/editorial_pipeline_service.py`
   Current behavior: `city` is preserved in the listener profile, but the pipeline exposes `region` first for any local editorial anchoring and only falls back to city when region is missing.
 
+- `Implemented in code` Story selection can use the listener region as a soft local near-tie signal.
+  Code area: `backend/app/services/story_selection_service.py`
+  Current behavior: when local geography preference is above zero and two clusters are close in score, a cluster with `regional_relevance = region_match` can be favored over a near-tie national or international cluster. Clearly stronger stories are not displaced.
+
 - `Implemented in code` The listener name may appear at most twice per bulletin.
   Code area: `backend/app/services/briefing_assembly_service.py`
   Current behavior: once in intro, optionally once in outro, never inside story summaries.

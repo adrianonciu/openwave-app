@@ -175,5 +175,6 @@
       "global",
       "brussels"
     ]
-  }
+  },
+  "regional_preference_influence_strength": 1.0
 }

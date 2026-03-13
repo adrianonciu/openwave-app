@@ -745,3 +745,4 @@ Run full real-news bulletins and audit:
 - added safe defaults and normalization for listener profile plus editorial preference mixes
 - exposed explicit personalization usage and default fallback flags in final pipeline outputs
 - made the local personalization anchor explicit: listener region/county is now the primary local editorial anchor, while city remains stored only as secondary metadata and fallback
+- applied the regional anchor conservatively in story selection so region-matching local coverage can win only in near-ties when local preference is enabled

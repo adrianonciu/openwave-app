@@ -50,6 +50,7 @@ class EditorialPipelineService:
             scored_clusters,
             max_stories=max_stories,
             editorial_preferences=resolved_personalization.editorial_preferences,
+            personalization=resolved_personalization,
         )
         self.summary_generator_service.reset_variation_state()
         generated_summaries = [

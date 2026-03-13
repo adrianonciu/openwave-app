@@ -14,9 +14,12 @@ class StorySelectionDecision(BaseModel):
     topic_label: str
     domain_label: str = "general"
     geography_label: str = "international"
+    regional_relevance: Literal["region_match", "national", "international", "unknown"] = "unknown"
     source_labels: list[str]
     preference_influence_used: bool = False
     preference_influence_summary: str | None = None
+    regional_preference_used: bool = False
+    regional_preference_summary: str | None = None
     explanation: str
 
 

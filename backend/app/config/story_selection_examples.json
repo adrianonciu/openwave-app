@@ -36,32 +36,41 @@
       ]
     },
     {
-      "name": "geography_preference_breaks_near_tie",
+      "name": "regional_preference_breaks_near_tie",
       "max_stories": 2,
-      "scenario": "Two near-tie clusters are both selectable, and the user preference leans toward national coverage, so the national story is preferred over an otherwise similar international story.",
-      "editorial_preferences": {
-        "geography": {
-          "local": 10,
-          "national": 80,
-          "international": 10
+      "scenario": "Two near-tie clusters are both selectable, and the user wants local coverage with Iasi County as the regional anchor, so the regional story is preferred over a close national story.",
+      "personalization": {
+        "listener_profile": {
+          "first_name": "Adrian",
+          "country": "Romania",
+          "region": "Iasi County",
+          "city": "Pascani"
         },
-        "domains": {
-          "politics": 20,
-          "economy": 20,
-          "sport": 20,
-          "entertainment": 10,
-          "education": 10,
-          "health": 10,
-          "tech": 10
+        "editorial_preferences": {
+          "geography": {
+            "local": 70,
+            "national": 20,
+            "international": 10
+          },
+          "domains": {
+            "politics": 20,
+            "economy": 20,
+            "sport": 20,
+            "entertainment": 10,
+            "education": 10,
+            "health": 10,
+            "tech": 10
+          }
         }
       },
       "expected_selected_cluster_ids": [
-        "cluster-national-001",
+        "cluster-iasi-001",
         "cluster-high-001"
       ],
       "expected_rejected_cluster_ids": [
-        "cluster-international-001"
-      ]
+        "cluster-national-close-001"
+      ],
+      "expected_decision_note": "regional_preference_used=true for cluster-iasi-001 because it matched the user region in a near-tie."
     },
     {
       "name": "domain_preference_breaks_near_tie",
@@ -92,31 +101,40 @@
       ]
     },
     {
-      "name": "stronger_story_still_wins_over_preference",
+      "name": "stronger_story_still_wins_over_regional_preference",
       "max_stories": 1,
-      "scenario": "A clearly stronger cluster stays selected even when user preferences favor another domain, because preferences only act as soft near-tie signals.",
-      "editorial_preferences": {
-        "geography": {
-          "local": 0,
-          "national": 20,
-          "international": 80
+      "scenario": "A clearly stronger national or international cluster stays selected even when the listener asked for local coverage around Iasi County, because regional preference only acts as a soft near-tie signal.",
+      "personalization": {
+        "listener_profile": {
+          "first_name": "Adrian",
+          "country": "Romania",
+          "region": "Iasi County",
+          "city": "Pascani"
         },
-        "domains": {
-          "politics": 5,
-          "economy": 5,
-          "sport": 80,
-          "entertainment": 5,
-          "education": 2,
-          "health": 1,
-          "tech": 2
+        "editorial_preferences": {
+          "geography": {
+            "local": 80,
+            "national": 10,
+            "international": 10
+          },
+          "domains": {
+            "politics": 20,
+            "economy": 20,
+            "sport": 20,
+            "entertainment": 10,
+            "education": 10,
+            "health": 10,
+            "tech": 10
+          }
         }
       },
       "expected_selected_cluster_ids": [
         "cluster-high-001"
       ],
       "expected_rejected_cluster_ids": [
-        "cluster-sport-close-001"
-      ]
+        "cluster-iasi-close-001"
+      ],
+      "expected_decision_note": "regional_preference_used=false for the winning stronger story because score lead was outside the near-tie tolerance."
     }
   ]
 }
