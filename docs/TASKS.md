@@ -724,3 +724,4 @@ Still intentionally excluded from this task:
 - deeper listener-profile personalization logic
 - continuity-aware selection or scoring changes
 - aggressive crawling or ingestion expansion across all county registry sources
+- city-driven local source activation

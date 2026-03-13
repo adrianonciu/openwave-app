@@ -51,7 +51,7 @@ class EditorialPipelineService:
         ) = resolved_personalization.explainability()
         local_editorial_anchor = resolved_personalization.local_editorial_anchor()
         local_editorial_anchor_scope = resolved_personalization.local_editorial_anchor_scope()
-        local_source_region_used, local_source_count, local_source_registry_used = self._resolve_local_source_registry_usage(
+        local_source_resolution = self.source_watcher_service.resolve_local_sources_for_personalization(
             resolved_personalization
         )
         continuity_records = self._load_previous_bulletin_clusters(previous_bulletin_clusters)
@@ -96,9 +96,11 @@ class EditorialPipelineService:
             target_duration=sized_briefing.target_duration_seconds,
             tolerance=sized_briefing.tolerance_seconds,
             continuity_record_count=len(continuity_records),
-            local_source_region_used=local_source_region_used,
-            local_source_count=local_source_count,
-            local_source_registry_used=local_source_registry_used,
+            local_source_region_used=local_source_resolution.region_used,
+            local_source_count=local_source_resolution.source_count,
+            local_source_registry_used=local_source_resolution.local_source_registry_used,
+            local_sources_enabled=local_source_resolution.local_sources_enabled,
+            local_source_explanation=local_source_resolution.explanation,
         )
 
         return FinalEditorialBriefingPackage(
@@ -123,9 +125,10 @@ class EditorialPipelineService:
             personalization_defaults_applied=defaults_applied,
             local_editorial_anchor=local_editorial_anchor,
             local_editorial_anchor_scope=local_editorial_anchor_scope,
-            local_source_region_used=local_source_region_used,
-            local_source_count=local_source_count,
-            local_source_registry_used=local_source_registry_used,
+            local_source_region_used=local_source_resolution.region_used,
+            local_source_count=local_source_resolution.source_count,
+            local_source_registry_used=local_source_resolution.local_source_registry_used,
+            local_sources_enabled=local_source_resolution.local_sources_enabled,
             personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
             assembly_explanation=briefing_draft.assembly_explanation,
@@ -135,20 +138,6 @@ class EditorialPipelineService:
             pipeline_explanation=pipeline_explanation,
             created_at=created_at,
         )
-
-    def _resolve_local_source_registry_usage(
-        self,
-        personalization: UserPersonalization,
-    ) -> tuple[str | None, int, bool]:
-        if personalization.editorial_preferences.geography.local <= 0:
-            return None, 0, False
-        if personalization.local_editorial_anchor_scope() != "region":
-            return None, 0, False
-        region = personalization.local_editorial_anchor()
-        if not region:
-            return None, 0, False
-        local_source_configs = self.source_watcher_service.get_local_source_configs_for_region(region)
-        return region, len(local_source_configs), bool(local_source_configs)
 
     def _load_previous_bulletin_clusters(
         self,
@@ -223,6 +212,8 @@ class EditorialPipelineService:
         local_source_region_used: str | None,
         local_source_count: int,
         local_source_registry_used: bool,
+        local_sources_enabled: bool,
+        local_source_explanation: str,
     ) -> str:
         lower_bound = max(target_duration - tolerance, 0)
         upper_bound = target_duration + tolerance
@@ -235,9 +226,9 @@ class EditorialPipelineService:
             else "No previous bulletin continuity records were available, so all stories were treated as new."
         )
         local_source_note = (
-            f"Loaded {local_source_count} county-based local source(s) for region '{local_source_region_used}'."
-            if local_source_registry_used and local_source_region_used
-            else "No county-based local source registry was activated for this run."
+            f"Loaded {local_source_count} county-based local source(s) for region '{local_source_region_used}'. {local_source_explanation}"
+            if local_source_registry_used and local_source_region_used and local_sources_enabled
+            else local_source_explanation
         )
 
         return (

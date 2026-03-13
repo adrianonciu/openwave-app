@@ -748,3 +748,4 @@ Run full real-news bulletins and audit:
 - applied the regional anchor conservatively in story selection so region-matching local coverage can win only in near-ties when local preference is enabled
 - added lightweight bulletin continuity detection so recurring clusters can be marked as updates or major updates in summary leads without changing scoring or selection
 - added a Romanian county-based local source registry and made it available to the source watcher and editorial pipeline explainability for region-first local personalization
+- connected the county registry to SourceWatcher operational resolution so `local_county` sources activate only when region exists and local preference is above zero

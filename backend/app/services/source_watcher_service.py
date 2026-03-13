@@ -15,12 +15,14 @@ from app.models.local_source_registry import LocalSourceEntry
 from app.models.source_watcher import (
     DetectedContentItem,
     LatestContentItem,
+    LocalSourceResolutionResult,
     SourceCheckResult,
     SourceCheckSummary,
     SourceConfig,
     SourceWatcherState,
 )
 from app.services.local_source_registry_service import LocalSourceRegistryService
+from app.models.user_personalization import UserPersonalization
 
 USER_AGENT = "OpenWaveSourceWatcher/1.0"
 REQUEST_TIMEOUT_SECONDS = 15
@@ -142,6 +144,58 @@ class SourceWatcherService:
         raw_data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
         return [SourceConfig(**item) for item in raw_data.get("sources", [])]
 
+    def load_source_configs_with_local_sources(
+        self,
+        personalization: UserPersonalization | None = None,
+    ) -> list[SourceConfig]:
+        source_configs = list(self.load_source_configs())
+        resolution = self.resolve_local_sources_for_personalization(personalization)
+        if resolution.local_sources_enabled:
+            source_configs.extend(resolution.resolved_sources)
+        return source_configs
+
+    def resolve_local_sources_for_personalization(
+        self,
+        personalization: UserPersonalization | None,
+    ) -> LocalSourceResolutionResult:
+        if personalization is None:
+            return LocalSourceResolutionResult(
+                explanation="County local sources were not activated because no personalization payload was provided.",
+            )
+        if personalization.editorial_preferences.geography.local <= 0:
+            return LocalSourceResolutionResult(
+                explanation="County local sources were not activated because local preference is 0.",
+            )
+        if personalization.local_editorial_anchor_scope() != "region":
+            return LocalSourceResolutionResult(
+                explanation="County local sources were not activated because the listener profile does not provide a county or region anchor.",
+            )
+        region = personalization.local_editorial_anchor()
+        if not region:
+            return LocalSourceResolutionResult(
+                explanation="County local sources were not activated because the listener region is missing.",
+            )
+
+        resolved_sources = self.get_local_source_configs_for_region(region)
+        if not resolved_sources:
+            return LocalSourceResolutionResult(
+                region_used=region,
+                resolved_sources=[],
+                source_count=0,
+                local_source_registry_used=False,
+                local_sources_enabled=False,
+                explanation=f"County local sources were not activated because the registry has no entries for region '{region}'.",
+            )
+
+        return LocalSourceResolutionResult(
+            region_used=region,
+            resolved_sources=resolved_sources,
+            source_count=len(resolved_sources),
+            local_source_registry_used=True,
+            local_sources_enabled=True,
+            explanation=f"County local sources were activated for region '{region}' with {len(resolved_sources)} watcher-usable source config(s).",
+        )
+
     def get_latest_content(self, source_config: SourceConfig) -> LatestContentItem:
         errors: list[str] = []
 
@@ -253,13 +307,15 @@ class SourceWatcherService:
                 SourceConfig(
                     source_id=f"local-{normalized_region}-{self._normalize_source_id_fragment(entry.source_name)}",
                     source_name=entry.source_name,
-                    source_type="news",
+                    source_type="local_county",
                     source_url=entry.source_url,
+                    region=region,
+                    priority_rank=entry.priority_rank,
                     parser_type="auto",
                     check_interval_minutes=30,
                 )
             )
-        return source_configs
+        return sorted(source_configs, key=lambda item: item.priority_rank or 999)
 
     def _get_latest_from_rss(self, source_config: SourceConfig) -> LatestContentItem | None:
         if not source_config.rss_url:
