@@ -1,67 +1,41 @@
 {
   "examples": [
     {
-      "category": "politics",
+      "category": "direct_quote",
       "input_cluster": {
-        "cluster_id": "cluster-politics-001",
-        "representative_title": "Guvernul aproba un nou pachet fiscal pentru industrie",
+        "cluster_id": "cluster-politics-quote-001",
+        "representative_title": "Premierul: \"Nu renuntam la reforma\" dupa sedinta coalitiei",
         "member_articles": [
           {
-            "url": "https://example.com/politics/1",
-            "title": "Guvernul aproba un nou pachet fiscal pentru industrie",
-            "source": "Reuters",
+            "url": "https://example.com/politics/quote-1",
+            "title": "Premierul: \"Nu renuntam la reforma\" dupa sedinta coalitiei",
+            "source": "HotNews",
             "published_at": "2026-03-13T10:00:00+00:00"
           },
           {
-            "url": "https://example.com/politics/2",
-            "title": "Coalitia sustine planul de relaxare fiscala pentru industrie",
-            "source": "BBC",
+            "url": "https://example.com/politics/quote-2",
+            "title": "Coalitia merge mai departe cu pachetul de reforme, spune premierul",
+            "source": "Digi24",
             "published_at": "2026-03-13T10:20:00+00:00"
           }
         ],
         "created_at": "2026-03-13T10:00:00+00:00",
         "latest_published_at": "2026-03-13T10:20:00+00:00"
       },
-      "generated_summary": "Guvernul aproba un nou pachet fiscal pentru industrie. Miza este politica, pentru ca decizia poate schimba raportul de forte, ritmul negocierilor si urmatorii pasi institutionali din perioada imediat urmatoare. Subiectul este urmarit de 2 surse, iar detaliile comune indica faptul ca urmeaza reactii si clarificari suplimentare cu efect politic direct.",
+      "short_headline": "Premier reforma coalitie",
+      "attribution_type": "direct_quote",
+      "quote_line": "Nu renuntam la reforma",
+      "generated_summary": "Premierul Nu renuntam la reforma dupa sedinta coalitiei. In perioada urmatoare, atentia se muta spre reactiile politice, spre aplicarea masurii si spre eventualele ajustari cerute de opozitie sau de partenerii de coalitie, iar formula-cheie este \"Nu renuntam la reforma\", potrivit HotNews. Miza este politica, pentru ca decizia poate schimba raportul de forte, ritmul negocierilor si urmatorii pasi institutionali din perioada imediat urmatoare.",
       "policy_compliance_notes": [
         "three_sentence_structure_present",
-        "word_target_likely_met",
-        "no_long_quotes"
+        "direct_quote_used_once",
+        "headline_generated"
       ]
     },
     {
-      "category": "economy",
+      "category": "official_statement",
       "input_cluster": {
-        "cluster_id": "cluster-economy-001",
-        "representative_title": "Banca Centrala Europeana reduce dobanzile pe fondul perspectivelor slabe de crestere",
-        "member_articles": [
-          {
-            "url": "https://example.com/economy/1",
-            "title": "Banca Centrala Europeana reduce dobanzile pe fondul perspectivelor slabe de crestere",
-            "source": "FT",
-            "published_at": "2026-03-13T09:00:00+00:00"
-          },
-          {
-            "url": "https://example.com/economy/2",
-            "title": "ECB coboara costul creditului dupa noi semnale de incetinire",
-            "source": "DW",
-            "published_at": "2026-03-13T09:40:00+00:00"
-          }
-        ],
-        "created_at": "2026-03-13T09:00:00+00:00",
-        "latest_published_at": "2026-03-13T09:40:00+00:00"
-      },
-      "generated_summary": "Banca Centrala Europeana reduce dobanzile pe fondul perspectivelor slabe de crestere. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni. Subiectul este urmarit de 2 surse, iar detaliile comune indica faptul ca urmeaza reactii si clarificari suplimentare despre impactul asupra pietei.",
-      "policy_compliance_notes": [
-        "three_sentence_structure_present",
-        "focus_on_event_and_consequence",
-        "no_article_shaped_wording"
-      ]
-    },
-    {
-      "category": "international_conflict",
-      "input_cluster": {
-        "cluster_id": "cluster-conflict-001",
+        "cluster_id": "cluster-conflict-official-001",
         "representative_title": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei",
         "member_articles": [
           {
@@ -80,34 +54,40 @@
         "created_at": "2026-03-13T11:10:00+00:00",
         "latest_published_at": "2026-03-13T11:40:00+00:00"
       },
-      "generated_summary": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide. Subiectul este urmarit de 2 surse, iar detaliile comune indica faptul ca urmeaza reactii si clarificari suplimentare cu impact direct asupra evolutiilor urmatoare.",
+      "short_headline": "Sanctiuni europene dupa atac",
+      "attribution_type": "official_statement",
+      "quote_line": null,
+      "generated_summary": "Uniunea Europeana aproba noi sanctiuni dupa un atac cu rachete asupra Ucrainei. De aici, atentia merge spre reactiile oficiale, spre eventualele masuri de raspuns si spre impactul imediat asupra terenului sau asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.",
       "policy_compliance_notes": [
         "three_sentence_structure_present",
-        "action_consequence_reaction_preserved",
-        "no_long_quotes"
+        "official_attribution_used",
+        "headline_generated"
       ]
     },
     {
-      "category": "sport",
+      "category": "source_attribution_once",
       "input_cluster": {
-        "cluster_id": "cluster-sport-001",
-        "representative_title": "Romania castiga si ajunge in semifinalele europene de handbal",
+        "cluster_id": "cluster-economy-source-001",
+        "representative_title": "Presiune pe bugetul de stat dupa noi estimari de deficit",
         "member_articles": [
           {
-            "url": "https://example.com/sport/1",
-            "title": "Romania castiga si ajunge in semifinalele europene de handbal",
-            "source": "AP",
-            "published_at": "2026-03-13T18:00:00+00:00"
+            "url": "https://example.com/economy/1",
+            "title": "Presiune pe bugetul de stat dupa noi estimari de deficit",
+            "source": "HotNews",
+            "published_at": "2026-03-13T09:00:00+00:00"
           }
         ],
-        "created_at": "2026-03-13T18:00:00+00:00",
-        "latest_published_at": "2026-03-13T18:00:00+00:00"
+        "created_at": "2026-03-13T09:00:00+00:00",
+        "latest_published_at": "2026-03-13T09:00:00+00:00"
       },
-      "generated_summary": "Romania castiga si ajunge in semifinalele europene de handbal. Miza este sportiva, pentru ca rezultatul schimba tabloul competitiei, presiunea din clasament si asteptarile pentru urmatorul meci. Pasul urmator este decisiv, iar echipa trebuie sa confirme acest rezultat in confruntarea care urmeaza si in lupta pentru obiectivul mai mare al turneului.",
+      "short_headline": "Presiune pe buget",
+      "attribution_type": "source_attribution",
+      "quote_line": null,
+      "generated_summary": "Presiune pe bugetul de stat dupa noi estimari de deficit. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal si dupa noile estimari economice, iar potrivit HotNews, acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
       "policy_compliance_notes": [
         "three_sentence_structure_present",
-        "focus_on_result_and_next_step",
-        "no_secondary_names_overload"
+        "source_mentioned_once",
+        "headline_generated"
       ]
     }
   ]

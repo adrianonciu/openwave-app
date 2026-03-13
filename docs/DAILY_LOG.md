@@ -634,3 +634,4 @@ In progress:
 - added editorial pipeline orchestration to connect clustering, scoring, selection, summary generation, assembly, and sizing into one final text briefing package
 - added an editorial-to-audio bridge that converts final editorial briefings into segmented audio-generation packages for the existing TTS pipeline
 - added an end-to-end bulletin generator that reuses the editorial pipeline, the editorial-to-audio bridge, and the existing segmented TTS flow to produce final audio segment files
+- refined story summaries with short editorial headlines and conservative attribution logic for quotes, official statements, or source fallback

@@ -1377,3 +1377,26 @@ This layer does not perform:
 - editorial policy redesign
 - Flutter integration changes
 - new audio normalization logic
+
+---
+
+# 24. Story Summary Refinement V2
+
+The story summary generator now adds two radio-style editorial elements on top
+of the existing conservative summary flow.
+
+New rules:
+
+- generate a short editorial headline of roughly 3-6 words
+- include one attribution element per story with this priority:
+  - direct quote when a short relevant quote is available
+  - official statement / official position
+  - source attribution fallback
+
+The generator keeps the same three-sentence structure:
+
+- sentence 1: event
+- sentence 2: detail plus attribution
+- sentence 3: consequence or context
+
+This refinement remains conservative and does not redesign the wider editorial pipeline.

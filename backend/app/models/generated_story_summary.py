@@ -15,11 +15,14 @@ class SummaryComplianceReport(BaseModel):
 
 class GeneratedStorySummary(BaseModel):
     cluster_id: str
+    short_headline: str
     summary_text: str
     sentence_count: int = Field(ge=0)
     word_count: int = Field(ge=0)
     topic_label: str = "general"
     source_labels: list[str] = Field(default_factory=list)
+    attribution_type: Literal["direct_quote", "official_statement", "source_attribution"]
+    quote_line: str | None = None
     representative_title: str | None = None
     score_total: float | None = Field(default=None, ge=0.0)
     policy_compliance: SummaryComplianceReport

@@ -496,3 +496,21 @@ Still intentionally excluded from this task:
 - editorial policy redesign
 - commentary integration
 - scheduling automation
+
+### Story Summary Refinement V2
+
+Backend now includes a refinement pass for per-story summary generation.
+
+Current scope:
+
+- generate a short 3-6 word editorial headline per story
+- add one attribution element using quote, official statement, or source fallback
+- keep the existing three-sentence structure
+- stay conservative and explainable
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- wider editorial pipeline redesign
+- aggressive rewriting beyond summary generation

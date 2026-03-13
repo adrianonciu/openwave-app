@@ -4,9 +4,7 @@
     "in articol",
     "autorul spune",
     "a scris ca",
-    "\"",
-    "“",
-    "”"
+    "autorul arata"
   ],
   "topic_templates": {
     "politics": {
@@ -79,5 +77,24 @@
     "international_conflict": ["attack", "war", "missile", "sanctions", "ukraine", "russia", "ceasefire"],
     "sport": ["wins", "victory", "match", "semifinal", "final", "league", "championship"],
     "general": []
-  }
+  },
+  "headline_stopwords": [
+    "si", "sau", "iar", "care", "dupa", "pentru", "asupra", "fondul", "urmatorul", "urmatoarea", "este", "sunt", "din", "prin", "noi", "nou", "noua", "the", "and", "after", "amid", "with", "from"
+  ],
+  "official_actor_terms": [
+    "guvern", "guvernul", "presedintia", "presedintele", "ministerul", "minister", "executivul", "coalitia", "parlamentul", "banca centrala", "uniunea europeana", "comisia europeana", "armata", "autoritatile", "oficialii", "liderii", "clubul", "federatia"
+  ],
+  "attribution_verbs": [
+    "spune", "declara", "anunta", "avertizeaza", "sustine", "precizeaza", "transmite", "confirma", "acusa", "cere", "promite"
+  ],
+  "source_attribution_templates": [
+    "Potrivit {source}, detaliile converg spre aceeasi linie a evenimentului.",
+    "Potrivit {source}, acesta este cadrul comun in care este urmarit subiectul.",
+    "Potrivit {source}, aceasta este forma cea mai clara a evenimentului in acest moment."
+  ],
+  "official_attribution_templates": [
+    "Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza.",
+    "Din pozitia oficiala reiese ca urmatoarele ore sunt importante pentru punerea in practica a deciziei.",
+    "Mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare."
+  ]
 }
