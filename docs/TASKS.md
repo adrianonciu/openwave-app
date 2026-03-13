@@ -532,3 +532,20 @@ Still intentionally excluded from this task:
 - TTS provider changes
 - editorial pipeline redesign
 - background explainer generation
+
+### Attribution-First Rule For Radio Summaries
+
+Backend now applies attribution-first phrasing in per-story summaries.
+
+Current scope:
+
+- rewrite attributed statements into attribution-first radio form
+- avoid post-attributed quote structures in generated summaries
+- keep short quotes only when they remain clear in audio
+- preserve the rest of the summary pipeline unchanged
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- wider editorial redesign

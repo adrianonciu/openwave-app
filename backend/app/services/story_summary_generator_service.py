@@ -95,7 +95,9 @@ class StorySummaryGeneratorService:
             sentences.append(casualty_line)
         if importance_triggered and (casualty_line or context_line):
             sentences.append(consequence_sentence)
-            if context_line and (casualty_line or score_total is not None and score_total >= self.expansion_score_threshold):
+            if context_line and (
+                casualty_line or score_total is not None and score_total >= self.expansion_score_threshold
+            ):
                 sentences.append(context_line)
         else:
             sentences.append(consequence_sentence)
@@ -329,23 +331,23 @@ class StorySummaryGeneratorService:
         quote_line: str | None,
     ) -> str:
         detail = self.topic_templates.get(topic, self.topic_templates["general"])["detail"].rstrip(".?!")
+        source = self._primary_source(cluster)
+
         if attribution_type == "direct_quote" and quote_line:
-            quote_source = self._primary_source(cluster)
-            return f'{detail}, iar formula-cheie este "{quote_line}", potrivit {quote_source}.'
+            return f'Potrivit {source}, formula-cheie este "{quote_line}", iar {detail.lower()}.'
 
         if attribution_type == "official_statement":
             attribution = self._pick_template(
                 self.official_attribution_templates,
                 cluster.cluster_id,
             ).rstrip(".?!")
-            return f"{detail}, iar {attribution.lower()}."
+            return f"{attribution}, iar {detail.lower()}."
 
-        source = self._primary_source(cluster)
         attribution = self._pick_template(
             self.source_attribution_templates,
             source,
         ).format(source=source).rstrip(".?!")
-        return f"{detail}, iar {attribution.lower()}."
+        return f"{attribution}, iar {detail.lower()}."
 
     def _build_consequence_sentence(self, topic: str) -> str:
         return self.topic_templates.get(topic, self.topic_templates["general"])["impact"]
@@ -453,6 +455,6 @@ class StorySummaryGeneratorService:
     ) -> str:
         return (
             f"Summary for cluster '{cluster.representative_title}' was generated with short headline '{short_headline}', "
-            f"topic template '{topic}', attribution mode '{attribution_type}', expanded={expanded_summary_used}, "
+            f"topic template '{topic}', attribution mode '{attribution_type}' in attribution-first form, expanded={expanded_summary_used}, "
             f"casualties={casualty_line_included}, context={context_line_included}. Compliance notes: {', '.join(compliance.notes)}."
         )

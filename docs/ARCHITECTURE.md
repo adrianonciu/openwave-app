@@ -1425,3 +1425,20 @@ Summary priority order for expanded stories:
 - sentence 5: short relevant context
 
 This refinement remains conservative and does not introduce new infrastructure.
+
+---
+
+# 26. Attribution-First Radio Rule
+
+The story summary generator now applies an attribution-first rule for radio-style summaries.
+
+Rule:
+
+- attributed statements should begin with the speaker, institution, or source
+- post-attributed constructions such as `..., a spus X` are avoided in generated summaries
+- preferred audio-safe forms are:
+  - `Potrivit X, ...`
+  - `X spune ca ...`
+  - `X a transmis ca ...`
+
+This keeps attribution clear at the start of the sentence and reduces listener confusion in audio.

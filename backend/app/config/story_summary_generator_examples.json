@@ -1,9 +1,39 @@
 {
   "examples": [
     {
-      "category": "three_sentence_story",
+      "category": "bad_post_attributed_form",
+      "bad_form": "Statele occidentale poarta intreaga responsabilitate, a transmis Ministerul rus de Externe.",
+      "corrected_form": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate."
+    },
+    {
+      "category": "official_statement_case",
       "input_cluster": {
-        "cluster_id": "cluster-economy-short-001",
+        "cluster_id": "cluster-official-001",
+        "representative_title": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate",
+        "member_articles": [
+          {
+            "url": "https://example.com/world/official-1",
+            "title": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate",
+            "source": "Reuters",
+            "published_at": "2026-03-13T14:00:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T14:00:00+00:00",
+        "latest_published_at": "2026-03-13T14:00:00+00:00"
+      },
+      "short_headline": "Mesaj dur al Moscovei",
+      "attribution_type": "official_statement",
+      "generated_summary": "Ministerul rus de Externe spune ca statele occidentale poarta intreaga responsabilitate. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea si poate aduce reactii politice sau militare rapide.",
+      "policy_compliance_notes": [
+        "attribution_first_used",
+        "official_statement_used",
+        "post_attribution_avoided"
+      ]
+    },
+    {
+      "category": "source_attribution_case",
+      "input_cluster": {
+        "cluster_id": "cluster-source-001",
         "representative_title": "Presiune pe bugetul de stat dupa noi estimari de deficit",
         "member_articles": [
           {
@@ -18,83 +48,37 @@
       },
       "short_headline": "Presiune pe buget",
       "attribution_type": "source_attribution",
-      "expanded_summary_used": false,
-      "casualty_line_included": false,
-      "context_line_included": false,
-      "generated_summary": "Presiune pe bugetul de stat dupa noi estimari de deficit. Urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal, iar potrivit HotNews acesta este cadrul comun in care este urmarit subiectul. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
+      "generated_summary": "Presiune pe bugetul de stat dupa noi estimari de deficit. Potrivit HotNews, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni.",
       "policy_compliance_notes": [
-        "three_sentence_default_kept",
+        "attribution_first_used",
         "source_mentioned_once",
-        "headline_generated"
+        "post_attribution_avoided"
       ]
     },
     {
-      "category": "four_sentence_with_casualties",
+      "category": "direct_quote_case",
       "input_cluster": {
-        "cluster_id": "cluster-conflict-casualties-001",
-        "representative_title": "Missile attack kills 7 and injures 40 in southern Ukraine",
+        "cluster_id": "cluster-quote-001",
+        "representative_title": "Premierul: \"Nu renuntam la reforma\" dupa sedinta coalitiei",
         "member_articles": [
           {
-            "url": "https://example.com/conflict/1",
-            "title": "Missile attack kills 7 and injures 40 in southern Ukraine",
-            "source": "Reuters",
-            "published_at": "2026-03-13T11:10:00+00:00"
-          },
-          {
-            "url": "https://example.com/conflict/2",
-            "title": "Officials condemn latest attack on southern Ukraine",
-            "source": "AP",
-            "published_at": "2026-03-13T11:40:00+00:00"
+            "url": "https://example.com/politics/quote-1",
+            "title": "Premierul: \"Nu renuntam la reforma\" dupa sedinta coalitiei",
+            "source": "HotNews",
+            "published_at": "2026-03-13T10:00:00+00:00"
           }
         ],
-        "created_at": "2026-03-13T11:10:00+00:00",
-        "latest_published_at": "2026-03-13T11:40:00+00:00"
+        "created_at": "2026-03-13T10:00:00+00:00",
+        "latest_published_at": "2026-03-13T10:00:00+00:00"
       },
-      "short_headline": "Atac cu victime Ucraina",
-      "attribution_type": "official_statement",
-      "expanded_summary_used": true,
-      "casualty_line_included": true,
-      "context_line_included": false,
-      "generated_summary": "Un atac cu rachete in sudul Ucrainei a provocat un nou val de reactii oficiale. De aici, atentia merge spre masurile de raspuns si spre impactul imediat asupra populatiei civile, iar mesajul oficial indica faptul ca urmeaza pasi institutionali si reactii suplimentare. Bilantul preliminar arata ca atacul a ucis 7 persoane si a ranit aproximativ 40. Miza este imediata, pentru ca episodul creste tensiunea si poate aduce reactii politice sau militare rapide.",
+      "short_headline": "Premier despre reforma",
+      "attribution_type": "direct_quote",
+      "quote_line": "Nu renuntam la reforma",
+      "generated_summary": "Premierul vorbeste despre continuarea reformei dupa sedinta coalitiei. Potrivit HotNews, formula-cheie este \"Nu renuntam la reforma\", iar in perioada urmatoare atentia se muta spre reactiile politice si spre aplicarea masurii. Miza este politica, pentru ca decizia poate schimba raportul de forte si urmatorii pasi institutionali.",
       "policy_compliance_notes": [
-        "expanded_summary_used",
-        "casualties_explicitly_included",
-        "four_sentence_major_story"
-      ]
-    },
-    {
-      "category": "five_sentence_with_casualties_and_context",
-      "input_cluster": {
-        "cluster_id": "cluster-conflict-context-001",
-        "representative_title": "Latest missile attack kills 12 and injures 55 after renewed strikes on the city",
-        "member_articles": [
-          {
-            "url": "https://example.com/conflict/context-1",
-            "title": "Latest missile attack kills 12 and injures 55 after renewed strikes on the city",
-            "source": "Reuters",
-            "published_at": "2026-03-13T12:10:00+00:00"
-          },
-          {
-            "url": "https://example.com/conflict/context-2",
-            "title": "Another wave of attacks triggers new emergency response",
-            "source": "BBC",
-            "published_at": "2026-03-13T12:25:00+00:00"
-          }
-        ],
-        "created_at": "2026-03-13T12:10:00+00:00",
-        "latest_published_at": "2026-03-13T12:25:00+00:00"
-      },
-      "short_headline": "Atac repetat cu victime",
-      "attribution_type": "source_attribution",
-      "expanded_summary_used": true,
-      "casualty_line_included": true,
-      "context_line_included": true,
-      "generated_summary": "Un nou atac cu rachete a lovit orasul si a declansat o interventie de urgenta. De aici, atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului, iar potrivit Reuters detaliile converg spre aceeasi linie a evenimentului. Bilantul preliminar arata ca atacul a ucis 12 persoane si a ranit aproximativ 55. Miza este imediata, pentru ca episodul creste tensiunea si poate aduce reactii politice sau militare rapide. Este unul dintre cele mai noi episoade dintr-o succesiune de atacuri si reactii urmarite deja in ultimele zile.",
-      "policy_compliance_notes": [
-        "expanded_summary_used",
-        "casualties_explicitly_included",
-        "context_line_included",
-        "five_sentence_major_story"
+        "attribution_first_used",
+        "short_quote_kept",
+        "post_attribution_avoided"
       ]
     }
   ]
