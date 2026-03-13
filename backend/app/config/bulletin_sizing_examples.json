@@ -1,0 +1,31 @@
+{
+  "examples": [
+    {
+      "name": "too_short_bulletin",
+      "original_duration_seconds": 210,
+      "target_duration_seconds": 540,
+      "tolerance_seconds": 90,
+      "expected_action": "below_target_duration",
+      "expected_removed_story_ids": [],
+      "notes": "The draft is left unchanged and flagged as below target because v1 does not expand text."
+    },
+    {
+      "name": "acceptable_bulletin",
+      "original_duration_seconds": 500,
+      "target_duration_seconds": 540,
+      "tolerance_seconds": 90,
+      "expected_action": "kept_unchanged",
+      "expected_removed_story_ids": [],
+      "notes": "The draft already fits inside the acceptable duration window."
+    },
+    {
+      "name": "too_long_bulletin",
+      "original_duration_seconds": 690,
+      "target_duration_seconds": 540,
+      "tolerance_seconds": 90,
+      "expected_action": "removed_lowest_priority_tail_story",
+      "expected_removed_story_ids": ["cluster-general-002", "cluster-sport-001"],
+      "notes": "The service removes lower-priority trailing stories until the draft falls back into the target range or hits the minimum story count."
+    }
+  ]
+}

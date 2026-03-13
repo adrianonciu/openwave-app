@@ -417,3 +417,21 @@ Still intentionally excluded from this task:
 - audio generation
 - TTS integration changes
 - aggressive bulletin duration optimization
+
+### Bulletin Sizing V1
+
+Backend now includes a bulletin sizing layer for duration control after briefing assembly.
+
+Current scope:
+
+- accept drafts already inside the target duration window
+- flag drafts that are too short without expanding text
+- trim trailing lower-priority stories when drafts are too long
+- preserve story ordering for kept items
+- expose explicit sizing actions and before/after durations
+
+Still intentionally excluded from this task:
+
+- audio generation
+- TTS integration changes
+- story text rewriting

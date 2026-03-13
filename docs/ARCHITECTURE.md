@@ -1244,3 +1244,30 @@ This layer does not perform:
 - audio generation
 - TTS orchestration
 - aggressive duration optimization
+
+---
+
+# 20. Bulletin Sizing V1
+
+After briefing assembly, OpenWave now includes a bulletin sizing layer that
+checks whether the draft fits a target duration window.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Summary Policy -> Story Summary Generator -> Briefing Assembly -> Bulletin Sizing
+```
+
+Sizing rules:
+
+- keep drafts unchanged when they already fit the target window
+- report drafts that are too short without expanding text
+- trim trailing lower-priority stories when drafts are too long
+- preserve the ordering of the remaining kept stories
+- expose sizing actions and original versus final duration
+
+This layer does not perform:
+
+- audio generation
+- TTS changes
+- story rewriting

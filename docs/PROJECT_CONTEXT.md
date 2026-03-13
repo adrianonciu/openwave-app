@@ -62,3 +62,5 @@ Current backend infrastructure also includes a conservative story summary genera
 
 Current backend infrastructure also includes a briefing assembly layer that turns generated story summaries into a coherent Romanian radio-style bulletin draft with intro, outro, ordering rationale, and estimated duration.
 
+Current backend infrastructure also includes a bulletin sizing layer that enforces a target duration window on briefing drafts and reports explicit keep/remove sizing actions.
+
