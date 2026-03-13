@@ -6,6 +6,7 @@
 - added JSON-backed watcher state persistence for last seen content
 - exposed a minimal backend endpoint for running all watcher checks
 - added an article fetch-and-clean service for extracting readable editorial text from article pages
+- added conservative news clustering to group clearly related articles without editorial ranking
 
 # OpenWave Development Log
 
@@ -616,4 +617,5 @@ In progress:
 
 1. voice tuning
 2. editorial automation pipeline
+
 

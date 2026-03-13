@@ -309,3 +309,21 @@ Still intentionally excluded from this task:
 - clustering
 - editorial scoring
 - briefing assembly
+
+### News Clustering V1
+
+Backend now includes a conservative clustering layer for fetched news articles.
+
+Current scope:
+
+- cluster only clearly related articles
+- combine recency window checks with title similarity
+- use shared entities and keyword overlap as supporting signals
+- keep borderline stories separate when overlap is weak
+- choose a representative title with a simple explicit rule
+
+Still intentionally excluded from this task:
+
+- summarization
+- editorial scoring
+- briefing assembly

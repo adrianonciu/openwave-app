@@ -50,3 +50,5 @@ This layer is intentionally limited to content detection and state tracking.
 
 Current backend infrastructure also includes an article fetch-and-clean layer that downloads a detected article page, extracts the main text, and returns cleaned editorial content for future pipelines.
 
+Current backend infrastructure also includes a conservative news clustering layer that groups clearly related fetched articles into story clusters before later editorial processing.
+

@@ -1067,3 +1067,36 @@ This layer does not perform:
 - clustering
 - editorial ranking
 - briefing assembly
+
+---
+
+# 14. News Clustering V1
+
+After article fetch and clean, OpenWave now includes a conservative clustering
+layer that groups clearly related articles into one story cluster.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Future Editorial Pipeline
+```
+
+Clustering signals:
+
+- recency window
+- title token overlap
+- shared named entities or capitalized phrases
+- keyword overlap from title and body
+- light body-text overlap support
+
+Design rule:
+
+- prefer false negatives over false positives
+- require strong overlap before merging
+- do not merge on broad topic similarity alone
+
+This layer does not perform:
+
+- summarization
+- story scoring
+- briefing assembly
