@@ -146,7 +146,7 @@
       }
     ],
     "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
-    "segment_count": 4,
+    "segment_count": 5,
     "estimated_duration_seconds": 48,
     "tts_segment_blocks": [
       {
@@ -163,6 +163,60 @@
       },
       {
         "segment_name": "outro",
+        "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."
+      }
+    ],
+    "ordered_segments": [
+      {
+        "segment_name": "intro",
+        "segment_type": "intro",
+        "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."
+      },
+      {
+        "segment_name": "story_01",
+        "segment_type": "story",
+        "text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."
+      },
+      {
+        "segment_name": "stinger_01",
+        "segment_type": "stinger",
+        "audio_file": "news_stinger_short.wav"
+      },
+      {
+        "segment_name": "story_02",
+        "segment_type": "story",
+        "text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."
+      },
+      {
+        "segment_name": "outro",
+        "segment_type": "outro",
+        "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."
+      }
+    ],
+    "audio_segment_sequence": [
+      {
+        "segment_name": "intro",
+        "segment_type": "intro",
+        "text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului."
+      },
+      {
+        "segment_name": "story_01",
+        "segment_type": "story",
+        "text": "Uniunea Europeana a aprobat noi sanctiuni dupa un atac cu rachete asupra Ucrainei. Potrivit declaratiilor oficiale, miza imediata tine de aplicarea deciziei si de reactiile care urmeaza, iar de aici atentia merge spre reactiile oficiale si spre impactul imediat asupra terenului sau asupra populatiei civile. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide."
+      },
+      {
+        "segment_name": "stinger_01",
+        "segment_type": "stinger",
+        "audio_file": "news_stinger_short.wav"
+      },
+      {
+        "segment_name": "story_02",
+        "segment_type": "story",
+        "text": "Inflatia ar putea creste din nou, avertizeaza Banca centrala. Potrivit Financial Times, acesta este cadrul comun in care este urmarit subiectul, iar urmatorul punct de atentie este felul in care pietele, companiile si oficialii vor raspunde dupa acest semnal. Miza este economica, pentru ca decizia poate influenta costurile, increderea din piata si asteptarile investitorilor pentru urmatoarele luni."
+      },
+      {
+        "segment_name": "outro",
+        "segment_type": "outro",
         "text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave."
       }
     ]

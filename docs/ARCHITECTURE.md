@@ -1484,3 +1484,7 @@ The briefing assembly layer now supports an optional dual-presenter pattern for 
 ### Listener First Name Personalization
 
 The briefing assembly layer now supports optional listener first-name personalization only in intro and outro text. The name is never injected into story summaries, and a hard counter keeps the total at 0, 1, or 2 mentions per bulletin.
+
+### News Stingers And Micro-Transitions
+
+The editorial-to-audio layer now supports optional `stinger` segments between story items. Stingers are configured separately, rotate lightly without consecutive repetition, are never inserted after the intro or before the outro, and remain outside TTS provider synthesis.

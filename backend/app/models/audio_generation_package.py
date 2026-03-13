@@ -11,10 +11,20 @@ class AudioStorySegment(BaseModel):
     source_labels: list[str] = Field(default_factory=list)
 
 
+class AudioSegmentBlock(BaseModel):
+    segment_name: str
+    segment_type: Literal["intro", "story", "stinger", "outro"]
+    text: str | None = None
+    audio_file: str | None = None
+    topic_label: str | None = None
+    source_labels: list[str] = Field(default_factory=list)
+
+
 class AudioGenerationPackage(BaseModel):
     briefing_id: str
     intro_text: str = Field(..., min_length=1)
     story_segments: list[AudioStorySegment] = Field(min_length=1)
+    ordered_segments: list[AudioSegmentBlock] = Field(min_length=3)
     outro_text: str = Field(..., min_length=1)
     segment_count: int = Field(ge=3)
     estimated_duration_seconds: int = Field(ge=0)

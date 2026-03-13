@@ -631,3 +631,20 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - personalization inside story text
+
+### News Stingers And Micro-Transitions
+
+Backend now supports optional stinger segments inside the audio generation layer.
+
+Current scope:
+
+- insert optional `stinger` audio blocks only between story segments
+- keep stingers configurable and lightly rotated without consecutive repeats
+- avoid stingers after intro, before outro, or when fewer than two stories exist
+- preserve existing TTS segment generation by filtering stingers out of the spoken TTS block list
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- long jingles or music-bed logic

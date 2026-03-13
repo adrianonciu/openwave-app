@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "stinger_files": [
+    "news_stinger_short.wav",
+    "news_stinger_soft.wav",
+    "news_stinger_fast.wav"
+  ],
+  "max_stingers_per_bulletin": 8
+}

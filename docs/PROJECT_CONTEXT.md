@@ -79,3 +79,5 @@ Current backend infrastructure also includes a deterministic variation layer ins
 Current backend infrastructure also supports a dual-presenter bulletin draft mode in briefing assembly, with alternating female/male story voices, deterministic intro/outro variants, and short pass-phrase markers kept separate from TTS generation for now.
 
 Current backend infrastructure also supports optional listener first-name personalization in briefing assembly, but only for intro/outro lines and with a hard cap of two mentions per bulletin.
+
+Current backend infrastructure also supports optional short news stingers in the audio-generation package, inserted only between stories and kept configurable without changing TTS provider internals.
