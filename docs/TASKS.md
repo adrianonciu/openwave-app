@@ -327,3 +327,21 @@ Still intentionally excluded from this task:
 - summarization
 - editorial scoring
 - briefing assembly
+
+### Story Scoring V1
+
+Backend now includes an explainable story scoring layer for clustered stories.
+
+Current scope:
+
+- score clusters with explicit weighted heuristics
+- increase score for fresher and multi-source stories
+- add modest bonuses for important entities and hard-news topics
+- expose score breakdowns and explanations for inspection
+- keep scoring independent from final story selection
+
+Still intentionally excluded from this task:
+
+- story selection
+- summarization
+- briefing assembly

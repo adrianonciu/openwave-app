@@ -52,3 +52,5 @@ Current backend infrastructure also includes an article fetch-and-clean layer th
 
 Current backend infrastructure also includes a conservative news clustering layer that groups clearly related fetched articles into story clusters before later editorial processing.
 
+Current backend infrastructure also includes a transparent story scoring layer that assigns editorial priority scores and score breakdowns to story clusters before later selection decisions.
+

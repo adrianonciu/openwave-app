@@ -1100,3 +1100,37 @@ This layer does not perform:
 - summarization
 - story scoring
 - briefing assembly
+
+---
+
+# 15. Story Scoring V1
+
+After clustering, OpenWave now includes a transparent story scoring layer that
+assigns an editorial priority score to each story cluster.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Future Editorial Pipeline
+```
+
+Scoring signals:
+
+- recency
+- source count
+- modest source quality weights
+- entity importance
+- topic weight
+- title strength
+
+Design rule:
+
+- scoring must be tunable and explainable
+- every score must expose a clear breakdown
+- scoring does not decide the final briefing lineup
+
+This layer does not perform:
+
+- story selection
+- summarization
+- briefing assembly

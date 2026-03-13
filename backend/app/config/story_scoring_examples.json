@@ -1,0 +1,76 @@
+{
+  "examples": [
+    {
+      "name": "high_priority_cluster",
+      "cluster": {
+        "cluster_id": "cluster-high-001",
+        "representative_title": "EU approves new sanctions after Russian missile attack on Ukraine",
+        "member_articles": [
+          {
+            "url": "https://example.com/reuters/eu-sanctions-ukraine",
+            "title": "EU approves new sanctions after Russian missile attack on Ukraine",
+            "source": "Reuters",
+            "published_at": "2026-03-13T11:10:00+00:00"
+          },
+          {
+            "url": "https://example.com/ap/ukraine-sanctions-europe",
+            "title": "Europe agrees sanctions package after Russia strikes Ukraine city",
+            "source": "AP",
+            "published_at": "2026-03-13T11:40:00+00:00"
+          },
+          {
+            "url": "https://example.com/bbc/eu-russia-ukraine-measures",
+            "title": "EU leaders back fresh Russia measures after Ukraine attack",
+            "source": "BBC",
+            "published_at": "2026-03-13T12:05:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T11:10:00+00:00",
+        "latest_published_at": "2026-03-13T12:05:00+00:00"
+      },
+      "reference_time": "2026-03-13T13:00:00+00:00"
+    },
+    {
+      "name": "medium_priority_cluster",
+      "cluster": {
+        "cluster_id": "cluster-medium-001",
+        "representative_title": "European Central Bank cuts rates amid weak growth outlook",
+        "member_articles": [
+          {
+            "url": "https://example.com/ft/ecb-rates",
+            "title": "European Central Bank cuts rates amid weak growth outlook",
+            "source": "FT",
+            "published_at": "2026-03-13T08:20:00+00:00"
+          },
+          {
+            "url": "https://example.com/dw/ecb-rate-move",
+            "title": "ECB lowers rates as euro zone economy slows",
+            "source": "DW",
+            "published_at": "2026-03-13T09:00:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-13T08:20:00+00:00",
+        "latest_published_at": "2026-03-13T09:00:00+00:00"
+      },
+      "reference_time": "2026-03-13T13:00:00+00:00"
+    },
+    {
+      "name": "low_priority_cluster",
+      "cluster": {
+        "cluster_id": "cluster-low-001",
+        "representative_title": "Commentary: What a delayed Ariane launch could mean for Europe",
+        "member_articles": [
+          {
+            "url": "https://example.com/commentary/ariane-delay-view",
+            "title": "Commentary: What a delayed Ariane launch could mean for Europe",
+            "source": "Brookings",
+            "published_at": "2026-03-12T09:00:00+00:00"
+          }
+        ],
+        "created_at": "2026-03-12T09:00:00+00:00",
+        "latest_published_at": "2026-03-12T09:00:00+00:00"
+      },
+      "reference_time": "2026-03-13T13:00:00+00:00"
+    }
+  ]
+}
