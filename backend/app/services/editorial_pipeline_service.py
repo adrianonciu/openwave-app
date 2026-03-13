@@ -72,6 +72,7 @@ class EditorialPipelineService:
             story_items=sized_briefing.story_items,
             outro_text=sized_briefing.outro_text,
             outro_variant=sized_briefing.outro_variant,
+            listener_name_mentions=sized_briefing.listener_name_mentions,
             estimated_total_word_count=sized_briefing.estimated_total_word_count,
             estimated_total_duration_seconds=sized_briefing.estimated_total_duration_seconds,
             target_duration_seconds=sized_briefing.target_duration_seconds,

@@ -645,3 +645,5 @@ In progress:
 - added a deterministic radio-language variation layer so summary attribution openings now rotate between equivalent attribution-first structures instead of repeating `Potrivit ...` across consecutive items
 
 - added dual-presenter bulletin draft support so briefing assembly now alternates female and male presenter voices, picks intro/outro variants deterministically, and inserts at most two short microphone-pass phrases between suitable story transitions
+
+- added optional listener first-name personalization in briefing assembly so intro and optional outro can mention the listener by name at most twice per bulletin, while story summaries remain unchanged

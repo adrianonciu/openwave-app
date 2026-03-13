@@ -17,6 +17,7 @@ class BriefingAssemblyService:
         self.spoken_words_per_minute: int = raw_config["spoken_words_per_minute"]
         self.female_presenter: str = raw_config["female_presenter"]
         self.male_presenter: str = raw_config["male_presenter"]
+        self.listener_first_name: str | None = raw_config.get("listener_first_name")
         self.intro_variants: list[dict[str, str]] = raw_config["intro_variants"]
         self.outro_variants: list[dict[str, str]] = raw_config["outro_variants"]
         self.pass_phrases: list[dict[str, str]] = raw_config["pass_phrases"]
@@ -38,11 +39,14 @@ class BriefingAssemblyService:
         briefing_seed = "|".join(story.cluster_id for story, _ in ordered_stories) or assembled_at.isoformat()
         intro_variant = self._pick_variant(self.intro_variants, briefing_seed)
         outro_variant = self._pick_variant(self.outro_variants, briefing_seed + ":outro")
+        intro_text, intro_mentions = self._personalize_intro(intro_variant["text"])
+        outro_text, outro_mentions = self._personalize_outro(outro_variant["text"], briefing_seed, intro_mentions)
+        listener_name_mentions = intro_mentions + outro_mentions
         ordered_items = self._build_presenter_items(ordered_stories)
         estimated_total_word_count = self._estimate_total_word_count(
             ordered_items,
-            intro_variant["text"],
-            outro_variant["text"],
+            intro_text,
+            outro_text,
         )
         estimated_total_duration_seconds = round(
             (estimated_total_word_count / self.spoken_words_per_minute) * 60
@@ -53,20 +57,58 @@ class BriefingAssemblyService:
             estimated_total_duration_seconds,
             intro_variant["id"],
             outro_variant["id"],
+            listener_name_mentions,
         )
 
         return GeneratedBriefingDraft(
             briefing_id=briefing_id,
-            intro_text=intro_variant["text"],
+            intro_text=intro_text,
             intro_variant=intro_variant["id"],
             ordered_story_items=ordered_items,
-            outro_text=outro_variant["text"],
+            outro_text=outro_text,
             outro_variant=outro_variant["id"],
+            listener_name_mentions=listener_name_mentions,
             estimated_total_word_count=estimated_total_word_count,
             estimated_total_duration_seconds=estimated_total_duration_seconds,
             assembly_explanation=assembly_explanation,
             assembled_at=assembled_at,
         )
+
+    def _personalize_intro(self, intro_text: str) -> tuple[str, int]:
+        if not self.listener_first_name:
+            return intro_text, 0
+        listener = self.listener_first_name.strip()
+        if not listener:
+            return intro_text, 0
+        if intro_text.startswith("Bun gasit."):
+            return intro_text.replace("Bun gasit.", f"Bun gasit, {listener}.", 1), 1
+        if intro_text.startswith("Buna ziua."):
+            return intro_text.replace("Buna ziua.", f"Buna ziua, {listener}.", 1), 1
+        if intro_text.endswith("."):
+            return intro_text[:-1] + f", {listener}.", 1
+        return intro_text + f", {listener}", 1
+
+    def _personalize_outro(
+        self,
+        outro_text: str,
+        seed: str,
+        existing_mentions: int,
+    ) -> tuple[str, int]:
+        if not self.listener_first_name or existing_mentions >= 2:
+            return outro_text, 0
+        listener = self.listener_first_name.strip()
+        if not listener:
+            return outro_text, 0
+        use_name = sum(ord(char) for char in seed + ":listener_outro") % 2 == 0
+        if not use_name:
+            return outro_text, 0
+        if outro_text.startswith("Ati ascultat jurnalul OpenWave."):
+            return outro_text.replace("Ati ascultat jurnalul OpenWave.", f"Ati ascultat jurnalul OpenWave, {listener}.", 1), 1
+        if outro_text.startswith("Atat pentru acest buletin."):
+            return outro_text.replace("Atat pentru acest buletin.", f"Atat pentru acest buletin, {listener}.", 1), 1
+        if outro_text.endswith("."):
+            return outro_text[:-1] + f", {listener}.", 1
+        return outro_text + f", {listener}", 1
 
     def _build_presenter_items(
         self,
@@ -268,6 +310,7 @@ class BriefingAssemblyService:
         estimated_total_duration_seconds: int,
         intro_variant: str,
         outro_variant: str,
+        listener_name_mentions: int,
     ) -> str:
         if not ordered_items:
             return "Briefing draft is empty because no story summaries were provided."
@@ -285,6 +328,6 @@ class BriefingAssemblyService:
         return (
             f"Bulletin opens with '{opener}' as the strongest available item, keeps score as the primary ordering rule, and alternates presenters female/male across stories. "
             f"Pacing labels are: {pacing_trace}. Presenter sequence is: {presenter_trace}. "
-            f"Intro variant={intro_variant}, outro variant={outro_variant}, passes_used={pass_count}. "
+            f"Intro variant={intro_variant}, outro variant={outro_variant}, listener_name_mentions={listener_name_mentions}, passes_used={pass_count}. "
             f"Estimated total duration is {estimated_total_duration_seconds} seconds, which is {duration_note}."
         )

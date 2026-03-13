@@ -1480,3 +1480,7 @@ The story summary generator now rotates attribution-first phrasing deterministic
 ### Dual Presenter Bulletin Mode
 
 The briefing assembly layer now supports an optional dual-presenter pattern for text drafts. Stories alternate female/male presenter voices, intro and outro lines are chosen from deterministic template variants, and at most two short microphone-pass phrases can be inserted between strong topic shifts without breaking pacing.
+
+### Listener First Name Personalization
+
+The briefing assembly layer now supports optional listener first-name personalization only in intro and outro text. The name is never injected into story summaries, and a hard counter keeps the total at 0, 1, or 2 mentions per bulletin.

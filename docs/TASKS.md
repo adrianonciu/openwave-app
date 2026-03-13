@@ -613,3 +613,21 @@ Still intentionally excluded from this task:
 - Flutter changes
 - TTS provider changes
 - audio-generation redesign
+
+### Listener First Name Personalization
+
+Backend now supports optional listener-name personalization inside briefing assembly.
+
+Current scope:
+
+- allow `listener_first_name` in briefing assembly config
+- personalize intro once when a listener name is configured
+- optionally personalize outro once more without exceeding two total mentions
+- expose `listener_name_mentions` on briefing outputs
+- keep story summaries completely unaffected
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS provider changes
+- personalization inside story text

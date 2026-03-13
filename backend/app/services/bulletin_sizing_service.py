@@ -96,6 +96,7 @@ class BulletinSizingService:
             story_items=normalized_story_items,
             outro_text=draft.outro_text,
             outro_variant=draft.outro_variant,
+            listener_name_mentions=draft.listener_name_mentions,
             estimated_total_word_count=final_word_count,
             estimated_total_duration_seconds=final_duration,
             target_duration_seconds=target_duration,

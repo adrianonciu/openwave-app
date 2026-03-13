@@ -22,6 +22,7 @@ class GeneratedBriefingDraft(BaseModel):
     ordered_story_items: list[BriefingStoryItem]
     outro_text: str
     outro_variant: str = "outro_01"
+    listener_name_mentions: int = Field(default=0, ge=0, le=2)
     estimated_total_word_count: int = Field(ge=0)
     estimated_total_duration_seconds: int = Field(ge=0)
     assembly_explanation: str

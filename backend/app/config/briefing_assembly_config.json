@@ -71,5 +71,6 @@
   },
   "max_consecutive_heavy": 2,
   "too_short_seconds": 150,
-  "too_long_seconds": 480
+  "too_long_seconds": 480,
+  "listener_first_name": "Adrian"
 }

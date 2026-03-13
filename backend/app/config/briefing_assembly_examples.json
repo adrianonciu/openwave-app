@@ -1,59 +1,28 @@
 {
   "examples": [
     {
-      "name": "dual_presenter_five_story_briefing",
-      "intro_variant": "intro_02",
-      "outro_variant": "outro_03",
-      "intro_presenter": "female",
-      "outro_presenter": "male",
-      "ordered_story_cluster_ids": [
-        "cluster-war-001",
-        "cluster-economy-001",
-        "cluster-war-002",
-        "cluster-sport-001",
-        "cluster-politics-001"
-      ],
-      "story_presenter_voices": [
-        "female",
-        "male",
-        "female",
-        "male",
-        "female"
-      ],
-      "pass_phrases_used": [
-        null,
-        "Mai departe, Mihai.",
-        null,
-        "Acum, Mihai.",
-        null
-      ],
-      "pacing_labels": [
-        "heavy",
-        "medium",
-        "heavy",
-        "light",
-        "heavy"
-      ],
-      "notes": "Score remains primary, stories alternate female/male, and only two short pass phrases appear around clear topic shifts."
+      "name": "listener_name_intro_only",
+      "listener_first_name": "Adrian",
+      "intro_text": "Bun gasit, Adrian. Ascultati briefingul OpenWave.",
+      "outro_text": "Acestea au fost principalele stiri ale momentului.",
+      "listener_name_mentions": 1,
+      "notes": "Name is used once in the intro and never appears in stories."
     },
     {
-      "name": "dual_presenter_eight_story_briefing",
-      "intro_variant": "intro_01",
-      "outro_variant": "outro_02",
-      "intro_presenter": "female",
-      "outro_presenter": "male",
-      "story_presenter_voices": [
-        "female",
-        "male",
-        "female",
-        "male",
-        "female",
-        "male",
-        "female",
-        "male"
-      ],
-      "pass_count": 2,
-      "notes": "Alternation is strict across stories, but pass phrases stay capped at two for the whole bulletin."
+      "name": "listener_name_intro_and_outro",
+      "listener_first_name": "Adrian",
+      "intro_text": "Buna ziua, Adrian. Iata principalele stiri ale momentului.",
+      "outro_text": "Ati ascultat jurnalul OpenWave, Adrian.",
+      "listener_name_mentions": 2,
+      "notes": "Name is used once in the intro and once in the outro, reaching the hard cap."
+    },
+    {
+      "name": "listener_name_disabled",
+      "listener_first_name": null,
+      "intro_text": "Acesta este jurnalul OpenWave cu cele mai importante informatii.",
+      "outro_text": "Atat pentru acest buletin. Revenim in curand.",
+      "listener_name_mentions": 0,
+      "notes": "When no listener name is configured, the bulletin stays fully neutral."
     }
   ]
 }

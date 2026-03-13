@@ -1,7 +1,7 @@
 {
   "input_final_editorial_briefing_package": {
     "briefing_id": "briefing-example-001",
-    "intro_text": "Bun gasit. Ascultati briefingul OpenWave cu principalele subiecte ale momentului.",
+    "intro_text": "Bun gasit, Adrian. Ascultati briefingul OpenWave.",
     "story_items": [
       {
         "position": 1,
@@ -93,7 +93,7 @@
         "pass_phrase_used": "Mai departe, Mihai."
       }
     ],
-    "outro_text": "Atat pentru acest buletin. Revenim cu noi actualizari in urmatoarea editie OpenWave.",
+    "outro_text": "Ati ascultat jurnalul OpenWave, Adrian.",
     "estimated_total_word_count": 119,
     "estimated_total_duration_seconds": 48,
     "target_duration_seconds": 540,
@@ -120,7 +120,8 @@
     "pipeline_explanation": "Example pipeline explanation.",
     "created_at": "2026-03-13T17:00:00+00:00",
     "intro_variant": "intro_01",
-    "outro_variant": "outro_02"
+    "outro_variant": "outro_02",
+    "listener_name_mentions": 2
   },
   "expected_audio_generation_package": {
     "briefing_id": "briefing-example-001",
