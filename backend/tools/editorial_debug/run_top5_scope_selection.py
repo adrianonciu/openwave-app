@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from itertools import combinations
 from pathlib import Path
 from urllib.parse import urlparse
 import json
@@ -31,11 +32,22 @@ GLOBAL_JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_global_selection.json"
 GLOBAL_TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_global_selection.txt"
 STORY_SELECTION_DEBUG_JSON_PATH = OUTPUT_DIR / "story_selection_debug.json"
 STORY_SELECTION_DEBUG_TEXT_PATH = OUTPUT_DIR / "story_selection_debug.txt"
+INTERNATIONAL_MERGE_DEBUG_JSON_PATH = OUTPUT_DIR / "international_merge_debug.json"
+INTERNATIONAL_MERGE_DEBUG_TEXT_PATH = OUTPUT_DIR / "international_merge_debug.txt"
 MAX_INPUT_ARTICLES = 20
 MAX_RSS_FALLBACK_ARTICLES = 6
+MAX_SOURCE_FETCH_ATTEMPTS = 32
 TOKEN_PATTERN = re.compile(r"[0-9A-Za-z\u00C0-\u024F][0-9A-Za-z\u00C0-\u024F\-']*")
 NOISY_PREFIX_PATTERN = re.compile(r"^(?:live(?:-text)?|video|foto|breaking|update)\s*[:\-]+\s*", re.IGNORECASE)
 SEPARATOR_PATTERN = re.compile(r"\s*(?:\||::| - |  |  )\s*")
+LIKELY_EVENT_TERMS = {
+    "iran", "golful", "emiratele", "ormuz", "porturi", "marines", "mijlociu", "orientul", "hamas",
+    "nato", "eu", "brussels", "sanctions", "atac", "ambasada", "ukraine", "ucraina", "moldova",
+}
+LOCATION_TERMS = {
+    "iran", "emiratele", "golful", "ormuz", "bagdad", "brussels", "romania", "ukraine", "ucraina", "moldova",
+    "balkans", "balcani", "black sea", "marea neagra", "germany", "belarus",
+}
 
 
 def _normalize_domain(url: str) -> str:
@@ -99,9 +111,11 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
     articles: list[FetchedArticle] = []
     seen_urls: set[str] = set()
 
+    source_attempts = 0
     for source_config, latest in latest_items:
-        if len(articles) >= MAX_INPUT_ARTICLES:
+        if len(articles) >= MAX_INPUT_ARTICLES or source_attempts >= MAX_SOURCE_FETCH_ATTEMPTS:
             break
+        source_attempts += 1
         if latest.url in seen_urls:
             continue
         seen_urls.add(latest.url)
@@ -250,6 +264,97 @@ def _write_scope_outputs(label: str, selected_clusters: list, candidate_clusters
     return payload
 
 
+def _representative_article(cluster, article_by_url: dict[str, FetchedArticle]) -> FetchedArticle | None:
+    for member in cluster.cluster.member_articles:
+        article = article_by_url.get(member.url)
+        if article is not None:
+            return article
+    return None
+
+
+def _write_international_merge_debug(global_candidates: list, article_by_url: dict[str, FetchedArticle], clustering_service) -> None:
+    top_candidates = global_candidates[:10]
+    representative_articles = []
+    for candidate in top_candidates:
+        article = _representative_article(candidate, article_by_url)
+        if article is not None:
+            representative_articles.append((candidate, article))
+
+    pair_payload = []
+    for (left_cluster, left_article), (right_cluster, right_article) in combinations(representative_articles, 2):
+        left_signal = clustering_service._build_signals(clustering_service._normalize_article(left_article))
+        right_signal = clustering_service._build_signals(clustering_service._normalize_article(right_article))
+        shared_entities = sorted(left_signal.entities & right_signal.entities)
+        shared_event_keywords = sorted(left_signal.event_terms & right_signal.event_terms)
+        shared_locations = sorted({term for term in shared_event_keywords if term in LOCATION_TERMS})
+        likely_pair = bool(
+            shared_entities
+            or (set(shared_event_keywords) & LIKELY_EVENT_TERMS)
+            or left_signal.normalized_source != right_signal.normalized_source and (
+                "iran" in (left_signal.event_terms | right_signal.event_terms)
+                and ({"golful", "emiratele", "ormuz", "porturi", "mijlociu", "marines", "hamas"} & (left_signal.event_terms | right_signal.event_terms))
+            )
+        )
+        if not likely_pair:
+            continue
+
+        decision = clustering_service.explain_pair(left_article, right_article)
+        pair_payload.append({
+            "candidate_a_cluster_id": left_cluster.cluster.cluster_id,
+            "candidate_b_cluster_id": right_cluster.cluster.cluster_id,
+            "candidate_a_headline": left_cluster.cluster.representative_title,
+            "candidate_b_headline": right_cluster.cluster.representative_title,
+            "normalized_headline_a": left_signal.normalized_title,
+            "normalized_headline_b": right_signal.normalized_title,
+            "normalized_source_a": left_signal.normalized_source,
+            "normalized_source_b": right_signal.normalized_source,
+            "shared_entities": shared_entities,
+            "shared_locations": shared_locations,
+            "shared_event_keywords": shared_event_keywords,
+            "hours_apart": round(decision.hours_apart, 2),
+            "merge_decision": decision.status == "merged",
+            "decision_status": decision.status,
+            "decision_reason": decision.reason,
+            "title_similarity": decision.title_similarity,
+            "keyword_overlap": decision.keyword_overlap,
+            "body_overlap": decision.body_overlap,
+        })
+
+    payload = {
+        "candidate_count_considered": len(representative_articles),
+        "pair_count_reported": len(pair_payload),
+        "pairs": pair_payload,
+    }
+    INTERNATIONAL_MERGE_DEBUG_JSON_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    lines = [
+        "INTERNATIONAL MERGE DEBUG",
+        "",
+        f"candidate_count_considered: {payload['candidate_count_considered']}",
+        f"pair_count_reported: {payload['pair_count_reported']}",
+        "",
+    ]
+    for index, item in enumerate(pair_payload, start=1):
+        lines.extend([
+            f"{index}. {item['candidate_a_headline']}  <->  {item['candidate_b_headline']}",
+            f"   normalized_headline_a: {item['normalized_headline_a']}",
+            f"   normalized_headline_b: {item['normalized_headline_b']}",
+            f"   normalized_source_a: {item['normalized_source_a']}",
+            f"   normalized_source_b: {item['normalized_source_b']}",
+            f"   shared_entities: {', '.join(item['shared_entities']) or 'none'}",
+            f"   shared_locations: {', '.join(item['shared_locations']) or 'none'}",
+            f"   shared_event_keywords: {', '.join(item['shared_event_keywords']) or 'none'}",
+            f"   hours_apart: {item['hours_apart']}",
+            f"   merge_decision: {item['merge_decision']}",
+            f"   decision_reason: {item['decision_reason']}",
+            f"   title_similarity: {item['title_similarity']}",
+            f"   keyword_overlap: {item['keyword_overlap']}",
+            f"   body_overlap: {item['body_overlap']}",
+            "",
+        ])
+    INTERNATIONAL_MERGE_DEBUG_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+
 def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: set[str]) -> None:
     candidate_payload = []
     for cluster in scored_clusters:
@@ -301,6 +406,7 @@ def main() -> None:
     pipeline_service = EditorialPipelineService()
 
     articles, _ = _build_articles(personalization)
+    article_by_url = {article.url: article for article in articles}
     story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
     scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
 
@@ -337,6 +443,7 @@ def main() -> None:
 
     selected_cluster_ids = {cluster.cluster.cluster_id for cluster in national_selection.selected_clusters + global_selection.selected_clusters}
     _write_story_selection_debug(scored_clusters, selected_cluster_ids)
+    _write_international_merge_debug(global_candidates, article_by_url, pipeline_service.clustering_service)
 
     print(f"Wrote {NATIONAL_JSON_OUTPUT_PATH}")
     print(f"Wrote {NATIONAL_TEXT_OUTPUT_PATH}")
@@ -344,6 +451,8 @@ def main() -> None:
     print(f"Wrote {GLOBAL_TEXT_OUTPUT_PATH}")
     print(f"Wrote {STORY_SELECTION_DEBUG_JSON_PATH}")
     print(f"Wrote {STORY_SELECTION_DEBUG_TEXT_PATH}")
+    print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_JSON_PATH}")
+    print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_TEXT_PATH}")
     print(json.dumps({
         "national_candidate_clusters": national_payload["candidate_cluster_count"],
         "global_candidate_clusters": global_payload["candidate_cluster_count"],
