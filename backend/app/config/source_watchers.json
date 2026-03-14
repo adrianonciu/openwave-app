@@ -12,8 +12,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
-      "editorial_priority": 2
+      "enabled": false,
+      "editorial_priority": 2,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "dw-world-news",
@@ -41,8 +42,9 @@
       "scope": "international",
       "country": "United States",
       "language": "en",
-      "enabled": true,
-      "editorial_priority": 4
+      "enabled": false,
+      "editorial_priority": 4,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "commentary-brookings",
@@ -55,8 +57,9 @@
       "scope": "international",
       "country": "United States",
       "language": "en",
-      "enabled": true,
-      "editorial_priority": 4
+      "enabled": false,
+      "editorial_priority": 4,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "ro-libertatea",
@@ -808,9 +811,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 1,
-      "notes": "metered article access may limit full-article fetch",
+      "notes": "metered article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 2
     },
     {
@@ -840,9 +843,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 3,
-      "editorial_priority": 1
+      "editorial_priority": 1,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-ap",
@@ -870,9 +874,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 5,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-aljazeera",
@@ -900,9 +905,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 7,
-      "notes": "metered or paywalled article access may limit full-article fetch",
+      "notes": "metered or paywalled article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 3
     },
     {
@@ -932,9 +937,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 9,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-bloomberg",
@@ -947,9 +953,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 1,
-      "notes": "metered article access may limit full-article fetch",
+      "notes": "metered article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 2
     },
     {
@@ -964,9 +970,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 2,
-      "notes": "metered or paywalled article access may limit full-article fetch",
+      "notes": "metered or paywalled article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 2
     },
     {
@@ -980,9 +986,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 3,
-      "notes": "paywalled article access may limit full-article fetch",
+      "notes": "paywalled article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 2
     },
     {
@@ -1011,9 +1017,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 5,
-      "notes": "paywalled article access may limit full-article fetch",
+      "notes": "paywalled article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 4
     },
     {
@@ -1027,9 +1033,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 6,
-      "notes": "metered article access may limit full-article fetch",
+      "notes": "metered article access may limit full-article fetch; inactive in default live international mix",
       "editorial_priority": 4
     },
     {
@@ -1043,9 +1049,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 7,
-      "editorial_priority": 5
+      "editorial_priority": 5,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-marketwatch",
@@ -1058,9 +1065,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 8,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-espn",
@@ -1073,9 +1081,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 1,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-skysports",
@@ -1088,9 +1097,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 2,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-cbssports",
@@ -1103,9 +1113,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 3,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-si",
@@ -1118,9 +1129,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 4,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-bbc-sport",
@@ -1133,9 +1145,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 5,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-athletic",
@@ -1148,9 +1161,9 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 6,
-      "notes": "subscription-first section; full article fetch may be limited",
+      "notes": "subscription-first section; full article fetch may be limited; inactive in default live international mix",
       "editorial_priority": 3
     },
     {
@@ -1164,9 +1177,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 7,
-      "editorial_priority": 3
+      "editorial_priority": 3,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-tmz",
@@ -1179,9 +1193,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 1,
-      "editorial_priority": 5
+      "editorial_priority": 5,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-people",
@@ -1194,9 +1209,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 2,
-      "editorial_priority": 5
+      "editorial_priority": 5,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-eonline",
@@ -1209,9 +1225,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 3,
-      "editorial_priority": 5
+      "editorial_priority": 5,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-usmagazine",
@@ -1224,9 +1241,10 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 4,
-      "editorial_priority": 5
+      "editorial_priority": 5,
+      "notes": "inactive in default live international mix"
     },
     {
       "source_id": "intl-variety",
@@ -1239,9 +1257,164 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true,
+      "enabled": false,
       "priority_rank": 5,
-      "editorial_priority": 4
+      "editorial_priority": 4,
+      "notes": "inactive in default live international mix"
+    },
+    {
+      "source_id": "intl-france24",
+      "source_name": "France 24",
+      "source_type": "news",
+      "source_url": "https://www.france24.com/en/",
+      "rss_url": "https://www.france24.com/en/rss",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "International",
+      "language": "en",
+      "enabled": false,
+      "notes": "discovery works but article fetch returned 403 in current architecture; inactive in default live international mix",
+      "editorial_priority": 2
+    },
+    {
+      "source_id": "intl-abc-au",
+      "source_name": "ABC News Australia",
+      "source_type": "news",
+      "source_url": "https://www.abc.net.au/news/world",
+      "rss_url": "https://www.abc.net.au/feeds/rss/news/world.xml",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "Australia",
+      "language": "en",
+      "enabled": true,
+      "editorial_priority": 2
+    },
+    {
+      "source_id": "intl-cbc",
+      "source_name": "CBC News",
+      "source_type": "news",
+      "source_url": "https://www.cbc.ca/news/world",
+      "rss_url": "https://www.cbc.ca/webfeed/rss/rss-world",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "Canada",
+      "language": "en",
+      "enabled": true,
+      "editorial_priority": 2
+    },
+    {
+      "source_id": "intl-cna",
+      "source_name": "CNA",
+      "source_type": "news",
+      "source_url": "https://www.channelnewsasia.com/world",
+      "rss_url": "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6311",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "Singapore",
+      "language": "en",
+      "enabled": true,
+      "editorial_priority": 3
+    },
+    {
+      "source_id": "intl-kyodo",
+      "source_name": "Kyodo News",
+      "source_type": "news",
+      "source_url": "https://english.kyodonews.net/",
+      "rss_url": "https://english.kyodonews.net/rss/news.xml",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "Japan",
+      "language": "en",
+      "enabled": true,
+      "editorial_priority": 3
+    },
+    {
+      "source_id": "intl-skynews",
+      "source_name": "Sky News",
+      "source_type": "news",
+      "source_url": "https://news.sky.com/world",
+      "rss_url": "https://feeds.skynews.com/feeds/rss/world.xml",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "United Kingdom",
+      "language": "en",
+      "enabled": true,
+      "editorial_priority": 3
+    },
+    {
+      "source_id": "intl-nbcnews",
+      "source_name": "NBC News",
+      "source_type": "news",
+      "source_url": "https://www.nbcnews.com/world",
+      "rss_url": "https://feeds.nbcnews.com/nbcnews/public/world",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "United States",
+      "language": "en",
+      "enabled": true,
+      "editorial_priority": 3
+    },
+    {
+      "source_id": "intl-politico-eu",
+      "source_name": "Politico Europe",
+      "source_type": "news",
+      "source_url": "https://www.politico.eu/",
+      "rss_url": "https://www.politico.eu/feed/",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "Europe",
+      "language": "en",
+      "enabled": false,
+      "notes": "feed discovery worked but article fetch returned 403 in current architecture; inactive in default live international mix",
+      "editorial_priority": 2
+    },
+    {
+      "source_id": "intl-politico-us",
+      "source_name": "Politico",
+      "source_type": "news",
+      "source_url": "https://www.politico.com/",
+      "rss_url": "https://www.politico.com/rss/politicopicks.xml",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "United States",
+      "language": "en",
+      "enabled": false,
+      "notes": "feed access returned 403 in current architecture; inactive in default live international mix",
+      "editorial_priority": 3
+    },
+    {
+      "source_id": "intl-upi",
+      "source_name": "UPI",
+      "source_type": "news",
+      "source_url": "https://www.upi.com/Top_News/World-News/",
+      "rss_url": "https://www.upi.com/Top_News/World-News/rss/",
+      "parser_type": "auto",
+      "check_interval_minutes": 30,
+      "category": "general",
+      "scope": "international",
+      "country": "United States",
+      "language": "en",
+      "enabled": false,
+      "notes": "rss endpoint returned 404 in current architecture; inactive in default live international mix",
+      "editorial_priority": 3
     }
   ]
 }

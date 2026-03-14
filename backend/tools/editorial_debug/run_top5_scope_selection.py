@@ -168,7 +168,9 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
         if rss_article.url in seen_urls or not rss_article.summary.strip():
             continue
         seen_urls.add(rss_article.url)
-        mapped_meta = source_by_domain.get(_normalize_domain(rss_article.url), {})
+        mapped_meta = source_by_domain.get(_normalize_domain(rss_article.url))
+        if not mapped_meta:
+            continue
         article = FetchedArticle(
             url=rss_article.url,
             title=rss_article.title,
