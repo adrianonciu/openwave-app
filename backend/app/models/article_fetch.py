@@ -13,6 +13,9 @@ class FetchedArticle(BaseModel):
     published_at: datetime | None = None
     source: str
     content_text: str
+    ingestion_kind: Literal["full_fetch", "rss_fallback", "unknown"] = "unknown"
+    editorial_priority: int = 3
+    is_local_source: bool = False
 
 
 class ArticleFetchResult(BaseModel):

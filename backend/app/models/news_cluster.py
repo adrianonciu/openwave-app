@@ -12,6 +12,9 @@ class NewsClusteringArticle(BaseModel):
     source: str
     published_at: datetime
     content_text: str
+    ingestion_kind: Literal["full_fetch", "rss_fallback", "unknown"] = "unknown"
+    editorial_priority: int = 3
+    is_local_source: bool = False
 
     @classmethod
     def from_fetched_article(cls, article: FetchedArticle) -> "NewsClusteringArticle":
@@ -22,6 +25,9 @@ class NewsClusteringArticle(BaseModel):
             source=article.source,
             published_at=published_at,
             content_text=article.content_text,
+            ingestion_kind=article.ingestion_kind,
+            editorial_priority=article.editorial_priority,
+            is_local_source=article.is_local_source,
         )
 
 
@@ -30,6 +36,9 @@ class ClusterMemberArticle(BaseModel):
     title: str
     source: str
     published_at: datetime
+    ingestion_kind: Literal["full_fetch", "rss_fallback", "unknown"] = "unknown"
+    editorial_priority: int = Field(default=3, ge=1, le=5)
+    is_local_source: bool = False
 
 
 class StoryCluster(BaseModel):

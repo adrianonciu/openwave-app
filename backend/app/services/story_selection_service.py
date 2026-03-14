@@ -540,6 +540,8 @@ class StorySelectionService:
         return best_domain
 
     def _infer_geography(self, cluster: ScoredStoryCluster) -> str:
+        if any(member.is_local_source for member in cluster.cluster.member_articles):
+            return "local"
         text = self._cluster_text(cluster)
         best_label = "international"
         best_matches = 0
@@ -557,6 +559,8 @@ class StorySelectionService:
     ) -> str:
         if personalization is None or personalization.local_editorial_anchor_scope() != "region":
             return "unknown"
+        if any(member.is_local_source for member in cluster.cluster.member_articles):
+            return "region_match"
         anchor = personalization.local_editorial_anchor()
         if not anchor:
             return "unknown"

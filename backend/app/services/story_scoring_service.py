@@ -9,7 +9,7 @@ from app.models.news_cluster import StoryCluster
 from app.models.story_score import ScoredStoryCluster, ScoreComponent, StoryScoreBreakdown
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "story_scoring_config.json"
-TOKEN_PATTERN = re.compile(r"[A-Za-z][A-Za-z\-']{2,}")
+TOKEN_PATTERN = re.compile(r"[0-9A-Za-z\u00C0-\u024F][0-9A-Za-z\u00C0-\u024F\-']{2,}")
 
 
 class StoryScoringService:
@@ -25,6 +25,12 @@ class StoryScoringService:
         self.entity_importance_terms: dict[str, float] = raw_config["entity_importance_terms"]
         self.topic_keywords: dict[str, float] = raw_config["topic_keywords"]
         self.title_strength_keywords: dict[str, float] = raw_config["title_strength_keywords"]
+        self.priority_quality_weights: dict[int, float] = {1: 1.0, 2: 0.9, 3: 0.75, 4: 0.55, 5: 0.35}
+        self.ingestion_quality_adjustments: dict[str, float] = {
+            "full_fetch": 0.0,
+            "rss_fallback": -0.2,
+            "unknown": -0.05,
+        }
 
     def score_clusters(
         self,
@@ -115,20 +121,31 @@ class StoryScoringService:
         )
 
     def _score_source_quality(self, cluster: StoryCluster) -> ScoreComponent:
-        source_scores = [
-            self.source_quality_weights.get(member.source, 0.6)
-            for member in cluster.member_articles
-        ]
+        source_scores = []
+        rss_fallback_count = 0
+        for member in cluster.member_articles:
+            priority_weight = self.priority_quality_weights.get(member.editorial_priority, 0.6)
+            configured_weight = self.source_quality_weights.get(member.source, priority_weight)
+            ingestion_adjustment = self.ingestion_quality_adjustments.get(
+                member.ingestion_kind,
+                self.ingestion_quality_adjustments["unknown"],
+            )
+            if member.ingestion_kind == "rss_fallback":
+                rss_fallback_count += 1
+            source_scores.append(min(max(configured_weight + ingestion_adjustment, 0.1), 1.0))
         average_quality = sum(source_scores) / len(source_scores)
         contribution = round(average_quality * self.weights["source_quality"], 2)
+        explanation = "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+        if rss_fallback_count:
+            explanation += (
+                f" {rss_fallback_count} cluster article(s) came from RSS fallback and were scored more conservatively."
+            )
         return ScoreComponent(
             name="source_quality",
             value=round(average_quality, 2),
             max_points=self.weights["source_quality"],
             contribution=contribution,
-            explanation=(
-                "Source-quality bonus uses a modest average trust weight across member sources."
-            ),
+            explanation=explanation,
         )
 
     def _score_entity_importance(self, cluster: StoryCluster) -> ScoreComponent:

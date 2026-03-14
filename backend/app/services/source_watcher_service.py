@@ -29,6 +29,7 @@ REQUEST_TIMEOUT_SECONDS = 15
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "source_watchers.json"
 STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "source_watcher_state.json"
 RFC3339_DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
+CHARSET_PATTERN = re.compile(r"charset=['\"]?([A-Za-z0-9._-]+)", re.IGNORECASE)
 MAX_LOCAL_SOURCES_PER_REGION = 3
 
 
@@ -127,7 +128,7 @@ class _ListingParser(HTMLParser):
 
         if tag in {"article", "li"} and self.container_stack:
             candidate = self.container_stack.pop()
-            if candidate["href"] and candidate["title"] and candidate["published_at"]:
+            if candidate["href"] and candidate["title"]:
                 self.candidates.append(candidate)
 
     def handle_data(self, data: str) -> None:
@@ -396,9 +397,11 @@ class SourceWatcherService:
         parser.feed(html)
 
         candidates: list[LatestContentItem] = []
+        undated_candidates: list[dict[str, str]] = []
         for candidate in parser.candidates:
             published_at = self._parse_datetime(candidate["published_at"])
             if published_at is None:
+                undated_candidates.append(candidate)
                 continue
             candidates.append(
                 LatestContentItem(
@@ -411,13 +414,39 @@ class SourceWatcherService:
             )
 
         if not candidates:
+            for candidate in undated_candidates[:5]:
+                resolved_candidate = self._get_latest_from_article_page(
+                    source_config=source_config,
+                    article_url=candidate["href"],
+                    fallback_title=candidate["title"],
+                )
+                if resolved_candidate is not None:
+                    candidates.append(resolved_candidate)
+
+        if not candidates:
             return None
 
         return max(candidates, key=lambda item: item.published_at)
 
     def _get_latest_from_page(self, source_config: SourceConfig) -> LatestContentItem | None:
-        html = self._fetch_text(source_config.source_url)
-        json_ld_candidates = self._extract_json_ld_candidates(html, source_config)
+        return self._get_latest_from_article_page(
+            source_config=source_config,
+            article_url=source_config.source_url,
+            fallback_title=None,
+        )
+
+    def _get_latest_from_article_page(
+        self,
+        source_config: SourceConfig,
+        article_url: str,
+        fallback_title: str | None,
+    ) -> LatestContentItem | None:
+        html = self._fetch_text(article_url)
+        json_ld_candidates = self._extract_json_ld_candidates(
+            html,
+            source_config,
+            base_url=article_url,
+        )
         if json_ld_candidates:
             return max(json_ld_candidates, key=lambda item: item.published_at)
 
@@ -435,14 +464,15 @@ class SourceWatcherService:
             parser.meta.get("og:title")
             or parser.meta.get("twitter:title")
             or parser.title.strip()
+            or fallback_title
         )
-        url = parser.canonical_url or source_config.source_url
+        canonical_url = parser.canonical_url or article_url
 
-        if not published_at or not title or not url:
+        if not published_at or not title or not canonical_url:
             return None
 
         return LatestContentItem(
-            url=urljoin(source_config.source_url, url),
+            url=urljoin(article_url, canonical_url),
             title=title,
             published_at=published_at,
             source_name=source_config.source_name,
@@ -486,6 +516,7 @@ class SourceWatcherService:
         self,
         html: str,
         source_config: SourceConfig,
+        base_url: str | None = None,
     ) -> list[LatestContentItem]:
         parser = _PageParser()
         parser.feed(html)
@@ -498,7 +529,7 @@ class SourceWatcherService:
                 continue
 
             for item in self._flatten_json_ld(payload):
-                candidate = self._json_ld_to_item(item, source_config)
+                candidate = self._json_ld_to_item(item, source_config, base_url=base_url)
                 if candidate is not None:
                     candidates.append(candidate)
 
@@ -508,6 +539,7 @@ class SourceWatcherService:
         self,
         item: dict[str, Any],
         source_config: SourceConfig,
+        base_url: str | None = None,
     ) -> LatestContentItem | None:
         item_type = item.get("@type")
         if isinstance(item_type, list):
@@ -524,7 +556,7 @@ class SourceWatcherService:
             str(item.get("datePublished") or item.get("dateCreated") or "")
         )
         title = str(item.get("headline") or item.get("name") or "").strip()
-        url = self._extract_json_ld_url(item, source_config.source_url)
+        url = self._extract_json_ld_url(item, base_url or source_config.source_url)
 
         if not published_at or not title or not url:
             return None
@@ -690,8 +722,33 @@ class SourceWatcherService:
     def _fetch_text(self, url: str) -> str:
         request = Request(url, headers={"User-Agent": USER_AGENT})
         with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-            charset = response.headers.get_content_charset() or "utf-8"
-            return response.read().decode(charset, errors="replace")
+            raw_body = response.read()
+            charset = response.headers.get_content_charset()
+            return self._decode_html_bytes(raw_body, charset)
+
+    def _decode_html_bytes(self, raw_body: bytes, header_charset: str | None) -> str:
+        attempted: list[str] = []
+        candidate_charsets: list[str] = []
+        if header_charset:
+            candidate_charsets.append(header_charset)
+
+        meta_snippet = raw_body[:2048].decode("ascii", errors="ignore")
+        meta_match = CHARSET_PATTERN.search(meta_snippet)
+        if meta_match:
+            candidate_charsets.append(meta_match.group(1))
+
+        candidate_charsets.extend(["utf-8", "windows-1250", "iso-8859-2", "cp1252", "latin-1"])
+        for charset in candidate_charsets:
+            normalized = charset.strip().lower()
+            if not normalized or normalized in attempted:
+                continue
+            attempted.append(normalized)
+            try:
+                return raw_body.decode(normalized)
+            except (LookupError, UnicodeDecodeError):
+                continue
+
+        return raw_body.decode("utf-8", errors="replace")
 
     def _first_text(self, parent: ET.Element, *paths: str) -> str:
         for path in paths:
@@ -705,7 +762,9 @@ class SourceWatcherService:
         lowered = re.sub(r"[^a-z0-9]+", "-", lowered)
         return lowered.strip("-")
 
-    def _parse_datetime(self, raw_value: str) -> datetime | None:
+    def _parse_datetime(self, raw_value: str | None) -> datetime | None:
+        if raw_value is None:
+            return None
         value = raw_value.strip()
         if not value:
             return None

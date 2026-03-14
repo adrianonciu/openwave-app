@@ -14,8 +14,10 @@ from app.models.news_cluster import (
     StoryCluster,
 )
 
-TOKEN_PATTERN = re.compile(r"[A-Za-z][A-Za-z\-']{2,}")
-ENTITY_PATTERN = re.compile(r"\b(?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3}|[A-Z]{2,}(?:\s+[A-Z]{2,}){0,2})\b")
+TOKEN_PATTERN = re.compile(r"[0-9A-Za-z\u00C0-\u024F][0-9A-Za-z\u00C0-\u024F\-']{2,}")
+ENTITY_PATTERN = re.compile(
+    r"\b(?:[A-Z\u00C0-\u024F][a-z\u00DF-\u024F]+(?:\s+[A-Z\u00C0-\u024F][a-z\u00DF-\u024F]+){0,3}|[A-Z\u00C0-\u024F]{2,}(?:\s+[A-Z\u00C0-\u024F]{2,}){0,2})\b"
+)
 STOPWORDS = {
     "about",
     "after",
@@ -256,6 +258,9 @@ class NewsClusteringService:
                 title=item.article.title,
                 source=item.article.source,
                 published_at=item.article.published_at,
+                ingestion_kind=item.article.ingestion_kind,
+                editorial_priority=item.article.editorial_priority,
+                is_local_source=item.article.is_local_source,
             )
             for item in sorted(cluster_signals, key=lambda value: value.article.published_at)
         ]

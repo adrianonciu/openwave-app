@@ -16,12 +16,13 @@ from app.services.story_summary_policy_service import StorySummaryPolicyService
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "story_summary_generator_config.json"
 WORD_PATTERN = re.compile(r"\b\w+\b", re.UNICODE)
 SENTENCE_SPLIT_PATTERN = re.compile(r"(?<=[.!?])\s+")
-NON_ALPHA_PATTERN = re.compile(r'[^A-Za-z0-9\s\-"]')
+ROMANIAN_LETTER_CLASS = "0-9A-Za-z\u00C0-\u024F"
+NON_ALPHA_PATTERN = re.compile(rf'[^{ROMANIAN_LETTER_CLASS}\s\-"]')
 QUOTE_PATTERN = re.compile(r'["](.{3,120}?)["]')
-TOKEN_PATTERN = re.compile(r"[A-Za-z0-9-]+")
+TOKEN_PATTERN = re.compile(rf"[{ROMANIAN_LETTER_CLASS}-]+")
 NUMBER_PATTERN = re.compile(r"\b\d+(?:[.,]\d+)?%?\b")
 KEEP_NUMBER_WINDOW_PATTERN = re.compile(
-    r"\b\d+(?:[.,]\d+)?%?\b(?:\s+(?:de|la|din|pana|pentru|in|pe|aproximativ))?(?:\s+[A-Za-z%-]+){0,3}",
+    rf"\b\d+(?:[.,]\d+)?%?\b(?:\s+(?:de|la|din|pana|pentru|in|pe|aproximativ))?(?:\s+[{ROMANIAN_LETTER_CLASS}%-]+){{0,3}}",
     re.UNICODE,
 )
 COUNT_KEYWORD_PATTERN = re.compile(
@@ -30,6 +31,18 @@ COUNT_KEYWORD_PATTERN = re.compile(
 KEYWORD_COUNT_PATTERN = re.compile(
     r"(?P<kind>killed|dead|deaths|morti|decese|injured|wounded|raniti|ranite)\s+(?P<count>\d+)"
 )
+ENGLISH_HEADLINE_MARKERS = {
+    "about", "accuses", "after", "against", "amid", "charges", "conflict", "custody",
+    "dropped", "during", "explosion", "family", "fire", "generations", "global", "him",
+    "international", "jewish", "leaders", "marines", "moved", "negotiations", "new",
+    "news", "politics", "reports", "rescuers", "rise", "says", "school", "security",
+    "suspect", "three", "under", "warships", "weather", "wait", "whose", "world",
+}
+ROMANIAN_HEADLINE_MARKERS = {
+    "acum", "atac", "autoritati", "buget", "dupa", "guvern", "iasi", "investitii", "masura",
+    "negocieri", "noutati", "politic", "politica", "potrivit", "romania", "securitate",
+    "stiri", "subiect", "transmite",
+}
 
 
 class StorySummaryGeneratorService:
@@ -338,6 +351,9 @@ class StorySummaryGeneratorService:
 
     def _build_short_headline(self, cluster: StoryCluster) -> str:
         translated_title = self._light_translate_title(cluster.representative_title)
+        topic = self._infer_topic(cluster)
+        if self._title_looks_unreliable(translated_title) or self._translation_coverage_is_low(cluster.representative_title, translated_title):
+            return self._fallback_headline_for_topic(topic)
         tokens = [
             token
             for token in TOKEN_PATTERN.findall(translated_title)
@@ -478,6 +494,8 @@ class StorySummaryGeneratorService:
         )
         if continuity_lead is not None:
             return continuity_lead
+        if self._title_looks_unreliable(translated_title) or self._translation_coverage_is_low(cluster.representative_title, translated_title):
+            translated_title = ""
         if lead_type == "impact":
             return self._build_impact_lead(cluster, translated_title)
         if lead_type == "decision":
@@ -504,6 +522,8 @@ class StorySummaryGeneratorService:
 
     def _continuity_subject(self, translated_title: str) -> str:
         subject = translated_title.strip().rstrip('.!?')
+        if self._title_looks_unreliable(subject):
+            return "subiectul urmarit"
         words = subject.split()
         if len(words) > 12:
             subject = " ".join(words[:12])
@@ -605,7 +625,11 @@ class StorySummaryGeneratorService:
         return None
 
     def _extract_location_phrase(self, translated_title: str) -> str | None:
-        match = re.search(r"\b(in|la|din|spre|pe)\s+([A-Za-z0-9\s-]{3,40})", translated_title, re.IGNORECASE)
+        match = re.search(
+            rf"\b(in|la|din|spre|pe)\s+([{ROMANIAN_LETTER_CLASS}\s-]{{3,40}})",
+            translated_title,
+            re.IGNORECASE,
+        )
         if not match:
             return None
         preposition = match.group(1).lower()
@@ -805,6 +829,35 @@ class StorySummaryGeneratorService:
         result = NON_ALPHA_PATTERN.sub(" ", result)
         result = re.sub(r"\s+", " ", result).strip()
         return result
+
+    def _title_looks_unreliable(self, title: str) -> bool:
+        tokens = [token.lower() for token in TOKEN_PATTERN.findall(title)]
+        if len(tokens) < 3:
+            return True
+        english_hits = sum(1 for token in tokens if token in ENGLISH_HEADLINE_MARKERS)
+        romanian_hits = sum(1 for token in tokens if token in ROMANIAN_HEADLINE_MARKERS)
+        return english_hits >= 2 and english_hits > romanian_hits
+
+    def _translation_coverage_is_low(self, original_title: str, translated_title: str) -> bool:
+        original_tokens = [token.lower() for token in TOKEN_PATTERN.findall(original_title)]
+        translated_tokens = [token.lower() for token in TOKEN_PATTERN.findall(translated_title)]
+        if len(translated_tokens) < 3:
+            return True
+        shared_tokens = set(original_tokens) & set(translated_tokens)
+        unchanged_ratio = len(shared_tokens) / max(len(set(original_tokens)), 1)
+        english_hits = sum(1 for token in original_tokens if token in ENGLISH_HEADLINE_MARKERS)
+        romanian_hits = sum(1 for token in translated_tokens if token in ROMANIAN_HEADLINE_MARKERS)
+        return unchanged_ratio >= 0.6 and english_hits >= 2 and romanian_hits == 0
+
+    def _fallback_headline_for_topic(self, topic: str) -> str:
+        fallback_by_topic = {
+            "economy": "Economie in prim plan",
+            "politics": "Decizie politica importanta",
+            "war": "Tensiuni internationale in atentie",
+            "disaster": "Incident major in atentie",
+            "science_space": "Noutate importanta din stiinta",
+        }
+        return fallback_by_topic.get(topic, "Subiect important acum")
 
     def _cluster_text(self, cluster: StoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.member_articles)

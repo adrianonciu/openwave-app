@@ -178,7 +178,13 @@ def main() -> None:
         seen_urls.add(latest.url)
         fetch_result = fetch_service.fetch_article(latest)
         if fetch_result.status == 'success' and fetch_result.article is not None:
-            article = fetch_result.article
+            article = fetch_result.article.model_copy(
+                update={
+                    'ingestion_kind': 'full_fetch',
+                    'editorial_priority': source_config.editorial_priority,
+                    'is_local_source': source_config.scope == 'local',
+                }
+            )
             articles.append(article)
             provenance_by_url[article.url] = {
                 'ingestion_kind': 'full_fetch',
@@ -229,6 +235,9 @@ def main() -> None:
             published_at=rss_article.published_at,
             source=rss_article.source,
             content_text=rss_article.summary,
+            ingestion_kind='rss_fallback',
+            editorial_priority=mapped_meta.get('editorial_priority', 3),
+            is_local_source=mapped_meta.get('scope') == 'local',
         )
         articles.append(article)
         provenance_by_url[article.url] = {

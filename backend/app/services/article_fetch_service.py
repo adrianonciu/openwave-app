@@ -64,6 +64,7 @@ JUNK_HINTS = {
 MULTISPACE_PATTERN = re.compile(r"[ \t]+")
 MULTINEWLINE_PATTERN = re.compile(r"\n{3,}")
 DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
+CHARSET_PATTERN = re.compile(r"charset=['\"]?([A-Za-z0-9._-]+)", re.IGNORECASE)
 
 
 @dataclass
@@ -240,6 +241,7 @@ class ArticleFetchService:
             published_at=metadata.published_at or normalized_target.published_at,
             source=metadata.source or normalized_target.source or self._source_from_url(normalized_target.url),
             content_text=content_text,
+            ingestion_kind="full_fetch",
         )
         return ArticleFetchResult(
             status="success",
@@ -281,8 +283,9 @@ class ArticleFetchService:
         request = Request(url, headers={"User-Agent": USER_AGENT})
         try:
             with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-                charset = response.headers.get_content_charset() or "utf-8"
-                html = response.read().decode(charset, errors="replace")
+                raw_body = response.read()
+                charset = response.headers.get_content_charset()
+                html = self._decode_html_bytes(raw_body, charset)
         except (TimeoutError, socket.timeout) as exc:
             raise TimeoutError(f"Timed out while downloading article '{url}'.") from exc
         except URLError as exc:
@@ -292,6 +295,30 @@ class ArticleFetchService:
 
         self._html_cache[url] = (now, html)
         return html, False
+
+    def _decode_html_bytes(self, raw_body: bytes, header_charset: str | None) -> str:
+        attempted: list[str] = []
+        candidate_charsets: list[str] = []
+        if header_charset:
+            candidate_charsets.append(header_charset)
+
+        meta_snippet = raw_body[:2048].decode("ascii", errors="ignore")
+        meta_match = CHARSET_PATTERN.search(meta_snippet)
+        if meta_match:
+            candidate_charsets.append(meta_match.group(1))
+
+        candidate_charsets.extend(["utf-8", "windows-1250", "iso-8859-2", "cp1252", "latin-1"])
+        for charset in candidate_charsets:
+            normalized = charset.strip().lower()
+            if not normalized or normalized in attempted:
+                continue
+            attempted.append(normalized)
+            try:
+                return raw_body.decode(normalized)
+            except (LookupError, UnicodeDecodeError):
+                continue
+
+        return raw_body.decode("utf-8", errors="replace")
 
     def _extract_json_ld_metadata(self, json_ld_blocks: list[str]) -> _ArticleMetadata:
         best = _ArticleMetadata()
