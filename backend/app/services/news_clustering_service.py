@@ -60,7 +60,7 @@ EVENT_NORMALIZATION_MAP = {
     "middle east": "orientul mijlociu",
     "united arab emirates": "emiratele",
     "uae": "emiratele",
-    "gulf": "golf",
+    "gulf": "golful",
     "ports": "porturi",
     "port": "porturi",
     "threatens": "ameninta",
@@ -84,18 +84,30 @@ SPORT_TERMS = {
     "atletism", "championship", "cupa", "football", "goal", "gol", "league", "liga", "match",
     "meci", "nba", "olympic", "pariuri", "soccer", "sport", "tennis", "wbc",
 }
+SPORT_STRONG_TERMS = {
+    "atletism", "championship", "cupa", "football", "goal", "gol", "league", "liga", "match",
+    "meci", "nba", "olympic", "pariuri", "play-off", "play-out", "soccer", "sport", "tennis", "wbc",
+}
 HARD_NEWS_TERMS = {
-    "ambasada", "atac", "bagdad", "china", "conflict", "emiratele", "explozie", "golf",
+    "ambasada", "atac", "bagdad", "china", "conflict", "crisis", "criza", "emiratele", "explozie", "golful",
     "government", "hamas", "iran", "israel", "marines", "minister", "mijlociu", "nava",
     "nave", "orientul", "ormuz", "pensionari", "porturi", "president", "putin", "racheta",
-    "rusia", "scoala", "securitate", "trump", "ucraina", "ukraine",
+    "protest", "proteste", "protesters", "prison", "rusia", "scoala", "securitate", "trump", "ucraina", "ukraine",
+    "death", "deaths", "dies",
 }
 ENTERTAINMENT_TERMS = {
     "award", "awards", "beauty", "celebrity", "fashion", "film", "music", "nails",
     "oval office", "piercings", "premiu", "premiile", "show", "style", "tmz",
 }
+HUMAN_INTEREST_TERMS = {
+    "treasure", "hunter", "philosopher", "classic", "style", "fashion", "beauty", "nails", "award",
+}
+GENERALIST_SOURCES = {"AP", "BBC", "DW", "Euronews Romania", "Reuters"}
+REGIONAL_ESCALATION_TERMS = {
+    "iran", "golful", "emiratele", "ormuz", "orientul", "mijlociu", "porturi", "nave", "marines", "hamas", "atac",
+}
 GEOPOLITICAL_EVENT_ANCHORS = {
-    "bagdad", "belarus", "china", "cuba", "emiratele", "gaza", "golf", "hamas",
+    "bagdad", "belarus", "china", "cuba", "emiratele", "gaza", "golful", "hamas",
     "iran", "israel", "kharg", "mijlociu", "ormuz", "rusia", "sua", "trump",
     "ucraina", "uae",
 }
@@ -310,10 +322,29 @@ class NewsClusteringService:
                 hours_apart=hours_apart,
             )
 
-        if self._is_geopolitical_event_bundle(left, right, shared_entities, cross_source):
+        if self._is_geopolitical_event_bundle(
+            left,
+            right,
+            shared_entities,
+            cross_source,
+            event_overlap,
+            keyword_overlap,
+            hours_apart,
+        ):
             return ClusterDecision(
                 status="merged",
                 reason="cross_source_geopolitical_event_bundle",
+                title_similarity=max(title_similarity, normalized_title_similarity),
+                keyword_overlap=max(keyword_overlap, event_overlap),
+                body_overlap=body_overlap,
+                shared_entities=shared_entities,
+                hours_apart=hours_apart,
+            )
+
+        if self._is_regional_escalation_bundle(left, right, cross_source, event_overlap, keyword_overlap, hours_apart):
+            return ClusterDecision(
+                status="merged",
+                reason="regional_escalation_bundle",
                 title_similarity=max(title_similarity, normalized_title_similarity),
                 keyword_overlap=max(keyword_overlap, event_overlap),
                 body_overlap=body_overlap,
@@ -421,6 +452,7 @@ class NewsClusteringService:
         normalized_source = self._normalize_source_identity(article.source)
         normalized_category = self._normalize_category(
             article.source_category,
+            normalized_source,
             normalized_title,
             normalized_content,
         )
@@ -487,38 +519,82 @@ class NewsClusteringService:
         right: _ArticleSignals,
         shared_entities: list[str],
         cross_source: bool,
+        event_overlap: float,
+        keyword_overlap: float,
+        hours_apart: float,
     ) -> bool:
-        if not cross_source:
+        if not cross_source or hours_apart > min(self.recency_window_hours, 18):
             return False
         shared_event_terms = left.event_terms & right.event_terms
         anchor_overlap = shared_event_terms & GEOPOLITICAL_EVENT_ANCHORS
-        if len(anchor_overlap) >= 2 and len(shared_event_terms) >= 3:
+        if len(anchor_overlap) >= 2 and len(shared_event_terms) >= 3 and event_overlap >= 0.28:
             return True
-        if anchor_overlap and len(shared_event_terms) >= 4:
+        if anchor_overlap and len(shared_event_terms) >= 4 and keyword_overlap >= 0.22:
             return True
         lowered_entities = {entity.lower() for entity in shared_entities}
-        if anchor_overlap and lowered_entities & GEOPOLITICAL_EVENT_ANCHORS and len(shared_event_terms) >= 2:
+        if anchor_overlap and lowered_entities & GEOPOLITICAL_EVENT_ANCHORS and len(shared_event_terms) >= 2 and event_overlap >= 0.2:
+            return True
+        return False
+
+    def _is_regional_escalation_bundle(
+        self,
+        left: _ArticleSignals,
+        right: _ArticleSignals,
+        cross_source: bool,
+        event_overlap: float,
+        keyword_overlap: float,
+        hours_apart: float,
+    ) -> bool:
+        if not cross_source or hours_apart > 18:
+            return False
+        left_terms = left.event_terms & REGIONAL_ESCALATION_TERMS
+        right_terms = right.event_terms & REGIONAL_ESCALATION_TERMS
+        combined_terms = left_terms | right_terms
+        if "iran" not in combined_terms:
+            return False
+        gulf_side = {"golful", "emiratele", "ormuz", "porturi"}
+        security_side = {"orientul", "mijlociu", "nave", "marines", "hamas", "atac"}
+        has_cross_signal = (
+            (left_terms & gulf_side and right_terms & security_side)
+            or (right_terms & gulf_side and left_terms & security_side)
+        )
+        if has_cross_signal and (event_overlap >= 0.12 or keyword_overlap >= 0.18):
+            return True
+        shared_event_terms = left.event_terms & right.event_terms
+        escalation_overlap = shared_event_terms & REGIONAL_ESCALATION_TERMS
+        if "iran" in escalation_overlap and len(escalation_overlap) >= 2 and (event_overlap >= 0.16 or keyword_overlap >= 0.22):
             return True
         return False
 
     def _normalize_category(
         self,
         category: str | None,
+        normalized_source: str,
         normalized_title: str,
         normalized_content: str,
     ) -> str | None:
         base_category = category or "general"
         text = f"{normalized_title} {normalized_content}".lower()
         sport_hits = sum(1 for term in SPORT_TERMS if term in text)
+        sport_strong_hits = sum(1 for term in SPORT_STRONG_TERMS if term in text)
         hard_news_hits = sum(1 for term in HARD_NEWS_TERMS if term in text)
         entertainment_hits = sum(1 for term in ENTERTAINMENT_TERMS if term in text)
-        if base_category == "sport" and hard_news_hits >= max(sport_hits, 1):
+        human_interest_hits = sum(1 for term in HUMAN_INTEREST_TERMS if term in text)
+        source_is_generalist = normalized_source in GENERALIST_SOURCES
+
+        if base_category == "sport" and human_interest_hits >= 2 and hard_news_hits <= 1:
+            return "entertainment"
+        if base_category == "sport" and (hard_news_hits >= max(sport_hits, 1) or sport_strong_hits == 0):
+            return "general"
+        if base_category == "sport" and source_is_generalist and sport_strong_hits < 2:
             return "general"
         if base_category in {"entertainment", "lifestyle"} and hard_news_hits >= max(entertainment_hits + 2, 3):
             return "general"
-        if base_category == "general" and sport_hits >= 3 and hard_news_hits == 0:
+        if base_category == "general" and sport_strong_hits >= 3 and hard_news_hits == 0:
             return "sport"
         if base_category == "general" and entertainment_hits >= 2 and hard_news_hits <= 1:
+            return "entertainment"
+        if base_category == "general" and human_interest_hits >= 2 and hard_news_hits <= 1:
             return "entertainment"
         return base_category
 
