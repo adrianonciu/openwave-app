@@ -14,6 +14,13 @@
 - added text-only briefing assembly with intro, outro, ordering rationale, and estimated duration
 - added bulletin sizing with explainable duration control and tail-story removal
 
+## 2026-03-14
+
+- retuned OpenAI probe voices for stronger Ana/Paul separation while keeping ElevenLabs as the default production path
+- changed probe OpenAI default voices to Ana `marin` and Paul `cedar`, with env overrides still supported
+- added presenter-local OpenAI probe style instructions and a modest speed increase for slightly brisker radio pacing
+- regenerated the existing probe bulletin set through the OpenAI provider override without changing probe script structure
+
 # OpenWave Development Log
 
 This file records important milestones and architectural decisions during the development of OpenWave.

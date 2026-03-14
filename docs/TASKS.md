@@ -38,6 +38,11 @@ Goal of this phase:
 
 Stabilize the pipeline and prepare for the Segment architecture.
 
+Probe-only TTS note:
+- OpenAI probe generation remains opt-in through provider override; default production TTS stays on ElevenLabs.
+- Current probe contrast defaults are Ana `marin` and Paul `cedar`.
+- Quick fallback pair for listening comparison: Ana `shimmer`, Paul `onyx`.
+
 ---
 
 # Immediate Tasks (Next)

@@ -14,10 +14,22 @@ class OpenAITtsProvider(BaseTtsProvider):
     provider_name = 'openai'
     _DEFAULT_VOICE = 'alloy'
     _INSTRUCTION_BY_PRESENTER = {
-        'ana': 'Esti Ana, prezentatoare de stiri radio. Citeste clar, natural, in limba romana, pe ton de jurnal de stiri.',
-        'paul': 'Esti Paul, prezentator de stiri radio. Citeste clar, natural, in limba romana, pe ton de jurnal de stiri.',
+        'ana': (
+            'Speak in Romanian, warm, clear, slightly brisk radio delivery, '
+            'with natural sentence endings and short pauses.'
+        ),
+        'paul': (
+            'Speak in Romanian, steady, lower, slightly brisk news delivery, '
+            'with clean articulation and short pauses.'
+        ),
     }
-    _DEFAULT_INSTRUCTION = 'Citeste clar, natural, in limba romana, pe ton de jurnal de stiri.'
+    _DEFAULT_INSTRUCTION = (
+        'Speak in Romanian, clear and natural, with slightly brisk radio-news pacing and short pauses.'
+    )
+    _PRESENTER_SPEEDS = {
+        'ana': 1.14,
+        'paul': 1.12,
+    }
 
     def __init__(self, presenter: PresenterConfig) -> None:
         self._presenter = presenter
@@ -58,7 +70,7 @@ class OpenAITtsProvider(BaseTtsProvider):
                 'input': text,
                 'instructions': self._instructions(),
                 'response_format': self.output_format,
-                'speed': self._settings.tuning.speed,
+                'speed': self._speed(),
             }
         ).encode('utf-8')
         request = urllib.request.Request(
@@ -99,6 +111,12 @@ class OpenAITtsProvider(BaseTtsProvider):
             self.presenter_name.casefold(),
             self._DEFAULT_INSTRUCTION,
         )
+
+    def _speed(self) -> float:
+        presenter_speed = self._PRESENTER_SPEEDS.get(self.presenter_name.casefold())
+        if presenter_speed is None:
+            return self._settings.tuning.speed
+        return max(self._settings.tuning.speed, presenter_speed)
 
     def _message_for_status(self, status_code: int) -> str:
         return f'OpenAI TTS request failed with status {status_code}.'

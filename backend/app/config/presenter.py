@@ -69,8 +69,8 @@ _GENERIC_MODEL = os.getenv('TTS_MODEL', '')
 _GENERIC_OUTPUT_FORMAT = os.getenv('TTS_OUTPUT_FORMAT', '')
 _GENERIC_SPEED = _read_float('TTS_SPEED', 1.0)
 _OPENAI_DEFAULT_VOICE = (os.getenv('OPENAI_TTS_VOICE', _GENERIC_VOICE or 'alloy').strip().lower() or 'alloy')
-_OPENAI_ANA_VOICE = (os.getenv('OPENAI_TTS_VOICE_ANA', 'alloy').strip().lower() or 'alloy')
-_OPENAI_PAUL_VOICE = (os.getenv('OPENAI_TTS_VOICE_PAUL', 'echo').strip().lower() or 'echo')
+_OPENAI_ANA_VOICE = (os.getenv('OPENAI_TTS_VOICE_ANA', 'marin').strip().lower() or 'marin')
+_OPENAI_PAUL_VOICE = (os.getenv('OPENAI_TTS_VOICE_PAUL', 'cedar').strip().lower() or 'cedar')
 
 
 def _build_provider_settings() -> tuple[TtsProviderSettings, TtsProviderSettings]:
