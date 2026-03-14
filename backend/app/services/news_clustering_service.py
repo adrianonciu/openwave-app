@@ -260,6 +260,8 @@ class NewsClusteringService:
                 published_at=item.article.published_at,
                 ingestion_kind=item.article.ingestion_kind,
                 editorial_priority=item.article.editorial_priority,
+                source_scope=item.article.source_scope,
+                source_category=item.article.source_category,
                 is_local_source=item.article.is_local_source,
             )
             for item in sorted(cluster_signals, key=lambda value: value.article.published_at)

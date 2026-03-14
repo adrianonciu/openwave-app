@@ -14,6 +14,8 @@ class NewsClusteringArticle(BaseModel):
     content_text: str
     ingestion_kind: Literal["full_fetch", "rss_fallback", "unknown"] = "unknown"
     editorial_priority: int = 3
+    source_scope: Literal["local", "national", "international"] | None = None
+    source_category: str | None = None
     is_local_source: bool = False
 
     @classmethod
@@ -27,6 +29,8 @@ class NewsClusteringArticle(BaseModel):
             content_text=article.content_text,
             ingestion_kind=article.ingestion_kind,
             editorial_priority=article.editorial_priority,
+            source_scope=article.source_scope,
+            source_category=article.source_category,
             is_local_source=article.is_local_source,
         )
 
@@ -38,6 +42,8 @@ class ClusterMemberArticle(BaseModel):
     published_at: datetime
     ingestion_kind: Literal["full_fetch", "rss_fallback", "unknown"] = "unknown"
     editorial_priority: int = Field(default=3, ge=1, le=5)
+    source_scope: Literal["local", "national", "international"] | None = None
+    source_category: str | None = None
     is_local_source: bool = False
 
 

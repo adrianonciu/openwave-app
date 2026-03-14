@@ -51,6 +51,8 @@ class StorySelectionService:
             "regional_preference_influence_strength",
             1.0,
         )
+        self.minimum_editorial_fit: float = raw_config.get("minimum_editorial_fit", 0.24)
+        self.soft_news_editorial_fit_bar: float = raw_config.get("soft_news_editorial_fit_bar", 0.42)
 
     def select_stories(
         self,
@@ -276,6 +278,23 @@ class StorySelectionService:
     ) -> str | None:
         if cluster.score_total < self.minimum_score_threshold:
             return "below_minimum_score_threshold"
+
+        editorial_fit = cluster.score_breakdown.editorial_fit.value
+        editorial_fit_explanation = cluster.score_breakdown.editorial_fit.explanation.lower()
+        is_local = any(member.is_local_source for member in cluster.cluster.member_articles)
+        if "low-value title markers" in editorial_fit_explanation and not is_local:
+            return "low_value_headline_cluster"
+        if "english-heavy title tokens" in editorial_fit_explanation and not is_local:
+            return "english_heavy_headline_cluster"
+        if "low-priority source without local relevance" in editorial_fit_explanation and editorial_fit < 0.7:
+            return "low_priority_source_cluster"
+        if "low-value title markers" in editorial_fit_explanation and editorial_fit < 0.6:
+            return "low_value_headline_cluster"
+        if editorial_fit < self.minimum_editorial_fit:
+            return "low_editorial_fit_cluster"
+
+        if self._is_soft_news_cluster(cluster) and editorial_fit < self.soft_news_editorial_fit_bar:
+            return "soft_news_cluster_below_editorial_bar"
 
         if self._is_commentary_like(cluster) and cluster.score_total < self.commentary_like_title_penalty_trigger:
             return "commentary_like_cluster_below_editorial_bar"
@@ -606,6 +625,13 @@ class StorySelectionService:
         title = cluster.cluster.representative_title.lower()
         return any(term in title for term in self.commentary_like_title_terms)
 
+
+    def _is_soft_news_cluster(self, cluster: ScoredStoryCluster) -> bool:
+        categories = {member.source_category or "general" for member in cluster.cluster.member_articles}
+        if any(member.is_local_source for member in cluster.cluster.member_articles):
+            return False
+        return any(category in {"sport", "entertainment", "lifestyle"} for category in categories)
+
     def _build_decision(
         self,
         cluster: ScoredStoryCluster,
@@ -686,6 +712,11 @@ class StorySelectionService:
 
         reason_map = {
             "below_minimum_score_threshold": "its score was below the minimum editorial threshold",
+            "low_value_headline_cluster": "its headline pattern looked too low-value or SEO-style for bulletin inclusion",
+            "english_heavy_headline_cluster": "its headline remained too English-heavy for the default Romanian bulletin",
+            "low_priority_source_cluster": "its source priority was too low for inclusion without local relevance",
+            "low_editorial_fit_cluster": "its source category, scope, and headline quality did not clear the editorial-fit bar",
+            "soft_news_cluster_below_editorial_bar": "it was a soft-news cluster that did not clear the higher editorial-fit bar",
             "selection_limit_reached": "the candidate set had already reached the story limit",
             "rejected_by_topic_diversity_soft_cap": "a similar-topic cluster with a close score had already been kept",
             "rejected_by_source_diversity_soft_cap": "other close-scoring clusters already represented the same source mix",

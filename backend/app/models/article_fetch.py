@@ -15,6 +15,8 @@ class FetchedArticle(BaseModel):
     content_text: str
     ingestion_kind: Literal["full_fetch", "rss_fallback", "unknown"] = "unknown"
     editorial_priority: int = 3
+    source_scope: Literal["local", "national", "international"] | None = None
+    source_category: str | None = None
     is_local_source: bool = False
 
 

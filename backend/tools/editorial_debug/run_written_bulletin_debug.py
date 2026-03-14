@@ -183,6 +183,8 @@ def main() -> None:
                 update={
                     'ingestion_kind': 'full_fetch',
                     'editorial_priority': source_config.editorial_priority,
+                    'source_scope': source_config.scope,
+                    'source_category': source_config.category,
                     'is_local_source': source_config.scope == 'local',
                 }
             )
@@ -238,6 +240,8 @@ def main() -> None:
             content_text=rss_article.summary,
             ingestion_kind='rss_fallback',
             editorial_priority=mapped_meta.get('editorial_priority', 3),
+            source_scope=mapped_meta.get('scope'),
+            source_category=mapped_meta.get('category'),
             is_local_source=mapped_meta.get('scope') == 'local',
         )
         articles.append(article)
@@ -299,8 +303,13 @@ def main() -> None:
             'member_articles': [member.model_dump(mode='json') for member in scored.cluster.member_articles],
             'member_provenance': dict(provenance_counts),
             'contains_local_source': any(provenance_by_url.get(url, {}).get('is_local_source', False) for url in member_urls),
+            'source_scopes': sorted({member.source_scope or 'unknown' for member in scored.cluster.member_articles}),
+            'source_categories': sorted({member.source_category or 'general' for member in scored.cluster.member_articles}),
+            'editorial_priorities': sorted({member.editorial_priority for member in scored.cluster.member_articles}),
             'score_total': scored.score_total,
             'score_breakdown': _serialize_score_breakdown(scored),
+            'quality_guardrail_explanation': scored.score_breakdown.editorial_fit.explanation,
+            'downranked_for_quality': 'low-value' in scored.score_breakdown.editorial_fit.explanation or 'English-heavy' in scored.score_breakdown.editorial_fit.explanation or 'soft-news' in scored.score_breakdown.editorial_fit.explanation,
             'scoring_explanation': scored.scoring_explanation,
         })
 
@@ -324,6 +333,9 @@ def main() -> None:
             'representative_title': summary.representative_title,
             'summary_text': summary.summary_text,
             'source_labels': summary.source_labels,
+            'source_scopes': sorted({member.source_scope or 'unknown' for member in next(cluster.cluster.member_articles for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id)}),
+            'source_categories': sorted({member.source_category or 'general' for member in next(cluster.cluster.member_articles for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id)}),
+            'editorial_priorities': sorted({member.editorial_priority for member in next(cluster.cluster.member_articles for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id)}),
             'score_total': summary.score_total,
             'lead_type': summary.lead_type,
             'topic_label': summary.topic_label,
@@ -332,6 +344,8 @@ def main() -> None:
             'generation_explanation': summary.generation_explanation,
             'decision': decision.model_dump(mode='json') if decision else None,
             'member_provenance': dict(provenance_counts),
+            'quality_guardrail_explanation': next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id),
+            'downranked_for_quality': 'low-value' in next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id) or 'English-heavy' in next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id) or 'soft-news' in next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == item.story.cluster_id),
             'perspective_count': len(item.perspective_segments),
             'language_issue': language_issue,
         })
@@ -387,7 +401,18 @@ def main() -> None:
         'story_selection': {
             'selection_stats': selection_result.selection_stats.model_dump(mode='json'),
             'selection_explanation': selection_result.selection_explanation,
-            'stories_considered': [decision.model_dump(mode='json') for decision in selection_result.decisions],
+            'stories_considered': [
+                {
+                    **decision.model_dump(mode='json'),
+                    'source_categories': sorted({member.source_category or 'general' for member in next(cluster.cluster.member_articles for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id)}),
+                    'source_scopes': sorted({member.source_scope or 'unknown' for member in next(cluster.cluster.member_articles for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id)}),
+                    'editorial_priorities': sorted({member.editorial_priority for member in next(cluster.cluster.member_articles for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id)}),
+                    'provenance': next(dict(Counter(member.ingestion_kind for member in cluster.cluster.member_articles)) for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id),
+                    'quality_guardrail_explanation': next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id),
+                    'downranked_for_quality': 'low-value' in next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id) or 'English-heavy' in next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id) or 'soft-news' in next(cluster.score_breakdown.editorial_fit.explanation for cluster in scored_clusters if cluster.cluster.cluster_id == decision.cluster_id),
+                }
+                for decision in selection_result.decisions
+            ],
         },
         'final_written_bulletin': {
             'briefing_id': sized_briefing.briefing_id,

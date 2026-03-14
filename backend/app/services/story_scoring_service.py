@@ -10,6 +10,16 @@ from app.models.story_score import ScoredStoryCluster, ScoreComponent, StoryScor
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "story_scoring_config.json"
 TOKEN_PATTERN = re.compile(r"[0-9A-Za-z\u00C0-\u024F][0-9A-Za-z\u00C0-\u024F\-']{2,}")
+ENGLISH_HEADLINE_MARKERS = {
+    "asks", "back", "bounce", "bottom", "bracketology", "charges", "conference", "department",
+    "evidence", "federal", "investigation", "judge", "justice", "losers", "record", "rock",
+    "selling", "shoots", "sold", "sports", "taliban", "winners", "year",
+}
+LOW_VALUE_TITLE_MARKERS = {
+    "live-text", "live text", "video", "photos", "gallery", "highlights", "odds", "preview",
+    "recap", "bracketology", "winners", "losers", "propozitie cu", "cum se scrie", "definitie",
+    "ce inseamna", "ghid", "tutorial",
+}
 
 
 class StoryScoringService:
@@ -53,6 +63,7 @@ class StoryScoringService:
         entity_importance = self._score_entity_importance(cluster)
         topic_weight = self._score_topic_weight(cluster)
         title_strength = self._score_title_strength(cluster)
+        editorial_fit = self._score_editorial_fit(cluster)
 
         total = round(
             recency.contribution
@@ -60,7 +71,8 @@ class StoryScoringService:
             + source_quality.contribution
             + entity_importance.contribution
             + topic_weight.contribution
-            + title_strength.contribution,
+            + title_strength.contribution
+            + editorial_fit.contribution,
             2,
         )
         breakdown = StoryScoreBreakdown(
@@ -70,6 +82,7 @@ class StoryScoringService:
             entity_importance=entity_importance,
             topic_weight=topic_weight,
             title_strength=title_strength,
+            editorial_fit=editorial_fit,
         )
         explanation = self._build_explanation(cluster, breakdown, total)
         return ScoredStoryCluster(
@@ -218,6 +231,71 @@ class StoryScoringService:
             ),
         )
 
+    def _score_editorial_fit(self, cluster: StoryCluster) -> ScoreComponent:
+        max_points = 12.0
+        categories = {member.source_category or "general" for member in cluster.member_articles}
+        scopes = {
+            member.source_scope or ("local" if member.is_local_source else "unknown")
+            for member in cluster.member_articles
+        }
+        priorities = [member.editorial_priority for member in cluster.member_articles]
+        title = cluster.representative_title
+        lowered_title = title.lower()
+        tokens = [token.lower() for token in TOKEN_PATTERN.findall(title)]
+        english_hits = [token for token in tokens if token in ENGLISH_HEADLINE_MARKERS]
+        low_value_markers = [marker for marker in LOW_VALUE_TITLE_MARKERS if marker in lowered_title]
+
+        category_scores = {
+            "general": 1.0,
+            "economy": 0.95,
+            "analysis": 0.65,
+            "sport": 0.26,
+            "entertainment": 0.05,
+            "lifestyle": 0.05,
+        }
+        normalized = sum(category_scores.get(category, 0.6) for category in categories) / max(len(categories), 1)
+        if "local" in scopes:
+            normalized += 0.22
+        elif "national" in scopes:
+            normalized += 0.08
+
+        if priorities:
+            normalized += max(0.0, (6 - min(priorities)) * 0.03)
+
+        reasons: list[str] = []
+        if low_value_markers:
+            penalty = 0.55 if any(marker in {"propozitie cu", "cum se scrie", "definitie", "ghid", "tutorial"} for marker in low_value_markers) else 0.42
+            normalized -= penalty
+            reasons.append(f"low-value title markers: {', '.join(low_value_markers[:3])}")
+        if len(english_hits) >= 2:
+            penalty = 0.52 if "local" not in scopes else 0.18
+            normalized -= penalty
+            reasons.append(f"English-heavy title tokens: {', '.join(english_hits[:4])}")
+        if len(tokens) < 4:
+            normalized -= 0.18
+            reasons.append("headline too short for strong editorial context")
+        if any(category in {"sport", "entertainment", "lifestyle"} for category in categories) and "local" not in scopes:
+            normalized -= 0.24
+            reasons.append("soft-news category without local relevance")
+        if min(priorities or [3]) >= 5 and "local" not in scopes:
+            normalized -= 0.16
+            reasons.append("low-priority source without local relevance")
+
+        normalized = min(max(normalized, 0.0), 1.0)
+        contribution = round(normalized * max_points, 2)
+        categories_text = ", ".join(sorted(categories))
+        scopes_text = ", ".join(sorted(scopes))
+        reason_text = "; ".join(reasons) if reasons else "category/scope fit stayed within conservative hard-news defaults"
+        return ScoreComponent(
+            name="editorial_fit",
+            value=round(normalized, 2),
+            max_points=max_points,
+            contribution=contribution,
+            explanation=(
+                f"Editorial fit considered categories [{categories_text}], scopes [{scopes_text}], and headline quality. {reason_text}."
+            ),
+        )
+
     def _cluster_text(self, cluster: StoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.member_articles)
         return f"{cluster.representative_title} {titles}".lower()
@@ -236,6 +314,7 @@ class StoryScoringService:
                 breakdown.entity_importance,
                 breakdown.topic_weight,
                 breakdown.title_strength,
+                breakdown.editorial_fit,
             ],
             key=lambda component: component.contribution,
             reverse=True,
