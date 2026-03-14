@@ -269,7 +269,7 @@ class EditorialContractValidationService:
             rewritten_sentences.append(sentence)
 
         quote_count = sum(1 for sentence in rewritten_sentences if QUOTE_PATTERN.search(sentence))
-        is_major_story = bool(story.get("expanded_summary_used")) or (story.get("score_total") or 0) >= 70 or story.get("lead_type") in {"impact", "conflict"}
+        is_major_story = story.get("story_type") == "major" or bool(story.get("expanded_summary_used")) or (story.get("score_total") or 0) >= 70 or story.get("lead_type") in {"impact", "conflict"}
         if not is_major_story and quote_count > 1:
             violations.append(self._warning("quote_count", "Short story carries more than one direct quote.", story_id=story_id, field_name="summary_text"))
         if is_major_story and quote_count < 2:

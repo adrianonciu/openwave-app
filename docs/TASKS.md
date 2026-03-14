@@ -803,3 +803,21 @@ Still intentionally excluded from this task:
 - TTS redesign
 - broad editorial-engine redesign
 - generative auto-rewrites beyond deterministic fixes
+
+### Story Editorial Composition Stage
+
+`StorySummaryGeneratorService` now acts as the explicit editorial writing stage before briefing assembly.
+
+Current scope:
+
+- compose each selected story into structured editorial fields
+- generate `story_type`, `headline`, `lead`, `body`, `source_attribution`, `quotes`, and `editorial_notes`
+- preserve `summary_text` and existing downstream compatibility
+- expose the structured fields in the written-bulletin debug output
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS changes
+- broad editorial-pipeline redesign
+- open-ended generative rewriting

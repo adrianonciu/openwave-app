@@ -15,6 +15,14 @@ class SummaryComplianceReport(BaseModel):
 
 class GeneratedStorySummary(BaseModel):
     cluster_id: str
+    story_id: str
+    story_type: Literal["short", "major"] = "short"
+    headline: str
+    lead: str
+    body: str
+    source_attribution: str
+    quotes: list[str] = Field(default_factory=list)
+    editorial_notes: list[str] = Field(default_factory=list)
     short_headline: str
     lead_type: Literal["impact", "decision", "warning", "conflict", "change", "event"]
     story_continuity_type: Literal["new_story", "update", "major_update"] = "new_story"

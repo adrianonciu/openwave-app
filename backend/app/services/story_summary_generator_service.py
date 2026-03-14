@@ -123,7 +123,7 @@ class StorySummaryGeneratorService:
         normalized_cluster, source_basis, score_total = self._normalize_cluster(cluster)
         generated_at = datetime.now(UTC)
         topic = self._infer_topic(normalized_cluster)
-        short_headline = self._build_short_headline(normalized_cluster)
+        short_headline = self.build_headline(normalized_cluster)
         (
             story_continuity_type,
             continuity_detected,
@@ -143,54 +143,41 @@ class StorySummaryGeneratorService:
             score_total=score_total,
             casualty_line=casualty_line,
         )
+        story_type = self.infer_story_type(
+            lead_type=lead_type,
+            score_total=score_total,
+            important_story=importance_triggered,
+            casualty_line=casualty_line,
+        )
         context_line = self._build_context_line(
             cluster=normalized_cluster,
             topic=topic,
             important_story=importance_triggered,
             casualty_line=casualty_line,
         )
-
-        lead_sentence = self._build_lead_sentence(
+        composed_story = self.compose_story(
             cluster=normalized_cluster,
             topic=topic,
+            short_headline=short_headline,
             lead_type=lead_type,
-            casualty_line=casualty_line,
-            story_continuity_type=story_continuity_type,
-        )
-        detail_sentence, attribution_variant, summary_variation_used = self._build_detail_sentence(
-            cluster=normalized_cluster,
-            topic=topic,
             attribution_type=attribution_type,
             quote_line=quote_line,
-        )
-        consequence_sentence = self._build_consequence_sentence(topic)
-
-        sentences = [lead_sentence, detail_sentence]
-        if casualty_line and lead_type != "impact":
-            sentences.append(casualty_line)
-        if importance_triggered and (casualty_line or context_line):
-            sentences.append(consequence_sentence)
-            if context_line and (
-                casualty_line or score_total is not None and score_total >= self.expansion_score_threshold
-            ):
-                sentences.append(context_line)
-        else:
-            sentences.append(consequence_sentence)
-
-        filtered_sentences, essential_numbers_kept, nonessential_numbers_removed = self._filter_sentence_numbers(
-            sentences,
             casualty_line=casualty_line,
+            context_line=context_line,
+            story_continuity_type=story_continuity_type,
+            story_type=story_type,
+            score_total=score_total,
+            important_story=importance_triggered,
         )
-        summary_text = " ".join(sentence for sentence in filtered_sentences if sentence).strip()
-        summary_text = self._expand_if_needed(summary_text, topic)
+        summary_text = composed_story["summary_text"]
         sentence_count = len(
             [sentence for sentence in SENTENCE_SPLIT_PATTERN.split(summary_text) if sentence.strip()]
         )
         word_count = self._word_count(summary_text)
-        expanded_summary_used = sentence_count > self.policy.preferred_sentence_count
+        expanded_summary_used = story_type == "major" or sentence_count > self.policy.preferred_sentence_count
         casualty_line_included = casualty_line is not None
-        context_line_included = context_line is not None and sentence_count >= 5
-        memorable_quote_used = quote_line is not None and attribution_type == "direct_quote"
+        context_line_included = context_line is not None and sentence_count >= 4
+        memorable_quote_used = bool(composed_story["quotes"])
         compliance = self._build_compliance_report(
             summary_text=summary_text,
             sentence_count=sentence_count,
@@ -210,14 +197,22 @@ class StorySummaryGeneratorService:
             casualty_line_included=casualty_line_included,
             context_line_included=context_line_included,
             memorable_quote_used=memorable_quote_used,
-            essential_numbers_kept=essential_numbers_kept,
-            nonessential_numbers_removed=nonessential_numbers_removed,
-            attribution_variant=attribution_variant,
-            summary_variation_used=summary_variation_used,
+            essential_numbers_kept=composed_story["essential_numbers_kept"],
+            nonessential_numbers_removed=composed_story["nonessential_numbers_removed"],
+            attribution_variant=composed_story["attribution_variant"],
+            summary_variation_used=composed_story["summary_variation_used"],
         )
 
         return GeneratedStorySummary(
             cluster_id=normalized_cluster.cluster_id,
+            story_id=normalized_cluster.cluster_id,
+            story_type=story_type,
+            headline=short_headline,
+            lead=composed_story["lead"],
+            body=composed_story["body"],
+            source_attribution=composed_story["source_attribution"],
+            quotes=composed_story["quotes"],
+            editorial_notes=composed_story["editorial_notes"],
             short_headline=short_headline,
             lead_type=lead_type,
             story_continuity_type=story_continuity_type,
@@ -229,12 +224,12 @@ class StorySummaryGeneratorService:
             topic_label=topic,
             source_labels=sorted({member.source for member in normalized_cluster.member_articles}),
             attribution_type=attribution_type,
-            attribution_variant=attribution_variant,
-            summary_variation_used=summary_variation_used,
+            attribution_variant=composed_story["attribution_variant"],
+            summary_variation_used=composed_story["summary_variation_used"],
             quote_line=quote_line,
             memorable_quote_used=memorable_quote_used,
-            essential_numbers_kept=essential_numbers_kept,
-            nonessential_numbers_removed=nonessential_numbers_removed,
+            essential_numbers_kept=composed_story["essential_numbers_kept"],
+            nonessential_numbers_removed=composed_story["nonessential_numbers_removed"],
             expanded_summary_used=expanded_summary_used,
             casualty_line_included=casualty_line_included,
             context_line_included=context_line_included,
@@ -245,6 +240,185 @@ class StorySummaryGeneratorService:
             generated_at=generated_at,
             source_basis=source_basis,
         )
+
+    def compose_story(
+        self,
+        cluster: StoryCluster,
+        topic: str,
+        short_headline: str,
+        lead_type: str,
+        attribution_type: str,
+        quote_line: str | None,
+        casualty_line: str | None,
+        context_line: str | None,
+        story_continuity_type: str,
+        story_type: str,
+        score_total: float | None,
+        important_story: bool,
+    ) -> dict[str, object]:
+        lead = self.build_lead(
+            cluster=cluster,
+            topic=topic,
+            lead_type=lead_type,
+            casualty_line=casualty_line,
+            story_continuity_type=story_continuity_type,
+        )
+        source_attribution, attribution_variant, summary_variation_used = self.build_source_attribution(
+            cluster=cluster,
+            topic=topic,
+            attribution_type=attribution_type,
+            quote_line=quote_line,
+        )
+        body_sentences = self.build_body(
+            topic=topic,
+            casualty_line=casualty_line,
+            context_line=context_line,
+            story_type=story_type,
+            important_story=important_story,
+        )
+        filtered_body_sentences, essential_numbers_kept, nonessential_numbers_removed = self._filter_sentence_numbers(
+            body_sentences,
+            casualty_line=casualty_line,
+        )
+        quotes = self.extract_quotes(
+            cluster=cluster,
+            attribution_type=attribution_type,
+            quote_line=quote_line,
+            story_type=story_type,
+        )
+        body = " ".join(sentence for sentence in filtered_body_sentences if sentence).strip()
+        body = self.normalize_for_radio(body)
+        summary_text = self._compose_summary_text(
+            lead=lead,
+            source_attribution=source_attribution,
+            body=body,
+            quotes=quotes,
+        )
+        summary_text = self._expand_if_needed(summary_text, topic) if story_type == "major" else summary_text
+        summary_text = self.normalize_for_radio(summary_text)
+        editorial_notes = [
+            f"story_type={story_type}",
+            "headline_ready_for_assembly",
+            "source_attribution_early",
+            "romanian_radio_normalized",
+        ]
+        if quotes:
+            editorial_notes.append(f"quotes={len(quotes)}")
+        if score_total is not None and score_total >= self.expansion_score_threshold:
+            editorial_notes.append("high_priority_story")
+        if context_line:
+            editorial_notes.append("context_included")
+        return {
+            "lead": lead,
+            "source_attribution": source_attribution,
+            "body": body,
+            "quotes": quotes,
+            "summary_text": summary_text,
+            "editorial_notes": editorial_notes,
+            "attribution_variant": attribution_variant,
+            "summary_variation_used": summary_variation_used,
+            "essential_numbers_kept": essential_numbers_kept,
+            "nonessential_numbers_removed": nonessential_numbers_removed,
+        }
+
+    def infer_story_type(
+        self,
+        lead_type: str,
+        score_total: float | None,
+        important_story: bool,
+        casualty_line: str | None,
+    ) -> str:
+        if casualty_line or important_story or lead_type in {"impact", "conflict"}:
+            return "major"
+        if score_total is not None and score_total >= self.expansion_score_threshold:
+            return "major"
+        return "short"
+
+    def build_headline(self, cluster: StoryCluster) -> str:
+        return self._build_short_headline(cluster)
+
+    def build_lead(
+        self,
+        cluster: StoryCluster,
+        topic: str,
+        lead_type: str,
+        casualty_line: str | None,
+        story_continuity_type: str,
+    ) -> str:
+        return self.normalize_for_radio(
+            self._build_lead_sentence(
+                cluster=cluster,
+                topic=topic,
+                lead_type=lead_type,
+                casualty_line=casualty_line,
+                story_continuity_type=story_continuity_type,
+            )
+        )
+
+    def build_source_attribution(
+        self,
+        cluster: StoryCluster,
+        topic: str,
+        attribution_type: str,
+        quote_line: str | None,
+    ) -> tuple[str, str, bool]:
+        sentence, attribution_variant, summary_variation_used = self._build_detail_sentence(
+            cluster=cluster,
+            topic=topic,
+            attribution_type=attribution_type,
+            quote_line=quote_line,
+        )
+        return self.normalize_for_radio(sentence), attribution_variant, summary_variation_used
+
+    def build_body(
+        self,
+        topic: str,
+        casualty_line: str | None,
+        context_line: str | None,
+        story_type: str,
+        important_story: bool,
+    ) -> list[str]:
+        body_sentences: list[str] = []
+        if casualty_line:
+            body_sentences.append(casualty_line)
+        body_sentences.append(self._build_consequence_sentence(topic))
+        if context_line and (story_type == "major" or important_story):
+            body_sentences.append(context_line)
+        return body_sentences
+
+    def extract_quotes(
+        self,
+        cluster: StoryCluster,
+        attribution_type: str,
+        quote_line: str | None,
+        story_type: str,
+    ) -> list[str]:
+        if quote_line is None:
+            return []
+        actor = self._attribution_actor(cluster, attribution_type)
+        quote_sentence = self.normalize_for_radio(f'{actor} spune: "{quote_line}".')
+        if story_type == "short":
+            return [quote_sentence]
+        return [quote_sentence]
+
+    def normalize_for_radio(self, text: str) -> str:
+        cleaned = text.replace("\n", " ").replace("\t", " ")
+        cleaned = re.sub(r"\s+", " ", cleaned).strip()
+        cleaned = re.sub(r"\s+([,.;:?!])", r"\1", cleaned)
+        cleaned = cleaned.replace("..", ".")
+        if not cleaned:
+            return cleaned
+        return cleaned[0].upper() + cleaned[1:]
+
+    def _compose_summary_text(
+        self,
+        lead: str,
+        source_attribution: str,
+        body: str,
+        quotes: list[str],
+    ) -> str:
+        parts = [lead.strip(), source_attribution.strip(), body.strip(), *[quote.strip() for quote in quotes if quote.strip()]]
+        return ' '.join(part for part in parts if part).strip()
 
     def _normalize_cluster(
         self,

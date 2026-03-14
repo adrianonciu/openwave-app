@@ -1639,3 +1639,6 @@ OpenWave now also supports a backend-only `dual_test` presenter mode in `Editori
 ## Editorial Contract Validation
 
 OpenWave now includes a deterministic editorial validation gate between final text assembly and audio preparation. `EditorialContractValidationService` validates story titles, attribution, language cleanliness, quote-order rules, user-name placement, story-count bounds, presenter alternation in dual-test mode, and perspective adjacency. Blocking violations stop the pipeline before `EditorialToAudioService`, and every run writes `backend/debug_output/editorial_validation_report.json`.
+## Story Editorial Composition
+
+`StorySummaryGeneratorService` now acts as the explicit Story Editorial Composition stage in the pipeline. Instead of only returning a compact summary string, it composes structured editorial story fields such as `story_type`, `headline`, `lead`, `body`, `source_attribution`, `quotes`, and `editorial_notes`, while still preserving `summary_text` for downstream assembly and audio compatibility.

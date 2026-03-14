@@ -827,3 +827,6 @@ Run Probe bulletin tests to validate presenter alternation and audio flow.
 - Added `EditorialContractValidationService` as a mandatory gate between final editorial assembly and the editorial-to-audio bridge.
 - Added structured validation models plus `backend/debug_output/editorial_validation_report.json` for blocking violations, warnings, and deterministic auto-fixes.
 - End-to-end bulletin generation now stops with `editorial_contract_validation_failed` when blocking editorial rules fail, instead of silently continuing to audio generation.
+- Refactored `story_summary_generator_service.py` into the explicit Story Editorial Composition stage, so selected clusters now become structured editorial stories before briefing assembly.
+- `GeneratedStorySummary` now carries `story_type`, `headline`, `lead`, `body`, `source_attribution`, `quotes`, and `editorial_notes` while preserving `summary_text` for downstream compatibility.
+- Written bulletin debug output now exposes the composed story structure directly for manual editorial inspection.
