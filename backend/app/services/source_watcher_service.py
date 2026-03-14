@@ -25,7 +25,7 @@ from app.models.source_watcher import (
 from app.services.local_source_registry_service import LocalSourceRegistryService
 from app.models.user_personalization import UserPersonalization
 
-USER_AGENT = "OpenWaveSourceWatcher/1.0"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 REQUEST_TIMEOUT_SECONDS = 15
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "source_watchers.json"
 STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "source_watcher_state.json"

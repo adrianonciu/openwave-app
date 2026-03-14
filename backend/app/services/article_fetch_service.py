@@ -17,7 +17,7 @@ from urllib.request import Request, urlopen
 from app.models.article_fetch import ArticleFetchResult, FetchArticleInput, FetchedArticle
 from app.models.source_watcher import DetectedContentItem, LatestContentItem
 
-USER_AGENT = "OpenWaveArticleFetcher/1.0"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 REQUEST_TIMEOUT_SECONDS = 20
 HTML_CACHE_TTL_SECONDS = 900
 MIN_CONTENT_LENGTH = 500
