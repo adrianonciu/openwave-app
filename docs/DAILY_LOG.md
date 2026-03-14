@@ -17,6 +17,8 @@
 ## 2026-03-14
 
 - retuned OpenAI probe voices for stronger Ana/Paul separation while keeping ElevenLabs as the default production path
+- expanded the main source watcher registry with Romanian national and international sources while preserving the separate county-local registry
+- added normalized watcher metadata for source scope, category, country, language, enabled state, and notes so the existing config path can carry broader source coverage conservatively
 - changed probe OpenAI default voices to Ana `marin` and Paul `cedar`, with env overrides still supported
 - added presenter-local OpenAI probe style instructions and a modest speed increase for slightly brisker radio pacing
 - regenerated the existing probe bulletin set through the OpenAI provider override without changing probe script structure

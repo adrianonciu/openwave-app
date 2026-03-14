@@ -23,7 +23,7 @@ class LocalSourceRegistryService:
 
         for county in self.load_registry():
             if self._normalize_region_key(county.county_name) == normalized_region:
-                return county.source_entries
+                return [entry for entry in county.source_entries if entry.enabled]
         return []
 
     def has_local_sources_for_region(self, region: str) -> bool:

@@ -4,6 +4,11 @@ from pydantic import BaseModel, Field
 class LocalSourceEntry(BaseModel):
     source_name: str
     source_url: str
+    category: str = "general"
+    scope: str = "local"
+    country: str = "Romania"
+    language: str = "ro"
+    enabled: bool = True
     priority_rank: int = Field(ge=1)
     notes: str | None = None
 

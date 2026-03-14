@@ -11,6 +11,12 @@ class SourceConfig(BaseModel):
     source_name: str
     source_type: Literal["news", "commentary", "local_county"]
     source_url: str
+    category: str | None = None
+    scope: Literal["local", "national", "international"] | None = None
+    country: str | None = None
+    language: str | None = None
+    enabled: bool = True
+    notes: str | None = None
     region: str | None = None
     priority_rank: int | None = Field(default=None, ge=1)
     rss_url: str | None = None

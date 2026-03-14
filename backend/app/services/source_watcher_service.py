@@ -143,7 +143,11 @@ class SourceWatcherService:
 
     def load_source_configs(self) -> list[SourceConfig]:
         raw_data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-        return [SourceConfig(**item) for item in raw_data.get("sources", [])]
+        return [
+            SourceConfig(**item)
+            for item in raw_data.get("sources", [])
+            if item.get("enabled", True)
+        ]
 
     def load_source_configs_with_local_sources(
         self,
@@ -324,6 +328,12 @@ class SourceWatcherService:
                     source_name=entry.source_name,
                     source_type="local_county",
                     source_url=entry.source_url,
+                    category=entry.category,
+                    scope=entry.scope,
+                    country=entry.country,
+                    language=entry.language,
+                    enabled=entry.enabled,
+                    notes=entry.notes,
                     region=region,
                     priority_rank=entry.priority_rank,
                     parser_type="auto",

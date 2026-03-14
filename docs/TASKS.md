@@ -43,6 +43,10 @@ Probe-only TTS note:
 - Current probe contrast defaults are Ana `marin` and Paul `cedar`.
 - Quick fallback pair for listening comparison: Ana `shimmer`, Paul `onyx`.
 
+Source registry note:
+- The main watcher config now carries Romanian national and international sources with explicit scope/category metadata.
+- County-local sources remain in the separate Romanian county registry and are still appended only when local personalization enables them.
+
 ---
 
 # Immediate Tasks (Next)
