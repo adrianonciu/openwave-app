@@ -1636,3 +1636,6 @@ OpenWave now also supports a temporary OpenAI TTS provider path for testing. Thi
 ### Dual Presenter Test Mode
 
 OpenWave now also supports a backend-only `dual_test` presenter mode in `EditorialToAudioService`. This mode assigns `presenter_name` per spoken segment, keeps intro/outro on Ana, alternates story blocks Ana/Paul by story index, and forces perspective segments to inherit the same presenter as their parent story while leaving Flutter and provider architecture unchanged.
+## Editorial Contract Validation
+
+OpenWave now includes a deterministic editorial validation gate between final text assembly and audio preparation. `EditorialContractValidationService` validates story titles, attribution, language cleanliness, quote-order rules, user-name placement, story-count bounds, presenter alternation in dual-test mode, and perspective adjacency. Blocking violations stop the pipeline before `EditorialToAudioService`, and every run writes `backend/debug_output/editorial_validation_report.json`.

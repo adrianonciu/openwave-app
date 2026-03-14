@@ -383,3 +383,10 @@ County-based local source example:
 ## Dual Presenter Test Mode
 
 OpenWave now supports a conservative `dual_test` presenter mode at the editorial-to-audio bridge layer. In this mode, `EditorialToAudioService` assigns `Ana` to intro and outro, alternates story blocks as `Ana`, `Paul`, `Ana`, `Paul`, and makes all perspective segments inherit the presenter of their parent story. If `presenter_mode` is not `dual_test`, the existing single-presenter flow remains unchanged.
+## 6.5 Editorial Contract Validation
+
+A mandatory `EditorialContractValidationService` now runs after `BulletinSizingService` and before `EditorialToAudioService`. It validates each story plus bulletin-level structure, records warnings and deterministic auto-fixes, and blocks invalid bulletins from reaching the segmented TTS pipeline.
+
+Updated flow:
+
+`SourceWatcher -> ArticleFetchService -> NewsClusteringService -> StoryScoringService -> StorySelectionService -> StorySummaryGeneratorService -> BriefingAssemblyService -> BulletinSizingService -> EditorialContractValidationService -> EditorialToAudioService -> TtsService`

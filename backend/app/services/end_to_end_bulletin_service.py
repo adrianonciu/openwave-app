@@ -13,6 +13,7 @@ from app.models.end_to_end_bulletin_result import (
     TtsBudgetEstimate,
 )
 from app.models.final_editorial_briefing import FinalEditorialBriefingPackage
+from app.services.editorial_contract_validation_service import EditorialContractValidationService
 from app.services.editorial_pipeline_service import EditorialPipelineService
 from app.services.editorial_to_audio_service import EditorialToAudioService
 from app.services.tts.tts_budget_service import TtsBudgetEstimateData, TtsBudgetExceededError
@@ -23,6 +24,7 @@ from app.services.tts_service import TtsService
 class EndToEndBulletinService:
     def __init__(self) -> None:
         self.editorial_pipeline_service = EditorialPipelineService()
+        self.editorial_contract_validation_service = EditorialContractValidationService()
         self.editorial_to_audio_service = EditorialToAudioService()
         self.tts_service = TtsService()
 
@@ -63,6 +65,23 @@ class EndToEndBulletinService:
                 effective_bulletin_id,
             )
 
+        final_editorial_briefing, validation_result = self.editorial_contract_validation_service.validate_bulletin(
+            final_editorial_briefing
+        )
+        if not validation_result.passed:
+            return self._error_result(
+                stage="editorial_contract_validation_failed",
+                code="editorial_contract_validation_failed",
+                message=f"{validation_result.summary} Report: {validation_result.report_path}",
+                input_article_count=len(articles),
+                final_editorial_briefing=final_editorial_briefing,
+                created_at=created_at,
+                editorial_preferences=resolved_personalization.editorial_preferences,
+                personalization=resolved_personalization,
+                editorial_validation_passed=False,
+                editorial_validation_report_path=validation_result.report_path,
+            )
+
         audio_package_result = self.editorial_to_audio_service.prepare_audio_generation_package(
             final_editorial_briefing
         )
@@ -77,6 +96,8 @@ class EndToEndBulletinService:
                 created_at=created_at,
                 editorial_preferences=resolved_personalization.editorial_preferences,
                 personalization=resolved_personalization,
+                editorial_validation_passed=True,
+                editorial_validation_report_path=validation_result.report_path,
             )
 
         audio_package = audio_package_result.package
@@ -112,6 +133,8 @@ class EndToEndBulletinService:
                 editorial_preferences=resolved_personalization.editorial_preferences,
                 personalization=resolved_personalization,
                 tts_budget_estimate=exc.estimate,
+                editorial_validation_passed=True,
+                editorial_validation_report_path=validation_result.report_path,
             )
         except TtsProviderError as exc:
             return self._error_result(
@@ -125,6 +148,8 @@ class EndToEndBulletinService:
                 editorial_preferences=resolved_personalization.editorial_preferences,
                 personalization=resolved_personalization,
                 tts_budget_estimate=tts_budget_estimate,
+                editorial_validation_passed=True,
+                editorial_validation_report_path=validation_result.report_path,
             )
         except Exception as exc:
             return self._error_result(
@@ -138,6 +163,8 @@ class EndToEndBulletinService:
                 editorial_preferences=resolved_personalization.editorial_preferences,
                 personalization=resolved_personalization,
                 tts_budget_estimate=tts_budget_estimate,
+                editorial_validation_passed=True,
+                editorial_validation_report_path=validation_result.report_path,
             )
 
         generated_audio_segments = list(tts_result["segments"])
@@ -187,6 +214,8 @@ class EndToEndBulletinService:
             tts_provider=tts_result.get("tts_provider"),
             tts_voice_id=tts_result.get("tts_voice_id"),
             tts_budget_estimate=self._to_budget_model(tts_budget_estimate),
+            editorial_validation_passed=True,
+            editorial_validation_report_path=validation_result.report_path,
             created_at=created_at,
         )
 
@@ -220,6 +249,8 @@ class EndToEndBulletinService:
         personalization: UserPersonalization | None = None,
         editorial_preferences: EditorialPreferenceProfile | None = None,
         tts_budget_estimate: TtsBudgetEstimateData | None = None,
+        editorial_validation_passed: bool | None = None,
+        editorial_validation_report_path: str | None = None,
     ) -> EndToEndBulletinResult:
         execution_stats = EndToEndExecutionStats(
             input_article_count=input_article_count,
@@ -303,6 +334,8 @@ class EndToEndBulletinService:
             tts_provider=None,
             tts_voice_id=None,
             tts_budget_estimate=self._to_budget_model(tts_budget_estimate),
+            editorial_validation_passed=editorial_validation_passed,
+            editorial_validation_report_path=editorial_validation_report_path,
             created_at=created_at,
         )
 

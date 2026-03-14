@@ -23,6 +23,7 @@ class TtsBudgetEstimate(BaseModel):
 class EndToEndPipelineError(BaseModel):
     stage: Literal[
         "editorial_pipeline_failed",
+        "editorial_contract_validation_failed",
         "audio_generation_package_failed",
         "tts_budget_preflight_failed",
         "tts_generation_failed",
@@ -80,4 +81,6 @@ class EndToEndBulletinResult(BaseModel):
     tts_provider: str | None = None
     tts_voice_id: str | None = None
     tts_budget_estimate: TtsBudgetEstimate | None = None
+    editorial_validation_passed: bool | None = None
+    editorial_validation_report_path: str | None = None
     created_at: datetime

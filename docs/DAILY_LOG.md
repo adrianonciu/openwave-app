@@ -824,3 +824,6 @@ Next step:
 Run Probe bulletin tests to validate presenter alternation and audio flow.
 
 - Added OpenAI-backed probe execution for `backend/tests/probe_voice_tests`, using env-configured `OPENAI_TTS_VOICE_ANA` and `OPENAI_TTS_VOICE_PAUL` while leaving the default ElevenLabs path unchanged.
+- Added `EditorialContractValidationService` as a mandatory gate between final editorial assembly and the editorial-to-audio bridge.
+- Added structured validation models plus `backend/debug_output/editorial_validation_report.json` for blocking violations, warnings, and deterministic auto-fixes.
+- End-to-end bulletin generation now stops with `editorial_contract_validation_failed` when blocking editorial rules fail, instead of silently continuing to audio generation.

@@ -783,3 +783,23 @@ Still intentionally excluded from this task:
 - Added backend-only `dual_test` presenter assignment in the editorial-to-audio bridge so story blocks alternate Ana/Paul, intro/outro use Ana, and perspective segments inherit the parent story presenter without requiring Flutter changes.
 
 - Probe voice test scripts now force `provider_override="openai"` so Ana and Paul can be validated through OpenAI TTS without changing the default ElevenLabs production path.
+
+### Editorial Contract Validation Gate
+
+Backend now includes a mandatory editorial validation gate before audio generation.
+
+Current scope:
+
+- validate each final story title and body
+- validate source attribution, language cleanliness, quote ordering, and user-name placement
+- validate bulletin intro/outro presence and story-count range
+- report presenter alternation and perspective adjacency issues
+- write `backend/debug_output/editorial_validation_report.json` on validation runs
+- stop end-to-end generation when blocking editorial rules fail
+
+Still intentionally excluded from this task:
+
+- Flutter changes
+- TTS redesign
+- broad editorial-engine redesign
+- generative auto-rewrites beyond deterministic fixes
