@@ -16,6 +16,7 @@ from app.models.final_editorial_briefing import FinalEditorialBriefingPackage
 from app.services.editorial_pipeline_service import EditorialPipelineService
 from app.services.editorial_to_audio_service import EditorialToAudioService
 from app.services.tts.tts_budget_service import TtsBudgetEstimateData, TtsBudgetExceededError
+from app.services.tts.tts_provider_error import TtsProviderError
 from app.services.tts_service import TtsService
 
 
@@ -111,6 +112,19 @@ class EndToEndBulletinService:
                 editorial_preferences=resolved_personalization.editorial_preferences,
                 personalization=resolved_personalization,
                 tts_budget_estimate=exc.estimate,
+            )
+        except TtsProviderError as exc:
+            return self._error_result(
+                stage="tts_generation_failed",
+                code=exc.info.code,
+                message=exc.info.message,
+                input_article_count=len(articles),
+                final_editorial_briefing=final_editorial_briefing,
+                audio_generation_package=audio_package,
+                created_at=created_at,
+                editorial_preferences=resolved_personalization.editorial_preferences,
+                personalization=resolved_personalization,
+                tts_budget_estimate=tts_budget_estimate,
             )
         except Exception as exc:
             return self._error_result(

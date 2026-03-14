@@ -767,3 +767,5 @@ Still intentionally excluded from this task:
 
 - Added conservative TTS budget preflight and structured quota handling for end-to-end personalized bulletin generation.
 - Flutter now translates backend TTS budget failures into a user-facing recovery message with shorter-bulletin and lower-cost-mode suggestions.
+
+- Added temporary OpenAI TTS test-provider support for segmented bulletin audio using `gpt-4o-mini-tts`, with Ana and Paul voice presets routed through the existing provider factory.

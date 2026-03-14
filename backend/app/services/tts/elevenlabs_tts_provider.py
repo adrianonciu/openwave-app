@@ -7,6 +7,7 @@ from pathlib import Path
 
 from app.config.presenter import PresenterConfig
 from app.services.tts.base_tts_provider import BaseTtsProvider
+from app.services.tts.tts_provider_error import TtsProviderError
 
 
 class ElevenLabsTtsProvider(BaseTtsProvider):
@@ -19,7 +20,12 @@ class ElevenLabsTtsProvider(BaseTtsProvider):
     }
 
     def __init__(self, presenter: PresenterConfig) -> None:
+        self._presenter = presenter
         self._settings = presenter.elevenlabs
+
+    @property
+    def presenter_name(self) -> str:
+        return self._presenter.presenter_name
 
     @property
     def voice_id(self) -> str:
@@ -38,8 +44,10 @@ class ElevenLabsTtsProvider(BaseTtsProvider):
 
     def synthesize(self, text: str, output_path: Path) -> None:
         if not self.is_configured():
-            raise RuntimeError(
-                'ElevenLabs is not configured. Set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID.'
+            raise TtsProviderError(
+                provider=self.provider_name,
+                code='provider_not_configured',
+                message='ElevenLabs is not configured. Set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID.',
             )
 
         payload = json.dumps(
@@ -65,8 +73,15 @@ class ElevenLabsTtsProvider(BaseTtsProvider):
                 output_path.write_bytes(response.read())
         except urllib.error.HTTPError as exc:
             details = exc.read().decode('utf-8', errors='ignore')
-            raise RuntimeError(
-                f'ElevenLabs request failed: {exc.code} {details}'.strip()
+            raise TtsProviderError(
+                provider=self.provider_name,
+                code='provider_request_failed',
+                message=f'ElevenLabs request failed with status {exc.code}.',
+                status_code=exc.code,
             ) from exc
         except urllib.error.URLError as exc:
-            raise RuntimeError(f'ElevenLabs request failed: {exc.reason}') from exc
+            raise TtsProviderError(
+                provider=self.provider_name,
+                code='provider_network_error',
+                message='ElevenLabs request failed because the provider could not be reached.',
+            ) from exc

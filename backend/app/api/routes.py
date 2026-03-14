@@ -18,6 +18,7 @@ from app.services.article_service import ArticleService
 from app.services.briefing_service import BriefingService
 from app.services.end_to_end_bulletin_service import EndToEndBulletinService
 from app.services.source_watcher_service import SourceWatcherService
+from app.services.tts.tts_provider_error import TtsProviderError
 from app.services.tts_service import TtsService
 
 router = APIRouter()
@@ -57,7 +58,9 @@ def generate_tts_audio(payload: TtsGenerationRequest) -> TtsGenerationResponse:
             presenter_name=payload.presenter_name,
             file_stem=payload.file_stem,
         )
-    except (RuntimeError, ValueError) as exc:
+    except TtsProviderError as exc:
+        raise HTTPException(status_code=400, detail=exc.info.__dict__) from exc
+    except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return TtsGenerationResponse(**result)
@@ -74,7 +77,9 @@ def generate_tts_audio_from_pilot(
         )
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    except (RuntimeError, ValueError) as exc:
+    except TtsProviderError as exc:
+        raise HTTPException(status_code=400, detail=exc.info.__dict__) from exc
+    except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return TtsPilotAudioResponse(**result)

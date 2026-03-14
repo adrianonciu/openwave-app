@@ -11,6 +11,7 @@ except ImportError:  # pragma: no cover - handled via is_configured
 
 from app.config.presenter import PresenterConfig
 from app.services.tts.base_tts_provider import BaseTtsProvider
+from app.services.tts.tts_provider_error import TtsProviderError
 
 
 class EdgeTtsProvider(BaseTtsProvider):
@@ -18,6 +19,10 @@ class EdgeTtsProvider(BaseTtsProvider):
 
     def __init__(self, presenter: PresenterConfig) -> None:
         self._presenter = presenter
+
+    @property
+    def presenter_name(self) -> str:
+        return self._presenter.presenter_name
 
     @property
     def voice_id(self) -> str:
@@ -36,10 +41,18 @@ class EdgeTtsProvider(BaseTtsProvider):
 
     def synthesize(self, text: str, output_path: Path) -> None:
         if edge_tts is None:
-            raise RuntimeError('Edge TTS is not installed. Add edge-tts to the backend environment.')
+            raise TtsProviderError(
+                provider=self.provider_name,
+                code='provider_not_configured',
+                message='Edge TTS is not installed. Add edge-tts to the backend environment.',
+            )
 
         if not self.voice_id:
-            raise RuntimeError('Edge TTS voice is not configured. Set EDGE_TTS_VOICE or TTS_VOICE_ID.')
+            raise TtsProviderError(
+                provider=self.provider_name,
+                code='provider_not_configured',
+                message='Edge TTS voice is not configured. Set EDGE_TTS_VOICE or TTS_VOICE_ID.',
+            )
 
         communicate = edge_tts.Communicate(text=text, voice=self.voice_id)
         asyncio.run(communicate.save(str(output_path)))

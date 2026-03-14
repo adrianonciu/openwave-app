@@ -1,4 +1,4 @@
-﻿from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class TtsGenerationRequest(BaseModel):
@@ -10,6 +10,13 @@ class TtsGenerationRequest(BaseModel):
 class TtsPilotGenerationRequest(BaseModel):
     pilot_id: str = Field(..., min_length=1)
     presenter_name: str = 'Corina'
+
+
+class TtsProviderErrorResponse(BaseModel):
+    provider: str
+    code: str
+    message: str
+    status_code: int | None = None
 
 
 class TtsGenerationResponse(BaseModel):

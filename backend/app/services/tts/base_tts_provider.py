@@ -9,6 +9,11 @@ class BaseTtsProvider(ABC):
 
     @property
     @abstractmethod
+    def presenter_name(self) -> str:
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
     def voice_id(self) -> str:
         raise NotImplementedError
 

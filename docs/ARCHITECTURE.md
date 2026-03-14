@@ -1626,3 +1626,7 @@ Current behavior:
 - fail early with a structured `tts_budget_exceeded` error when the estimate is above the remaining budget
 - keep provider internals unchanged and still catch late quota errors defensively during synthesis
 - expose estimate metadata back to Flutter so the UI can show a product-style message and fallback suggestions
+
+### OpenAI Test TTS Provider
+
+OpenWave now also supports a temporary OpenAI TTS provider path for testing. This path keeps the existing provider abstraction, uses the `POST /v1/audio/speech` endpoint with `gpt-4o-mini-tts`, preserves segmented file output, and maps presenter names to fixed test voices (`Ana -> alloy`, `Paul -> verse`) without changing editorial or final voice architecture.

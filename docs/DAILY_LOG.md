@@ -759,3 +759,7 @@ Run full real-news bulletins and audit:
 - Added a conservative TTS budget preflight for end-to-end bulletins, using normalized segment text length and segment count before ElevenLabs synthesis starts.
 - Structured quota failures now return `tts_budget_exceeded` with estimated required credits and remaining credits when available.
 - Flutter home screen now shows a product-style quota message with estimate details and fallback suggestions instead of surfacing raw provider exceptions.
+
+- Added a temporary OpenAI TTS test provider path using `gpt-4o-mini-tts` through the existing provider factory.
+- Added presenter voice mapping for `Ana -> alloy` and `Paul -> verse`, while preserving segmented file naming and storage behavior.
+- TTS provider failures are now surfaced as structured provider errors in backend TTS routes and preserved more cleanly in the end-to-end generation path.

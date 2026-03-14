@@ -68,12 +68,11 @@ _GENERIC_VOICE = os.getenv('TTS_VOICE_ID', '')
 _GENERIC_MODEL = os.getenv('TTS_MODEL', '')
 _GENERIC_OUTPUT_FORMAT = os.getenv('TTS_OUTPUT_FORMAT', '')
 _GENERIC_SPEED = _read_float('TTS_SPEED', 1.0)
+_OPENAI_DEFAULT_VOICE = (os.getenv('OPENAI_TTS_VOICE', _GENERIC_VOICE or 'alloy').strip().lower() or 'alloy')
 
-_DEFAULT_PRESENTER = PresenterConfig(
-    presenter_name='Corina',
-    preferred_tts_provider=_GENERIC_PROVIDER,
-    fallback_tts_provider=os.getenv('TTS_FALLBACK_PROVIDER', 'openai'),
-    elevenlabs=TtsProviderSettings(
+
+def _build_provider_settings() -> tuple[TtsProviderSettings, TtsProviderSettings]:
+    elevenlabs = TtsProviderSettings(
         api_key=os.getenv('ELEVENLABS_API_KEY', ''),
         voice_id=os.getenv('ELEVENLABS_VOICE_ID', _GENERIC_VOICE),
         model=os.getenv('ELEVENLABS_MODEL_ID', _GENERIC_MODEL or 'eleven_multilingual_v2'),
@@ -87,10 +86,10 @@ _DEFAULT_PRESENTER = PresenterConfig(
             use_speaker_boost=_read_bool('ELEVENLABS_USE_SPEAKER_BOOST', True),
             speed=_read_float('ELEVENLABS_SPEED', _GENERIC_SPEED),
         ),
-    ),
-    openai=TtsProviderSettings(
+    )
+    openai = TtsProviderSettings(
         api_key=os.getenv('OPENAI_API_KEY', ''),
-        voice_id=os.getenv('OPENAI_TTS_VOICE', _GENERIC_VOICE or 'shimmer'),
+        voice_id=_OPENAI_DEFAULT_VOICE,
         model=os.getenv('OPENAI_TTS_MODEL', _GENERIC_MODEL or 'gpt-4o-mini-tts'),
         output_format=(os.getenv('OPENAI_TTS_OUTPUT_FORMAT', _GENERIC_OUTPUT_FORMAT or 'mp3').strip().lower() or 'mp3'),
         tuning=VoiceTuningSettings(
@@ -100,11 +99,29 @@ _DEFAULT_PRESENTER = PresenterConfig(
             use_speaker_boost=_read_bool('OPENAI_TTS_USE_SPEAKER_BOOST', False),
             speed=_read_float('OPENAI_TTS_SPEED', 1.05),
         ),
-    ),
-)
+    )
+    return elevenlabs, openai
+
+
+def _build_presenter(presenter_name: str, *, openai_voice_id: str | None = None) -> PresenterConfig:
+    elevenlabs, openai = _build_provider_settings()
+    if openai_voice_id is not None:
+        openai = replace(openai, voice_id=openai_voice_id)
+    return PresenterConfig(
+        presenter_name=presenter_name,
+        preferred_tts_provider=_GENERIC_PROVIDER,
+        fallback_tts_provider=os.getenv('TTS_FALLBACK_PROVIDER', 'openai'),
+        elevenlabs=elevenlabs,
+        openai=openai,
+    )
+
+
+_DEFAULT_PRESENTER = _build_presenter('Corina')
 
 _PRESENTERS = {
     _DEFAULT_PRESENTER.presenter_name.casefold(): _DEFAULT_PRESENTER,
+    'ana': _build_presenter('Ana', openai_voice_id='alloy'),
+    'paul': _build_presenter('Paul', openai_voice_id='verse'),
 }
 
 
