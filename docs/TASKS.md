@@ -763,3 +763,7 @@ Still intentionally excluded from this task:
 - TTS logic changes
 - new editorial rules
 
+## Recently completed stabilization work
+
+- Added conservative TTS budget preflight and structured quota handling for end-to-end personalized bulletin generation.
+- Flutter now translates backend TTS budget failures into a user-facing recovery message with shorter-bulletin and lower-cost-mode suggestions.

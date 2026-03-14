@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ApiService _apiService = ApiService();
   bool _isGenerating = false;
-  String? _error;
+  BulletinGenerationException? _generationError;
 
   Future<void> _openPersonalizationSettings() async {
     final updated = await Navigator.of(context).push<UserPersonalization>(
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _generateBulletin() async {
     setState(() {
       _isGenerating = true;
-      _error = null;
+      _generationError = null;
     });
 
     try {
@@ -71,12 +71,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       );
+    } on BulletinGenerationException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _generationError = error;
+      });
     } catch (error) {
       if (!mounted) {
         return;
       }
       setState(() {
-        _error = error.toString();
+        _generationError = BulletinGenerationException(
+          message: 'OpenWave could not generate the next bulletin right now. Please try again.',
+        );
       });
     } finally {
       if (!mounted) {
@@ -162,16 +171,79 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.tune),
             label: const Text('Edit personalization'),
           ),
-          if (_error != null) ...[
+          if (_generationError != null) ...[
             const SizedBox(height: 16),
-            Text(
-              _error!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
+            _ErrorNotice(error: _generationError!),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _ErrorNotice extends StatelessWidget {
+  const _ErrorNotice({required this.error});
+
+  final BulletinGenerationException error;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final suggestions = error.suggestions;
+
+    return Card(
+      color: theme.colorScheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              error.isTtsBudgetIssue ? 'Audio budget limit reached' : 'Generation failed',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.userMessage,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+            if (error.estimateSummary != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                error.estimateSummary!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onErrorContainer,
+                ),
+              ),
+            ],
+            if (error.budgetSummary != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                error.budgetSummary!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onErrorContainer,
+                ),
+              ),
+            ],
+            if (suggestions.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              for (final suggestion in suggestions)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    '- $suggestion',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onErrorContainer,
+                    ),
+                  ),
+                ),
+            ],
+          ],
+        ),
       ),
     );
   }

@@ -10,10 +10,12 @@ from app.models.end_to_end_bulletin_result import (
     EndToEndBulletinResult,
     EndToEndExecutionStats,
     EndToEndPipelineError,
+    TtsBudgetEstimate,
 )
 from app.models.final_editorial_briefing import FinalEditorialBriefingPackage
 from app.services.editorial_pipeline_service import EditorialPipelineService
 from app.services.editorial_to_audio_service import EditorialToAudioService
+from app.services.tts.tts_budget_service import TtsBudgetEstimateData, TtsBudgetExceededError
 from app.services.tts_service import TtsService
 
 
@@ -82,10 +84,33 @@ class EndToEndBulletinService:
 
         segment_blocks = self.editorial_to_audio_service.to_tts_segment_blocks(audio_package)
         try:
+            tts_budget_estimate = self.tts_service.estimate_segment_budget(
+                segment_blocks=segment_blocks,
+                presenter_name=presenter_name,
+                file_stem=effective_bulletin_id,
+            )
+        except Exception:
+            tts_budget_estimate = None
+
+        try:
             tts_result = self.tts_service.generate_audio_segments(
                 segment_blocks=segment_blocks,
                 presenter_name=presenter_name,
                 file_stem=effective_bulletin_id,
+                budget_estimate=tts_budget_estimate,
+            )
+        except TtsBudgetExceededError as exc:
+            return self._error_result(
+                stage="tts_budget_preflight_failed",
+                code="tts_budget_exceeded",
+                message=str(exc),
+                input_article_count=len(articles),
+                final_editorial_briefing=final_editorial_briefing,
+                audio_generation_package=audio_package,
+                created_at=created_at,
+                editorial_preferences=resolved_personalization.editorial_preferences,
+                personalization=resolved_personalization,
+                tts_budget_estimate=exc.estimate,
             )
         except Exception as exc:
             return self._error_result(
@@ -98,6 +123,7 @@ class EndToEndBulletinService:
                 created_at=created_at,
                 editorial_preferences=resolved_personalization.editorial_preferences,
                 personalization=resolved_personalization,
+                tts_budget_estimate=tts_budget_estimate,
             )
 
         generated_audio_segments = list(tts_result["segments"])
@@ -146,6 +172,7 @@ class EndToEndBulletinService:
             personalization_explanation=final_editorial_briefing.personalization_explanation,
             tts_provider=tts_result.get("tts_provider"),
             tts_voice_id=tts_result.get("tts_voice_id"),
+            tts_budget_estimate=self._to_budget_model(tts_budget_estimate),
             created_at=created_at,
         )
 
@@ -178,6 +205,7 @@ class EndToEndBulletinService:
         audio_generation_package: AudioGenerationPackage | None = None,
         personalization: UserPersonalization | None = None,
         editorial_preferences: EditorialPreferenceProfile | None = None,
+        tts_budget_estimate: TtsBudgetEstimateData | None = None,
     ) -> EndToEndBulletinResult:
         execution_stats = EndToEndExecutionStats(
             input_article_count=input_article_count,
@@ -215,7 +243,33 @@ class EndToEndBulletinService:
             ),
             execution_summary=f"End-to-end bulletin generation failed at stage '{stage}'.",
             success=False,
-            errors=[EndToEndPipelineError(stage=stage, code=code, message=message)],
+            errors=[
+                EndToEndPipelineError(
+                    stage=stage,
+                    code=code,
+                    message=message,
+                    estimated_required_credits=(
+                        tts_budget_estimate.estimated_required_credits
+                        if tts_budget_estimate is not None
+                        else None
+                    ),
+                    remaining_credits=(
+                        tts_budget_estimate.remaining_credits
+                        if tts_budget_estimate is not None
+                        else None
+                    ),
+                    estimated_total_characters=(
+                        tts_budget_estimate.estimated_total_characters
+                        if tts_budget_estimate is not None
+                        else None
+                    ),
+                    segment_count=(
+                        tts_budget_estimate.segment_count
+                        if tts_budget_estimate is not None
+                        else None
+                    ),
+                )
+            ],
             execution_stats=execution_stats,
             presenter_name=None,
             personalization=personalization or UserPersonalization.from_input(editorial_preferences=editorial_preferences),
@@ -234,6 +288,7 @@ class EndToEndBulletinService:
             personalization_explanation=(final_editorial_briefing.personalization_explanation if final_editorial_briefing is not None else ((personalization.explainability()[4]) if personalization else "Pipeline used safe neutral personalization defaults because no explicit personalization payload was provided.")),
             tts_provider=None,
             tts_voice_id=None,
+            tts_budget_estimate=self._to_budget_model(tts_budget_estimate),
             created_at=created_at,
         )
 
@@ -249,6 +304,11 @@ class EndToEndBulletinService:
             f"and producing {execution_stats.generated_segment_count} audio segments. "
             f"Output files: {', '.join(generated_audio_paths)}."
         )
+
+    def _to_budget_model(self, estimate: TtsBudgetEstimateData | None) -> TtsBudgetEstimate | None:
+        if estimate is None:
+            return None
+        return TtsBudgetEstimate(**estimate.to_dict())
 
     def _dump_model(self, model) -> dict:
         if hasattr(model, "model_dump"):

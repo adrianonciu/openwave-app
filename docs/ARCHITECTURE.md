@@ -1606,3 +1606,23 @@ Current behavior:
 - activated county local sources inside SourceWatcher monitoring so the watcher appends a capped region-based `local_county` source set to the normal monitored sources only when local preference is enabled
 - Flutter now exposes the personalization contract through onboarding, settings, local persistence, and end-to-end bulletin request payloads, while applying changes only to future generated briefings
 
+---
+
+# 31. TTS Budget Preflight
+
+OpenWave now includes a small budget-check layer immediately before segmented TTS generation in the end-to-end bulletin path.
+
+Pipeline position:
+
+```
+Final Editorial Briefing Package -> Audio Generation Package -> TTS Budget Preflight -> Existing Segmented TTS Generation
+```
+
+Current behavior:
+
+- estimate normalized TTS size from prepared segment text
+- preserve segment count as part of the estimate
+- check remaining ElevenLabs quota when that provider exposes subscription data
+- fail early with a structured `tts_budget_exceeded` error when the estimate is above the remaining budget
+- keep provider internals unchanged and still catch late quota errors defensively during synthesis
+- expose estimate metadata back to Flutter so the UI can show a product-style message and fallback suggestions

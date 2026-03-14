@@ -754,3 +754,8 @@ Run full real-news bulletins and audit:
 - connected Flutter bulletin generation requests to send listener profile plus editorial preferences to the existing end-to-end backend payload
 - added player-screen settings access so personalization changes are saved for the next bulletin without interrupting the current playback session
 
+## 2026-03-14
+
+- Added a conservative TTS budget preflight for end-to-end bulletins, using normalized segment text length and segment count before ElevenLabs synthesis starts.
+- Structured quota failures now return `tts_budget_exceeded` with estimated required credits and remaining credits when available.
+- Flutter home screen now shows a product-style quota message with estimate details and fallback suggestions instead of surfacing raw provider exceptions.

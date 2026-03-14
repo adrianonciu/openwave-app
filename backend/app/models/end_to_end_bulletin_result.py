@@ -9,14 +9,30 @@ from app.models.audio_generation_package import AudioGenerationPackage
 from app.models.final_editorial_briefing import FinalEditorialBriefingPackage
 
 
+class TtsBudgetEstimate(BaseModel):
+    provider: str
+    presenter_name: str
+    segment_count: int = Field(ge=0)
+    estimated_total_characters: int = Field(ge=0)
+    estimated_required_credits: int = Field(ge=0)
+    remaining_credits: int | None = Field(default=None, ge=0)
+    budget_check_performed: bool = False
+    within_budget: bool | None = None
+
+
 class EndToEndPipelineError(BaseModel):
     stage: Literal[
         "editorial_pipeline_failed",
         "audio_generation_package_failed",
+        "tts_budget_preflight_failed",
         "tts_generation_failed",
     ]
     code: str
     message: str
+    estimated_required_credits: int | None = Field(default=None, ge=0)
+    remaining_credits: int | None = Field(default=None, ge=0)
+    estimated_total_characters: int | None = Field(default=None, ge=0)
+    segment_count: int | None = Field(default=None, ge=0)
 
 
 class EndToEndExecutionStats(BaseModel):
@@ -63,4 +79,5 @@ class EndToEndBulletinResult(BaseModel):
     personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     tts_provider: str | None = None
     tts_voice_id: str | None = None
+    tts_budget_estimate: TtsBudgetEstimate | None = None
     created_at: datetime

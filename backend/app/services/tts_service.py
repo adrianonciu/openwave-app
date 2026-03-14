@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import hashlib
 import re
@@ -12,6 +12,11 @@ from app.services.tts.editorial_entity_formatter import (
 from app.services.tts.romanian_numbers_normalizer import normalize_romanian_numbers_for_tts
 from app.services.tts.romanian_tts_normalizer import normalize_for_romanian_tts
 from app.services.tts.speech_pacing_formatter import SpeechPacingFormatter
+from app.services.tts.tts_budget_service import (
+    TtsBudgetEstimateData,
+    TtsBudgetExceededError,
+    TtsBudgetService,
+)
 from app.services.tts.tts_factory import create_tts_provider
 
 
@@ -27,6 +32,7 @@ class TtsService:
             'pilot_03': Path('docs/editorial/testing/pilot_03_briefing_ro.md'),
         }
         self._pacing_formatter = SpeechPacingFormatter()
+        self._budget_service = TtsBudgetService()
 
     def get_pilot_summaries(self) -> list[dict[str, str]]:
         summaries: list[dict[str, str]] = []
@@ -99,11 +105,37 @@ class TtsService:
             'tts_voice_id': provider.voice_id,
         }
 
+    def estimate_segment_budget(
+        self,
+        segment_blocks: list[dict[str, str]],
+        presenter_name: str | None = None,
+        file_stem: str | None = None,
+    ) -> TtsBudgetEstimateData:
+        if not segment_blocks:
+            raise ValueError('segment_blocks must not be empty.')
+
+        presenter = get_presenter_config(presenter_name)
+        provider = create_tts_provider(presenter)
+        safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
+        prepared_segments = self._prepare_segment_payloads(segment_blocks)
+        pending_segments = self._build_pending_segment_outputs(
+            prepared_segments,
+            safe_stem=safe_stem,
+            output_extension=provider.output_extension,
+        )
+        return self._budget_service.estimate_budget(
+            provider_name=provider.provider_name,
+            presenter_name=presenter.presenter_name,
+            prepared_segment_texts=[segment['text'] for segment in pending_segments],
+            elevenlabs_api_key=presenter.elevenlabs.api_key,
+        )
+
     def generate_audio_segments(
         self,
         segment_blocks: list[dict[str, str]],
         presenter_name: str | None = None,
         file_stem: str | None = None,
+        budget_estimate: TtsBudgetEstimateData | None = None,
     ) -> dict[str, str | list[str]]:
         if not segment_blocks:
             raise ValueError('segment_blocks must not be empty.')
@@ -112,29 +144,45 @@ class TtsService:
         provider = create_tts_provider(presenter)
         safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
         segment_urls: list[str] = []
-        editorial_blocks = apply_romanian_editorial_lexicon([segment['text'] for segment in segment_blocks])
+        prepared_segments = self._prepare_segment_payloads(segment_blocks)
+        if not prepared_segments:
+            raise ValueError('No audio segments were generated.')
 
-        for segment, editorial_text in zip(segment_blocks, editorial_blocks):
-            cleaned_text = self._clean_briefing_text(
-                self._pacing_formatter.format_text_for_tts([editorial_text])
-            )
-            if not cleaned_text:
-                continue
+        pending_segments = self._build_pending_segment_outputs(
+            prepared_segments,
+            safe_stem=safe_stem,
+            output_extension=provider.output_extension,
+        )
+        resolved_budget_estimate = budget_estimate or self._budget_service.estimate_budget(
+            provider_name=provider.provider_name,
+            presenter_name=presenter.presenter_name,
+            prepared_segment_texts=[segment['text'] for segment in pending_segments],
+            elevenlabs_api_key=presenter.elevenlabs.api_key,
+        )
+        self._budget_service.raise_if_budget_exceeded(resolved_budget_estimate)
 
-            cleaned_text = normalize_romanian_numbers_for_tts(cleaned_text)
-            cleaned_text = normalize_for_romanian_tts(cleaned_text)
+        pending_by_name = {segment['segment_name']: segment for segment in pending_segments}
 
+        for segment in prepared_segments:
             segment_name = self._safe_stem(segment['segment_name'])
             file_name = f'{safe_stem}_{segment_name}.{provider.output_extension}'
             output_path = self.generated_audio_directory / file_name
+            pending_segment = pending_by_name.get(segment['segment_name'])
 
-            if not output_path.exists() or output_path.stat().st_size == 0:
-                provider.synthesize(cleaned_text, output_path)
+            if pending_segment is not None:
+                try:
+                    provider.synthesize(segment['text'], output_path)
+                except RuntimeError as exc:
+                    budget_error = self._budget_service.parse_quota_error(
+                        provider_name=provider.provider_name,
+                        error_message=str(exc),
+                        fallback_estimate=resolved_budget_estimate,
+                    )
+                    if budget_error is not None:
+                        raise budget_error from exc
+                    raise
 
             segment_urls.append(f'/audio/generated/{file_name}')
-
-        if not segment_urls:
-            raise ValueError('No audio segments were generated.')
 
         return {
             'segments': segment_urls,
@@ -219,6 +267,45 @@ class TtsService:
             return f'story_{existing_segments:02d}'
 
         return None
+
+    def _prepare_segment_payloads(self, segment_blocks: list[dict[str, str]]) -> list[dict[str, str]]:
+        editorial_blocks = apply_romanian_editorial_lexicon([segment['text'] for segment in segment_blocks])
+        prepared_segments: list[dict[str, str]] = []
+
+        for segment, editorial_text in zip(segment_blocks, editorial_blocks):
+            cleaned_text = self._clean_briefing_text(
+                self._pacing_formatter.format_text_for_tts([editorial_text])
+            )
+            if not cleaned_text:
+                continue
+
+            cleaned_text = normalize_romanian_numbers_for_tts(cleaned_text)
+            cleaned_text = normalize_for_romanian_tts(cleaned_text)
+            prepared_segments.append(
+                {
+                    'segment_name': segment['segment_name'],
+                    'text': cleaned_text,
+                }
+            )
+
+        return prepared_segments
+
+    def _build_pending_segment_outputs(
+        self,
+        prepared_segments: list[dict[str, str]],
+        *,
+        safe_stem: str,
+        output_extension: str,
+    ) -> list[dict[str, str]]:
+        pending_segments: list[dict[str, str]] = []
+        for segment in prepared_segments:
+            segment_name = self._safe_stem(segment['segment_name'])
+            file_name = f'{safe_stem}_{segment_name}.{output_extension}'
+            output_path = self.generated_audio_directory / file_name
+            if output_path.exists() and output_path.stat().st_size > 0:
+                continue
+            pending_segments.append(segment)
+        return pending_segments
 
     def _resolve_project_path(self, relative_path: Path) -> Path:
         project_root = Path(__file__).resolve().parents[3]
