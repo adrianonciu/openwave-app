@@ -29,6 +29,8 @@ NATIONAL_JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_national_selection.json"
 NATIONAL_TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_national_selection.txt"
 GLOBAL_JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_global_selection.json"
 GLOBAL_TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_global_selection.txt"
+STORY_SELECTION_DEBUG_JSON_PATH = OUTPUT_DIR / "story_selection_debug.json"
+STORY_SELECTION_DEBUG_TEXT_PATH = OUTPUT_DIR / "story_selection_debug.txt"
 MAX_INPUT_ARTICLES = 20
 MAX_RSS_FALLBACK_ARTICLES = 6
 TOKEN_PATTERN = re.compile(r"[0-9A-Za-z\u00C0-\u024F][0-9A-Za-z\u00C0-\u024F\-']*")
@@ -245,6 +247,50 @@ def _write_scope_outputs(label: str, selected_clusters: list, candidate_clusters
     return payload
 
 
+def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: set[str]) -> None:
+    candidate_payload = []
+    for cluster in scored_clusters:
+        serialized = _serialize_candidate(
+            cluster,
+            selection_status="selected" if cluster.cluster.cluster_id in selected_cluster_ids else "candidate",
+        )
+        candidate_payload.append(serialized)
+
+    payload = {
+        "candidate_cluster_count": len(candidate_payload),
+        "clusters_with_unique_source_count_gte_2": sum(1 for item in candidate_payload if item["unique_source_count"] >= 2),
+        "clusters_with_unique_source_count_gte_3": sum(1 for item in candidate_payload if item["unique_source_count"] >= 3),
+        "top_candidate_clusters": candidate_payload[:10],
+        "selected_stories": [item for item in candidate_payload if item["selection_status"] == "selected"],
+    }
+    STORY_SELECTION_DEBUG_JSON_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    lines = [
+        "STORY SELECTION DEBUG",
+        "",
+        f"candidate_cluster_count: {payload['candidate_cluster_count']}",
+        f"clusters_with_unique_source_count_gte_2: {payload['clusters_with_unique_source_count_gte_2']}",
+        f"clusters_with_unique_source_count_gte_3: {payload['clusters_with_unique_source_count_gte_3']}",
+        "",
+    ]
+    for index, item in enumerate(payload["top_candidate_clusters"], start=1):
+        lines.extend([
+            f"{index}. {item['normalized_headline'] or item['top_headline']}",
+            f"   selection_status: {item['selection_status']}",
+            f"   cluster_id: {item['cluster_id']}",
+            f"   unique_source_count: {item['unique_source_count']}",
+            f"   source_list: {', '.join(item['source_list'])}",
+            f"   source_scope: {item['source_scope']}",
+            f"   source_category: {item['source_category']}",
+            f"   editorial_priority: {item['editorial_priority_summary']['best']}",
+            f"   freshness_score: {item['freshness_score']}",
+            f"   editorial_fit_score: {item['editorial_fit_score']}",
+            f"   final_score: {item['final_score']}",
+            "",
+        ])
+    STORY_SELECTION_DEBUG_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     personalization = _build_general_personalization()
@@ -285,10 +331,15 @@ def main() -> None:
         GLOBAL_TEXT_OUTPUT_PATH,
     )
 
+    selected_cluster_ids = {cluster.cluster.cluster_id for cluster in national_selection.selected_clusters + global_selection.selected_clusters}
+    _write_story_selection_debug(scored_clusters, selected_cluster_ids)
+
     print(f"Wrote {NATIONAL_JSON_OUTPUT_PATH}")
     print(f"Wrote {NATIONAL_TEXT_OUTPUT_PATH}")
     print(f"Wrote {GLOBAL_JSON_OUTPUT_PATH}")
     print(f"Wrote {GLOBAL_TEXT_OUTPUT_PATH}")
+    print(f"Wrote {STORY_SELECTION_DEBUG_JSON_PATH}")
+    print(f"Wrote {STORY_SELECTION_DEBUG_TEXT_PATH}")
     print(json.dumps({
         "national_candidate_clusters": national_payload["candidate_cluster_count"],
         "global_candidate_clusters": global_payload["candidate_cluster_count"],
