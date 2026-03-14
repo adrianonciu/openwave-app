@@ -1605,6 +1605,7 @@ Current behavior:
 
 - activated county local sources inside SourceWatcher monitoring so the watcher appends a capped region-based `local_county` source set to the normal monitored sources only when local preference is enabled
 - expanded the main watcher source registry with normalized `scope`, `category`, `country`, `language`, `enabled`, and `notes` metadata so Romanian national and international sources can be monitored through the same config path without changing the local county registry model
+- added a conservative `editorial_priority` metadata field to both main watcher sources and county-local entries so future scoring can distinguish source reliability tiers without redesigning the watcher or editorial pipeline
 - Flutter now exposes the personalization contract through onboarding, settings, local persistence, and end-to-end bulletin request payloads, while applying changes only to future generated briefings
 
 ---

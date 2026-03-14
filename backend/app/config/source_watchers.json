@@ -12,7 +12,8 @@
       "scope": "international",
       "country": "International",
       "language": "en",
-      "enabled": true
+      "enabled": true,
+      "editorial_priority": 2
     },
     {
       "source_id": "dw-world-news",
@@ -26,7 +27,8 @@
       "scope": "international",
       "country": "Germany",
       "language": "en",
-      "enabled": true
+      "enabled": true,
+      "editorial_priority": 2
     },
     {
       "source_id": "commentary-foreign-affairs",
@@ -39,7 +41,8 @@
       "scope": "international",
       "country": "United States",
       "language": "en",
-      "enabled": true
+      "enabled": true,
+      "editorial_priority": 4
     },
     {
       "source_id": "commentary-brookings",
@@ -52,7 +55,8 @@
       "scope": "international",
       "country": "United States",
       "language": "en",
-      "enabled": true
+      "enabled": true,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-libertatea",
@@ -66,7 +70,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-digi24",
@@ -80,7 +85,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 2
     },
     {
       "source_id": "ro-hotnews",
@@ -94,7 +100,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 2
     },
     {
       "source_id": "ro-stiripesurse",
@@ -108,7 +115,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-stirileprotv",
@@ -122,7 +130,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-mediafax",
@@ -136,7 +145,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 6
+      "priority_rank": 6,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-adevarul",
@@ -150,7 +160,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 7
+      "priority_rank": 7,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-g4media",
@@ -164,7 +175,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 8
+      "priority_rank": 8,
+      "editorial_priority": 2
     },
     {
       "source_id": "ro-antena3",
@@ -178,7 +190,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 9
+      "priority_rank": 9,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-romaniatv",
@@ -192,7 +205,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 10
+      "priority_rank": 10,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-euronews-ro",
@@ -206,7 +220,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 11
+      "priority_rank": 11,
+      "editorial_priority": 2
     },
     {
       "source_id": "ro-news-ro",
@@ -220,7 +235,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 12
+      "priority_rank": 12,
+      "editorial_priority": 2
     },
     {
       "source_id": "ro-ziarul-financiar",
@@ -234,7 +250,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 13
+      "priority_rank": 13,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-capital",
@@ -248,7 +265,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 14
+      "priority_rank": 14,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-dcnews",
@@ -262,7 +280,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 15
+      "priority_rank": 15,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-puterea",
@@ -276,7 +295,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 16
+      "priority_rank": 16,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-realitatea",
@@ -290,7 +310,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 17
+      "priority_rank": 17,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-europa-libera",
@@ -304,7 +325,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 18
+      "priority_rank": 18,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-agerpres",
@@ -318,7 +340,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 19
+      "priority_rank": 19,
+      "editorial_priority": 1
     },
     {
       "source_id": "ro-observatornews",
@@ -332,7 +355,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 20
+      "priority_rank": 20,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-digisport",
@@ -346,7 +370,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-gsp",
@@ -360,7 +385,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-prosport",
@@ -374,7 +400,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-sport-ro",
@@ -388,7 +415,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-fanatik-sport",
@@ -402,7 +430,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-flashscore",
@@ -417,7 +446,8 @@
       "language": "ro",
       "enabled": true,
       "priority_rank": 6,
-      "notes": "scoreboard-heavy source; current watcher may detect updates better than full editorial article pages"
+      "notes": "scoreboard-heavy source; current watcher may detect updates better than full editorial article pages",
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-romanian-soccer",
@@ -432,7 +462,8 @@
       "language": "ro",
       "enabled": true,
       "priority_rank": 7,
-      "notes": "niche archival football source; metadata extraction may vary by page"
+      "notes": "niche archival football source; metadata extraction may vary by page",
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-economica",
@@ -446,7 +477,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-economedia",
@@ -460,7 +492,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-profit",
@@ -474,7 +507,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-bursa",
@@ -488,7 +522,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-wall-street",
@@ -502,7 +537,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-business-magazin",
@@ -516,7 +552,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 6
+      "priority_rank": 6,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-cursbnr",
@@ -531,7 +568,8 @@
       "language": "ro",
       "enabled": true,
       "priority_rank": 7,
-      "notes": "reference-data source; useful for signal monitoring but not always article-like"
+      "notes": "reference-data source; useful for signal monitoring but not always article-like",
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-click",
@@ -545,7 +583,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-libertatea-entertainment",
@@ -559,7 +598,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-acasatv",
@@ -573,7 +613,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-cancan",
@@ -587,7 +628,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-libertatea-lifestyle",
@@ -601,7 +643,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-prosport-monden",
@@ -615,7 +658,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 6
+      "priority_rank": 6,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-fanatik-monden",
@@ -629,7 +673,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 7
+      "priority_rank": 7,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-elle",
@@ -643,7 +688,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 8
+      "priority_rank": 8,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-viva",
@@ -657,7 +703,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 9
+      "priority_rank": 9,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-unica",
@@ -671,7 +718,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 10
+      "priority_rank": 10,
+      "editorial_priority": 5
     },
     {
       "source_id": "ro-recorder",
@@ -685,7 +733,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-contributors",
@@ -699,7 +748,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-presshub",
@@ -713,7 +763,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-context",
@@ -727,7 +778,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 4
     },
     {
       "source_id": "ro-ziare",
@@ -741,7 +793,8 @@
       "country": "Romania",
       "language": "ro",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 5
     },
     {
       "source_id": "intl-nyt",
@@ -756,7 +809,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 1,
-      "notes": "metered article access may limit full-article fetch"
+      "notes": "metered article access may limit full-article fetch",
+      "editorial_priority": 2
     },
     {
       "source_id": "intl-guardian",
@@ -770,7 +824,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 2
     },
     {
       "source_id": "intl-reuters",
@@ -784,7 +839,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 1
     },
     {
       "source_id": "intl-ap",
@@ -798,7 +854,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 1
     },
     {
       "source_id": "intl-cnn",
@@ -812,7 +869,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-aljazeera",
@@ -826,7 +884,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 6
+      "priority_rank": 6,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-washington-post",
@@ -841,7 +900,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 7,
-      "notes": "metered or paywalled article access may limit full-article fetch"
+      "notes": "metered or paywalled article access may limit full-article fetch",
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-npr",
@@ -855,7 +915,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 8
+      "priority_rank": 8,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-foxnews",
@@ -869,7 +930,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 9
+      "priority_rank": 9,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-bloomberg",
@@ -884,7 +946,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 1,
-      "notes": "metered article access may limit full-article fetch"
+      "notes": "metered article access may limit full-article fetch",
+      "editorial_priority": 2
     },
     {
       "source_id": "intl-ft",
@@ -899,7 +962,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 2,
-      "notes": "metered or paywalled article access may limit full-article fetch"
+      "notes": "metered or paywalled article access may limit full-article fetch",
+      "editorial_priority": 2
     },
     {
       "source_id": "intl-wsj",
@@ -914,7 +978,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 3,
-      "notes": "paywalled article access may limit full-article fetch"
+      "notes": "paywalled article access may limit full-article fetch",
+      "editorial_priority": 2
     },
     {
       "source_id": "intl-cnbc",
@@ -928,7 +993,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-economist",
@@ -943,7 +1009,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 5,
-      "notes": "paywalled article access may limit full-article fetch"
+      "notes": "paywalled article access may limit full-article fetch",
+      "editorial_priority": 4
     },
     {
       "source_id": "intl-forbes",
@@ -958,7 +1025,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 6,
-      "notes": "metered article access may limit full-article fetch"
+      "notes": "metered article access may limit full-article fetch",
+      "editorial_priority": 4
     },
     {
       "source_id": "intl-yahoo-finance",
@@ -972,7 +1040,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 7
+      "priority_rank": 7,
+      "editorial_priority": 5
     },
     {
       "source_id": "intl-marketwatch",
@@ -986,7 +1055,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 8
+      "priority_rank": 8,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-espn",
@@ -1000,7 +1070,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-skysports",
@@ -1014,7 +1085,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-cbssports",
@@ -1028,7 +1100,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-si",
@@ -1042,7 +1115,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-bbc-sport",
@@ -1056,7 +1130,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-athletic",
@@ -1071,7 +1146,8 @@
       "language": "en",
       "enabled": true,
       "priority_rank": 6,
-      "notes": "subscription-first section; full article fetch may be limited"
+      "notes": "subscription-first section; full article fetch may be limited",
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-yahoo-sports",
@@ -1085,7 +1161,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 7
+      "priority_rank": 7,
+      "editorial_priority": 3
     },
     {
       "source_id": "intl-tmz",
@@ -1099,7 +1176,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 1
+      "priority_rank": 1,
+      "editorial_priority": 5
     },
     {
       "source_id": "intl-people",
@@ -1113,7 +1191,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 2
+      "priority_rank": 2,
+      "editorial_priority": 5
     },
     {
       "source_id": "intl-eonline",
@@ -1127,7 +1206,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 3
+      "priority_rank": 3,
+      "editorial_priority": 5
     },
     {
       "source_id": "intl-usmagazine",
@@ -1141,7 +1221,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 4
+      "priority_rank": 4,
+      "editorial_priority": 5
     },
     {
       "source_id": "intl-variety",
@@ -1155,7 +1236,8 @@
       "country": "International",
       "language": "en",
       "enabled": true,
-      "priority_rank": 5
+      "priority_rank": 5,
+      "editorial_priority": 4
     }
   ]
 }

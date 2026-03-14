@@ -46,6 +46,7 @@ Probe-only TTS note:
 Source registry note:
 - The main watcher config now carries Romanian national and international sources with explicit scope/category metadata.
 - County-local sources remain in the separate Romanian county registry and are still appended only when local personalization enables them.
+- Each loaded source now also carries `editorial_priority` on a conservative 1-5 scale for later scoring use.
 
 ---
 

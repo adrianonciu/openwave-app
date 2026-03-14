@@ -16,6 +16,7 @@ class SourceConfig(BaseModel):
     country: str | None = None
     language: str | None = None
     enabled: bool = True
+    editorial_priority: int = Field(default=3, ge=1, le=5)
     notes: str | None = None
     region: str | None = None
     priority_rank: int | None = Field(default=None, ge=1)

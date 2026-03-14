@@ -9,6 +9,7 @@ class LocalSourceEntry(BaseModel):
     country: str = "Romania"
     language: str = "ro"
     enabled: bool = True
+    editorial_priority: int = Field(default=3, ge=1, le=5)
     priority_rank: int = Field(ge=1)
     notes: str | None = None
 

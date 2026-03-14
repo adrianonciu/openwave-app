@@ -333,6 +333,7 @@ class SourceWatcherService:
                     country=entry.country,
                     language=entry.language,
                     enabled=entry.enabled,
+                    editorial_priority=entry.editorial_priority,
                     notes=entry.notes,
                     region=region,
                     priority_rank=entry.priority_rank,
