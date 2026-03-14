@@ -34,6 +34,8 @@ STORY_SELECTION_DEBUG_JSON_PATH = OUTPUT_DIR / "story_selection_debug.json"
 STORY_SELECTION_DEBUG_TEXT_PATH = OUTPUT_DIR / "story_selection_debug.txt"
 INTERNATIONAL_MERGE_DEBUG_JSON_PATH = OUTPUT_DIR / "international_merge_debug.json"
 INTERNATIONAL_MERGE_DEBUG_TEXT_PATH = OUTPUT_DIR / "international_merge_debug.txt"
+CANDIDATE_POOL_AUDIT_JSON_PATH = OUTPUT_DIR / "candidate_pool_audit.json"
+CANDIDATE_POOL_AUDIT_TEXT_PATH = OUTPUT_DIR / "candidate_pool_audit.txt"
 MAX_INPUT_ARTICLES = 20
 MAX_RSS_FALLBACK_ARTICLES = 6
 MAX_SOURCE_FETCH_ATTEMPTS = 32
@@ -219,6 +221,25 @@ def _serialize_candidate(scored_cluster, selection_status: str = "selected") -> 
         "europe_romania_impact_explanation": breakdown.europe_romania_impact.explanation,
         "editorial_fit_score": breakdown.editorial_fit.contribution,
         "final_score": scored_cluster.score_total,
+    }
+
+
+def _cluster_signals(scored_cluster, article_by_url: dict[str, FetchedArticle], clustering_service) -> dict[str, object]:
+    representative_article = _representative_article(scored_cluster, article_by_url)
+    if representative_article is None:
+        return {
+            "event_families": [],
+            "regional_buckets": [],
+            "normalized_headline": _normalize_headline(scored_cluster.cluster.representative_title),
+            "normalized_source": None,
+        }
+    normalized_article = clustering_service._normalize_article(representative_article)
+    signals = clustering_service._build_signals(normalized_article)
+    return {
+        "event_families": sorted(signals.event_families),
+        "regional_buckets": sorted(signals.regional_buckets),
+        "normalized_headline": signals.normalized_title or _normalize_headline(scored_cluster.cluster.representative_title),
+        "normalized_source": signals.normalized_source,
     }
 
 
@@ -408,6 +429,99 @@ def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: se
     STORY_SELECTION_DEBUG_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _write_candidate_pool_audit(scored_clusters: list, article_by_url: dict[str, FetchedArticle], clustering_service) -> None:
+    top_candidates = scored_clusters[:10]
+    top_payload = []
+    event_family_distribution: Counter[str] = Counter()
+    regional_bucket_distribution: Counter[str] = Counter()
+    scope_distribution: Counter[str] = Counter()
+
+    for cluster in scored_clusters:
+        serialized = _serialize_candidate(cluster, selection_status="candidate")
+        signals = _cluster_signals(cluster, article_by_url, clustering_service)
+        scope_distribution[serialized["source_scope"]] += 1
+
+        families = signals["event_families"] or ["none"]
+        for family in families:
+            event_family_distribution[family] += 1
+
+        buckets = signals["regional_buckets"] or ["none"]
+        for bucket in buckets:
+            regional_bucket_distribution[bucket] += 1
+
+        if len(top_payload) < 10:
+            top_payload.append({
+                **serialized,
+                "normalized_headline": signals["normalized_headline"],
+                "normalized_source": signals["normalized_source"],
+                "event_family": signals["event_families"],
+                "regional_bucket": signals["regional_buckets"],
+            })
+
+    payload = {
+        "candidate_pool_size": {
+            "total_clusters": len(scored_clusters),
+            "international_clusters": scope_distribution.get("international", 0),
+            "national_clusters": scope_distribution.get("national", 0),
+        },
+        "multi_source_cluster_stats": {
+            "clusters_unique_sources_gte_2": sum(
+                1 for cluster in scored_clusters if len({member.source for member in cluster.cluster.member_articles}) >= 2
+            ),
+            "clusters_unique_sources_gte_3": sum(
+                1 for cluster in scored_clusters if len({member.source for member in cluster.cluster.member_articles}) >= 3
+            ),
+            "clusters_unique_sources_gte_4": sum(
+                1 for cluster in scored_clusters if len({member.source for member in cluster.cluster.member_articles}) >= 4
+            ),
+        },
+        "event_family_distribution": dict(sorted(event_family_distribution.items())),
+        "regional_bucket_distribution": dict(sorted(regional_bucket_distribution.items())),
+        "top_candidate_clusters": top_payload,
+    }
+    CANDIDATE_POOL_AUDIT_JSON_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    lines = [
+        "CANDIDATE POOL AUDIT",
+        "",
+        f"total_clusters: {payload['candidate_pool_size']['total_clusters']}",
+        f"international_clusters: {payload['candidate_pool_size']['international_clusters']}",
+        f"national_clusters: {payload['candidate_pool_size']['national_clusters']}",
+        "",
+        "MULTI-SOURCE CLUSTER STATS",
+        f"clusters_unique_sources_gte_2: {payload['multi_source_cluster_stats']['clusters_unique_sources_gte_2']}",
+        f"clusters_unique_sources_gte_3: {payload['multi_source_cluster_stats']['clusters_unique_sources_gte_3']}",
+        f"clusters_unique_sources_gte_4: {payload['multi_source_cluster_stats']['clusters_unique_sources_gte_4']}",
+        "",
+        "EVENT FAMILY DISTRIBUTION",
+    ]
+    for family, count in payload["event_family_distribution"].items():
+        lines.append(f"{family}: {count}")
+    lines.extend(["", "REGIONAL BUCKET DISTRIBUTION"])
+    for bucket, count in payload["regional_bucket_distribution"].items():
+        lines.append(f"{bucket}: {count}")
+    lines.extend(["", "TOP 10 CANDIDATE CLUSTERS", ""])
+
+    for index, item in enumerate(top_payload, start=1):
+        lines.extend([
+            f"{index}. {item['normalized_headline'] or item['top_headline']}",
+            f"   cluster_id: {item['cluster_id']}",
+            f"   top_headline: {item['top_headline']}",
+            f"   normalized_headline: {item['normalized_headline']}",
+            f"   normalized_source: {item['normalized_source'] or 'unknown'}",
+            f"   source_list: {', '.join(item['source_list'])}",
+            f"   unique_source_count: {item['unique_source_count']}",
+            f"   event_family: {', '.join(item['event_family']) or 'none'}",
+            f"   regional_bucket: {', '.join(item['regional_bucket']) or 'none'}",
+            f"   category: {item['source_category']}",
+            f"   freshness_score: {item['freshness_score']}",
+            f"   editorial_fit_score: {item['editorial_fit_score']}",
+            f"   final_score: {item['final_score']}",
+            "",
+        ])
+    CANDIDATE_POOL_AUDIT_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     personalization = _build_general_personalization()
@@ -452,6 +566,7 @@ def main() -> None:
     selected_cluster_ids = {cluster.cluster.cluster_id for cluster in national_selection.selected_clusters + global_selection.selected_clusters}
     _write_story_selection_debug(scored_clusters, selected_cluster_ids)
     _write_international_merge_debug(global_candidates, article_by_url, pipeline_service.clustering_service)
+    _write_candidate_pool_audit(scored_clusters, article_by_url, pipeline_service.clustering_service)
 
     print(f"Wrote {NATIONAL_JSON_OUTPUT_PATH}")
     print(f"Wrote {NATIONAL_TEXT_OUTPUT_PATH}")
@@ -461,6 +576,8 @@ def main() -> None:
     print(f"Wrote {STORY_SELECTION_DEBUG_TEXT_PATH}")
     print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_JSON_PATH}")
     print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_TEXT_PATH}")
+    print(f"Wrote {CANDIDATE_POOL_AUDIT_JSON_PATH}")
+    print(f"Wrote {CANDIDATE_POOL_AUDIT_TEXT_PATH}")
     print(json.dumps({
         "national_candidate_clusters": national_payload["candidate_cluster_count"],
         "global_candidate_clusters": global_payload["candidate_cluster_count"],
