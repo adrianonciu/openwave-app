@@ -106,6 +106,20 @@ GENERALIST_SOURCES = {"AP", "BBC", "DW", "Euronews Romania", "Reuters"}
 REGIONAL_ESCALATION_TERMS = {
     "iran", "golful", "emiratele", "ormuz", "orientul", "mijlociu", "porturi", "nave", "marines", "hamas", "atac",
 }
+EVENT_FAMILY_KEYWORDS = {
+    "regional_conflict": {"war", "conflict", "escalation", "tensions", "strike", "strikes", "attack", "atac", "hamas", "iran", "israel"},
+    "military_movement": {"troops", "marines", "warships", "naval", "deployment", "nave", "military"},
+    "energy_shipping_disruption": {"ports", "porturi", "shipping", "strait", "ormuz", "oil", "gas", "route", "routes"},
+    "political_crisis": {"protest", "protests", "protesters", "uprising", "coup", "government", "crisis", "criza"},
+    "attack_or_strike": {"attack", "atac", "strike", "strikes", "explosion", "explozie", "racheta", "missile"},
+    "economic_shock": {"oil", "gas", "inflation", "markets", "piete", "supply", "shipping"},
+}
+EVENT_FAMILY_MERGEABLE = {"regional_conflict", "military_movement", "energy_shipping_disruption"}
+REGIONAL_LOCATION_BUCKETS = {
+    "gulf_escalation": {"iran", "golful", "emiratele", "ormuz", "orientul", "mijlociu", "porturi", "gaza", "hamas", "israel"},
+    "black_sea_security": {"romania", "marea", "neagra", "ucraina", "ukraine", "moldova", "rusia"},
+    "eu_security": {"eu", "brussels", "nato", "romania", "moldova", "balkans", "balcani"},
+}
 GEOPOLITICAL_EVENT_ANCHORS = {
     "bagdad", "belarus", "china", "cuba", "emiratele", "gaza", "golful", "hamas",
     "iran", "israel", "kharg", "mijlociu", "ormuz", "rusia", "sua", "trump",
@@ -124,6 +138,8 @@ class _ArticleSignals:
     body_keywords: set[str]
     entities: set[str]
     event_terms: set[str]
+    event_families: set[str]
+    regional_buckets: set[str]
 
 
 class NewsClusteringService:
@@ -193,6 +209,8 @@ class NewsClusteringService:
         event_terms = self._event_terms(
             f"{normalized_article.title}. {normalized_article.content_text[:1600]}"
         )
+        event_families = self._event_families(event_terms)
+        regional_buckets = self._regional_buckets(event_terms)
         return _ArticleSignals(
             article=normalized_article,
             normalized_title=self._normalize_text(normalized_article.title),
@@ -202,6 +220,8 @@ class NewsClusteringService:
             body_keywords=body_keywords,
             entities=entities,
             event_terms=event_terms,
+            event_families=event_families,
+            regional_buckets=regional_buckets,
         )
 
     def _cluster_match_decision(
@@ -345,6 +365,26 @@ class NewsClusteringService:
             return ClusterDecision(
                 status="merged",
                 reason="regional_escalation_bundle",
+                title_similarity=max(title_similarity, normalized_title_similarity),
+                keyword_overlap=max(keyword_overlap, event_overlap),
+                body_overlap=body_overlap,
+                shared_entities=shared_entities,
+                hours_apart=hours_apart,
+            )
+
+        if self._is_event_family_hard_news_match(
+            left,
+            right,
+            shared_entities,
+            cross_source,
+            normalized_title_similarity,
+            event_overlap,
+            keyword_overlap,
+            hours_apart,
+        ):
+            return ClusterDecision(
+                status="merged",
+                reason="event_family_regional_hard_news_match",
                 title_similarity=max(title_similarity, normalized_title_similarity),
                 keyword_overlap=max(keyword_overlap, event_overlap),
                 body_overlap=body_overlap,
@@ -565,6 +605,49 @@ class NewsClusteringService:
         if "iran" in escalation_overlap and len(escalation_overlap) >= 2 and (event_overlap >= 0.16 or keyword_overlap >= 0.22):
             return True
         return False
+
+    def _event_families(self, event_terms: set[str]) -> set[str]:
+        families = {
+            family
+            for family, keywords in EVENT_FAMILY_KEYWORDS.items()
+            if event_terms & keywords
+        }
+        return families
+
+    def _regional_buckets(self, event_terms: set[str]) -> set[str]:
+        return {
+            bucket
+            for bucket, keywords in REGIONAL_LOCATION_BUCKETS.items()
+            if event_terms & keywords
+        }
+
+    def _is_event_family_hard_news_match(
+        self,
+        left: _ArticleSignals,
+        right: _ArticleSignals,
+        shared_entities: list[str],
+        cross_source: bool,
+        normalized_title_similarity: float,
+        event_overlap: float,
+        keyword_overlap: float,
+        hours_apart: float,
+    ) -> bool:
+        if not cross_source or hours_apart > min(self.recency_window_hours, 18):
+            return False
+        if left.article.source_category in {"sport", "entertainment", "lifestyle"}:
+            return False
+        if right.article.source_category in {"sport", "entertainment", "lifestyle"}:
+            return False
+        shared_families = (left.event_families & right.event_families) & EVENT_FAMILY_MERGEABLE
+        if not shared_families:
+            return False
+        if len(shared_entities) < 1:
+            return False
+        if not (left.regional_buckets & right.regional_buckets):
+            return False
+        if max(normalized_title_similarity, event_overlap, keyword_overlap) < 0.1:
+            return False
+        return True
 
     def _normalize_category(
         self,
