@@ -7,8 +7,8 @@ from app.services.tts.elevenlabs_tts_provider import ElevenLabsTtsProvider
 from app.services.tts.openai_tts_provider import OpenAITtsProvider
 
 
-def create_tts_provider(presenter: PresenterConfig) -> BaseTtsProvider:
-    preferred_name = presenter.preferred_tts_provider.strip().lower() or 'elevenlabs'
+def create_tts_provider(presenter: PresenterConfig, provider_override: str | None = None) -> BaseTtsProvider:
+    preferred_name = (provider_override or presenter.preferred_tts_provider).strip().lower() or 'elevenlabs'
     fallback_name = presenter.fallback_tts_provider.strip().lower() or 'openai'
 
     providers = {
@@ -23,11 +23,11 @@ def create_tts_provider(presenter: PresenterConfig) -> BaseTtsProvider:
     if preferred_provider is not None and preferred_provider.is_configured():
         return preferred_provider
 
-    if fallback_provider is not None and fallback_provider.is_configured():
+    if provider_override is None and fallback_provider is not None and fallback_provider.is_configured():
         return fallback_provider
 
     if preferred_provider is None:
-        raise RuntimeError(f'Unsupported TTS provider: {presenter.preferred_tts_provider}')
+        raise RuntimeError(f'Unsupported TTS provider: {provider_override or presenter.preferred_tts_provider}')
 
     raise RuntimeError(
         'No TTS provider is configured. Set TTS_PROVIDER=edge for development testing or configure ElevenLabs/OpenAI credentials.'

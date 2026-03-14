@@ -69,6 +69,8 @@ _GENERIC_MODEL = os.getenv('TTS_MODEL', '')
 _GENERIC_OUTPUT_FORMAT = os.getenv('TTS_OUTPUT_FORMAT', '')
 _GENERIC_SPEED = _read_float('TTS_SPEED', 1.0)
 _OPENAI_DEFAULT_VOICE = (os.getenv('OPENAI_TTS_VOICE', _GENERIC_VOICE or 'alloy').strip().lower() or 'alloy')
+_OPENAI_ANA_VOICE = (os.getenv('OPENAI_TTS_VOICE_ANA', 'alloy').strip().lower() or 'alloy')
+_OPENAI_PAUL_VOICE = (os.getenv('OPENAI_TTS_VOICE_PAUL', 'echo').strip().lower() or 'echo')
 
 
 def _build_provider_settings() -> tuple[TtsProviderSettings, TtsProviderSettings]:
@@ -120,8 +122,8 @@ _DEFAULT_PRESENTER = _build_presenter('Corina')
 
 _PRESENTERS = {
     _DEFAULT_PRESENTER.presenter_name.casefold(): _DEFAULT_PRESENTER,
-    'ana': _build_presenter('Ana', openai_voice_id='alloy'),
-    'paul': _build_presenter('Paul', openai_voice_id='verse'),
+    'ana': _build_presenter('Ana', openai_voice_id=_OPENAI_ANA_VOICE),
+    'paul': _build_presenter('Paul', openai_voice_id=_OPENAI_PAUL_VOICE),
 }
 
 

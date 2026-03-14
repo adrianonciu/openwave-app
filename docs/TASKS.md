@@ -771,3 +771,5 @@ Still intentionally excluded from this task:
 - Added temporary OpenAI TTS test-provider support for segmented bulletin audio using `gpt-4o-mini-tts`, with Ana and Paul voice presets routed through the existing provider factory.
 
 - Added backend-only `dual_test` presenter assignment in the editorial-to-audio bridge so story blocks alternate Ana/Paul, intro/outro use Ana, and perspective segments inherit the parent story presenter without requiring Flutter changes.
+
+- Probe voice test scripts now force `provider_override="openai"` so Ana and Paul can be validated through OpenAI TTS without changing the default ElevenLabs production path.

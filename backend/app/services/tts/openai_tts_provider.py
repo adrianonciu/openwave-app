@@ -12,10 +12,6 @@ from app.services.tts.tts_provider_error import TtsProviderError
 
 class OpenAITtsProvider(BaseTtsProvider):
     provider_name = 'openai'
-    _VOICE_BY_PRESENTER = {
-        'ana': 'alloy',
-        'paul': 'verse',
-    }
     _DEFAULT_VOICE = 'alloy'
     _INSTRUCTION_BY_PRESENTER = {
         'ana': 'Esti Ana, prezentatoare de stiri radio. Citeste clar, natural, in limba romana, pe ton de jurnal de stiri.',
@@ -33,9 +29,6 @@ class OpenAITtsProvider(BaseTtsProvider):
 
     @property
     def voice_id(self) -> str:
-        mapped_voice = self._VOICE_BY_PRESENTER.get(self.presenter_name.casefold())
-        if mapped_voice:
-            return mapped_voice
         configured_voice = self._settings.voice_id.strip().lower()
         return configured_voice or self._DEFAULT_VOICE
 

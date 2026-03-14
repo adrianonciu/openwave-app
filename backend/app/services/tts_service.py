@@ -49,7 +49,12 @@ class TtsService:
             )
         return summaries
 
-    def generate_pilot_audio(self, pilot_id: str, presenter_name: str | None = None) -> dict[str, str | list[str]]:
+    def generate_pilot_audio(
+        self,
+        pilot_id: str,
+        presenter_name: str | None = None,
+        provider_override: str | None = None,
+    ) -> dict[str, str | list[str]]:
         normalized_pilot_id = pilot_id.strip().lower()
         if normalized_pilot_id not in self._pilot_files:
             raise FileNotFoundError(f'Unknown pilot id: {pilot_id}')
@@ -62,6 +67,7 @@ class TtsService:
             segment_blocks=segment_blocks,
             presenter_name=presenter_name,
             file_stem=normalized_pilot_id,
+            provider_override=provider_override,
         )
         return {
             'pilot_id': normalized_pilot_id,
@@ -74,6 +80,7 @@ class TtsService:
         briefing_text: str,
         presenter_name: str | None = None,
         file_stem: str | None = None,
+        provider_override: str | None = None,
     ) -> dict[str, str]:
         cleaned_text = self._clean_briefing_text(briefing_text)
         if not cleaned_text:
@@ -84,7 +91,7 @@ class TtsService:
         cleaned_text = normalize_for_romanian_tts(cleaned_text)
 
         presenter = get_presenter_config(presenter_name)
-        provider = create_tts_provider(presenter)
+        provider = create_tts_provider(presenter, provider_override=provider_override)
         safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
         fingerprint = hashlib.md5(
             (
@@ -110,6 +117,7 @@ class TtsService:
         segment_blocks: list[dict[str, str]],
         presenter_name: str | None = None,
         file_stem: str | None = None,
+        provider_override: str | None = None,
     ) -> TtsBudgetEstimateData:
         if not segment_blocks:
             raise ValueError('segment_blocks must not be empty.')
@@ -121,10 +129,11 @@ class TtsService:
             prepared_segments,
             safe_stem=safe_stem,
             fallback_presenter_name=presenter_name,
+            provider_override=provider_override,
         )
 
         if not pending_segments:
-            provider = create_tts_provider(fallback_presenter)
+            provider = create_tts_provider(fallback_presenter, provider_override=provider_override)
             return self._budget_service.estimate_budget(
                 provider_name=provider.provider_name,
                 presenter_name=fallback_presenter.presenter_name,
@@ -132,7 +141,11 @@ class TtsService:
                 elevenlabs_api_key=fallback_presenter.elevenlabs.api_key,
             )
 
-        return self._estimate_budget_from_outputs(pending_segments, fallback_presenter_name=presenter_name)
+        return self._estimate_budget_from_outputs(
+            pending_segments,
+            fallback_presenter_name=presenter_name,
+            provider_override=provider_override,
+        )
 
     def generate_audio_segments(
         self,
@@ -140,6 +153,7 @@ class TtsService:
         presenter_name: str | None = None,
         file_stem: str | None = None,
         budget_estimate: TtsBudgetEstimateData | None = None,
+        provider_override: str | None = None,
     ) -> dict[str, str | list[str]]:
         if not segment_blocks:
             raise ValueError('segment_blocks must not be empty.')
@@ -155,10 +169,12 @@ class TtsService:
             prepared_segments,
             safe_stem=safe_stem,
             fallback_presenter_name=presenter_name,
+            provider_override=provider_override,
         )
         resolved_budget_estimate = budget_estimate or self._estimate_budget_from_outputs(
             pending_segments,
             fallback_presenter_name=presenter_name,
+            provider_override=provider_override,
         )
         self._budget_service.raise_if_budget_exceeded(resolved_budget_estimate)
 
@@ -173,6 +189,7 @@ class TtsService:
                 segment,
                 safe_stem=safe_stem,
                 fallback_presenter_name=presenter_name,
+                provider_override=provider_override,
             )
             provider = output['provider']
             presenter = output['presenter']
@@ -309,6 +326,7 @@ class TtsService:
         *,
         safe_stem: str,
         fallback_presenter_name: str | None,
+        provider_override: str | None = None,
     ) -> list[dict[str, object]]:
         pending_segments: list[dict[str, object]] = []
         for segment in prepared_segments:
@@ -316,6 +334,7 @@ class TtsService:
                 segment,
                 safe_stem=safe_stem,
                 fallback_presenter_name=fallback_presenter_name,
+                provider_override=provider_override,
             )
             output_path = output['output_path']
             if output_path.exists() and output_path.stat().st_size > 0:
@@ -329,13 +348,14 @@ class TtsService:
         *,
         safe_stem: str,
         fallback_presenter_name: str | None,
+        provider_override: str | None = None,
     ) -> dict[str, object]:
         presenter_name = self._resolve_segment_presenter_name(
             segment.get('presenter_name'),
             fallback_presenter_name,
         )
         presenter = get_presenter_config(presenter_name)
-        provider = create_tts_provider(presenter)
+        provider = create_tts_provider(presenter, provider_override=provider_override)
         segment_name = self._safe_stem(segment['segment_name'] or 'segment')
         file_name = f'{safe_stem}_{segment_name}.{provider.output_extension}'
         output_path = self.generated_audio_directory / file_name
@@ -354,10 +374,11 @@ class TtsService:
         pending_segments: list[dict[str, object]],
         *,
         fallback_presenter_name: str | None,
+        provider_override: str | None = None,
     ) -> TtsBudgetEstimateData:
         if not pending_segments:
             fallback_presenter = get_presenter_config(fallback_presenter_name)
-            provider = create_tts_provider(fallback_presenter)
+            provider = create_tts_provider(fallback_presenter, provider_override=provider_override)
             return self._budget_service.estimate_budget(
                 provider_name=provider.provider_name,
                 presenter_name=fallback_presenter.presenter_name,

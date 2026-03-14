@@ -58,6 +58,7 @@ def run_probe() -> dict[str, object]:
     result = tts_service.generate_audio_segments(
         segment_blocks=segment_blocks,
         file_stem=PROBE_ID,
+        provider_override='openai',
     )
     return {
         'probe_id': PROBE_ID,

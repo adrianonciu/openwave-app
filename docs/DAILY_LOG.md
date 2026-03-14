@@ -767,3 +767,50 @@ Run full real-news bulletins and audit:
 - Added a conservative dual presenter test mode in `EditorialToAudioService` with `presenter_mode`, `presenter_a`, and `presenter_b` config.
 - In `dual_test`, intro/outro now use Ana, story blocks alternate Ana then Paul, and perspective segments inherit the presenter of the parent story block.
 - Propagated `presenter_name` through audio segment models and TTS segment blocks while preserving the existing single-presenter flow when the mode stays `single`.
+
+Date: 2026-03-14
+
+Task: Dual presenter test mode (Ana / Paul)
+
+Implemented backend-only dual presenter test mode for the OpenWave Probe flow.
+
+Key changes:
+- Added presenter configuration file:
+  backend/app/config/audio_presenter_config.json
+- Introduced presenter_mode with two supported values:
+  - single (default)
+  - dual_test
+- Added presenter_name propagation through audio generation models:
+  - AudioStorySegment
+  - AudioSegmentBlock
+- Implemented presenter assignment logic in:
+  backend/app/services/editorial_to_audio_service.py
+
+Behavior in dual_test mode:
+- intro → Ana
+- story_01 → Ana
+- story_02 → Paul
+- story_03 → Ana
+- story_04 → Paul
+- perspective_* segments inherit the presenter of the parent story
+- outro → Ana
+
+Additional notes:
+- headline and story body remain a single story block and therefore keep the same presenter
+- presenter_name is forwarded into the TTS pipeline via TtsService
+- single-presenter mode remains unchanged and fully compatible
+- no changes were required in Flutter
+- no editorial logic redesign
+- no TTS provider redesign
+
+Validation:
+- python -m py_compile passed for modified backend files
+- manual verification pending via bulletin generation
+
+Commit:
+0572236 — Add dual presenter test audio mode
+
+Next step:
+Run Probe bulletin tests to validate presenter alternation and audio flow.
+
+- Added OpenAI-backed probe execution for `backend/tests/probe_voice_tests`, using env-configured `OPENAI_TTS_VOICE_ANA` and `OPENAI_TTS_VOICE_PAUL` while leaving the default ElevenLabs path unchanged.
