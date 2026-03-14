@@ -53,6 +53,8 @@ class StorySelectionService:
         )
         self.minimum_editorial_fit: float = raw_config.get("minimum_editorial_fit", 0.24)
         self.soft_news_editorial_fit_bar: float = raw_config.get("soft_news_editorial_fit_bar", 0.42)
+        self.minimum_unique_sources: int = raw_config.get("minimum_unique_sources", 2)
+        self.anchor_min_unique_sources: int = raw_config.get("anchor_min_unique_sources", 3)
 
     def select_stories(
         self,
@@ -65,7 +67,7 @@ class StorySelectionService:
         selected_at = datetime.now(UTC)
         ordered_clusters = sorted(
             scored_clusters,
-            key=lambda cluster: cluster.score_total,
+            key=self._selection_sort_key,
             reverse=True,
         )
         resolved_preferences = (
@@ -248,7 +250,7 @@ class StorySelectionService:
                 )
             )
 
-        selected = sorted(selected, key=lambda cluster: cluster.score_total, reverse=True)
+        selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         stats = StorySelectionStats(
             total_input_clusters=len(scored_clusters),
             selected_count=len(selected),
@@ -282,6 +284,9 @@ class StorySelectionService:
         editorial_fit = cluster.score_breakdown.editorial_fit.value
         editorial_fit_explanation = cluster.score_breakdown.editorial_fit.explanation.lower()
         is_local = any(member.is_local_source for member in cluster.cluster.member_articles)
+        unique_source_count = self._unique_source_count(cluster)
+        if unique_source_count < self.minimum_unique_sources and not is_local:
+            return "single_source_cluster_without_local_relevance"
         if "low-value title markers" in editorial_fit_explanation and not is_local:
             return "low_value_headline_cluster"
         if "english-heavy title tokens" in editorial_fit_explanation and not is_local:
@@ -608,6 +613,22 @@ class StorySelectionService:
     def _source_labels(self, cluster: ScoredStoryCluster) -> list[str]:
         return sorted({member.source for member in cluster.cluster.member_articles})
 
+    def _unique_source_count(self, cluster: ScoredStoryCluster) -> int:
+        return len({member.source for member in cluster.cluster.member_articles})
+
+    def _best_editorial_priority(self, cluster: ScoredStoryCluster) -> int:
+        priorities = [member.editorial_priority for member in cluster.cluster.member_articles]
+        return min(priorities) if priorities else 5
+
+    def _is_anchor_candidate(self, cluster: ScoredStoryCluster) -> bool:
+        return self._unique_source_count(cluster) >= self.anchor_min_unique_sources
+
+    def _selection_sort_key(self, cluster: ScoredStoryCluster) -> tuple[float, float, float, float]:
+        anchor_bonus = 1.0 if self._is_anchor_candidate(cluster) else 0.0
+        unique_sources = float(self._unique_source_count(cluster))
+        priority_bonus = float(6 - self._best_editorial_priority(cluster))
+        return (anchor_bonus, unique_sources, priority_bonus, cluster.score_total)
+
     def _cluster_text(self, cluster: ScoredStoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.cluster.member_articles)
         urls = " ".join(member.url for member in cluster.cluster.member_articles)
@@ -722,6 +743,7 @@ class StorySelectionService:
             "rejected_by_source_diversity_soft_cap": "other close-scoring clusters already represented the same source mix",
             "commentary_like_cluster_below_editorial_bar": "its title looked commentary-like and it did not clear the higher bar for inclusion",
             "rejected_by_editorial_preferences_soft_target": "a near-tie cluster better matched the requested editorial preferences",
+            "single_source_cluster_without_local_relevance": "it was supported by only one source and did not have clear local relevance",
         }
         detail = reason_map.get(reason, reason)
         return (
@@ -761,6 +783,7 @@ class StorySelectionService:
             )
         return (
             f"Selected {stats.selected_count} of {stats.total_input_clusters} scored clusters using a "
-            f"minimum score of {stats.minimum_score_threshold} and a limit of {stats.max_stories}. "
+            f"minimum score of {stats.minimum_score_threshold}, a minimum of {self.minimum_unique_sources} unique source(s) for normal stories, "
+            f"and an anchor preference of {self.anchor_min_unique_sources}+ unique sources for Story 1. "
             f"Top selected titles: {top_titles}. {preference_note}{regional_note}"
         )

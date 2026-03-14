@@ -176,5 +176,7 @@
       "brussels"
     ]
   },
-  "regional_preference_influence_strength": 1.0
+  "regional_preference_influence_strength": 1.0,
+  "minimum_unique_sources": 2,
+  "anchor_min_unique_sources": 3
 }

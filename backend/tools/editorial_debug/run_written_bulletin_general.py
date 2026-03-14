@@ -28,6 +28,8 @@ from app.services.source_watcher_service import SourceWatcherService
 OUTPUT_DIR = BACKEND_ROOT / "debug_output"
 JSON_OUTPUT_PATH = OUTPUT_DIR / "written_bulletin_debug.json"
 TEXT_OUTPUT_PATH = OUTPUT_DIR / "written_bulletin_general.txt"
+SELECTION_JSON_OUTPUT_PATH = OUTPUT_DIR / "story_selection_debug.json"
+SELECTION_TEXT_OUTPUT_PATH = OUTPUT_DIR / "story_selection_debug.txt"
 MAX_INPUT_ARTICLES = 20
 MAX_RSS_FALLBACK_ARTICLES = 6
 ENGLISH_MARKERS = {
@@ -92,7 +94,96 @@ def _serialize_score_breakdown(scored_cluster) -> dict[str, object]:
         "entity_importance": breakdown.entity_importance.model_dump(mode="json"),
         "topic_weight": breakdown.topic_weight.model_dump(mode="json"),
         "title_strength": breakdown.title_strength.model_dump(mode="json"),
+        "editorial_fit": breakdown.editorial_fit.model_dump(mode="json"),
     }
+
+
+def _cluster_scope(scored_cluster) -> str:
+    scopes = [member.source_scope or ("local" if member.is_local_source else "unknown") for member in scored_cluster.cluster.member_articles]
+    return Counter(scopes).most_common(1)[0][0] if scopes else "unknown"
+
+
+def _cluster_category(scored_cluster) -> str:
+    categories = [member.source_category or "general" for member in scored_cluster.cluster.member_articles]
+    return Counter(categories).most_common(1)[0][0] if categories else "general"
+
+
+def _cluster_editorial_priority(scored_cluster) -> int:
+    priorities = [member.editorial_priority for member in scored_cluster.cluster.member_articles]
+    return min(priorities) if priorities else 5
+
+
+def _unique_source_count(scored_cluster) -> int:
+    return len({member.source for member in scored_cluster.cluster.member_articles})
+
+
+def _serialize_selection_candidate(scored_cluster, decision_by_cluster_id: dict[str, object]) -> dict[str, object]:
+    decision = decision_by_cluster_id.get(scored_cluster.cluster.cluster_id)
+    breakdown = scored_cluster.score_breakdown
+    return {
+        "cluster_id": scored_cluster.cluster.cluster_id,
+        "top_headline": scored_cluster.cluster.representative_title,
+        "cluster_size": len(scored_cluster.cluster.member_articles),
+        "unique_source_count": _unique_source_count(scored_cluster),
+        "source_scope": _cluster_scope(scored_cluster),
+        "source_category": _cluster_category(scored_cluster),
+        "editorial_priority": _cluster_editorial_priority(scored_cluster),
+        "freshness_score": breakdown.recency.contribution,
+        "editorial_fit": breakdown.editorial_fit.contribution,
+        "final_score": scored_cluster.score_total,
+        "decision": None if decision is None else decision.model_dump(mode="json"),
+    }
+
+
+def _write_story_selection_debug(scored_clusters, selection_result) -> None:
+    decision_by_cluster_id = {decision.cluster_id: decision for decision in selection_result.decisions}
+    candidates = [_serialize_selection_candidate(cluster, decision_by_cluster_id) for cluster in scored_clusters]
+    selected_candidates = [candidate for candidate in candidates if candidate["decision"] and candidate["decision"]["status"] == "selected"]
+    anchor_candidate = next((candidate for candidate in selected_candidates if candidate["unique_source_count"] >= 3), None)
+    anchor_story = selected_candidates[0] if selected_candidates else None
+    anchor_rule_satisfied = bool(anchor_story and anchor_story["unique_source_count"] >= 3)
+    eligible_anchor_exists = any(candidate["unique_source_count"] >= 3 for candidate in candidates)
+
+    payload = {
+        "candidate_cluster_count": len(candidates),
+        "selected_story_count": len(selected_candidates),
+        "anchor_rule": {
+            "required_unique_source_count": 3,
+            "story_1_cluster_id": None if anchor_story is None else anchor_story["cluster_id"],
+            "story_1_unique_source_count": None if anchor_story is None else anchor_story["unique_source_count"],
+            "satisfied": anchor_rule_satisfied,
+            "eligible_anchor_exists": eligible_anchor_exists,
+            "note": None if anchor_rule_satisfied or eligible_anchor_exists else "No cluster reached the anchor-strength threshold of 3 unique sources.",
+        },
+        "top_candidate_clusters": candidates[:10],
+        "selected_stories": selected_candidates,
+        "all_candidates": candidates,
+    }
+    SELECTION_JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    lines = [
+        "STORY SELECTION DEBUG",
+        "",
+        f"Candidate clusters: {len(candidates)}",
+        f"Selected stories: {len(selected_candidates)}",
+        f"Anchor rule satisfied: {anchor_rule_satisfied}",
+    ]
+    if anchor_story is not None:
+        lines.append(f"Anchor story: {anchor_story['cluster_id']} | sources={anchor_story['unique_source_count']} | score={anchor_story['final_score']}")
+    elif not eligible_anchor_exists:
+        lines.append("Anchor story: no eligible cluster reached 3 unique sources")
+    lines.extend([
+        "",
+        "Top Candidate Clusters",
+    ])
+    for index, candidate in enumerate(candidates[:10], start=1):
+        decision = candidate["decision"]
+        lines.append(
+            f"{index}. {candidate['cluster_id']} | score={candidate['final_score']} | sources={candidate['unique_source_count']} | "
+            f"priority={candidate['editorial_priority']} | scope={candidate['source_scope']} | category={candidate['source_category']} | "
+            f"decision={decision['status'] if decision else 'none'} | headline={candidate['top_headline']}"
+        )
+    SELECTION_TEXT_OUTPUT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedArticle], list[dict[str, object]], dict[str, dict[str, object]], object]:
@@ -216,6 +307,13 @@ def main() -> None:
     articles, discovery_results, provenance_by_url, local_resolution = _build_articles(personalization)
     story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
     scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
+    selection_result = pipeline_service.selection_service.select_stories(
+        scored_clusters,
+        max_stories=8,
+        editorial_preferences=personalization.editorial_preferences,
+        personalization=personalization,
+    )
+    _write_story_selection_debug(scored_clusters, selection_result)
     final_briefing = pipeline_service.run_editorial_pipeline(
         articles=articles,
         personalization=personalization,
@@ -367,6 +465,8 @@ def main() -> None:
 
     print(f"Wrote {JSON_OUTPUT_PATH}")
     print(f"Wrote {TEXT_OUTPUT_PATH}")
+    print(f"Wrote {SELECTION_JSON_OUTPUT_PATH}")
+    print(f"Wrote {SELECTION_TEXT_OUTPUT_PATH}")
     print(validation_result.summary)
 
 
