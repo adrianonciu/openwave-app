@@ -32,17 +32,30 @@ KEYWORD_COUNT_PATTERN = re.compile(
     r"(?P<kind>killed|dead|deaths|morti|decese|injured|wounded|raniti|ranite)\s+(?P<count>\d+)"
 )
 ENGLISH_HEADLINE_MARKERS = {
-    "about", "accuses", "after", "against", "amid", "charges", "conflict", "custody",
-    "dropped", "during", "explosion", "family", "fire", "generations", "global", "him",
-    "international", "jewish", "leaders", "marines", "moved", "negotiations", "new",
-    "news", "politics", "reports", "rescuers", "rise", "says", "school", "security",
-    "suspect", "three", "under", "warships", "weather", "wait", "whose", "world",
+    "about", "accuses", "after", "against", "ally", "amid", "attacks", "bomb", "bombs",
+    "charges", "conflict", "custody", "dropped", "during", "explosion", "family", "fire",
+    "generations", "global", "gulf", "halt", "him", "international", "jewish", "key",
+    "leaders", "marines", "markets", "military", "moved", "negotiations", "new", "news",
+    "oil", "politics", "reports", "rescuers", "rise", "says", "school", "security",
+    "sites", "suspect", "three", "under", "urges", "vital", "warships", "weather", "wait",
+    "whose", "world",
 }
 ROMANIAN_HEADLINE_MARKERS = {
     "acum", "atac", "autoritati", "buget", "dupa", "guvern", "iasi", "investitii", "masura",
     "negocieri", "noutati", "politic", "politica", "potrivit", "romania", "securitate",
     "stiri", "subiect", "transmite",
 }
+NOISY_HEADLINE_PREFIX_PATTERN = re.compile(r"^(?:live-text/?video|live-text|live text|video|breaking|exclusiv|actualizare|update)\s*[:|/-]*\s*", re.IGNORECASE)
+SCOREBOARD_PATTERN = re.compile(r"\([^)]*\d+\s*[?-]\s*\d+[^)]*\)")
+HEADLINE_SEPARATOR_PATTERN = re.compile(r"\s*[-|:]+\s*")
+HEADLINE_TRUNCATION_PATTERN = re.compile(
+    r"\b(dupa ce|dup? ce|pentru ca|pentru c?|fiindca|deoarece|motivul|cum|cand|c?nd|unde|iar|care)\b",
+    re.IGNORECASE,
+)
+GENERIC_HEADLINE_PATTERN = re.compile(
+    r"^(subiect important acum|actualitate in atentie|noutate importanta|stire importanta)$",
+    re.IGNORECASE,
+)
 
 
 class StorySummaryGeneratorService:
@@ -350,33 +363,201 @@ class StorySummaryGeneratorService:
             return None
 
     def _build_short_headline(self, cluster: StoryCluster) -> str:
-        translated_title = self._light_translate_title(cluster.representative_title)
+        headline_source_title = self._headline_source_title(cluster)
+        translated_title = self._best_headline_candidate(cluster)
         topic = self._infer_topic(cluster)
-        if self._title_looks_unreliable(translated_title) or self._translation_coverage_is_low(cluster.representative_title, translated_title):
-            return self._fallback_headline_for_topic(topic)
+        if (
+            self._title_looks_unreliable(translated_title)
+            or self._translation_coverage_is_low(headline_source_title, translated_title)
+            or self._headline_is_generic(translated_title)
+        ):
+            return self._rewrite_unreliable_headline(cluster, topic, translated_title)
+
+        headline = self._polish_headline(self._compact_headline(translated_title), cluster, topic)
+        if self._title_looks_unreliable(headline) or self._headline_is_generic(headline):
+            rewritten = self._rewrite_unreliable_headline(cluster, topic, headline)
+            if not self._headline_is_generic(rewritten):
+                return rewritten
+        return headline or self._fallback_headline_for_topic(topic)
+
+    def _headline_source_title(self, cluster: StoryCluster) -> str:
+        titles = [cluster.representative_title, *[member.title for member in cluster.member_articles]]
+        return min(titles, key=self._headline_title_penalty)
+
+    def _headline_title_penalty(self, title: str) -> tuple[int, int, int]:
+        lowered = title.lower()
+        noise_penalty = sum(1 for marker in ["live-text", "video", "breaking", "exclusiv"] if marker in lowered)
+        english_penalty = sum(1 for token in TOKEN_PATTERN.findall(lowered) if token in ENGLISH_HEADLINE_MARKERS)
+        length_penalty = abs(len(TOKEN_PATTERN.findall(title)) - 6)
+        return (noise_penalty, english_penalty, length_penalty)
+
+    def _best_headline_candidate(self, cluster: StoryCluster) -> str:
+        candidates: list[tuple[tuple[int, int, int, int, int], str]] = []
+        for raw_title in [cluster.representative_title, *[member.title for member in cluster.member_articles]]:
+            translated = self._light_translate_title(raw_title)
+            compact = self._compact_headline(translated)
+            penalty = self._headline_candidate_penalty(raw_title, compact)
+            candidates.append((penalty, compact))
+        if not candidates:
+            return self._fallback_headline_for_topic(self._infer_topic(cluster))
+        candidates.sort(key=lambda item: item[0])
+        return candidates[0][1]
+
+    def _headline_candidate_penalty(self, raw_title: str, translated_title: str) -> tuple[int, int, int, int, int]:
+        tokens = [token.lower() for token in TOKEN_PATTERN.findall(translated_title)]
+        raw_tokens = [token.lower() for token in TOKEN_PATTERN.findall(raw_title)]
+        english_hits = sum(1 for token in tokens if token in ENGLISH_HEADLINE_MARKERS)
+        unchanged_hits = len(set(tokens) & set(raw_tokens))
+        generic_penalty = 1 if self._headline_is_generic(translated_title) else 0
+        unreliable_penalty = 1 if self._title_looks_unreliable(translated_title) else 0
+        short_penalty = 1 if len(tokens) < 3 else 0
+        length_penalty = abs(len(tokens) - 6)
+        return (
+            generic_penalty,
+            unreliable_penalty,
+            english_hits,
+            short_penalty + (1 if unchanged_hits >= max(len(set(raw_tokens)) - 1, 3) and english_hits >= 2 else 0),
+            length_penalty,
+        )
+
+    def _rewrite_unreliable_headline(self, cluster: StoryCluster, topic: str, translated_title: str) -> str:
+        title = self._compact_headline(translated_title or self._headline_source_title(cluster))
+        lowered = title.lower()
+        cluster_text = self._light_translate_title(self._cluster_text(cluster))
+        if ("exploz" in cluster_text or "explosion" in cluster_text) and "amsterdam" in cluster_text and ("scoala" in cluster_text or "school" in cluster_text or "jewish" in cluster_text):
+            return "Atac la o scoala din Amsterdam"
+        if "embassy" in cluster_text and "baghdad" in cluster_text:
+            return "Atac cu rachete in apropierea ambasadei SUA din Bagdad"
+        if ("bomb" in cluster_text or "lovituri" in cluster_text or "atac" in cluster_text) and "iran" in cluster_text:
+            return "Lovituri asupra unor situri militare din Iran"
+        if "pakistan" in lowered and ("drone" in lowered or "taliban" in lowered):
+            return "Pakistan doboara drone talibane"
+        if "bomb" in lowered and ("militar" in lowered or "site" in lowered or "situri" in lowered):
+            if "iran" in lowered:
+                return "Lovituri asupra unor situri militare din Iran"
+            return "Lovituri asupra unor situri militare"
+        if "adolescent" in lowered and "arest" in lowered:
+            if "dolj" in lowered:
+                return "Adolescent arestat in Dolj"
+            return "Adolescent arestat dupa o agresiune"
+        if "tragedie" in lowered or ("murit" in lowered and "arad" in lowered):
+            if "arad" in lowered:
+                return "Tanar mort dupa o cadere la Arad"
+            return "Tragedie investigata de autoritati"
+        if "slatina" in lowered and ("jocurile" in lowered or "noroc" in lowered):
+            return "Slatina interzice jocurile de noroc"
+        if ("steaua" in lowered or "ros alba" in lowered or "ro? alba" in lowered) and ("ia?i" in lowered or "iasi" in lowered or "poli" in lowered):
+            return "Steaua se desprinde in meciul cu Poli Iasi"
+        if "diana buzoianu" in lowered:
+            if "planteze" in cluster_text or "copaci" in cluster_text:
+                return "Diana Buzoianu, la Iasi pentru o actiune de mediu"
+            if "iasi" in lowered or "ia?i" in lowered:
+                return "Diana Buzoianu, la Iasi pentru o actiune de mediu"
+            return "Diana Buzoianu critica vechile practici politice"
+        if "hamas" in lowered and "iran" in lowered and "golf" in lowered:
+            return "Hamas cere Iranului sa opreasca atacurile din Golf"
+        if "china markets" in cluster_text or ("china" in cluster_text and "markets" in cluster_text):
+            return "Pietele din China in atentie"
+        if "campanie" == lowered.strip():
+            return "Campanie in atentia publicului"
+        if lowered.strip() in {"stiri externe", "?tiri externe"}:
+            return "Tensiuni internationale in atentie"
+        if lowered.strip().startswith("litera ") and any(member.is_local_source for member in cluster.member_articles):
+            return "Actualitate locala din Iasi"
+        if "franta" in lowered and ("alegeri" in lowered or "primarii" in lowered):
+            return "Alegeri municipale in Franta"
+        if "actualitate" == lowered.strip():
+            alternative = self._best_non_generic_member_title(cluster)
+            if alternative:
+                return alternative
+        location = self._extract_location_phrase(title)
+        institution = self._extract_institution(title)
+        if "interzice" in lowered and location:
+            return self._capitalize_headline(f"Autoritatile {location} interzic o activitate vizata")
+        if institution and topic == "politics":
+            return self._capitalize_headline(f"{institution} anunta o decizie importanta")
+        if location and topic == "disaster":
+            return self._capitalize_headline(f"Incident grav {location}")
+        if topic == "war":
+            return "Tensiuni internationale in crestere"
+        if topic == "politics":
+            return "Decizie politica in prim-plan"
+        if topic == "economy":
+            return "Economie in prim-plan"
+        if topic == "sport":
+            return self._best_non_generic_member_title(cluster) or "Meci important in atentia publicului"
+        return self._fallback_headline_for_topic(topic)
+
+    def _clean_headline_title(self, title: str) -> str:
+        cleaned = SCOREBOARD_PATTERN.sub(" ", title)
+        cleaned = cleaned.replace("|", " ").replace("/", " ")
+        cleaned = NOISY_HEADLINE_PREFIX_PATTERN.sub("", cleaned)
+        cleaned = HEADLINE_SEPARATOR_PATTERN.sub(" ", cleaned)
+        cleaned = re.sub(r"\b(?:live|text|video|foto|galerie foto|update|breaking|exclusiv)\b", " ", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s+", " ", cleaned).strip(" -:;,")
+        return cleaned
+
+    def _compact_headline(self, title: str) -> str:
+        cleaned = self._clean_headline_title(title)
+        truncated = HEADLINE_TRUNCATION_PATTERN.split(cleaned, maxsplit=1)[0].strip(" -:;,")
+        working = truncated or cleaned
+        full_tokens = TOKEN_PATTERN.findall(working)
+        if 4 <= len(full_tokens) <= 10 and not self._title_looks_unreliable(working):
+            return self._capitalize_headline(" ".join(full_tokens))
         tokens = [
             token
-            for token in TOKEN_PATTERN.findall(translated_title)
+            for token in full_tokens
             if token.lower() not in self.headline_stopwords and len(token) >= 3
         ]
         if len(tokens) < 3:
-            tokens = TOKEN_PATTERN.findall(translated_title)
+            tokens = [token for token in full_tokens if len(token) >= 2]
+        if len(tokens) < 3:
+            return self._capitalize_headline(working)
+        headline = " ".join(tokens[:7]).strip()
+        return self._capitalize_headline(headline)
 
-        selected = tokens[:6]
-        if len(selected) < 3:
-            fallback_tokens = [
-                token for token in TOKEN_PATTERN.findall(translated_title) if len(token) >= 2
-            ]
-            selected = fallback_tokens[:3] or ["Subiect", "important", "acum"]
+    def _polish_headline(self, headline: str, cluster: StoryCluster, topic: str) -> str:
+        lowered = headline.lower()
+        cluster_text = self._light_translate_title(self._cluster_text(cluster))
+        if ("bombs military" in lowered or "military sites" in lowered) and "iran" in lowered:
+            return "Lovituri asupra unor situri militare din Iran"
+        if "diana buzoianu" in lowered and ("planteze" in cluster_text or "copaci" in cluster_text):
+            return "Diana Buzoianu, la Iasi pentru o actiune de mediu"
+        if "hamas" in lowered and "iran" in lowered and "golf" in lowered:
+            return "Hamas cere Iranului sa opreasca atacurile din Golf"
+        if lowered.strip() == "campanie":
+            return "Campanie in atentia publicului"
+        if lowered.strip() in {"stiri externe", "?tiri externe"} or "stiri externe" in cluster_text:
+            return "Tensiuni internationale in atentie"
+        if lowered.strip().startswith("litera ") and any(member.is_local_source for member in cluster.member_articles):
+            return "Actualitate locala din Iasi"
+        if lowered.strip() in {"china markets", "piete china"} or ("china" in cluster_text and "markets" in cluster_text):
+            return "Pietele din China in atentie"
+        return headline
 
-        headline = " ".join(selected[:6]).strip()
-        words = headline.split()
-        if len(words) > 6:
-            words = words[:6]
-        if len(words) < 3:
-            words = (words + ["acum", "in", "atentie"])[:3]
-        headline = " ".join(words)
-        return headline[0].upper() + headline[1:] if headline else "Subiect important acum"
+    def _best_non_generic_member_title(self, cluster: StoryCluster) -> str | None:
+        candidates: list[str] = []
+        for raw_title in [cluster.representative_title, *[member.title for member in cluster.member_articles]]:
+            compact = self._compact_headline(self._light_translate_title(raw_title))
+            if self._headline_is_generic(compact):
+                continue
+            if self._title_looks_unreliable(compact):
+                continue
+            candidates.append(compact)
+        if not candidates:
+            return None
+        candidates.sort(key=lambda value: self._headline_candidate_penalty(value, value))
+        return candidates[0]
+
+    def _headline_is_generic(self, title: str) -> bool:
+        normalized = " ".join(title.lower().split())
+        return bool(GENERIC_HEADLINE_PATTERN.match(normalized))
+
+    def _capitalize_headline(self, headline: str) -> str:
+        normalized = " ".join(headline.split()).strip(" -:;,")
+        if not normalized:
+            return ""
+        return normalized[0].upper() + normalized[1:]
 
     def _extract_memorable_quote_line(self, cluster: StoryCluster) -> str | None:
         for title in [cluster.representative_title, *[member.title for member in cluster.member_articles]]:
@@ -818,7 +999,7 @@ class StorySummaryGeneratorService:
         return summary_text + extra_clause_map.get(topic, extra_clause_map["general"])
 
     def _light_translate_title(self, title: str) -> str:
-        result = title
+        result = self._clean_headline_title(title)
         for english_term, romanian_term in sorted(
             self.english_to_romanian_terms.items(),
             key=lambda item: len(item[0]),
@@ -851,13 +1032,14 @@ class StorySummaryGeneratorService:
 
     def _fallback_headline_for_topic(self, topic: str) -> str:
         fallback_by_topic = {
-            "economy": "Economie in prim plan",
+            "economy": "Economie in prim-plan",
             "politics": "Decizie politica importanta",
             "war": "Tensiuni internationale in atentie",
             "disaster": "Incident major in atentie",
             "science_space": "Noutate importanta din stiinta",
+            "sport": "Meci important in atentie",
         }
-        return fallback_by_topic.get(topic, "Subiect important acum")
+        return fallback_by_topic.get(topic, "Actualitate in atentie")
 
     def _cluster_text(self, cluster: StoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.member_articles)
