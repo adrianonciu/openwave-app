@@ -10,6 +10,7 @@ from typing import Any
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import ParseError
 
 from app.models.local_source_registry import LocalSourceEntry
 from app.models.source_watcher import (
@@ -31,6 +32,7 @@ STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "source_watcher_stat
 RFC3339_DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
 CHARSET_PATTERN = re.compile(r"charset=['\"]?([A-Za-z0-9._-]+)", re.IGNORECASE)
 MAX_LOCAL_SOURCES_PER_REGION = 3
+MALFORMED_RSS_NAMESPACE_TAG_PATTERN = re.compile(r"</?media:[^>]+>")
 
 
 class _PageParser(HTMLParser):
@@ -338,7 +340,8 @@ class SourceWatcherService:
                     notes=entry.notes,
                     region=region,
                     priority_rank=entry.priority_rank,
-                    parser_type="auto",
+                    rss_url=entry.rss_url,
+                    parser_type=entry.parser_type,
                     check_interval_minutes=30,
                 )
             )
@@ -348,8 +351,9 @@ class SourceWatcherService:
         if not source_config.rss_url:
             return None
 
-        root = ET.fromstring(self._fetch_bytes(source_config.rss_url))
+        root = self._parse_rss_root(source_config.rss_url)
         candidates: list[LatestContentItem] = []
+        pending_page_resolution: list[tuple[str, str]] = []
 
         for item in root.findall("./channel/item"):
             candidate = self._build_item_from_xml_entry(
@@ -366,6 +370,11 @@ class SourceWatcherService:
             )
             if candidate is not None:
                 candidates.append(candidate)
+                continue
+            title = self._first_text(item, "title")
+            url = self._first_text(item, "link")
+            if title and url:
+                pending_page_resolution.append((title.strip(), url.strip()))
 
         for entry in root.findall("{http://www.w3.org/2005/Atom}entry"):
             candidate = self._build_item_from_xml_entry(
@@ -383,9 +392,29 @@ class SourceWatcherService:
                 candidates.append(candidate)
 
         if not candidates:
+            for title, url in pending_page_resolution[:5]:
+                candidate = self._get_latest_from_article_page(
+                    source_config=source_config,
+                    article_url=url,
+                    fallback_title=title,
+                )
+                if candidate is not None:
+                    candidates.append(candidate)
+
+        if not candidates:
             return None
 
         return max(candidates, key=lambda item: item.published_at)
+
+    def _parse_rss_root(self, rss_url: str) -> ET.Element:
+        raw_feed = self._fetch_bytes(rss_url).lstrip()
+        try:
+            return ET.fromstring(raw_feed)
+        except ParseError as exc:
+            if 'unbound prefix' not in str(exc):
+                raise
+            sanitized_feed = MALFORMED_RSS_NAMESPACE_TAG_PATTERN.sub('', raw_feed.decode('utf-8', errors='replace'))
+            return ET.fromstring(sanitized_feed.encode('utf-8'))
 
     def _get_latest_from_listing(self, source_config: SourceConfig) -> LatestContentItem | None:
         html = self._fetch_text(source_config.source_url)

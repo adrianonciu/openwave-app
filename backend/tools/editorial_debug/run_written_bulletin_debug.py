@@ -34,7 +34,8 @@ from app.services.story_summary_generator_service import StorySummaryGeneratorSe
 OUTPUT_DIR = BACKEND_ROOT / 'debug_output'
 JSON_OUTPUT_PATH = OUTPUT_DIR / 'written_bulletin_debug.json'
 TEXT_OUTPUT_PATH = OUTPUT_DIR / 'written_bulletin_adrian.txt'
-MAX_INPUT_ARTICLES = 12
+MAX_INPUT_ARTICLES = 14
+MAX_RSS_FALLBACK_ARTICLES = 4
 ENGLISH_MARKERS = {
     'the', 'and', 'with', 'from', 'under', 'against', 'whose', 'during', 'officials',
     'says', 'say', 'family', 'suspect', 'wait', 'world', 'news', 'teacher', 'died',
@@ -223,7 +224,7 @@ def main() -> None:
 
     rss_articles_added = 0
     for rss_article in article_service.get_articles():
-        if len(articles) >= MAX_INPUT_ARTICLES:
+        if len(articles) >= MAX_INPUT_ARTICLES or rss_articles_added >= MAX_RSS_FALLBACK_ARTICLES:
             break
         if rss_article.url in seen_urls or not rss_article.summary.strip():
             continue
@@ -338,6 +339,17 @@ def main() -> None:
     local_candidate_articles = [
         article for article in article_ingestion_results if article.get('is_local_source') and article.get('status') == 'success'
     ]
+    candidate_scope_counts = dict(Counter((article.get('scope') or 'unknown') for article in article_ingestion_results if article.get('status') == 'success'))
+    candidate_provenance_counts = dict(Counter(article.get('ingestion_kind') or 'unknown' for article in article_ingestion_results if article.get('status') == 'success'))
+    local_source_status = {
+        result['source_name']: {
+            'status': result['status'],
+            'latest_item': result.get('latest_item'),
+            'error': result.get('error'),
+        }
+        for result in discovery_results
+        if result.get('scope') == 'local'
+    }
     local_selected_stories = [
         story for story in selected_story_debug if story['decision'] and story['decision'].get('regional_relevance') == 'region_match'
     ]
@@ -364,6 +376,8 @@ def main() -> None:
             'total_candidate_articles': len(articles),
             'full_fetch_success_count': sum(1 for article in article_ingestion_results if article.get('ingestion_kind') == 'full_fetch'),
             'rss_fallback_count': rss_articles_added,
+            'candidates_by_scope': candidate_scope_counts,
+            'candidates_by_provenance': candidate_provenance_counts,
             'results': article_ingestion_results,
         },
         'story_clustering': {
@@ -387,6 +401,7 @@ def main() -> None:
             'local_story_count': len(local_selected_stories),
             'iasi_local_candidate_count': len(local_candidate_articles),
             'iasi_local_sources_produced_candidates': len(local_candidate_articles) > 0,
+            'local_parser_status_by_source': local_source_status,
             'perspective_pairs_triggered': perspective_triggered,
             'mixed_language_story_ids': mixed_language_story_ids,
             'rss_fallback_usage_rate': round(rss_fallback_candidates / max(len(articles), 1), 2),
@@ -426,10 +441,14 @@ def main() -> None:
         '',
         'Editorial diagnostics',
         f'- Candidate articles: {len(articles)}',
+        f'- Candidates by scope: {candidate_scope_counts}',
+        f'- Candidates by provenance: {candidate_provenance_counts}',
         f'- Clusters created: {len(story_clusters)}',
         f'- Selected stories: {len(sized_briefing.story_items)}',
         f'- Local stories selected: {len(local_selected_stories)}',
+        f'- Iasi local candidate count: {len(local_candidate_articles)}',
         f'- Iasi sources produced candidates: {len(local_candidate_articles) > 0}',
+        f'- Local parser status by source: {local_source_status}',
         f'- Perspective pairs triggered: {perspective_triggered}',
         f'- Mixed Romanian/English detected: {bool(mixed_language_story_ids)}',
         f'- Mixed-language story ids: {", ".join(mixed_language_story_ids) or "none"}',

@@ -29,7 +29,7 @@ class ArticleFetchResult(BaseModel):
     ]
     article: FetchedArticle | None = None
     error_message: str | None = None
-    extraction_method: Literal["json_ld", "article_tag", "heuristic"] | None = None
+    extraction_method: Literal["json_ld", "article_tag", "heuristic", "paragraph_fallback"] | None = None
     cached: bool = False
 
 

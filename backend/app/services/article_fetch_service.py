@@ -65,6 +65,7 @@ MULTISPACE_PATTERN = re.compile(r"[ \t]+")
 MULTINEWLINE_PATTERN = re.compile(r"\n{3,}")
 DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
 CHARSET_PATTERN = re.compile(r"charset=['\"]?([A-Za-z0-9._-]+)", re.IGNORECASE)
+PARAGRAPH_PATTERN = re.compile(r"<p\b[^>]*>(.*?)</p>", re.IGNORECASE | re.DOTALL)
 
 
 @dataclass
@@ -222,7 +223,7 @@ class ArticleFetchService:
 
         json_ld_metadata = self._extract_json_ld_metadata(parser.json_ld_blocks)
         metadata = self._merge_metadata(normalized_target, parser, json_ld_metadata)
-        extraction_method, content_text = self._extract_content_text(parser, json_ld_metadata)
+        extraction_method, content_text = self._extract_content_text(parser, json_ld_metadata, html)
 
         if len(content_text) < MIN_CONTENT_LENGTH:
             return ArticleFetchResult(
@@ -408,6 +409,7 @@ class ArticleFetchService:
         self,
         parser: _ArticleHtmlParser,
         json_ld_metadata: _ArticleMetadata,
+        html: str,
     ) -> tuple[str | None, str]:
         if json_ld_metadata.article_body:
             cleaned = self._clean_content_text(json_ld_metadata.article_body)
@@ -422,7 +424,11 @@ class ArticleFetchService:
         if len(heuristic_text) >= MIN_CONTENT_LENGTH:
             return "heuristic", heuristic_text
 
-        fallback = max((json_ld_metadata.article_body or ""), article_text, heuristic_text, key=len)
+        paragraph_fallback = self._clean_content_text(self._extract_paragraph_fallback_text(html))
+        if len(paragraph_fallback) >= MIN_CONTENT_LENGTH:
+            return "paragraph_fallback", paragraph_fallback
+
+        fallback = max((json_ld_metadata.article_body or ""), article_text, heuristic_text, paragraph_fallback, key=len)
         return None, fallback
 
     def _build_heuristic_text(self, blocks: list[dict[str, Any]]) -> str:
@@ -458,6 +464,31 @@ class ArticleFetchService:
 
         selected.sort(key=lambda item: item[0])
         return "\n\n".join(text for _, text in selected)
+
+    def _extract_paragraph_fallback_text(self, html: str) -> str:
+        paragraphs: list[str] = []
+        for match in PARAGRAPH_PATTERN.findall(html):
+            text = re.sub(r"<[^>]+>", " ", match)
+            text = self._clean_line(text)
+            if not text:
+                continue
+            lowered = text.lower()
+            if any(marker in lowered for marker in [
+                "adresa ta de email",
+                "campurile obligatorii",
+                "lasa un raspuns",
+                "publicată.",
+                "comentariu",
+            ]):
+                break
+            if len(text) < 60:
+                continue
+            if self._looks_like_noise(text, "paragraph_fallback"):
+                continue
+            paragraphs.append(text)
+            if sum(len(item) for item in paragraphs) >= 4000:
+                break
+        return "\n\n".join(paragraphs)
 
     def _clean_content_text(self, raw_text: str) -> str:
         if not raw_text:

@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 class LocalSourceEntry(BaseModel):
     source_name: str
     source_url: str
+    rss_url: str | None = None
+    parser_type: str = "auto"
     category: str = "general"
     scope: str = "local"
     country: str = "Romania"

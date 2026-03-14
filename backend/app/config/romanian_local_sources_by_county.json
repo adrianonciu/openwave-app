@@ -492,17 +492,26 @@
         {
           "source_name": "ziaruldeiasi.ro",
           "source_url": "https://www.ziaruldeiasi.ro",
-          "priority_rank": 1
+          "priority_rank": 1,
+          "rss_url": "https://www.ziaruldeiasi.ro/rss",
+          "parser_type": "rss",
+          "notes": "Uses site RSS because homepage listing does not expose article-level publish dates."
         },
         {
           "source_name": "bzi.ro",
           "source_url": "https://www.bzi.ro",
-          "priority_rank": 2
+          "priority_rank": 2,
+          "rss_url": "https://www.bzi.ro/local-s14/feed",
+          "parser_type": "rss",
+          "notes": "Uses local section RSS for fresher Iasi coverage."
         },
         {
           "source_name": "ieseanul.ro",
           "source_url": "https://www.ieseanul.ro",
-          "priority_rank": 3
+          "priority_rank": 3,
+          "rss_url": "https://ieseanul.ro/feed/",
+          "parser_type": "rss",
+          "notes": "Uses general site RSS because locale section feed is stale; source remains local by registry scope."
         }
       ]
     },
