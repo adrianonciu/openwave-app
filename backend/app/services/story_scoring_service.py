@@ -20,6 +20,46 @@ LOW_VALUE_TITLE_MARKERS = {
     "recap", "bracketology", "winners", "losers", "propozitie cu", "cum se scrie", "definitie",
     "ce inseamna", "ghid", "tutorial",
 }
+EUROPE_ROMANIA_IMPACT_TERMS: dict[str, float] = {
+    "black sea": 1.0,
+    "marea neagra": 1.0,
+    "romania": 1.0,
+    "romanian": 0.95,
+    "romania's": 0.95,
+    "european union": 0.95,
+    "eu": 0.9,
+    "brussels": 0.9,
+    "nato": 0.95,
+    "ukraine": 0.95,
+    "ucraina": 0.95,
+    "moldova": 0.9,
+    "balkans": 0.8,
+    "balcani": 0.8,
+    "middle east": 0.7,
+    "orientul mijlociu": 0.7,
+    "gulf": 0.8,
+    "golf": 0.8,
+    "emiratele": 0.75,
+    "ports": 0.7,
+    "porturi": 0.7,
+    "eurozone": 0.9,
+    "ecb": 0.9,
+    "european central bank": 0.9,
+    "european markets": 0.8,
+    "european energy": 0.85,
+    "energy supply": 0.8,
+    "gas supply": 0.8,
+    "oil": 0.55,
+    "gas": 0.55,
+    "shipping": 0.65,
+    "shipping routes": 0.8,
+    "strait of hormuz": 0.85,
+    "ormuz": 0.85,
+    "security": 0.7,
+    "defence": 0.7,
+    "defense": 0.7,
+    "migration": 0.7,
+}
 
 
 class StoryScoringService:
@@ -63,6 +103,7 @@ class StoryScoringService:
         entity_importance = self._score_entity_importance(cluster)
         topic_weight = self._score_topic_weight(cluster)
         title_strength = self._score_title_strength(cluster)
+        europe_romania_impact = self._score_europe_romania_impact(cluster)
         editorial_fit = self._score_editorial_fit(cluster)
 
         total = round(
@@ -72,6 +113,7 @@ class StoryScoringService:
             + entity_importance.contribution
             + topic_weight.contribution
             + title_strength.contribution
+            + europe_romania_impact.contribution
             + editorial_fit.contribution,
             2,
         )
@@ -82,6 +124,7 @@ class StoryScoringService:
             entity_importance=entity_importance,
             topic_weight=topic_weight,
             title_strength=title_strength,
+            europe_romania_impact=europe_romania_impact,
             editorial_fit=editorial_fit,
         )
         explanation = self._build_explanation(cluster, breakdown, total)
@@ -231,6 +274,48 @@ class StoryScoringService:
             ),
         )
 
+    def _score_europe_romania_impact(self, cluster: StoryCluster) -> ScoreComponent:
+        max_points = 9.0
+        scopes = {
+            member.source_scope or ("local" if member.is_local_source else "unknown")
+            for member in cluster.member_articles
+        }
+        text = self._cluster_text(cluster)
+        matched_terms = [
+            (term, weight)
+            for term, weight in EUROPE_ROMANIA_IMPACT_TERMS.items()
+            if term.lower() in text
+        ]
+
+        if "international" not in scopes:
+            return ScoreComponent(
+                name="europe_romania_impact",
+                value=0.0,
+                max_points=max_points,
+                contribution=0.0,
+                explanation="Europe/Romania impact boost applies only to international clusters.",
+            )
+
+        normalized = min(sum(weight for _, weight in matched_terms), 2.0) / 2.0
+
+        categories = {member.source_category or "general" for member in cluster.member_articles}
+        if any(category in {"entertainment", "lifestyle"} for category in categories):
+            normalized = max(normalized - 0.35, 0.0)
+        elif "sport" in categories and normalized < 0.75:
+            normalized = max(normalized - 0.2, 0.0)
+
+        contribution = round(normalized * max_points, 2)
+        label_text = ", ".join(term for term, _ in matched_terms[:5]) if matched_terms else "none"
+        return ScoreComponent(
+            name="europe_romania_impact",
+            value=round(normalized, 2),
+            max_points=max_points,
+            contribution=contribution,
+            explanation=(
+                f"International relevance to Europe/Romania matched: {label_text}."
+            ),
+        )
+
     def _score_editorial_fit(self, cluster: StoryCluster) -> ScoreComponent:
         max_points = 12.0
         categories = {member.source_category or "general" for member in cluster.member_articles}
@@ -314,6 +399,7 @@ class StoryScoringService:
                 breakdown.entity_importance,
                 breakdown.topic_weight,
                 breakdown.title_strength,
+                breakdown.europe_romania_impact,
                 breakdown.editorial_fit,
             ],
             key=lambda component: component.contribution,

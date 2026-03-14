@@ -20,6 +20,7 @@ class StoryScoreBreakdown(BaseModel):
     entity_importance: ScoreComponent
     topic_weight: ScoreComponent
     title_strength: ScoreComponent
+    europe_romania_impact: ScoreComponent
     editorial_fit: ScoreComponent
 
 
