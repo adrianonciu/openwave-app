@@ -376,6 +376,7 @@ class _PersonalizationFlowScreenState extends State<PersonalizationFlowScreen> {
   @override
   Widget build(BuildContext context) {
     final isLastStep = _currentStep == 1;
+    final canContinue = _currentStep == 0 ? _isProfileValid : _isPreferencesValid;
 
     return Scaffold(
       appBar: AppBar(
@@ -388,49 +389,50 @@ class _PersonalizationFlowScreenState extends State<PersonalizationFlowScreen> {
             : _buildPreferencesStep(context),
       ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          child: Row(
-            children: [
-              if (_currentStep > 0)
+        top: false,
+        child: Material(
+          elevation: 8,
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Row(
+              children: [
+                if (_currentStep > 0)
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _isSaving
+                          ? null
+                          : () {
+                              setState(() {
+                                _currentStep--;
+                              });
+                            },
+                      child: const Text('Back'),
+                    ),
+                  ),
+                if (_currentStep > 0) const SizedBox(width: 12),
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: _isSaving
+                  child: ElevatedButton(
+                    onPressed: (_isSaving || !canContinue)
                         ? null
                         : () {
-                            setState(() {
-                              _currentStep--;
-                            });
-                          },
-                    child: const Text('Back'),
-                  ),
-                ),
-              if (_currentStep > 0) const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton(
-                  onPressed: _isSaving
-                      ? null
-                      : () {
-                          if (!isLastStep) {
-                            if (!_isProfileValid) {
-                              setState(() {});
+                            if (!isLastStep) {
+                              setState(() {
+                                _currentStep = 1;
+                              });
                               return;
                             }
-                            setState(() {
-                              _currentStep = 1;
-                            });
-                            return;
-                          }
-                          _save();
-                        },
-                  child: Text(_isSaving
-                      ? 'Saving...'
-                      : (isLastStep
-                          ? (widget.isOnboarding ? 'Finish setup' : 'Save')
-                          : 'Continue')),
+                            _save();
+                          },
+                    child: Text(_isSaving
+                        ? 'Saving...'
+                        : (isLastStep
+                            ? (widget.isOnboarding ? 'Finish setup' : 'Save')
+                            : 'Continue')),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
