@@ -81,12 +81,12 @@ EVENT_NORMALIZATION_MAP = {
     "market": "piete",
 }
 SPORT_TERMS = {
-    "atletism", "championship", "cupa", "football", "goal", "gol", "league", "liga", "match",
-    "meci", "nba", "olympic", "pariuri", "soccer", "sport", "tennis", "wbc",
+    "atletism", "championship", "cupa", "derby", "football", "goal", "gol", "league", "liga", "match",
+    "meci", "nba", "olympic", "pariuri", "soccer", "sport", "superliga", "tennis", "wbc",
 }
 SPORT_STRONG_TERMS = {
-    "atletism", "championship", "cupa", "football", "goal", "gol", "league", "liga", "match",
-    "meci", "nba", "olympic", "pariuri", "play-off", "play-out", "soccer", "sport", "tennis", "wbc",
+    "atletism", "championship", "cupa", "derby", "football", "goal", "gol", "league", "liga", "match",
+    "meci", "nba", "olympic", "pariuri", "play-off", "play-out", "soccer", "sport", "superliga", "tennis", "wbc",
 }
 HARD_NEWS_TERMS = {
     "ambasada", "atac", "bagdad", "china", "conflict", "crisis", "criza", "emiratele", "explozie", "golful",
@@ -209,8 +209,17 @@ class NewsClusteringService:
         event_terms = self._event_terms(
             f"{normalized_article.title}. {normalized_article.content_text[:1600]}"
         )
-        event_families = self._event_families(event_terms)
-        regional_buckets = self._regional_buckets(event_terms)
+        if self._should_suppress_hard_news_signals(
+            normalized_article.source_category,
+            normalized_article.title,
+            normalized_article.content_text,
+            event_terms,
+        ):
+            event_families = set()
+            regional_buckets = set()
+        else:
+            event_families = self._event_families(event_terms)
+            regional_buckets = self._regional_buckets(event_terms)
         return _ArticleSignals(
             article=normalized_article,
             normalized_title=self._normalize_text(normalized_article.title),
@@ -613,6 +622,25 @@ class NewsClusteringService:
             if event_terms & keywords
         }
         return families
+
+    def _should_suppress_hard_news_signals(
+        self,
+        category: str | None,
+        normalized_title: str,
+        normalized_content: str,
+        event_terms: set[str],
+    ) -> bool:
+        text = f"{normalized_title} {normalized_content}".lower()
+        sport_hits = sum(1 for term in SPORT_STRONG_TERMS if term in text)
+        geopolitical_hits = sum(1 for term in GEOPOLITICAL_EVENT_ANCHORS if term in event_terms)
+        regional_hits = sum(1 for term in REGIONAL_ESCALATION_TERMS if term in event_terms)
+        hard_news_hits = sum(1 for term in HARD_NEWS_TERMS if term in text)
+
+        if category == "sport":
+            return True
+        if sport_hits >= 2 and geopolitical_hits == 0 and regional_hits == 0 and hard_news_hits <= 1:
+            return True
+        return False
 
     def _regional_buckets(self, event_terms: set[str]) -> set[str]:
         return {

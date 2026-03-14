@@ -36,6 +36,8 @@ INTERNATIONAL_MERGE_DEBUG_JSON_PATH = OUTPUT_DIR / "international_merge_debug.js
 INTERNATIONAL_MERGE_DEBUG_TEXT_PATH = OUTPUT_DIR / "international_merge_debug.txt"
 CANDIDATE_POOL_AUDIT_JSON_PATH = OUTPUT_DIR / "candidate_pool_audit.json"
 CANDIDATE_POOL_AUDIT_TEXT_PATH = OUTPUT_DIR / "candidate_pool_audit.txt"
+INTERNATIONAL_SOURCE_COVERAGE_JSON_PATH = OUTPUT_DIR / "international_source_coverage.json"
+INTERNATIONAL_SOURCE_COVERAGE_TEXT_PATH = OUTPUT_DIR / "international_source_coverage.txt"
 MAX_INPUT_ARTICLES = 20
 MAX_RSS_FALLBACK_ARTICLES = 6
 MAX_SOURCE_FETCH_ATTEMPTS = 32
@@ -82,7 +84,7 @@ def _build_general_personalization() -> UserPersonalization:
     )
 
 
-def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedArticle], dict[str, dict[str, object]]]:
+def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedArticle], dict[str, dict[str, object]], dict[str, dict[str, object]]]:
     watcher_service = SourceWatcherService()
     fetch_service = ArticleFetchService()
     article_service = ArticleService()
@@ -90,6 +92,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
     base_source_configs, _ = watcher_service.resolve_monitored_source_configs(personalization)
     source_by_domain: dict[str, dict[str, object]] = {}
     latest_items: list[tuple[object, object]] = []
+    source_coverage: dict[str, dict[str, object]] = {}
 
     for source_config in base_source_configs:
         source_by_domain[_normalize_domain(source_config.source_url)] = {
@@ -101,9 +104,22 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             "editorial_priority": source_config.editorial_priority,
             "region": source_config.region,
         }
+        source_coverage[source_config.source_id] = {
+            "source_id": source_config.source_id,
+            "source_name": source_config.source_name,
+            "source_scope": source_config.scope,
+            "source_category": source_config.category,
+            "editorial_priority": source_config.editorial_priority,
+            "articles_discovered": 0,
+            "articles_fetched_successfully": 0,
+            "candidate_articles_produced": 0,
+            "clusters_contributed_to": 0,
+            "multi_source_clusters_contributed_to": 0,
+        }
         try:
             latest = watcher_service.get_latest_content(source_config)
             latest_items.append((source_config, latest))
+            source_coverage[source_config.source_id]["articles_discovered"] += 1
         except Exception:
             continue
 
@@ -133,6 +149,8 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
                 }
             )
             articles.append(article)
+            source_coverage[source_config.source_id]["articles_fetched_successfully"] += 1
+            source_coverage[source_config.source_id]["candidate_articles_produced"] += 1
             provenance_by_url[article.url] = {
                 "ingestion_kind": "full_fetch",
                 "source_id": source_config.source_id,
@@ -164,6 +182,9 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             is_local_source=mapped_meta.get("scope") == "local",
         )
         articles.append(article)
+        source_id = mapped_meta.get("source_id")
+        if source_id in source_coverage:
+            source_coverage[source_id]["candidate_articles_produced"] += 1
         provenance_by_url[article.url] = {
             "ingestion_kind": "rss_fallback",
             "source_id": mapped_meta.get("source_id"),
@@ -175,7 +196,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
         }
         rss_articles_added += 1
 
-    return articles, provenance_by_url
+    return articles, provenance_by_url, source_coverage
 
 
 def _dominant_scope(scored_cluster) -> str:
@@ -429,6 +450,69 @@ def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: se
     STORY_SELECTION_DEBUG_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _write_international_source_coverage(
+    source_coverage: dict[str, dict[str, object]],
+    scored_clusters: list,
+    clustering_service,
+) -> None:
+    coverage_by_normalized_source = {
+        clustering_service._normalize_source_identity(coverage["source_name"]): coverage
+        for coverage in source_coverage.values()
+    }
+
+    for cluster in scored_clusters:
+        source_ids_in_cluster: set[str] = set()
+        for member in cluster.cluster.member_articles:
+            normalized_member_source = clustering_service._normalize_source_identity(member.source)
+            coverage = coverage_by_normalized_source.get(normalized_member_source)
+            if coverage is not None:
+                source_ids_in_cluster.add(coverage["source_id"])
+        for source_id in source_ids_in_cluster:
+            source_coverage[source_id]["clusters_contributed_to"] += 1
+            if len({member.source for member in cluster.cluster.member_articles}) >= 2:
+                source_coverage[source_id]["multi_source_clusters_contributed_to"] += 1
+
+    international_sources = [
+        coverage
+        for coverage in source_coverage.values()
+        if coverage["source_scope"] == "international"
+    ]
+    international_sources.sort(
+        key=lambda item: (
+            -item["candidate_articles_produced"],
+            -item["articles_fetched_successfully"],
+            -item["clusters_contributed_to"],
+            item["source_name"].lower(),
+        )
+    )
+
+    payload = {
+        "international_source_count": len(international_sources),
+        "sources": international_sources,
+    }
+    INTERNATIONAL_SOURCE_COVERAGE_JSON_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    lines = [
+        "INTERNATIONAL SOURCE COVERAGE",
+        "",
+        f"international_source_count: {payload['international_source_count']}",
+        "",
+    ]
+    for index, item in enumerate(international_sources, start=1):
+        lines.extend([
+            f"{index}. {item['source_name']}",
+            f"   source_category: {item['source_category']}",
+            f"   editorial_priority: {item['editorial_priority']}",
+            f"   articles_discovered: {item['articles_discovered']}",
+            f"   articles_fetched_successfully: {item['articles_fetched_successfully']}",
+            f"   candidate_articles_produced: {item['candidate_articles_produced']}",
+            f"   clusters_contributed_to: {item['clusters_contributed_to']}",
+            f"   multi_source_clusters_contributed_to: {item['multi_source_clusters_contributed_to']}",
+            "",
+        ])
+    INTERNATIONAL_SOURCE_COVERAGE_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+
 def _write_candidate_pool_audit(scored_clusters: list, article_by_url: dict[str, FetchedArticle], clustering_service) -> None:
     top_candidates = scored_clusters[:10]
     top_payload = []
@@ -527,7 +611,7 @@ def main() -> None:
     personalization = _build_general_personalization()
     pipeline_service = EditorialPipelineService()
 
-    articles, _ = _build_articles(personalization)
+    articles, _, source_coverage = _build_articles(personalization)
     article_by_url = {article.url: article for article in articles}
     story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
     scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
@@ -567,6 +651,7 @@ def main() -> None:
     _write_story_selection_debug(scored_clusters, selected_cluster_ids)
     _write_international_merge_debug(global_candidates, article_by_url, pipeline_service.clustering_service)
     _write_candidate_pool_audit(scored_clusters, article_by_url, pipeline_service.clustering_service)
+    _write_international_source_coverage(source_coverage, scored_clusters, pipeline_service.clustering_service)
 
     print(f"Wrote {NATIONAL_JSON_OUTPUT_PATH}")
     print(f"Wrote {NATIONAL_TEXT_OUTPUT_PATH}")
@@ -578,6 +663,8 @@ def main() -> None:
     print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_TEXT_PATH}")
     print(f"Wrote {CANDIDATE_POOL_AUDIT_JSON_PATH}")
     print(f"Wrote {CANDIDATE_POOL_AUDIT_TEXT_PATH}")
+    print(f"Wrote {INTERNATIONAL_SOURCE_COVERAGE_JSON_PATH}")
+    print(f"Wrote {INTERNATIONAL_SOURCE_COVERAGE_TEXT_PATH}")
     print(json.dumps({
         "national_candidate_clusters": national_payload["candidate_cluster_count"],
         "global_candidate_clusters": global_payload["candidate_cluster_count"],
