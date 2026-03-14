@@ -763,3 +763,7 @@ Run full real-news bulletins and audit:
 - Added a temporary OpenAI TTS test provider path using `gpt-4o-mini-tts` through the existing provider factory.
 - Added presenter voice mapping for `Ana -> alloy` and `Paul -> verse`, while preserving segmented file naming and storage behavior.
 - TTS provider failures are now surfaced as structured provider errors in backend TTS routes and preserved more cleanly in the end-to-end generation path.
+
+- Added a conservative dual presenter test mode in `EditorialToAudioService` with `presenter_mode`, `presenter_a`, and `presenter_b` config.
+- In `dual_test`, intro/outro now use Ana, story blocks alternate Ana then Paul, and perspective segments inherit the presenter of the parent story block.
+- Propagated `presenter_name` through audio segment models and TTS segment blocks while preserving the existing single-presenter flow when the mode stays `single`.

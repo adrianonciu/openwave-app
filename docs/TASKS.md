@@ -769,3 +769,5 @@ Still intentionally excluded from this task:
 - Flutter now translates backend TTS budget failures into a user-facing recovery message with shorter-bulletin and lower-cost-mode suggestions.
 
 - Added temporary OpenAI TTS test-provider support for segmented bulletin audio using `gpt-4o-mini-tts`, with Ana and Paul voice presets routed through the existing provider factory.
+
+- Added backend-only `dual_test` presenter assignment in the editorial-to-audio bridge so story blocks alternate Ana/Paul, intro/outro use Ana, and perspective segments inherit the parent story presenter without requiring Flutter changes.

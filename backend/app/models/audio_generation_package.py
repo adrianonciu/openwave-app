@@ -9,6 +9,7 @@ class AudioStorySegment(BaseModel):
     story_text: str = Field(..., min_length=1)
     topic_label: str = "general"
     source_labels: list[str] = Field(default_factory=list)
+    presenter_name: str | None = None
 
 
 class AudioSegmentBlock(BaseModel):
@@ -18,6 +19,7 @@ class AudioSegmentBlock(BaseModel):
     audio_file: str | None = None
     topic_label: str | None = None
     source_labels: list[str] = Field(default_factory=list)
+    presenter_name: str | None = None
 
 
 class AudioGenerationPackage(BaseModel):

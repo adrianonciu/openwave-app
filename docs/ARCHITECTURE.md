@@ -1630,3 +1630,7 @@ Current behavior:
 ### OpenAI Test TTS Provider
 
 OpenWave now also supports a temporary OpenAI TTS provider path for testing. This path keeps the existing provider abstraction, uses the `POST /v1/audio/speech` endpoint with `gpt-4o-mini-tts`, preserves segmented file output, and maps presenter names to fixed test voices (`Ana -> alloy`, `Paul -> verse`) without changing editorial or final voice architecture.
+
+### Dual Presenter Test Mode
+
+OpenWave now also supports a backend-only `dual_test` presenter mode in `EditorialToAudioService`. This mode assigns `presenter_name` per spoken segment, keeps intro/outro on Ana, alternates story blocks Ana/Paul by story index, and forces perspective segments to inherit the same presenter as their parent story while leaving Flutter and provider architecture unchanged.

@@ -379,3 +379,7 @@ County-based local source example:
 - watcher source type: `local_county`
 - registry path: `backend/app/config/romanian_local_sources_by_county.json`
 - resolution example: `backend/app/config/local_source_resolution_examples.json`
+
+## Dual Presenter Test Mode
+
+OpenWave now supports a conservative `dual_test` presenter mode at the editorial-to-audio bridge layer. In this mode, `EditorialToAudioService` assigns `Ana` to intro and outro, alternates story blocks as `Ana`, `Paul`, `Ana`, `Paul`, and makes all perspective segments inherit the presenter of their parent story. If `presenter_mode` is not `dual_test`, the existing single-presenter flow remains unchanged.

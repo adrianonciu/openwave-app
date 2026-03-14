@@ -114,21 +114,25 @@ class TtsService:
         if not segment_blocks:
             raise ValueError('segment_blocks must not be empty.')
 
-        presenter = get_presenter_config(presenter_name)
-        provider = create_tts_provider(presenter)
-        safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
+        fallback_presenter = get_presenter_config(presenter_name)
+        safe_stem = self._safe_stem(file_stem or fallback_presenter.presenter_name)
         prepared_segments = self._prepare_segment_payloads(segment_blocks)
         pending_segments = self._build_pending_segment_outputs(
             prepared_segments,
             safe_stem=safe_stem,
-            output_extension=provider.output_extension,
+            fallback_presenter_name=presenter_name,
         )
-        return self._budget_service.estimate_budget(
-            provider_name=provider.provider_name,
-            presenter_name=presenter.presenter_name,
-            prepared_segment_texts=[segment['text'] for segment in pending_segments],
-            elevenlabs_api_key=presenter.elevenlabs.api_key,
-        )
+
+        if not pending_segments:
+            provider = create_tts_provider(fallback_presenter)
+            return self._budget_service.estimate_budget(
+                provider_name=provider.provider_name,
+                presenter_name=fallback_presenter.presenter_name,
+                prepared_segment_texts=[],
+                elevenlabs_api_key=fallback_presenter.elevenlabs.api_key,
+            )
+
+        return self._estimate_budget_from_outputs(pending_segments, fallback_presenter_name=presenter_name)
 
     def generate_audio_segments(
         self,
@@ -140,9 +144,8 @@ class TtsService:
         if not segment_blocks:
             raise ValueError('segment_blocks must not be empty.')
 
-        presenter = get_presenter_config(presenter_name)
-        provider = create_tts_provider(presenter)
-        safe_stem = self._safe_stem(file_stem or presenter.presenter_name)
+        fallback_presenter = get_presenter_config(presenter_name)
+        safe_stem = self._safe_stem(file_stem or fallback_presenter.presenter_name)
         segment_urls: list[str] = []
         prepared_segments = self._prepare_segment_payloads(segment_blocks)
         if not prepared_segments:
@@ -151,23 +154,32 @@ class TtsService:
         pending_segments = self._build_pending_segment_outputs(
             prepared_segments,
             safe_stem=safe_stem,
-            output_extension=provider.output_extension,
+            fallback_presenter_name=presenter_name,
         )
-        resolved_budget_estimate = budget_estimate or self._budget_service.estimate_budget(
-            provider_name=provider.provider_name,
-            presenter_name=presenter.presenter_name,
-            prepared_segment_texts=[segment['text'] for segment in pending_segments],
-            elevenlabs_api_key=presenter.elevenlabs.api_key,
+        resolved_budget_estimate = budget_estimate or self._estimate_budget_from_outputs(
+            pending_segments,
+            fallback_presenter_name=presenter_name,
         )
         self._budget_service.raise_if_budget_exceeded(resolved_budget_estimate)
 
         pending_by_name = {segment['segment_name']: segment for segment in pending_segments}
+        provider_names: set[str] = set()
+        voice_ids: set[str] = set()
+        presenter_names: set[str] = set()
 
         for segment in prepared_segments:
-            segment_name = self._safe_stem(segment['segment_name'])
-            file_name = f'{safe_stem}_{segment_name}.{provider.output_extension}'
-            output_path = self.generated_audio_directory / file_name
             pending_segment = pending_by_name.get(segment['segment_name'])
+            output = pending_segment or self._resolve_segment_output(
+                segment,
+                safe_stem=safe_stem,
+                fallback_presenter_name=presenter_name,
+            )
+            provider = output['provider']
+            presenter = output['presenter']
+            output_path = output['output_path']
+            provider_names.add(provider.provider_name)
+            voice_ids.add(provider.voice_id)
+            presenter_names.add(presenter.presenter_name)
 
             if pending_segment is not None:
                 try:
@@ -182,13 +194,13 @@ class TtsService:
                         raise budget_error from exc
                     raise
 
-            segment_urls.append(f'/audio/generated/{file_name}')
+            segment_urls.append(output['segment_url'])
 
         return {
             'segments': segment_urls,
-            'presenter_name': presenter.presenter_name,
-            'tts_provider': provider.provider_name,
-            'tts_voice_id': provider.voice_id,
+            'presenter_name': self._summarize_presenter_name(presenter_names, fallback_presenter.presenter_name),
+            'tts_provider': self._summarize_value(provider_names, fallback='mixed'),
+            'tts_voice_id': self._summarize_value(voice_ids, fallback='multiple'),
         }
 
     def extract_audio_blocks_from_markdown(self, markdown: str) -> list[str]:
@@ -268,9 +280,9 @@ class TtsService:
 
         return None
 
-    def _prepare_segment_payloads(self, segment_blocks: list[dict[str, str]]) -> list[dict[str, str]]:
+    def _prepare_segment_payloads(self, segment_blocks: list[dict[str, str]]) -> list[dict[str, str | None]]:
         editorial_blocks = apply_romanian_editorial_lexicon([segment['text'] for segment in segment_blocks])
-        prepared_segments: list[dict[str, str]] = []
+        prepared_segments: list[dict[str, str | None]] = []
 
         for segment, editorial_text in zip(segment_blocks, editorial_blocks):
             cleaned_text = self._clean_briefing_text(
@@ -285,6 +297,7 @@ class TtsService:
                 {
                     'segment_name': segment['segment_name'],
                     'text': cleaned_text,
+                    'presenter_name': segment.get('presenter_name'),
                 }
             )
 
@@ -292,20 +305,117 @@ class TtsService:
 
     def _build_pending_segment_outputs(
         self,
-        prepared_segments: list[dict[str, str]],
+        prepared_segments: list[dict[str, str | None]],
         *,
         safe_stem: str,
-        output_extension: str,
-    ) -> list[dict[str, str]]:
-        pending_segments: list[dict[str, str]] = []
+        fallback_presenter_name: str | None,
+    ) -> list[dict[str, object]]:
+        pending_segments: list[dict[str, object]] = []
         for segment in prepared_segments:
-            segment_name = self._safe_stem(segment['segment_name'])
-            file_name = f'{safe_stem}_{segment_name}.{output_extension}'
-            output_path = self.generated_audio_directory / file_name
+            output = self._resolve_segment_output(
+                segment,
+                safe_stem=safe_stem,
+                fallback_presenter_name=fallback_presenter_name,
+            )
+            output_path = output['output_path']
             if output_path.exists() and output_path.stat().st_size > 0:
                 continue
-            pending_segments.append(segment)
+            pending_segments.append(output)
         return pending_segments
+
+    def _resolve_segment_output(
+        self,
+        segment: dict[str, str | None],
+        *,
+        safe_stem: str,
+        fallback_presenter_name: str | None,
+    ) -> dict[str, object]:
+        presenter_name = self._resolve_segment_presenter_name(
+            segment.get('presenter_name'),
+            fallback_presenter_name,
+        )
+        presenter = get_presenter_config(presenter_name)
+        provider = create_tts_provider(presenter)
+        segment_name = self._safe_stem(segment['segment_name'] or 'segment')
+        file_name = f'{safe_stem}_{segment_name}.{provider.output_extension}'
+        output_path = self.generated_audio_directory / file_name
+        return {
+            'segment_name': segment['segment_name'],
+            'text': segment['text'],
+            'presenter_name': presenter.presenter_name,
+            'presenter': presenter,
+            'provider': provider,
+            'segment_url': f'/audio/generated/{file_name}',
+            'output_path': output_path,
+        }
+
+    def _estimate_budget_from_outputs(
+        self,
+        pending_segments: list[dict[str, object]],
+        *,
+        fallback_presenter_name: str | None,
+    ) -> TtsBudgetEstimateData:
+        if not pending_segments:
+            fallback_presenter = get_presenter_config(fallback_presenter_name)
+            provider = create_tts_provider(fallback_presenter)
+            return self._budget_service.estimate_budget(
+                provider_name=provider.provider_name,
+                presenter_name=fallback_presenter.presenter_name,
+                prepared_segment_texts=[],
+                elevenlabs_api_key=fallback_presenter.elevenlabs.api_key,
+            )
+
+        provider_names = {segment['provider'].provider_name for segment in pending_segments}
+        presenter_names = {segment['presenter_name'] for segment in pending_segments}
+        total_characters = sum(len(segment['text']) for segment in pending_segments)
+        if len(provider_names) != 1:
+            return TtsBudgetEstimateData(
+                provider='mixed',
+                presenter_name='multiple',
+                segment_count=len(pending_segments),
+                estimated_total_characters=total_characters,
+                estimated_required_credits=total_characters,
+                remaining_credits=None,
+                budget_check_performed=False,
+                within_budget=None,
+            )
+
+        first_segment = pending_segments[0]
+        provider = first_segment['provider']
+        presenter = first_segment['presenter']
+        presenter_label = next(iter(presenter_names)) if len(presenter_names) == 1 else 'multiple'
+        elevenlabs_api_key = presenter.elevenlabs.api_key if provider.provider_name == 'elevenlabs' else None
+        return self._budget_service.estimate_budget(
+            provider_name=provider.provider_name,
+            presenter_name=presenter_label,
+            prepared_segment_texts=[segment['text'] for segment in pending_segments],
+            elevenlabs_api_key=elevenlabs_api_key,
+        )
+
+    def _resolve_segment_presenter_name(
+        self,
+        segment_presenter_name: str | None,
+        fallback_presenter_name: str | None,
+    ) -> str | None:
+        if segment_presenter_name and segment_presenter_name.strip():
+            return segment_presenter_name.strip()
+        if fallback_presenter_name and fallback_presenter_name.strip():
+            return fallback_presenter_name.strip()
+        return None
+
+    def _summarize_presenter_name(self, presenter_names: set[str], fallback_presenter_name: str) -> str:
+        if not presenter_names:
+            return fallback_presenter_name
+        if len(presenter_names) == 1:
+            return next(iter(presenter_names))
+        return 'multiple'
+
+    def _summarize_value(self, values: set[str], fallback: str) -> str:
+        if not values:
+            return fallback
+        if len(values) == 1:
+            return next(iter(values))
+        return fallback
 
     def _resolve_project_path(self, relative_path: Path) -> Path:
         project_root = Path(__file__).resolve().parents[3]

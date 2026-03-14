@@ -100,3 +100,5 @@ Current Flutter app infrastructure now includes a real personalization flow with
 Current backend infrastructure also includes a conservative TTS budget preflight layer for end-to-end bulletins. Before segmented audio generation starts, the backend estimates normalized TTS size, checks provider quota when available, and returns structured budget errors plus estimate metadata so Flutter can fail gracefully without exposing raw provider exceptions.
 
 Current backend infrastructure also supports a temporary OpenAI TTS test provider mode alongside ElevenLabs. Provider selection still flows through the existing presenter config and factory, segmented output naming is unchanged, and presenter-name mapping now allows Ana/alloy and Paul/verse for lower-cost bulletin audio tests.
+
+Current backend infrastructure also supports a conservative dual presenter test mode in the editorial-to-audio bridge. When enabled, intro/outro use Ana, story blocks alternate Ana/Paul by story index, perspective segments inherit the parent story presenter, and the existing single-presenter path remains unchanged for normal use.

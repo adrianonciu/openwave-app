@@ -14,14 +14,19 @@ from app.models.audio_generation_package import (
 from app.models.final_editorial_briefing import FinalEditorialBriefingPackage
 
 STINGER_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "audio_stingers_config.json"
+PRESENTER_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "audio_presenter_config.json"
 
 
 class EditorialToAudioService:
     def __init__(self) -> None:
         raw_config = json.loads(STINGER_CONFIG_PATH.read_text(encoding="utf-8"))
+        presenter_config = json.loads(PRESENTER_CONFIG_PATH.read_text(encoding="utf-8"))
         self.stingers_enabled: bool = raw_config.get("enabled", False)
         self.stinger_files: list[str] = raw_config.get("stinger_files", [])
         self.max_stingers_per_bulletin: int = raw_config.get("max_stingers_per_bulletin", 8)
+        self.presenter_mode: str = presenter_config.get("presenter_mode", "single")
+        self.presenter_a: str = presenter_config.get("presenter_a", "Ana")
+        self.presenter_b: str = presenter_config.get("presenter_b", "Paul")
 
     def prepare_audio_generation_package(
         self,
@@ -34,16 +39,20 @@ class EditorialToAudioService:
                 message="Final editorial briefing package is missing intro_text.",
             )
 
-        story_segments = [
-            AudioStorySegment(
-                segment_id=f"story_{index:02d}",
-                story_text=item.story.summary_text.strip(),
-                topic_label=item.story.topic_label,
-                source_labels=item.story.source_labels,
+        story_segments: list[AudioStorySegment] = []
+        for index, item in enumerate(briefing.story_items, start=1):
+            story_text = item.story.summary_text.strip()
+            if not story_text:
+                continue
+            story_segments.append(
+                AudioStorySegment(
+                    segment_id=f"story_{index:02d}",
+                    story_text=story_text,
+                    topic_label=item.story.topic_label,
+                    source_labels=item.story.source_labels,
+                    presenter_name=self._resolve_story_presenter(index),
+                )
             )
-            for index, item in enumerate(briefing.story_items, start=1)
-            if item.story.summary_text.strip()
-        ]
         if not story_segments:
             return self._error(
                 code="missing_story_segments",
@@ -93,6 +102,7 @@ class EditorialToAudioService:
                 segment_name="intro",
                 segment_type="intro",
                 text=intro_text,
+                presenter_name=self._resolve_intro_outro_presenter(),
             )
         ]
 
@@ -107,6 +117,7 @@ class EditorialToAudioService:
                     text=story.story_text,
                     topic_label=story.topic_label,
                     source_labels=story.source_labels,
+                    presenter_name=story.presenter_name,
                 )
             )
             source_item = source_items[index - 1] if index - 1 < len(source_items) else None
@@ -118,6 +129,7 @@ class EditorialToAudioService:
                         text=perspective.narration_text,
                         topic_label=story.topic_label,
                         source_labels=[perspective.source],
+                        presenter_name=story.presenter_name,
                     )
                 )
             is_last_story = index == len(story_segments)
@@ -147,9 +159,20 @@ class EditorialToAudioService:
                 segment_name="outro",
                 segment_type="outro",
                 text=outro_text,
+                presenter_name=self._resolve_intro_outro_presenter(),
             )
         )
         return ordered_segments
+
+    def _resolve_story_presenter(self, story_index: int) -> str | None:
+        if self.presenter_mode != "dual_test":
+            return None
+        return self.presenter_a if story_index % 2 == 1 else self.presenter_b
+
+    def _resolve_intro_outro_presenter(self) -> str | None:
+        if self.presenter_mode != "dual_test":
+            return None
+        return self.presenter_a
 
     def _should_insert_stinger(
         self,
@@ -183,14 +206,18 @@ class EditorialToAudioService:
         self,
         package: AudioGenerationPackage,
     ) -> list[dict[str, str]]:
-        return [
-            {
+        blocks: list[dict[str, str]] = []
+        for segment in package.ordered_segments:
+            if segment.segment_type == "stinger" or not segment.text:
+                continue
+            block = {
                 "segment_name": segment.segment_name,
-                "text": segment.text or "",
+                "text": segment.text,
             }
-            for segment in package.ordered_segments
-            if segment.segment_type != "stinger" and segment.text
-        ]
+            if segment.presenter_name:
+                block["presenter_name"] = segment.presenter_name
+            blocks.append(block)
+        return blocks
 
     def to_audio_segment_sequence(
         self,
@@ -206,6 +233,8 @@ class EditorialToAudioService:
                 entry["text"] = segment.text
             if segment.audio_file:
                 entry["audio_file"] = segment.audio_file
+            if segment.presenter_name:
+                entry["presenter_name"] = segment.presenter_name
             sequence.append(entry)
         return sequence
 
