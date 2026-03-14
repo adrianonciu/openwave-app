@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import json
 import sys
+from collections import Counter
 
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 if str(BACKEND_ROOT) not in sys.path:
@@ -22,6 +23,29 @@ TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_breaking_bulletin.txt"
 JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_breaking_bulletin.json"
 
 
+EXCLUDED_NATIONAL_CATEGORIES = {"sport", "entertainment", "lifestyle", "culture", "tv"}
+PLACEHOLDER_HEADLINES = {"actualitate", "stiri", "stiri", "live", "breaking", "updates", "context"}
+
+
+def _is_placeholder(title: str) -> bool:
+    return (title or "").strip().lower() in PLACEHOLDER_HEADLINES
+
+
+def _dominant_category(scored_cluster) -> str:
+    categories = [member.source_category or "general" for member in scored_cluster.cluster.member_articles]
+    return Counter(categories).most_common(1)[0][0] if categories else "general"
+
+
+def _is_usable_breaking_candidate(scored_cluster, scope: str) -> bool:
+    headline = (scored_cluster.cluster.representative_title or "").strip()
+    if not headline or _is_placeholder(headline):
+        return False
+    category = _dominant_category(scored_cluster).lower()
+    if scope == "national" and category in EXCLUDED_NATIONAL_CATEGORIES:
+        return False
+    return True
+
+
 def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: int) -> dict[str, object]:
     serialized = _serialize_candidate(scored_cluster, selection_status="selected")
     signals = _cluster_signals(scored_cluster, article_by_url, clustering_service)
@@ -39,20 +63,35 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
     }
 
 
-def _pick_top5(selected_clusters: list, candidates: list, article_by_url, clustering_service) -> list[dict[str, object]]:
+def _pick_top5(selected_clusters: list, candidates: list, article_by_url, clustering_service, scope: str) -> list[dict[str, object]]:
     picked = []
     seen_ids = set()
-    for cluster in selected_clusters[:5]:
+    for cluster in selected_clusters:
+        if not _is_usable_breaking_candidate(cluster, scope):
+            continue
         picked.append(_breaking_entry(cluster, article_by_url, clustering_service, len(picked) + 1))
         seen_ids.add(cluster.cluster.cluster_id)
-    if len(picked) < 5:
-        for cluster in candidates:
-            if cluster.cluster.cluster_id in seen_ids:
-                continue
-            picked.append(_breaking_entry(cluster, article_by_url, clustering_service, len(picked) + 1))
-            seen_ids.add(cluster.cluster.cluster_id)
-            if len(picked) == 5:
-                break
+        if len(picked) == 5:
+            return picked
+
+    multi_source_fallback = [
+        cluster for cluster in candidates
+        if cluster.cluster.cluster_id not in seen_ids
+        and _is_usable_breaking_candidate(cluster, scope)
+        and len({member.source for member in cluster.cluster.member_articles}) >= 2
+    ]
+    single_source_fallback = [
+        cluster for cluster in candidates
+        if cluster.cluster.cluster_id not in seen_ids
+        and _is_usable_breaking_candidate(cluster, scope)
+        and len({member.source for member in cluster.cluster.member_articles}) < 2
+    ]
+
+    for cluster in [*multi_source_fallback, *single_source_fallback]:
+        picked.append(_breaking_entry(cluster, article_by_url, clustering_service, len(picked) + 1))
+        seen_ids.add(cluster.cluster.cluster_id)
+        if len(picked) == 5:
+            break
     return picked
 
 
@@ -82,8 +121,8 @@ def main() -> None:
         personalization=personalization,
     )
 
-    national_top5 = _pick_top5(national_selection.selected_clusters, national_candidates, article_by_url, pipeline_service.clustering_service)
-    global_top5 = _pick_top5(global_selection.selected_clusters, global_candidates, article_by_url, pipeline_service.clustering_service)
+    national_top5 = _pick_top5(national_selection.selected_clusters, national_candidates, article_by_url, pipeline_service.clustering_service, "national")
+    global_top5 = _pick_top5(global_selection.selected_clusters, global_candidates, article_by_url, pipeline_service.clustering_service, "international")
 
     payload = {
         "top5_national": national_top5,

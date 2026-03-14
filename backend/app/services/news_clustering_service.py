@@ -46,6 +46,20 @@ SOURCE_CANONICAL_MAP = {
     "euronews ro stiri de ultima ora breaking news allviews": "Euronews Romania",
     "news ro": "News.ro",
     "news.ro": "News.ro",
+    "agerpres": "Agerpres",
+    "antena 3": "Antena 3",
+    "antena 3 cnn": "Antena 3",
+    "digi24": "Digi24",
+    "europa libera romania": "Europa Libera Romania",
+    "g4media": "G4Media",
+    "gandul": "Gandul",
+    "hotnews": "HotNews",
+    "libertatea": "Libertatea",
+    "spotmedia": "SpotMedia",
+    "stirile protv": "Stirile ProTV",
+    "zf ro": "ZF.ro",
+    "zf": "ZF.ro",
+    "ziare com": "Ziare.com",
     "reuters": "Reuters",
     "reuters world": "Reuters",
     "stiri pe surse": "Stiripesurse",
@@ -102,9 +116,27 @@ ENTERTAINMENT_TERMS = {
 HUMAN_INTEREST_TERMS = {
     "treasure", "hunter", "philosopher", "classic", "style", "fashion", "beauty", "nails", "award",
 }
-GENERALIST_SOURCES = {"AP", "BBC", "DW", "Euronews Romania", "Reuters"}
+GENERALIST_SOURCES = {"AP", "BBC", "DW", "Euronews Romania", "Reuters", "Agerpres", "Antena 3", "Digi24", "Europa Libera Romania", "G4Media", "Gandul", "HotNews", "Libertatea", "News.ro", "SpotMedia", "Stirile ProTV", "ZF.ro", "Ziare.com"}
 REGIONAL_ESCALATION_TERMS = {
     "iran", "golful", "emiratele", "ormuz", "orientul", "mijlociu", "porturi", "nave", "marines", "hamas", "atac",
+}
+
+ROMANIAN_HARD_NEWS_TERMS = {
+    "agerpres", "alegeri", "antena", "bnr", "bucuresti", "ccr", "coalitie", "cotidianul", "curtea",
+    "deputat", "deputati", "digi24", "dna", "diicot", "europa", "g4media", "gandul", "guvern",
+    "guvernul", "hotnews", "libertatea", "minister", "ministru", "news", "parlament", "parlamentul",
+    "partid", "pnl", "psd", "presedinte", "protv", "romania", "romaniei", "senat", "senatul",
+    "spotmedia", "stirile", "usr", "zf", "ziare",
+}
+ROMANIAN_LOCATION_TERMS = {
+    "alba", "arad", "arges", "bacau", "bihor", "botosani", "brasov", "bucuresti", "buzau", "cluj",
+    "constanta", "craiova", "dambovita", "galati", "iasi", "ilfov", "maramures", "moldova",
+    "oradea", "ploiesti", "romania", "sibiu", "suceava", "timis", "timisoara",
+}
+ROMANIAN_PUBLIC_AFFAIRS_BUCKET = "romanian_public_affairs"
+ROMANIAN_ENTITY_HINTS = {
+    "Romania", "Bucuresti", "Guvern", "Parlament", "CCR", "DNA", "DIICOT", "BNR", "HotNews", "G4Media",
+    "Digi24", "Agerpres", "News.ro", "Antena 3", "Libertatea", "Europa Libera", "SpotMedia", "Gandul",
 }
 EVENT_FAMILY_KEYWORDS = {
     "regional_conflict": {"war", "conflict", "escalation", "tensions", "strike", "strikes", "attack", "atac", "hamas", "iran", "israel"},
@@ -114,7 +146,7 @@ EVENT_FAMILY_KEYWORDS = {
     "attack_or_strike": {"attack", "atac", "strike", "strikes", "explosion", "explozie", "racheta", "missile"},
     "economic_shock": {"oil", "gas", "inflation", "markets", "piete", "supply", "shipping"},
 }
-EVENT_FAMILY_MERGEABLE = {"regional_conflict", "military_movement", "energy_shipping_disruption"}
+EVENT_FAMILY_MERGEABLE = {"regional_conflict", "military_movement", "energy_shipping_disruption", "political_crisis"}
 REGIONAL_LOCATION_BUCKETS = {
     "gulf_escalation": {"iran", "golful", "emiratele", "ormuz", "orientul", "mijlociu", "porturi", "gaza", "hamas", "israel"},
     "black_sea_security": {"romania", "marea", "neagra", "ucraina", "ukraine", "moldova", "rusia"},
@@ -401,6 +433,26 @@ class NewsClusteringService:
                 hours_apart=hours_apart,
             )
 
+        if self._is_romanian_national_hard_news_match(
+            left,
+            right,
+            shared_entities,
+            cross_source,
+            normalized_title_similarity,
+            event_overlap,
+            keyword_overlap,
+            hours_apart,
+        ):
+            return ClusterDecision(
+                status="merged",
+                reason="romanian_national_hard_news_match",
+                title_similarity=max(title_similarity, normalized_title_similarity),
+                keyword_overlap=max(keyword_overlap, event_overlap),
+                body_overlap=body_overlap,
+                shared_entities=shared_entities,
+                hours_apart=hours_apart,
+            )
+
         return ClusterDecision(
             status="separate",
             reason="similarity_below_conservative_threshold",
@@ -636,7 +688,7 @@ class NewsClusteringService:
         regional_hits = sum(1 for term in REGIONAL_ESCALATION_TERMS if term in event_terms)
         hard_news_hits = sum(1 for term in HARD_NEWS_TERMS if term in text)
 
-        if category == "sport":
+        if category in {"sport", "culture", "tv"}:
             return True
         if sport_hits >= 2 and geopolitical_hits == 0 and regional_hits == 0 and hard_news_hits <= 1:
             return True
@@ -676,6 +728,45 @@ class NewsClusteringService:
         if max(normalized_title_similarity, event_overlap, keyword_overlap) < 0.1:
             return False
         return True
+
+
+    def _is_romanian_national_hard_news_match(
+        self,
+        left: _ArticleSignals,
+        right: _ArticleSignals,
+        shared_entities: list[str],
+        cross_source: bool,
+        normalized_title_similarity: float,
+        event_overlap: float,
+        keyword_overlap: float,
+        hours_apart: float,
+    ) -> bool:
+        if not cross_source or hours_apart > min(self.recency_window_hours, 14):
+            return False
+        if left.article.source_scope != "national" or right.article.source_scope != "national":
+            return False
+        if left.article.source_category in {"sport", "entertainment", "lifestyle", "culture", "tv"}:
+            return False
+        if right.article.source_category in {"sport", "entertainment", "lifestyle", "culture", "tv"}:
+            return False
+
+        shared_terms = left.event_terms & right.event_terms
+        shared_romanian_terms = shared_terms & ROMANIAN_HARD_NEWS_TERMS
+        shared_locations = shared_terms & ROMANIAN_LOCATION_TERMS
+        left_entities = {entity.lower() for entity in left.entities}
+        right_entities = {entity.lower() for entity in right.entities}
+        shared_named = left_entities & right_entities
+        has_named_overlap = len(shared_entities) >= 1 or any(
+            hint.lower() in shared_named for hint in ROMANIAN_ENTITY_HINTS
+        )
+
+        if len(shared_romanian_terms) >= 3 and (normalized_title_similarity >= 0.22 or keyword_overlap >= 0.24):
+            return True
+        if has_named_overlap and len(shared_romanian_terms) >= 2 and (event_overlap >= 0.16 or keyword_overlap >= 0.2):
+            return True
+        if shared_locations and has_named_overlap and max(normalized_title_similarity, keyword_overlap) >= 0.18:
+            return True
+        return False
 
     def _normalize_category(
         self,

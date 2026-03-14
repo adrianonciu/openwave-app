@@ -55,6 +55,17 @@ class StorySelectionService:
         self.soft_news_editorial_fit_bar: float = raw_config.get("soft_news_editorial_fit_bar", 0.42)
         self.minimum_unique_sources: int = raw_config.get("minimum_unique_sources", 2)
         self.anchor_min_unique_sources: int = raw_config.get("anchor_min_unique_sources", 3)
+        self.placeholder_headline_pattern = re.compile(
+            r"^(?:actualitate|stiri|stiri|live|breaking|updates?|context)$",
+            re.IGNORECASE,
+        )
+        self.national_hard_news_excluded_categories = {
+            "sport",
+            "entertainment",
+            "lifestyle",
+            "culture",
+            "tv",
+        }
 
     def select_stories(
         self,
@@ -283,7 +294,13 @@ class StorySelectionService:
 
         editorial_fit = cluster.score_breakdown.editorial_fit.value
         editorial_fit_explanation = cluster.score_breakdown.editorial_fit.explanation.lower()
-        is_local = any(member.is_local_source for member in cluster.cluster.member_articles)
+        scopes = self._cluster_scopes(cluster)
+        categories = self._cluster_categories(cluster)
+        is_local = "local" in scopes
+        if self._is_placeholder_headline(cluster.cluster.representative_title):
+            return "placeholder_headline_cluster"
+        if "national" in scopes and categories & self.national_hard_news_excluded_categories:
+            return "non_hard_news_national_cluster"
         unique_source_count = self._unique_source_count(cluster)
         if unique_source_count < self.minimum_unique_sources and not is_local:
             return "single_source_cluster_without_local_relevance"
@@ -613,6 +630,18 @@ class StorySelectionService:
     def _source_labels(self, cluster: ScoredStoryCluster) -> list[str]:
         return sorted({member.source for member in cluster.cluster.member_articles})
 
+    def _cluster_scopes(self, cluster: ScoredStoryCluster) -> set[str]:
+        return {
+            member.source_scope or ("local" if member.is_local_source else "unknown")
+            for member in cluster.cluster.member_articles
+        }
+
+    def _cluster_categories(self, cluster: ScoredStoryCluster) -> set[str]:
+        return {
+            (member.source_category or "general").lower()
+            for member in cluster.cluster.member_articles
+        }
+
     def _unique_source_count(self, cluster: ScoredStoryCluster) -> int:
         return len({member.source for member in cluster.cluster.member_articles})
 
@@ -648,10 +677,15 @@ class StorySelectionService:
 
 
     def _is_soft_news_cluster(self, cluster: ScoredStoryCluster) -> bool:
-        categories = {member.source_category or "general" for member in cluster.cluster.member_articles}
-        if any(member.is_local_source for member in cluster.cluster.member_articles):
+        categories = self._cluster_categories(cluster)
+        if "local" in self._cluster_scopes(cluster):
             return False
         return any(category in {"sport", "entertainment", "lifestyle"} for category in categories)
+
+    def _is_placeholder_headline(self, title: str) -> bool:
+        normalized = self._normalize_text(title)
+        normalized = re.sub(r"\s+", " ", normalized).strip()
+        return bool(self.placeholder_headline_pattern.fullmatch(normalized))
 
     def _build_decision(
         self,
@@ -738,6 +772,8 @@ class StorySelectionService:
             "low_priority_source_cluster": "its source priority was too low for inclusion without local relevance",
             "low_editorial_fit_cluster": "its source category, scope, and headline quality did not clear the editorial-fit bar",
             "soft_news_cluster_below_editorial_bar": "it was a soft-news cluster that did not clear the higher editorial-fit bar",
+            "placeholder_headline_cluster": "its representative title was a section label or placeholder, not a usable story headline",
+            "non_hard_news_national_cluster": "it belonged to a non-hard-news category that is excluded from national hard-news selection",
             "selection_limit_reached": "the candidate set had already reached the story limit",
             "rejected_by_topic_diversity_soft_cap": "a similar-topic cluster with a close score had already been kept",
             "rejected_by_source_diversity_soft_cap": "other close-scoring clusters already represented the same source mix",
