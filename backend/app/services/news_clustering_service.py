@@ -476,6 +476,8 @@ class NewsClusteringService:
                 source_scope=item.article.source_scope,
                 source_category=item.article.source_category,
                 is_local_source=item.article.is_local_source,
+                national_preference_bucket=item.article.national_preference_bucket,
+                national_preference_reason=item.article.national_preference_reason,
             )
             for item in sorted(cluster_signals, key=lambda value: value.article.published_at)
         ]

@@ -52,6 +52,88 @@ LOCATION_TERMS = {
     "iran", "emiratele", "golful", "ormuz", "bagdad", "brussels", "romania", "ukraine", "ucraina", "moldova",
     "balkans", "balcani", "black sea", "marea neagra", "germany", "belarus",
 }
+NATIONAL_PREFERENCE_BUCKET_ORDER = {
+    "domestic_hard_news": 0,
+    "external_direct_impact": 1,
+    "off_target": 2,
+}
+ROMANIAN_DOMESTIC_HARD_NEWS_TERMS = {
+    "guvern", "guvernul", "parlament", "parlamentul", "presedinte", "presedintia", "alegeri", "electoral",
+    "partid", "psd", "pnl", "usr", "senat", "senatul", "camera deputatilor", "deputati", "primarie",
+    "consiliul", "ministru", "minister", "ministerul", "procuror", "procurorii", "instanta", "justitie",
+    "tribunal", "curte", "ccr", "dna", "diicot", "taxe", "impozit", "buget", "inflatie", "bnr",
+    "energie", "infrastructura", "autostrada", "spital", "sanatate", "educatie", "scoala", "protest",
+    "proteste", "greva", "administratie", "romania", "bucuresti", "cluj", "iasi", "constanta",
+}
+ROMANIAN_EXTERNAL_DIRECT_IMPACT_TERMS = {
+    "uniunea europeana", "ue", "eu", "nato", "schengen", "ucraina", "ukraine", "moldova", "transnistria",
+    "marea neagra", "black sea", "rusia", "razboi", "war", "gaz", "energie", "border",
+    "migratie", "defence", "defense", "securitate", "bruxelles", "brussels", "tarife",
+}
+ROMANIAN_OFF_TARGET_TERMS = {
+    "vedeta", "celebru", "monden", "lifestyle", "sport", "superliga", "liga", "meci", "scor", "gol",
+    "whatsapp", "instagram", "facebook", "fenomen", "anorexia financiara", "seriale", "tv", "show",
+}
+
+
+def _classify_romanian_national_preference(article: FetchedArticle, source_meta: dict[str, object]) -> tuple[str, str]:
+    text = f"{article.title} {article.content_text}".lower()
+    category = str(source_meta.get("category") or article.source_category or "general").lower()
+    if category in {"sport", "entertainment", "lifestyle", "culture", "tv"}:
+        return "off_target", f"source category '{category}' is outside national hard-news priority"
+
+    domestic_hits = [term for term in ROMANIAN_DOMESTIC_HARD_NEWS_TERMS if term in text]
+    external_hits = [term for term in ROMANIAN_EXTERNAL_DIRECT_IMPACT_TERMS if term in text]
+    off_target_hits = [term for term in ROMANIAN_OFF_TARGET_TERMS if term in text]
+
+    if domestic_hits:
+        return "domestic_hard_news", f"matched domestic hard-news signals: {', '.join(domestic_hits[:4])}"
+    if external_hits:
+        return "external_direct_impact", f"matched external direct-impact signals: {', '.join(external_hits[:4])}"
+    if off_target_hits or len(article.title.split()) > 22:
+        reason = ", ".join(off_target_hits[:4]) if off_target_hits else "headline looked feature-like or diffuse"
+        return "off_target", f"off-target signals: {reason}"
+    return "off_target", "no strong domestic or Romania-relevant external signal detected"
+
+
+def _effective_priority_for_romanian_candidate(base_priority: int, bucket: str) -> int:
+    if bucket == "domestic_hard_news":
+        return max(1, base_priority - 1)
+    if bucket == "off_target":
+        return min(5, base_priority + 1)
+    return base_priority
+
+
+def _candidate_choice_key(article: FetchedArticle) -> tuple[int, int, int, float]:
+    bucket_rank = NATIONAL_PREFERENCE_BUCKET_ORDER.get(article.national_preference_bucket or "off_target", 2)
+    fetch_rank = 0 if article.ingestion_kind == "full_fetch" else 1
+    effective_priority = article.editorial_priority
+    published_at = article.published_at.timestamp() if article.published_at else 0.0
+    return (bucket_rank, fetch_rank, effective_priority, -published_at)
+
+
+def _build_source_candidate_from_rss(rss_article, mapped_meta: dict[str, object]) -> FetchedArticle:
+    return FetchedArticle(
+        url=rss_article.url,
+        title=rss_article.title,
+        published_at=rss_article.published_at,
+        source=rss_article.source,
+        content_text=rss_article.summary,
+        ingestion_kind="rss_fallback",
+        editorial_priority=mapped_meta.get("editorial_priority", 3),
+        source_scope=mapped_meta.get("scope"),
+        source_category=mapped_meta.get("category"),
+        is_local_source=mapped_meta.get("scope") == "local",
+    )
+
+
+def _apply_romanian_national_preference(article: FetchedArticle, mapped_meta: dict[str, object]) -> FetchedArticle:
+    bucket, reason = _classify_romanian_national_preference(article, mapped_meta)
+    return article.model_copy(update={
+        "national_preference_bucket": bucket,
+        "national_preference_reason": reason,
+        "editorial_priority": _effective_priority_for_romanian_candidate(article.editorial_priority, bucket),
+    })
 
 
 def _normalize_domain(url: str) -> str:
@@ -103,6 +185,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             "category": source_config.category,
             "editorial_priority": source_config.editorial_priority,
             "region": source_config.region,
+            "country": source_config.country,
         }
         source_coverage[source_config.source_id] = {
             "source_id": source_config.source_id,
@@ -115,6 +198,8 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             "candidate_articles_produced": 0,
             "clusters_contributed_to": 0,
             "multi_source_clusters_contributed_to": 0,
+            "selected_national_preference_bucket": None,
+            "selected_national_preference_reason": None,
         }
         try:
             latest = watcher_service.get_latest_content(source_config)
@@ -126,79 +211,98 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
     latest_items.sort(key=lambda item: item[1].published_at, reverse=True)
 
     provenance_by_url: dict[str, dict[str, object]] = {}
-    articles: list[FetchedArticle] = []
     seen_urls: set[str] = set()
+    candidates_by_source: dict[str, list[FetchedArticle]] = {config.source_id: [] for config in base_source_configs}
 
     source_attempts = 0
     for source_config, latest in latest_items:
-        if len(articles) >= MAX_INPUT_ARTICLES or source_attempts >= MAX_SOURCE_FETCH_ATTEMPTS:
+        if source_attempts >= MAX_SOURCE_FETCH_ATTEMPTS:
             break
         source_attempts += 1
         if latest.url in seen_urls:
             continue
         seen_urls.add(latest.url)
         fetch_result = fetch_service.fetch_article(latest)
-        if fetch_result.status == "success" and fetch_result.article is not None:
-            article = fetch_result.article.model_copy(
-                update={
-                    "ingestion_kind": "full_fetch",
-                    "editorial_priority": source_config.editorial_priority,
-                    "source_scope": source_config.scope,
-                    "source_category": source_config.category,
-                    "is_local_source": source_config.scope == "local",
-                }
-            )
-            articles.append(article)
-            source_coverage[source_config.source_id]["articles_fetched_successfully"] += 1
-            source_coverage[source_config.source_id]["candidate_articles_produced"] += 1
-            provenance_by_url[article.url] = {
+        if fetch_result.status != "success" or fetch_result.article is None:
+            continue
+        article = fetch_result.article.model_copy(
+            update={
                 "ingestion_kind": "full_fetch",
-                "source_id": source_config.source_id,
-                "scope": source_config.scope,
-                "category": source_config.category,
                 "editorial_priority": source_config.editorial_priority,
-                "source_type": source_config.source_type,
+                "source_scope": source_config.scope,
+                "source_category": source_config.category,
                 "is_local_source": source_config.scope == "local",
             }
+        )
+        source_coverage[source_config.source_id]["articles_fetched_successfully"] += 1
+        source_coverage[source_config.source_id]["candidate_articles_produced"] += 1
+        mapped_meta = source_by_domain.get(_normalize_domain(source_config.source_url), {})
+        if source_config.scope == "national" and source_config.country == "Romania":
+            article = _apply_romanian_national_preference(article, mapped_meta)
+        candidates_by_source[source_config.source_id].append(article)
 
     rss_articles_added = 0
     for rss_article in article_service.get_articles():
-        if len(articles) >= MAX_INPUT_ARTICLES or rss_articles_added >= MAX_RSS_FALLBACK_ARTICLES:
+        if rss_articles_added >= MAX_RSS_FALLBACK_ARTICLES:
             break
         if rss_article.url in seen_urls or not rss_article.summary.strip():
             continue
-        seen_urls.add(rss_article.url)
         mapped_meta = source_by_domain.get(_normalize_domain(rss_article.url))
         if not mapped_meta:
             continue
-        article = FetchedArticle(
-            url=rss_article.url,
-            title=rss_article.title,
-            published_at=rss_article.published_at,
-            source=rss_article.source,
-            content_text=rss_article.summary,
-            ingestion_kind="rss_fallback",
-            editorial_priority=mapped_meta.get("editorial_priority", 3),
-            source_scope=mapped_meta.get("scope"),
-            source_category=mapped_meta.get("category"),
-            is_local_source=mapped_meta.get("scope") == "local",
-        )
-        articles.append(article)
         source_id = mapped_meta.get("source_id")
-        if source_id in source_coverage:
-            source_coverage[source_id]["candidate_articles_produced"] += 1
-        provenance_by_url[article.url] = {
-            "ingestion_kind": "rss_fallback",
-            "source_id": mapped_meta.get("source_id"),
-            "scope": mapped_meta.get("scope"),
-            "category": mapped_meta.get("category"),
-            "editorial_priority": mapped_meta.get("editorial_priority", 3),
-            "source_type": mapped_meta.get("source_type"),
-            "is_local_source": mapped_meta.get("scope") == "local",
-        }
+        if source_id not in candidates_by_source:
+            continue
+        article = _build_source_candidate_from_rss(rss_article, mapped_meta)
+        if mapped_meta.get("scope") == "national" and mapped_meta.get("country") == "Romania":
+            article = _apply_romanian_national_preference(article, mapped_meta)
+        candidates_by_source[source_id].append(article)
+        source_coverage[source_id]["candidate_articles_produced"] += 1
         rss_articles_added += 1
 
-    return articles, provenance_by_url, source_coverage
+    chosen_articles: list[FetchedArticle] = []
+    prioritized_national: list[FetchedArticle] = []
+    other_articles: list[FetchedArticle] = []
+
+    config_by_id = {config.source_id: config for config in base_source_configs}
+    for source_id, source_candidates in candidates_by_source.items():
+        if not source_candidates:
+            continue
+        source_config = config_by_id[source_id]
+        if source_config.scope == "national" and source_config.country == "Romania":
+            chosen = sorted(source_candidates, key=_candidate_choice_key)[0]
+            source_coverage[source_id]["selected_national_preference_bucket"] = chosen.national_preference_bucket
+            source_coverage[source_id]["selected_national_preference_reason"] = chosen.national_preference_reason
+            prioritized_national.append(chosen)
+        else:
+            full_fetch_candidates = [candidate for candidate in source_candidates if candidate.ingestion_kind == "full_fetch"]
+            chosen = full_fetch_candidates[0] if full_fetch_candidates else sorted(
+                source_candidates,
+                key=lambda candidate: -(candidate.published_at.timestamp() if candidate.published_at else 0.0),
+            )[0]
+            other_articles.append(chosen)
+
+    prioritized_national.sort(key=lambda article: (
+        NATIONAL_PREFERENCE_BUCKET_ORDER.get(article.national_preference_bucket or "off_target", 2),
+        -(article.published_at.timestamp() if article.published_at else 0.0),
+    ))
+    other_articles.sort(key=lambda article: -(article.published_at.timestamp() if article.published_at else 0.0))
+
+    for article in [*prioritized_national, *other_articles]:
+        if len(chosen_articles) >= MAX_INPUT_ARTICLES:
+            break
+        chosen_articles.append(article)
+        provenance_by_url[article.url] = {
+            "ingestion_kind": article.ingestion_kind,
+            "scope": article.source_scope,
+            "category": article.source_category,
+            "editorial_priority": article.editorial_priority,
+            "is_local_source": article.is_local_source,
+            "national_preference_bucket": article.national_preference_bucket,
+            "national_preference_reason": article.national_preference_reason,
+        }
+
+    return chosen_articles, provenance_by_url, source_coverage
 
 
 def _dominant_scope(scored_cluster) -> str:

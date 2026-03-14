@@ -188,6 +188,8 @@ def _write_romanian_source_coverage(source_coverage: dict[str, dict[str, object]
             f"   candidate_articles_produced: {item['candidate_articles_produced']}",
             f"   clusters_contributed_to: {item['clusters_contributed_to']}",
             f"   multi_source_clusters_contributed_to: {item['multi_source_clusters_contributed_to']}",
+            f"   selected_national_preference_bucket: {item.get('selected_national_preference_bucket') or 'none'}",
+            f"   selected_national_preference_reason: {item.get('selected_national_preference_reason') or 'none'}",
             "",
         ])
     ROMANIAN_SOURCE_COVERAGE_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
@@ -196,6 +198,9 @@ def _write_romanian_source_coverage(source_coverage: dict[str, dict[str, object]
 def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_url: dict[str, FetchedArticle], clustering_service) -> None:
     payload_clusters = []
     for cluster in national_candidates:
+        buckets = [member.national_preference_bucket for member in cluster.cluster.member_articles if member.national_preference_bucket]
+        reasons = [member.national_preference_reason for member in cluster.cluster.member_articles if member.national_preference_reason]
+        dominant_bucket = Counter(buckets).most_common(1)[0][0] if buckets else None
         payload_clusters.append({
             "cluster_id": cluster.cluster.cluster_id,
             "headline": cluster.cluster.representative_title,
@@ -203,12 +208,16 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "unique_source_count": len({member.source for member in cluster.cluster.member_articles}),
             "named_entities_detected": _cluster_named_entities(cluster, article_by_url, clustering_service),
             "cluster_similarity_score": _cluster_similarity_score(cluster, article_by_url, clustering_service),
+            "national_preference_bucket": dominant_bucket,
+            "national_preference_reason": reasons[0] if reasons else None,
             "final_score": cluster.score_total,
         })
 
+    bucket_distribution = Counter(item["national_preference_bucket"] or "none" for item in payload_clusters)
     payload = {
         "national_cluster_count": len(payload_clusters),
         "multi_source_clusters": sum(1 for item in payload_clusters if item["unique_source_count"] >= 2),
+        "national_preference_bucket_distribution": dict(sorted(bucket_distribution.items())),
         "clusters": payload_clusters,
     }
     ROMANIAN_CANDIDATE_POOL_AUDIT_JSON_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

@@ -17,6 +17,8 @@ class NewsClusteringArticle(BaseModel):
     source_scope: Literal["local", "national", "international"] | None = None
     source_category: str | None = None
     is_local_source: bool = False
+    national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
+    national_preference_reason: str | None = None
 
     @classmethod
     def from_fetched_article(cls, article: FetchedArticle) -> "NewsClusteringArticle":
@@ -32,6 +34,8 @@ class NewsClusteringArticle(BaseModel):
             source_scope=article.source_scope,
             source_category=article.source_category,
             is_local_source=article.is_local_source,
+            national_preference_bucket=article.national_preference_bucket,
+            national_preference_reason=article.national_preference_reason,
         )
 
 
@@ -45,6 +49,8 @@ class ClusterMemberArticle(BaseModel):
     source_scope: Literal["local", "national", "international"] | None = None
     source_category: str | None = None
     is_local_source: bool = False
+    national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
+    national_preference_reason: str | None = None
 
 
 class StoryCluster(BaseModel):

@@ -347,7 +347,23 @@ class StoryScoringService:
         if priorities:
             normalized += max(0.0, (6 - min(priorities)) * 0.03)
 
+        national_buckets = [
+            member.national_preference_bucket
+            for member in cluster.member_articles
+            if (member.source_scope == "national" and member.national_preference_bucket)
+        ]
         reasons: list[str] = []
+        if national_buckets:
+            bucket_boosts = {
+                "domestic_hard_news": 0.18,
+                "external_direct_impact": 0.08,
+                "off_target": -0.22,
+            }
+            average_bucket_boost = sum(bucket_boosts.get(bucket, 0.0) for bucket in national_buckets) / len(national_buckets)
+            normalized += average_bucket_boost
+            dominant_bucket = max(set(national_buckets), key=national_buckets.count)
+            reasons.append(f"national-first preference bucket: {dominant_bucket}")
+
         if low_value_markers:
             penalty = 0.55 if any(marker in {"propozitie cu", "cum se scrie", "definitie", "ghid", "tutorial"} for marker in low_value_markers) else 0.42
             normalized -= penalty
