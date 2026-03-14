@@ -32,13 +32,13 @@ KEYWORD_COUNT_PATTERN = re.compile(
     r"(?P<kind>killed|dead|deaths|morti|decese|injured|wounded|raniti|ranite)\s+(?P<count>\d+)"
 )
 ENGLISH_HEADLINE_MARKERS = {
-    "about", "accuses", "after", "against", "ally", "amid", "attacks", "bomb", "bombs",
-    "charges", "conflict", "custody", "dropped", "during", "explosion", "family", "fire",
+    "about", "accuses", "after", "against", "ally", "amid", "as", "attacks", "bomb", "bombs",
+    "charges", "conflict", "custody", "dropped", "during", "embassy", "enters", "explosion", "family", "fire",
     "generations", "global", "gulf", "halt", "him", "international", "jewish", "key",
     "leaders", "marines", "markets", "military", "moved", "negotiations", "new", "news",
     "oil", "politics", "reports", "rescuers", "rise", "says", "school", "security",
-    "sites", "suspect", "three", "under", "urges", "vital", "warships", "weather", "wait",
-    "whose", "world",
+    "sites", "suspect", "targeted", "third", "three", "under", "urges", "vital", "war", "warships", "weather", "wait",
+    "week", "whose", "why", "world",
 }
 ROMANIAN_HEADLINE_MARKERS = {
     "acum", "atac", "autoritati", "buget", "dupa", "guvern", "iasi", "investitii", "masura",
@@ -290,7 +290,7 @@ class StorySummaryGeneratorService:
             story_type=story_type,
         )
         body = " ".join(sentence for sentence in filtered_body_sentences if sentence).strip()
-        body = self.normalize_for_radio(body)
+        body = self.normalize_for_radio(self._normalize_story_text(body))
         summary_text = self._compose_summary_text(
             lead=lead,
             source_attribution=source_attribution,
@@ -298,7 +298,7 @@ class StorySummaryGeneratorService:
             quotes=quotes,
         )
         summary_text = self._expand_if_needed(summary_text, topic) if story_type == "major" else summary_text
-        summary_text = self.normalize_for_radio(summary_text)
+        summary_text = self.normalize_for_radio(self._normalize_story_text(summary_text))
         editorial_notes = [
             f"story_type={story_type}",
             "headline_ready_for_assembly",
@@ -363,7 +363,7 @@ class StorySummaryGeneratorService:
         )
         if story_type == "major":
             lead = self._build_major_story_lead(cluster, topic, short_headline, lead, casualty_line)
-        return self.normalize_for_radio(lead)
+        return self.normalize_for_radio(self._normalize_story_text(lead))
 
     def build_source_attribution(
         self,
@@ -380,14 +380,14 @@ class StorySummaryGeneratorService:
                 attribution_type=attribution_type,
                 quote_line=quote_line,
             )
-            return self.normalize_for_radio(sentence), attribution_variant, summary_variation_used
+            return self.normalize_for_radio(self._normalize_story_text(sentence)), attribution_variant, summary_variation_used
         sentence, attribution_variant, summary_variation_used = self._build_detail_sentence(
             cluster=cluster,
             topic=topic,
             attribution_type=attribution_type,
             quote_line=quote_line,
         )
-        return self.normalize_for_radio(sentence), attribution_variant, summary_variation_used
+        return self.normalize_for_radio(self._normalize_story_text(sentence)), attribution_variant, summary_variation_used
 
     def build_body(
         self,
@@ -417,7 +417,7 @@ class StorySummaryGeneratorService:
 
         if quote_line is not None:
             actor = self._clean_source_label(self._attribution_actor(cluster, attribution_type))
-            quote_sentence = self.normalize_for_radio(f'{actor} spune: "{quote_line}".')
+            quote_sentence = self.normalize_for_radio(self._normalize_story_text(f'{actor} spune: "{quote_line}".'))
             normalized_key = quote_sentence.lower()
             if normalized_key not in seen:
                 quotes.append(quote_sentence)
@@ -428,7 +428,7 @@ class StorySummaryGeneratorService:
             if extracted is None:
                 continue
             actor, statement = extracted
-            quote_sentence = self.normalize_for_radio(f"{actor} spune ca {statement}.")
+            quote_sentence = self.normalize_for_radio(self._normalize_story_text(f"{actor} spune ca {statement}."))
             normalized_key = quote_sentence.lower()
             if normalized_key in seen:
                 continue
@@ -505,7 +505,10 @@ class StorySummaryGeneratorService:
         casualty_line: str | None,
     ) -> str:
         if current_lead and current_lead.strip() != "Un eveniment important are loc.":
-            if "Un eveniment important are loc" not in current_lead:
+            if (
+                "Un eveniment important are loc" not in current_lead
+                and not self._text_needs_romanian_rewrite(current_lead)
+            ):
                 return current_lead
 
         cluster_text = self._light_translate_title(self._cluster_text(cluster))
@@ -619,6 +622,8 @@ class StorySummaryGeneratorService:
     def _clean_source_label(self, label: str) -> str:
         cleaned = self.normalize_for_radio(self._light_translate_title(label))
         cleaned = re.sub(r"\s*-\s*liderul presei ie[?s]ene.*$", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"^AP News$", "AP", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"^BBC World$", "BBC", cleaned, flags=re.IGNORECASE)
         cleaned = re.sub(r"^Euronews\.ro.*$", "Euronews Romania", cleaned, flags=re.IGNORECASE)
         cleaned = re.sub(r"^Ziarul de Ia[?s]i.*$", "Ziarul de Iasi", cleaned, flags=re.IGNORECASE)
         cleaned = re.sub(r"\s+#AllViews.*$", "", cleaned, flags=re.IGNORECASE)
@@ -649,6 +654,43 @@ class StorySummaryGeneratorService:
             or len(statement.split()) > 20
             or self._title_looks_unreliable(statement)
         )
+
+    def _text_needs_romanian_rewrite(self, text: str) -> bool:
+        tokens = [token.lower() for token in TOKEN_PATTERN.findall(text)]
+        if not tokens:
+            return False
+        english_hits = sum(1 for token in tokens if token in ENGLISH_HEADLINE_MARKERS)
+        romanian_hits = sum(1 for token in tokens if token in ROMANIAN_HEADLINE_MARKERS)
+        return english_hits >= 2 and english_hits >= romanian_hits
+
+    def _normalize_story_text(self, text: str) -> str:
+        normalized = text
+        replacements = {
+            "AP News": "AP",
+            "BBC World": "BBC",
+            "Associated Press": "AP",
+            "US": "SUA",
+            "Baghdad": "Bagdad",
+            "embassy": "ambasada",
+            "missile": "racheta",
+            "missiles": "rachete",
+            "war": "conflict",
+            "military": "militar",
+            "targeted": "vizata",
+            "target": "tinta",
+            "security": "securitate",
+            "regional": "regional",
+            "response": "raspuns",
+        }
+        for source_term, replacement in replacements.items():
+            normalized = re.sub(rf"\b{re.escape(source_term)}\b", replacement, normalized, flags=re.IGNORECASE)
+        for english_term, romanian_term in sorted(self.english_to_romanian_terms.items(), key=lambda item: len(item[0]), reverse=True):
+            normalized = re.sub(rf"\b{re.escape(english_term)}\b", romanian_term, normalized, flags=re.IGNORECASE)
+        normalized = normalized.replace(';', '. ')
+        normalized = re.sub(r'\s+', ' ', normalized).strip()
+        normalized = re.sub(r'\.\s*;', '. ', normalized)
+        normalized = re.sub(r'\s+([,.;:?!])', r'\1', normalized)
+        return normalized
 
     def _compose_summary_text(
         self,
@@ -1117,7 +1159,7 @@ class StorySummaryGeneratorService:
 
     def _continuity_subject(self, translated_title: str) -> str:
         subject = translated_title.strip().rstrip('.!?')
-        if self._title_looks_unreliable(subject):
+        if self._title_looks_unreliable(subject) or self._text_needs_romanian_rewrite(subject):
             return "subiectul urmarit"
         words = subject.split()
         if len(words) > 12:

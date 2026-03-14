@@ -356,7 +356,7 @@ class EditorialContractValidationService:
             return []
         monitored_configs, _ = self.source_watcher_service.resolve_monitored_source_configs(briefing.personalization)
         local_source_names = {
-            self._normalize_text(config.name)
+            self._normalize_text(getattr(config, "source_name", getattr(config, "name", "")))
             for config in monitored_configs
             if getattr(config, "scope", None) == "local"
         }
