@@ -1781,3 +1781,97 @@ The architecture is stable enough to confirm:
 * no local selection regression
 
 But the full spaced-snapshot requirement still needs scheduled follow-up runs later today and next morning to complete the time-separation validation properly.
+
+## 2026-03-15 - Task 7 national editorial signal upgrade
+
+Goal for this pass:
+
+* increase credible Romanian domestic hard-news candidates without changing the shared core
+* keep lifecycle and ranking formulas unchanged
+* improve the signal quality feeding national clustering and scoring
+
+Changes made:
+
+* expanded Romanian impact evidence in [backend/app/services/story_scoring_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/story_scoring_service.py)
+  * added policy / fiscal / justice signals such as:
+    * `guvernul romaniei`
+    * `parlamentul romaniei`
+    * `coalitie de guvernare`
+    * `amendamente buget`
+    * `deficit bugetar`
+    * `pachet solidaritate`
+    * `salariu minim`
+    * `aviz csm`
+    * `procuror sef dna`
+    * `tva`
+    * `evaziune fiscala`
+    * `antifrauda`
+* expanded Romanian family hints in [backend/tools/editorial_debug/run_top5_scope_selection.py](D:/aplicatie_telefon/openwave-app/backend/tools/editorial_debug/run_top5_scope_selection.py)
+  * added / strengthened:
+    * `fiscal_policy_ro`
+    * `government_coalition`
+    * `justice_procedure`
+    * `economic_policy_ro`
+    * `public_safety_local_admin`
+* fixed a classifier ordering bug:
+  * family hints were being added to `positive_score` after `domestic_score_total` had already been calculated
+  * this meant real Romanian policy/fiscal stories were carrying hints but not actually benefiting from them in the threshold decision
+* added narrower Romanian public-interest signals for:
+  * `tva`
+  * `evaziune`
+  * `antifrauda`
+  * `petarde`
+  * `artificii`
+  * `capitala`
+* kept lifecycle logic unchanged
+* kept the selection formula unchanged
+
+Validation run:
+
+* `backend\venv\Scripts\python.exe backend/tools/editorial_debug/run_top5_breaking_bulletin.py --profile=national`
+
+Observed improvement after the signal upgrade:
+
+* `selected_count` improved from `2` to `4`
+* `national_cluster_count` improved from `9-10` baseline range to `10`
+* `national_preference_bucket_distribution` improved from:
+  * `domestic_hard_news: 1`
+  * `external_direct_impact: 1`
+  * `off_target: 8`
+  to:
+  * `domestic_hard_news: 3`
+  * `external_direct_impact: 1`
+  * `off_target: 6`
+
+More credible domestic candidates now selected:
+
+* `Mierea din Mercosur fara taxe ameninta sa falimenteze producatorii romani...`
+* `Consiliul General a adoptat initiativa REPER privind reguli mai stricte pentru petarde si artificii in Capitala`
+* `ANAF s-a prins Cum se fura TVA...`
+
+Lifecycle interaction remained stable:
+
+* `domestic_politics` family continued to accumulate cleanly
+* `family_run_count` increased to `17`
+* `family_lifecycle_boost` remained predictable at `0.4`
+* no lifecycle scoring changes were needed
+
+Diversity protection stress test:
+
+* created a controlled synthetic case with `4` clusters in the same `justice_procedure` family
+* selection result kept only `2` stories from that family
+* this confirms the family diversity cap still works under overflow pressure
+
+Current limitation after Task 7:
+
+* national quality is materially better, but still not fully healthy
+* `multi_source_clusters` remained `0` in this particular post-upgrade run
+* some off-target national candidates still exist in the pool and can backfill when the domestic pool is thin
+
+Conclusion:
+
+* Task 7 improved Romanian domestic signal detection without changing ranking logic
+* more hard-news candidates now clear the national gate
+* lifecycle behavior remains stable
+* diversity protections remain active
+* the next bottleneck is now stronger same-story overlap across Romanian outlets, not missing domestic signal vocabulary

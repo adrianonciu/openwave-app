@@ -18,12 +18,14 @@ ENGLISH_HEADLINE_MARKERS = {
     "selling", "shoots", "sold", "sports", "taliban", "winners", "year",
 }
 ROMANIA_IMPACT_TERMS = {
-    "romania", "romaniei", "roman", "romani", "bucuresti", "guvern", "guvernul", "parlament",
-    "presedintie", "pnrr", "fonduri europene", "buget", "deficit", "deficit bugetar", "energie", "carburant",
-    "motorina", "bnr", "ccr", "anaf", "mae", "mapn", "psd", "pnl", "usr", "csm", "dna",
-    "diicot", "audieri", "procuror sef", "procuror-sef", "procuror", "parchet", "politie", "tribunal",
-    "instanta", "judecator", "rechizitoriu", "arest", "arestari", "perchezitii", "iccj", "parchetul general",
-    "amendamente buget", "taxe", "salariu minim",
+    "romania", "romaniei", "roman", "romani", "bucuresti", "guvern", "guvernul", "guvernul romaniei", "parlament",
+    "parlamentul romaniei", "presedintie", "coalitie de guvernare", "pnrr", "fonduri europene", "buget", "deficit",
+    "deficit bugetar", "amendamente buget", "pachet solidaritate", "salariu minim", "energie", "carburant",
+    "motorina", "bnr", "ccr", "anaf", "mae", "mapn", "psd", "pnl", "usr", "csm", "aviz csm", "aviz consultativ csm",
+    "aviz negativ csm", "dna", "procuror sef dna", "procuror-sef dna", "diicot", "audieri", "procuror sef", "procuror-sef",
+    "procuror", "parchet", "politie", "tribunal", "instanta", "judecator", "rechizitoriu", "arest", "arestari",
+    "perchezitii", "iccj", "parchetul general", "taxe", "tva", "evaziune", "evaziune fiscala", "antifrauda",
+    "frauda fiscala", "consiliul general", "consiliu local", "consiliul local", "capitala", "petarde", "artificii",
 }
 LOW_VALUE_TITLE_MARKERS = {
     "live-text", "live text", "video", "photos", "gallery", "highlights", "odds", "preview",

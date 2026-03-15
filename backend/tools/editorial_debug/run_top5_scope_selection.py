@@ -65,10 +65,10 @@ NATIONAL_PREFERENCE_BUCKET_ORDER = {
     "off_target": 2,
 }
 ROMANIAN_DOMESTIC_HARD_NEWS_TERMS = {
-    "guvern", "guvernul", "parlament", "parlamentul", "presedinte", "presedintia", "alegeri", "electoral",
+    "guvern", "guvernul", "guvernul romaniei", "parlament", "parlamentul", "parlamentul romaniei", "presedinte", "presedintia", "alegeri", "electoral",
     "partid", "psd", "pnl", "usr", "senat", "senatul", "camera deputatilor", "deputati", "primarie",
-    "consiliul", "ministru", "minister", "ministerul", "procuror", "procurorii", "instanta", "justitie",
-    "tribunal", "curte", "ccr", "dna", "diicot", "parchet", "politie", "judecator", "judecata", "dosar", "perchezitii", "arest", "arestari", "rechizitoriu", "taxe", "impozit", "buget", "inflatie", "bnr",
+    "consiliul", "ministru", "minister", "ministerul", "coali?ie de guvernare", "coalitie de guvernare", "procuror", "procurorii", "instanta", "justitie",
+    "tribunal", "curte", "ccr", "csm", "aviz csm", "dna", "diicot", "parchet", "politie", "judecator", "judecata", "dosar", "perchezitii", "arest", "arestari", "rechizitoriu", "taxe", "impozit", "buget", "deficit bugetar", "amendamente buget", "pachet solidaritate", "salariu minim", "inflatie", "bnr",
     "energie", "infrastructura", "autostrada", "spital", "sanatate", "educatie", "scoala", "protest",
     "proteste", "greva", "administratie", "romania", "bucuresti", "cluj", "iasi", "constanta",
 }
@@ -106,6 +106,9 @@ ROMANIAN_INSTITUTION_TERMS = {
     "diicot": 4,
     "csm": 4,
     "consiliul superior al magistraturii": 4,
+    "aviz csm": 4,
+    "aviz consultativ csm": 4,
+    "aviz negativ csm": 4,
     "iccj": 4,
     "inalta curte": 4,
     "parchet": 3,
@@ -119,11 +122,16 @@ ROMANIAN_INSTITUTION_TERMS = {
     "procuror": 3,
     "procuror sef": 4,
     "procuror-sef": 4,
+    "procuror sef dna": 4,
+    "procuror-sef dna": 4,
     "procurorii": 3,
     "procurorilor": 3,
     "rechizitoriu": 3,
     "primarie": 3,
     "primarul": 3,
+    "consiliul general": 3,
+    "consiliu local": 3,
+    "consiliul local": 3,
     "consiliul judetean": 3,
     "prefect": 3,
     "guvernul romaniei": 4,
@@ -136,8 +144,9 @@ ROMANIAN_INSTITUTION_TERMS = {
 }
 
 ROMANIAN_POLITICAL_ACTOR_TERMS = {
-    "premier": 3,
+    "premierul": 3,
     "prim-ministru": 3,
+    "coalitie de guvernare": 3,
     "ministru": 3,
     "ministrul": 3,
     "deputat": 2,
@@ -145,7 +154,6 @@ ROMANIAN_POLITICAL_ACTOR_TERMS = {
     "senator": 2,
     "senatorii": 2,
     "primar": 2,
-    "consiliul": 2,
     "psd": 3,
     "pnl": 3,
     "usr": 3,
@@ -192,7 +200,11 @@ ROMANIAN_PUBLIC_IMPACT_TERMS = {
     "licitatie": 2,
     "trafic rutier": 2,
     "coalitie": 2,
+    "coalitie de guvernare": 3,
     "negocieri": 2,
+    "amendamente buget": 3,
+    "deficit bugetar": 3,
+    "pachet solidaritate": 3,
     "ordonanta": 2,
     "lege": 2,
     "decizie": 2,
@@ -220,6 +232,15 @@ ROMANIAN_PUBLIC_IMPACT_TERMS = {
     "voineag adjunct": 2,
     "florenta diicot": 2,
     "cerbu dna": 2,
+    "tva": 3,
+    "evaziune": 3,
+    "evaziune fiscala": 3,
+    "antifrauda": 3,
+    "frauda fiscala": 3,
+    "siguranta publica": 2,
+    "petarde": 2,
+    "artificii": 2,
+    "capitala": 2,
 }
 
 ROMANIAN_PUBLIC_ECONOMY_TERMS = {
@@ -348,8 +369,12 @@ ROMANIAN_GENERIC_CORPORATE_NEGATIVE_TERMS = {
 }
 
 ROMANIAN_EVENT_FAMILY_HINTS = {
-    "romanian_domestic_politics": {"guvern", "guvernul", "guvernul romaniei", "parlament", "parlamentul", "parlamentul romaniei", "coalitie", "negocieri", "premier", "prim-ministru", "presedintie", "psd", "pnl", "usr", "udmr", "aur"},
-    "romanian_budget_fiscal": {"buget", "deficit", "taxe", "impozit", "impozite", "fiscal", "anaf", "bnr", "bvb", "ministerul finantelor"},
+    "romanian_domestic_politics": {"guvern", "guvernul", "guvernul romaniei", "parlament", "parlamentul", "parlamentul romaniei", "coalitie", "coalitie de guvernare", "negocieri", "premier", "prim-ministru", "presedintie", "psd", "pnl", "usr", "udmr", "aur"},
+    "fiscal_policy_ro": {"amendamente buget", "deficit bugetar", "pachet solidaritate", "salariu minim", "ministerul finantelor", "taxe", "impozit", "impozite", "fiscal", "tva", "evaziune fiscala", "frauda fiscala", "antifrauda"},
+    "government_coalition": {"coalitie de guvernare", "coalitie", "negocieri", "guvernul romaniei", "parlamentul romaniei", "premier", "prim-ministru"},
+    "justice_procedure": {"aviz csm", "aviz consultativ csm", "aviz negativ csm", "procuror sef dna", "procuror-sef dna", "procuror sef", "procuror-sef", "csm", "dna", "diicot", "iccj", "parchetul general"},
+    "economic_policy_ro": {"deficit bugetar", "amendamente buget", "pachet solidaritate", "salariu minim", "inflatie", "preturi", "facturi", "subventii", "investitii", "ministerul finantelor", "bnr"},
+    "romanian_budget_fiscal": {"buget", "deficit", "deficit bugetar", "amendamente buget", "taxe", "impozit", "impozite", "fiscal", "anaf", "bnr", "bvb", "ministerul finantelor", "tva", "evaziune fiscala", "frauda fiscala", "antifrauda"},
     "romanian_pnrr_funds": {"pnrr", "fonduri europene", "comisia europeana", "miliarde de euro", "reforma", "reforme"},
     "romanian_eu_funds_loss": {"pierdut", "pierde", "fonduri europene", "pnrr", "comisia europeana", "miliarde de euro"},
     "romanian_fiscal_policy_2026": {"bugetul pe 2026", "deficit", "taxe", "buget 2026", "masuri fiscale"},
@@ -362,7 +387,8 @@ ROMANIAN_EVENT_FAMILY_HINTS = {
     "romanian_prosecutor_decision": {"procuror-sef", "procuror sef", "numiri procurori", "csm", "dna", "diicot", "parchetul general", "audieri", "rechizitoriu", "audieri csm", "procuror sef dna", "aviz negativ csm", "aviz consultativ csm", "voineag adjunct", "florenta diicot", "cerbu dna", "balotaj csm"},
     "romanian_high_court_decision": {"iccj", "inalta curte", "curte de apel", "ccr", "instanta", "judecator", "judecata", "aviz negativ csm", "aviz consultativ csm", "balotaj csm"},
     "romanian_anti_corruption_case": {"dna", "diicot", "perchezitii", "arest", "arestari", "rechizitoriu", "coruptie", "dosar", "dosar anti coruptie", "dosar anti-coruptie"},
-    "romanian_major_policy_decision": {"ordonanta", "lege", "decizie", "masuri", "minister", "ministru", "guvernul"},
+    "romanian_major_policy_decision": {"ordonanta", "lege", "decizie", "masuri", "minister", "ministru", "guvernul", "consiliul general", "consiliu local", "consiliul local", "capitala"},
+    "public_safety_local_admin": {"consiliul general", "consiliu local", "consiliul local", "capitala", "petarde", "artificii", "siguranta publica"},
     "romanian_public_protest": {"protest", "proteste", "greva", "manifestatie", "studentii", "sindicat"},
     "romanian_infrastructure_issue": {"infrastructura", "autostrada", "trafic", "spital", "scoala", "metrou", "cale ferata"},
 }
@@ -508,12 +534,12 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
     specific_institution_anchor_count = sum(
         1
         for term, _ in institution_matches
-        if term in {"anaf", "bnr", "bvb", "bursa de valori bucuresti", "ccr", "curtea constitutionala", "dna", "diicot", "iccj", "inalta curte", "camera deputatilor", "administratia prezidentiala", "consiliul judetean", "primarie", "prefect"}
+        if term in {"anaf", "bnr", "bvb", "bursa de valori bucuresti", "ccr", "curtea constitutionala", "dna", "diicot", "iccj", "inalta curte", "camera deputatilor", "administratia prezidentiala", "consiliul general", "consiliu local", "consiliul local", "consiliul judetean", "primarie", "prefect"}
     )
     specific_actor_anchor_count = sum(
         1
         for term, _ in actor_matches
-        if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "premier", "prim-ministru"}
+        if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "coalitie de guvernare", "premierul", "prim-ministru"}
     )
     domestic_anchor_count = specific_institution_anchor_count + specific_actor_anchor_count + (1 if governance_location_hit else 0)
     if romania_reference_count and (institution_matches or actor_matches or public_impact_matches or public_economy_matches):
@@ -539,6 +565,9 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
     headline_public_interest = bool(title_public_impact_matches or title_public_economy_matches)
     headline_domestic_anchor = bool(title_institution_matches or title_actor_matches or title_governance_location_hit)
     headline_supports_domestic = headline_domestic_anchor or (headline_public_interest and romania_reference_count > 0)
+    family_hints = _romanian_event_family_hints(article)
+    positive_score += min(6, len(family_hints) * 2)
+    positive_signals.extend(f"family_hint:{hint}" for hint in family_hints)
     headline_gate_passed = headline_supports_domestic or public_interest_hits_count >= 2 or (romania_reference_count > 0 and domestic_anchor_count > 0)
     domestic_score_total = round(
         positive_score
@@ -569,18 +598,17 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
         and strong_public_interest
         and negative_score <= max(4, positive_score - 1)
     )
-
     article.domestic_hard_news_positive_signals = positive_signals
     article.domestic_hard_news_negative_signals = negative_signals
-    article.romanian_event_family_hints = _romanian_event_family_hints(article)
+    article.romanian_event_family_hints = family_hints
     article.institutional_signal_hits = sorted({
         *(term for term, _ in institution_matches),
-        *(term for term, _ in actor_matches if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "premier", "prim-ministru"}),
+        *(term for term, _ in actor_matches if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "coalitie de guvernare", "premierul", "prim-ministru"}),
         *(signal for signal in governance_location_signals if signal.startswith("governance_")),
     })
     article.romania_impact_evidence_hits = sorted({
         *(term for term, _ in title_institution_matches if term in {"csm", "ccr", "dna", "diicot", "iccj", "inalta curte", "parchet", "parchetul general", "tribunal", "instanta", "judecator", "procuror", "procuror-sef", "procuror sef", "guvernul romaniei", "parlamentul romaniei", "anaf", "bnr", "mae", "mapn"}),
-        *(term for term, _ in title_actor_matches if term in {"psd", "pnl", "usr", "udmr", "coalitia de guvernare", "premier", "prim-ministru"}),
+        *(term for term, _ in title_actor_matches if term in {"psd", "pnl", "usr", "udmr", "coalitia de guvernare", "coalitie de guvernare", "premierul", "prim-ministru"}),
         *(term for term, _ in title_public_impact_matches if term in {"buget", "deficit", "taxe", "impozit", "fiscal", "pnrr", "reforma", "reforme", "energie", "combustibil", "carburant", "motorina", "ordonanta", "lege", "decizie", "perchezitii", "arest", "arestari", "audieri", "rechizitoriu", "judecata", "dosar", "tentativa omor", "grupare rivala", "maceta", "audieri csm", "procuror sef dna", "aviz negativ csm", "dosar anti coruptie", "dosar anti-coruptie", "balotaj csm", "aviz consultativ csm", "voineag adjunct", "florenta diicot", "cerbu dna"}),
         *(term for term, _ in title_public_economy_matches),
         *(term for term, _ in institution_matches if term in {"csm", "ccr", "dna", "diicot", "iccj", "inalta curte", "parchet", "parchetul general", "tribunal", "instanta", "judecator", "procuror", "procuror-sef", "procuror sef", "guvernul romaniei", "parlamentul romaniei", "anaf", "bnr", "mae", "mapn"}),
@@ -655,6 +683,7 @@ def _romanian_justice_signal_score(article: FetchedArticle) -> int:
         "romanian_prosecutor_decision",
         "romanian_high_court_decision",
         "romanian_anti_corruption_case",
+        "justice_procedure",
     }
     justice_hits = set(article.romania_impact_evidence_hits or []) & {
         "csm", "dna", "diicot", "iccj", "inalta curte", "parchet", "parchetul general",
