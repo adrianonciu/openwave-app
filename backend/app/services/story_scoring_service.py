@@ -19,7 +19,9 @@ ROMANIA_IMPACT_TERMS = {
     "romania", "romaniei", "roman", "romani", "bucuresti", "guvern", "guvernul", "parlament",
     "presedintie", "pnrr", "fonduri europene", "buget", "deficit", "deficit bugetar", "energie", "carburant",
     "motorina", "bnr", "ccr", "anaf", "mae", "mapn", "psd", "pnl", "usr", "csm", "dna",
-    "diicot", "audieri", "procuror sef", "procuror-sef", "amendamente buget", "taxe", "salariu minim",
+    "diicot", "audieri", "procuror sef", "procuror-sef", "procuror", "parchet", "politie", "tribunal",
+    "instanta", "judecator", "rechizitoriu", "arest", "arestari", "perchezitii", "iccj", "parchetul general",
+    "amendamente buget", "taxe", "salariu minim",
 }
 LOW_VALUE_TITLE_MARKERS = {
     "live-text", "live text", "video", "photos", "gallery", "highlights", "odds", "preview",

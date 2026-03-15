@@ -51,6 +51,8 @@ def _is_usable_breaking_candidate(scored_cluster, scope: str) -> bool:
         buckets = [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]
         dominant_bucket = Counter(buckets).most_common(1)[0][0] if buckets else None
         if dominant_bucket == "off_target":
+            if getattr(scored_cluster, "recovered_domestic_candidate", False):
+                return True
             domestic_purity = getattr(scored_cluster, "domestic_purity_score", 0.0)
             impact_hits = getattr(scored_cluster, "romania_impact_evidence_hits", []) or []
             title_only_boost = getattr(scored_cluster, "title_only_domestic_boost", 0.0)

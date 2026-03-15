@@ -14,6 +14,9 @@ ROMANIAN_PERSISTENCE_HINTS = {
     "romanian_energy_security",
     "romanian_justice",
     "romanian_justice_case",
+    "romanian_prosecutor_decision",
+    "romanian_high_court_decision",
+    "romanian_anti_corruption_case",
     "romanian_major_policy_decision",
 }
 ROMANIAN_RECOVERY_HINTS = {
@@ -23,6 +26,9 @@ ROMANIAN_RECOVERY_HINTS = {
     "romanian_energy_security",
     "romanian_justice",
     "romanian_justice_case",
+    "romanian_prosecutor_decision",
+    "romanian_high_court_decision",
+    "romanian_anti_corruption_case",
     "romanian_major_policy_decision",
     "romanian_budget_fiscal",
 }
@@ -31,8 +37,18 @@ ROMANIAN_PRIORITY_RECOVERY_HINTS = {
     "romanian_fiscal_policy_2026",
     "romanian_justice",
     "romanian_justice_case",
+    "romanian_prosecutor_decision",
+    "romanian_high_court_decision",
+    "romanian_anti_corruption_case",
     "romanian_major_policy_decision",
     "romanian_budget_fiscal",
+}
+JUSTICE_PERSISTENCE_HINTS = {
+    "romanian_justice",
+    "romanian_justice_case",
+    "romanian_prosecutor_decision",
+    "romanian_high_court_decision",
+    "romanian_anti_corruption_case",
 }
 ROMANIAN_RECOVERY_POLICY_TERMS = {
     "buget", "deficit", "deficit bugetar", "taxe", "salariu minim", "energie", "pnrr", "reforme", "carburant", "motorina", "amendamente buget"
@@ -43,6 +59,7 @@ ROMANIAN_RECOVERY_INSTITUTIONS = {
 ROMANIAN_RECOVERY_MIN_PURITY = 0.35
 ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS = 1
 ROMANIAN_RECOVERY_SCORE_RATIO = 0.52
+ROMANIAN_JUSTICE_RECOVERY_MIN_PURITY = 0.2
 
 from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.story_score import ScoredStoryCluster
@@ -622,7 +639,7 @@ class StorySelectionService:
                 best_matches = matches
                 best_domain = domain
         inferred_topic = self._infer_topic(cluster)
-        if best_domain == "general" and inferred_topic in {"politics", "economy", "sport"}:
+        if best_domain == "general" and inferred_topic in {"politics", "economy", "justice", "sport"}:
             return inferred_topic
         return best_domain
 
@@ -851,7 +868,10 @@ class StorySelectionService:
         if not streaks:
             return 0.0
         longest = max(streaks)
-        return round(min(2.4, 0.8 + (longest * 0.4)), 2)
+        boost = min(2.4, 0.8 + (longest * 0.4))
+        if longest >= 2 and any(hint in JUSTICE_PERSISTENCE_HINTS for hint in (cluster.cluster_event_family_hints or [])):
+            boost = min(2.6, boost + 0.2)
+        return round(boost, 2)
 
     def _set_recovery_rejection(
         self,
@@ -876,8 +896,10 @@ class StorySelectionService:
         if bucket not in {"off_target", "external_direct_impact"}:
             return self._set_recovery_rejection(cluster, "candidate is already classified outside the near-miss recovery buckets", "bucket", "off_target|external_direct_impact", bucket or "none")
         purity = cluster.domestic_purity_score
-        if purity < ROMANIAN_RECOVERY_MIN_PURITY:
-            return self._set_recovery_rejection(cluster, f"purity={purity:.2f} < required={ROMANIAN_RECOVERY_MIN_PURITY:.2f}", "domestic_purity_score", ROMANIAN_RECOVERY_MIN_PURITY, round(purity, 2))
+        justice_hint_present = any(hint in JUSTICE_PERSISTENCE_HINTS for hint in (cluster.cluster_event_family_hints or []))
+        required_purity = ROMANIAN_JUSTICE_RECOVERY_MIN_PURITY if justice_hint_present else ROMANIAN_RECOVERY_MIN_PURITY
+        if purity < required_purity:
+            return self._set_recovery_rejection(cluster, f"purity={purity:.2f} < required={required_purity:.2f}", "domestic_purity_score", required_purity, round(purity, 2))
         impact_hits = len(cluster.romania_impact_evidence_hits or [])
         if impact_hits < ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS:
             return self._set_recovery_rejection(cluster, f"romania_impact_hits={impact_hits} < required={ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS}", "romania_impact_evidence_hits", ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS, impact_hits)

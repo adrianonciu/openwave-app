@@ -54,7 +54,29 @@
       "space",
       "ariane"
     ],
-    "general": []
+    "general": [],
+    "justice": [
+      "justitie",
+      "tribunal",
+      "instanta",
+      "judecator",
+      "parchet",
+      "politie",
+      "perchezitii",
+      "arestari",
+      "rechizitoriu",
+      "csm",
+      "dna",
+      "diicot",
+      "iccj",
+      "ccr",
+      "parchetul general",
+      "cjue",
+      "cedo",
+      "icc",
+      "extradare",
+      "mandat international"
+    ]
   },
   "preference_near_tie_tolerance": 4,
   "preference_influence_strength": 0.35,
@@ -136,7 +158,38 @@
       "google",
       "microsoft"
     ],
-    "general": []
+    "general": [],
+    "justice": [
+      "politie",
+      "parchet",
+      "tribunal",
+      "instanta",
+      "judecator",
+      "judecatori",
+      "perchezitii",
+      "arest",
+      "arestari",
+      "rechizitoriu",
+      "csm",
+      "dna",
+      "diicot",
+      "iccj",
+      "ccr",
+      "parchetul general",
+      "numiri procurori",
+      "reforme judiciare",
+      "cjue",
+      "cedo",
+      "icc",
+      "extradare",
+      "extradari",
+      "mandat international",
+      "mandate internationale",
+      "investigatii europene",
+      "procuror",
+      "procuror-sef",
+      "procuror sef"
+    ]
   },
   "geography_labels": {
     "local": [
