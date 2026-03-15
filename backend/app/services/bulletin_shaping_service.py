@@ -91,12 +91,29 @@ class BulletinShapingService:
             return (bucket_priority, round(lead_score, 3), base, cluster.cluster.cluster_id)
         if profile_name == "generalist":
             lead_score += domestic_score + local_relevance + family_run_count + lifecycle + romanian_sources + multi_source_bonus
-            if dominant_scope in {"national", "local"}:
+            europe_romania_impact = float(
+                getattr(getattr(cluster, "score_breakdown", None), "europe_romania_impact", None).contribution
+                if getattr(getattr(cluster, "score_breakdown", None), "europe_romania_impact", None)
+                else 0.0
+            )
+            if local_relevance > 0 or dominant_scope == "local":
+                bucket_priority = 5
+                lead_score += 12
+            elif dominant_scope == "national" and self._has_romania_focus(cluster):
+                bucket_priority = 4
+                lead_score += 12
+            elif dominant_scope == "national" and national_bucket == "domestic_hard_news":
                 bucket_priority = 3
-                lead_score += 8
-            elif dominant_scope == "international":
+                lead_score += 10
+            elif dominant_scope == "national":
                 bucket_priority = 2
-                lead_score += 2
+                lead_score += 4
+            elif dominant_scope == "international" and (national_bucket == "external_direct_impact" or europe_romania_impact >= 4.0):
+                bucket_priority = 2
+                lead_score += 4
+            elif dominant_scope == "international":
+                bucket_priority = 1
+                lead_score -= 4
             if local_relevance > 0:
                 lead_score += 4
             if national_bucket == "domestic_hard_news":
@@ -118,7 +135,7 @@ class BulletinShapingService:
         ordered: list[ScoredStoryCluster],
         candidate: ScoredStoryCluster,
         profile_name: str,
-    ) -> tuple[float, float, float, float, str]:
+    ) -> tuple[float, float, float, float, float, str]:
         previous = ordered[-1]
         previous_topic = self._topic_bucket(previous, profile_name)
         candidate_topic = self._topic_bucket(candidate, profile_name)
@@ -133,6 +150,15 @@ class BulletinShapingService:
                 recent_family_penalty = 0.5
             if self._topic_bucket(second_previous, profile_name) == candidate_topic:
                 recent_topic_penalty = 0.5
+
+        early_scope_penalty = 0.0
+        if profile_name == "generalist":
+            candidate_scope = self._dominant_scope(candidate)
+            target_position = len(ordered) + 1
+            if target_position <= 3 and candidate_scope == "international":
+                early_scope_penalty = 2.5
+            elif target_position <= 5 and candidate_scope == "international":
+                early_scope_penalty = 1.5
 
         editorial_strength = candidate.score_total or 0.0
         editorial_strength += float(getattr(candidate, "family_run_count", 0) or 0) * 0.15
@@ -168,6 +194,7 @@ class BulletinShapingService:
             topic_penalty,
             recent_family_penalty,
             recent_topic_penalty,
+            early_scope_penalty,
             -round(editorial_strength, 3),
             candidate.cluster.cluster_id,
         )
@@ -180,6 +207,14 @@ class BulletinShapingService:
             reasons.append(f"lifecycle_boost={getattr(cluster, 'family_lifecycle_boost', 0.0):.2f}")
             reasons.append(f"romanian_source_count={getattr(cluster, 'romanian_source_count', 0)}")
             reasons.append(f"national_bucket={self._dominant_national_bucket(cluster) or 'none'}")
+        elif profile_name == "generalist":
+            reasons.append(f"dominant_scope={self._dominant_scope(cluster)}")
+            reasons.append(f"romania_focus={self._has_romania_focus(cluster)}")
+            reasons.append(f"national_bucket={self._dominant_national_bucket(cluster) or 'none'}")
+            reasons.append(f"local_relevance_boost={getattr(cluster, 'local_relevance_boost', 0.0):.2f}")
+            reasons.append(f"romanian_source_count={getattr(cluster, 'romanian_source_count', 0)}")
+            reasons.append(f"family_run_count={getattr(cluster, 'family_run_count', 0)}")
+            reasons.append(f"lifecycle_boost={getattr(cluster, 'family_lifecycle_boost', 0.0):.2f}")
         elif profile_name == "local":
             reasons.append(f"local_relevance_boost={getattr(cluster, 'local_relevance_boost', 0.0):.2f}")
             reasons.append(f"county={getattr(cluster, 'local_county_tag', None) or 'none'}")
@@ -257,6 +292,21 @@ class BulletinShapingService:
             return "economy"
         return "general"
 
+
+    def _has_romania_focus(self, cluster: ScoredStoryCluster) -> bool:
+        title = (cluster.cluster.representative_title or "").lower()
+        romania_terms = (
+            "romania", "roman", "guvern", "guvernul", "parlament", "presed", "minister", "anaf", "csat",
+            "bucuresti", "capitala", "primar", "consiliul general", "romani", "romaniei"
+        )
+        if any(term in title for term in romania_terms):
+            return True
+        for member in cluster.cluster.member_articles:
+            region = str(getattr(member, "source_region", "") or "").lower()
+            if region in {"cluj", "iasi", "bucuresti", "timis", "constanta", "brasov", "prahova"}:
+                return True
+        return False
+
     def _dominant_national_bucket(self, cluster: ScoredStoryCluster) -> str | None:
         buckets: dict[str, int] = {}
         for member in cluster.cluster.member_articles:
@@ -275,3 +325,4 @@ class BulletinShapingService:
         if not scopes:
             return "unknown"
         return max(sorted(scopes), key=lambda scope: scopes[scope])
+

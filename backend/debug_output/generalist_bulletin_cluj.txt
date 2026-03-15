@@ -1,0 +1,114 @@
+OPENWAVE - Jurnalul momentului
+
+GENERALIST BULLETIN COMPOSITION
+
+local stories: 0
+national stories: 7
+international stories: 3
+Romania-focused constraint met: True
+first 5 domestic stories: 4
+first 5 balance rule met: True
+
+lead story chosen: Premierul Ilie Bolojan anunta ca o noua ordonanta intra in vigoare in Romania Masurile au impact in 3 domenii.
+reason: lead_story_selected: score_total=73.06, dominant_scope=national, romania_focus=True, national_bucket=off_target, local_relevance_boost=0.00, romanian_source_count=2, family_run_count=13, lifecycle_boost=0.40
+shaping: Bulletin shaping used profile 'generalist' across 10 selected stories. Lead story chosen: 'Premierul Ilie Bolojan anunta ca o noua ordonanta intra in vigoare in Romania Masurile au impact in 3 domenii' (lead_story_selected: score_total=73.06, dominant_scope=national, romania_focus=True, national_bucket=off_target, local_relevance_boost=0.00, romanian_source_count=2, family_run_count=13, lifecycle_boost=0.40). Applied deterministic family separation, topic diversity ordering, and confidence-aware tie-breaking across 9 later placements.
+
+1. Premierul Ilie Bolojan anunta ca o noua ordonanta intra in vigoare in Romania Masurile au impact in 3 domenii.
+   Lens: National
+   Sources: Digi24, Stirileprotv.ro
+   Unique sources: 2
+   Topic bucket: politics_government
+   Freshness: 30.0
+   Score: 73.06
+   Reserve fallback: True
+   Local civic fallback: False
+
+2. Intre MAGA si Macron Pariaza Nicusor Dan mai degraba pe Trump decat pe UE' Momentele definitorii.
+   Lens: National
+   Sources: Cotidianul
+   Unique sources: 1
+   Topic bucket: general
+   Freshness: 30.0
+   Score: 64.34
+   Reserve fallback: False
+   Local civic fallback: False
+
+3. Actualizare: Trump le cere aliatilor Statelor Unite sa trimita nave spre Stramtoarea Ormuz.
+   Lens: International
+   Sources: AP, Libertatea, NBC News, the Guardian
+   Unique sources: 4
+   Topic bucket: international_impact
+   Freshness: 30.0
+   Score: 105.9
+   Reserve fallback: False
+   Local civic fallback: False
+
+4. Primele avioane-cisterna ale SUA au ajuns in Romania Vor alimenta avioanele de lupta care au misiuni.
+   Lens: National
+   Sources: Antena 3
+   Unique sources: 1
+   Topic bucket: general
+   Freshness: 30.0
+   Score: 62.6
+   Reserve fallback: True
+   Local civic fallback: False
+
+5. Trei avioane cisterna ale SUA au ajuns in Romania in contextul razboiului din Iran Dislocarea temporara in Romania dupa decizia CSAT si a Parlamentului de la Bucuresti.
+   Lens: National
+   Sources: Mediafax
+   Unique sources: 1
+   Topic bucket: economy
+   Freshness: 30.0
+   Score: 64.9
+   Reserve fallback: True
+   Local civic fallback: False
+
+6. ONU livreaza ajutor de urgenta pentru afganii stramutati de conflictul cu Pakistanul.
+   Lens: International
+   Sources: CNA
+   Unique sources: 1
+   Topic bucket: international_impact
+   Freshness: 30.0
+   Score: 64.9
+   Reserve fallback: False
+   Local civic fallback: False
+
+7. Iranul si Ucraina schimba UE si ii testeaza unitatea Epoca inocentei s-a terminat.
+   Lens: National
+   Sources: spotmedia.ro
+   Unique sources: 1
+   Topic bucket: general
+   Freshness: 30.0
+   Score: 61.7
+   Reserve fallback: False
+   Local civic fallback: False
+
+8. Razboiul civil din Sudan ramane o criza umanitara fara sfarsit.
+   Lens: International
+   Sources: DW
+   Unique sources: 1
+   Topic bucket: international_impact
+   Freshness: 30.0
+   Score: 64.4
+   Reserve fallback: False
+   Local civic fallback: False
+
+9. Italia analizeaza revenirea la energia nucleara dupa aproape 40 de ani pe fondul preturilor ridicate la energie.
+   Lens: National
+   Sources: ZF.ro
+   Unique sources: 1
+   Topic bucket: economy
+   Freshness: 30.0
+   Score: 54.4
+   Reserve fallback: False
+   Local civic fallback: False
+
+10. Primele trei avioane-cisterna americane au aterizat in Romania.
+   Lens: National
+   Sources: G4Media.ro
+   Unique sources: 1
+   Topic bucket: politics_government
+   Freshness: 30.0
+   Score: 56.64
+   Reserve fallback: True
+   Local civic fallback: False

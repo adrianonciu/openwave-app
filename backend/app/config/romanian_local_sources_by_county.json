@@ -269,9 +269,10 @@
       "county_name": "Cluj",
       "source_entries": [
         {
-          "source_name": "cluj.com",
-          "source_url": "https://cluj.com",
-          "priority_rank": 1
+          "source_name": "stiridecluj.ro",
+          "source_url": "https://www.stiridecluj.ro",
+          "priority_rank": 1,
+          "notes": "Hyper-local Cluj coverage for civic events, traffic, and county updates."
         },
         {
           "source_name": "monitorulcj.ro",
@@ -282,6 +283,17 @@
           "source_name": "actualdecluj.ro",
           "source_url": "https://actualdecluj.ro",
           "priority_rank": 3
+        },
+        {
+          "source_name": "radiocluj.ro",
+          "source_url": "https://www.radiocluj.ro",
+          "priority_rank": 4,
+          "notes": "Public radio local coverage for Cluj and Transylvania."
+        },
+        {
+          "source_name": "cluj.com",
+          "source_url": "https://cluj.com",
+          "priority_rank": 5
         }
       ]
     },
