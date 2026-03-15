@@ -6,6 +6,31 @@ import json
 from pathlib import Path
 import re
 
+ROMANIAN_EVENT_PERSISTENCE_PATH = Path(__file__).resolve().parents[2] / "data" / "romanian_event_persistence_state.json"
+ROMANIAN_PERSISTENCE_HINTS = {
+    "romanian_fiscal_policy_2026",
+    "romanian_domestic_politics",
+    "romanian_pnrr_funds",
+    "romanian_energy_security",
+    "romanian_justice",
+    "romanian_major_policy_decision",
+}
+ROMANIAN_RECOVERY_HINTS = {
+    "romanian_domestic_politics",
+    "romanian_fiscal_policy_2026",
+    "romanian_pnrr_funds",
+    "romanian_energy_security",
+    "romanian_justice",
+    "romanian_major_policy_decision",
+    "romanian_budget_fiscal",
+}
+ROMANIAN_RECOVERY_POLICY_TERMS = {
+    "buget", "deficit", "taxe", "salariu minim", "energie", "pnrr", "reforme", "carburant", "motorina"
+}
+ROMANIAN_RECOVERY_INSTITUTIONS = {
+    "guvern", "guvernul", "parlament", "ccr", "bnr", "anaf", "mae", "mapn", "psd", "pnl", "usr"
+}
+
 from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.story_score import ScoredStoryCluster
 from app.models.story_selection import (
@@ -66,6 +91,7 @@ class StorySelectionService:
             "culture",
             "tv",
         }
+        self._romanian_event_persistence_state = self._load_romanian_event_persistence_state()
 
     def select_stories(
         self,
@@ -76,6 +102,7 @@ class StorySelectionService:
     ) -> StorySelectionResult:
         effective_max_stories = max_stories or self.default_max_stories
         selected_at = datetime.now(UTC)
+        self._romanian_event_persistence_state = self._load_romanian_event_persistence_state()
         ordered_clusters = sorted(
             scored_clusters,
             key=self._selection_sort_key,
@@ -263,7 +290,9 @@ class StorySelectionService:
 
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         selected = self._rebalance_national_domestic_selection(selected, ordered_clusters, effective_max_stories)
+        selected = self._recover_near_miss_domestic_candidates(selected, rejected, ordered_clusters, effective_max_stories)
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
+        self._persist_romanian_event_persistence_state(selected, selected_at)
         stats = StorySelectionStats(
             total_input_clusters=len(scored_clusters),
             selected_count=len(selected),
@@ -705,8 +734,11 @@ class StorySelectionService:
         bucket = self._dominant_national_bucket(cluster)
         adjusted = cluster.score_total
         if "national" in self._cluster_scopes(cluster):
+            persistence_boost = self._persistence_boost_for_cluster(cluster)
+            cluster.persistence_boost_applied = persistence_boost
             adjusted += cluster.domestic_purity_score * 4.0
             adjusted += min(cluster.title_only_domestic_boost, 1.5)
+            adjusted += persistence_boost
             adjusted -= cluster.external_penalty_applied * 5.0
             if bucket == "domestic_hard_news":
                 adjusted += 3.0
@@ -760,6 +792,125 @@ class StorySelectionService:
             selected_ids.discard(outgoing.cluster.cluster_id)
             selected_ids.add(incoming.cluster.cluster_id)
             selected_domestic = [cluster for cluster in selected if self._is_credible_domestic_candidate(cluster)]
+        return selected[:max_stories]
+
+
+    def _load_romanian_event_persistence_state(self) -> dict[str, object]:
+        if not ROMANIAN_EVENT_PERSISTENCE_PATH.exists():
+            return {"hints": {}, "updated_at": None}
+        try:
+            return json.loads(ROMANIAN_EVENT_PERSISTENCE_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {"hints": {}, "updated_at": None}
+
+    def _persist_romanian_event_persistence_state(self, selected: list[ScoredStoryCluster], selected_at: datetime) -> None:
+        if not self._is_all_national_input(selected):
+            return
+        hints_payload: dict[str, dict[str, object]] = {}
+        selected_hints = {
+            hint
+            for cluster in selected
+            for hint in (cluster.cluster_event_family_hints or [])
+            if hint in ROMANIAN_PERSISTENCE_HINTS
+        }
+        previous_hints = (self._romanian_event_persistence_state or {}).get("hints", {})
+        for hint in selected_hints:
+            previous_streak = int((previous_hints.get(hint) or {}).get("streak", 0))
+            hints_payload[hint] = {
+                "streak": previous_streak + 1,
+                "last_seen_at": selected_at.isoformat(),
+            }
+        ROMANIAN_EVENT_PERSISTENCE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        payload = {"updated_at": selected_at.isoformat(), "hints": hints_payload}
+        ROMANIAN_EVENT_PERSISTENCE_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        self._romanian_event_persistence_state = payload
+
+    def _persistence_boost_for_cluster(self, cluster: ScoredStoryCluster) -> float:
+        if "national" not in self._cluster_scopes(cluster):
+            return 0.0
+        previous_hints = (self._romanian_event_persistence_state or {}).get("hints", {})
+        streaks = [
+            int((previous_hints.get(hint) or {}).get("streak", 0))
+            for hint in (cluster.cluster_event_family_hints or [])
+            if hint in ROMANIAN_PERSISTENCE_HINTS
+        ]
+        if not streaks:
+            return 0.0
+        longest = max(streaks)
+        return round(min(2.4, 0.8 + (longest * 0.4)), 2)
+
+    def _near_miss_domestic_eligible(self, cluster: ScoredStoryCluster) -> bool:
+        if "national" not in self._cluster_scopes(cluster):
+            return False
+        bucket = self._dominant_national_bucket(cluster)
+        if bucket not in {"off_target", "external_direct_impact"}:
+            return False
+        return cluster.domestic_purity_score > 0.4 and len(cluster.romania_impact_evidence_hits) >= 1
+
+    def _mini_domestic_recovery_score(self, cluster: ScoredStoryCluster, leading_domestic_score: float) -> float:
+        hints = set(cluster.cluster_event_family_hints or []) & ROMANIAN_RECOVERY_HINTS
+        impact_hits = set(cluster.romania_impact_evidence_hits or [])
+        institutional_count = len([hit for hit in (cluster.romania_impact_evidence_hits or []) if hit in ROMANIAN_RECOVERY_INSTITUTIONS])
+        policy_count = len([hit for hit in (cluster.romania_impact_evidence_hits or []) if hit in ROMANIAN_RECOVERY_POLICY_TERMS])
+        score = (
+            (cluster.domestic_purity_score * 45.0)
+            + (min(len(hints), 3) * 10.0)
+            + (min(institutional_count, 3) * 8.0)
+            + (min(policy_count, 3) * 7.0)
+            + min(cluster.title_only_domestic_boost, 1.5) * 8.0
+            + min(cluster.persistence_boost_applied, 2.4) * 4.0
+        )
+        if leading_domestic_score > 0:
+            score += min(15.0, (cluster.score_total / leading_domestic_score) * 15.0)
+        return round(score, 2)
+
+    def _recover_near_miss_domestic_candidates(
+        self,
+        selected: list[ScoredStoryCluster],
+        rejected: list[ScoredStoryCluster],
+        ordered_clusters: list[ScoredStoryCluster],
+        max_stories: int,
+    ) -> list[ScoredStoryCluster]:
+        if not self._is_all_national_input(ordered_clusters):
+            return selected
+        domestic_selected = [cluster for cluster in selected if self._dominant_national_bucket(cluster) == "domestic_hard_news"]
+        leading_domestic_score = max((cluster.score_total for cluster in domestic_selected), default=0.0)
+        recovery_pool: list[ScoredStoryCluster] = []
+        for cluster in ordered_clusters:
+            if cluster in selected or not self._near_miss_domestic_eligible(cluster):
+                continue
+            recovery_score = self._mini_domestic_recovery_score(cluster, leading_domestic_score)
+            cluster.recovery_score = recovery_score
+            if leading_domestic_score <= 0 or recovery_score >= (leading_domestic_score * 0.6):
+                cluster.recovered_domestic_candidate = True
+                cluster.top5_balance_adjustment_reason = (
+                    f"Recovered as Romanian near-miss domestic candidate (recovery_score={recovery_score}, leading_domestic_score={leading_domestic_score})"
+                )
+                recovery_pool.append(cluster)
+        recovery_pool.sort(key=lambda cluster: (cluster.recovery_score, self._selection_adjusted_score(cluster)), reverse=True)
+        recovered_limit = 2
+        replacements = 0
+        selected_ids = {cluster.cluster.cluster_id for cluster in selected}
+        for candidate in recovery_pool:
+            if replacements >= recovered_limit or candidate.cluster.cluster_id in selected_ids:
+                continue
+            weak_external = [
+                cluster for cluster in selected
+                if self._dominant_national_bucket(cluster) in {"external_direct_impact", "off_target"}
+                and self._selection_adjusted_score(cluster) <= self._selection_adjusted_score(candidate) + 8.0
+            ]
+            weak_external.sort(key=lambda cluster: (self._selection_adjusted_score(cluster), cluster.external_penalty_applied))
+            if len(selected) < max_stories:
+                selected.append(candidate)
+                selected_ids.add(candidate.cluster.cluster_id)
+                replacements += 1
+                continue
+            if weak_external:
+                outgoing = weak_external[0]
+                selected = [candidate if item.cluster.cluster_id == outgoing.cluster.cluster_id else item for item in selected]
+                selected_ids.discard(outgoing.cluster.cluster_id)
+                selected_ids.add(candidate.cluster.cluster_id)
+                replacements += 1
         return selected[:max_stories]
 
     def _cluster_text(self, cluster: ScoredStoryCluster) -> str:

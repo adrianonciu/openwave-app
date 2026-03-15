@@ -79,6 +79,10 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "title_only_domestic_boost": getattr(scored_cluster, "title_only_domestic_boost", 0.0),
         "cluster_event_family_hints": getattr(scored_cluster, "cluster_event_family_hints", []),
         "domestic_vs_external_rank_reason": getattr(scored_cluster, "domestic_vs_external_rank_reason", None),
+        "recovery_score": getattr(scored_cluster, "recovery_score", 0.0),
+        "recovered_domestic_candidate": getattr(scored_cluster, "recovered_domestic_candidate", False),
+        "persistence_boost_applied": getattr(scored_cluster, "persistence_boost_applied", 0.0),
+        "top5_balance_adjustment_reason": getattr(scored_cluster, "top5_balance_adjustment_reason", None),
     }
 
 
@@ -271,6 +275,10 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "title_only_domestic_boost": getattr(cluster, "title_only_domestic_boost", None),
             "cluster_event_family_hints": getattr(cluster, "cluster_event_family_hints", None),
             "domestic_vs_external_rank_reason": getattr(cluster, "domestic_vs_external_rank_reason", None),
+            "recovery_score": getattr(cluster, "recovery_score", 0.0),
+            "recovered_domestic_candidate": getattr(cluster, "recovered_domestic_candidate", False),
+            "persistence_boost_applied": getattr(cluster, "persistence_boost_applied", 0.0),
+            "top5_balance_adjustment_reason": getattr(cluster, "top5_balance_adjustment_reason", None),
             "classifier_decision_reason": getattr(debug_article, "classifier_decision_reason", None) if debug_article is not None else None,
             "final_score": cluster.score_total,
         })
@@ -338,8 +346,33 @@ def main() -> None:
             f"External penalty: {item.get('external_penalty_applied', 0.0)}",
             f"Title-only domestic boost: {item.get('title_only_domestic_boost', 0.0)}",
             f"Rank reason: {item.get('domestic_vs_external_rank_reason') or 'none'}",
+            f"Recovery score: {item.get('recovery_score', 0.0)}",
+            f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
+            f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
+            f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
+            "",
+        ])
+
+    selected_national_ids = {item["cluster_id"] for item in national_top5}
+    near_miss_candidates = [
+        cluster for cluster in national_candidates
+        if cluster.cluster.cluster_id not in selected_national_ids
+        and getattr(cluster, "domestic_purity_score", 0.0) > 0.4
+        and len(getattr(cluster, "romania_impact_evidence_hits", []) or []) >= 1
+        and getattr(cluster, "recovered_domestic_candidate", False) is False
+    ]
+    near_miss_candidates.sort(key=lambda cluster: (getattr(cluster, "recovery_score", 0.0), getattr(cluster, "domestic_purity_score", 0.0), cluster.score_total), reverse=True)
+    lines.extend(["NEAR_MISS_DOMESTIC_CANDIDATES", ""])
+    for cluster in near_miss_candidates[:5]:
+        lines.extend([
+            f"Headline: {cluster.cluster.representative_title}",
+            f"Domestic purity: {getattr(cluster, 'domestic_purity_score', 0.0)}",
+            f"Romania impact hits: {', '.join(getattr(cluster, 'romania_impact_evidence_hits', []) or []) or 'none'}",
+            f"Event family hints: {', '.join(getattr(cluster, 'cluster_event_family_hints', []) or []) or 'none'}",
+            f"Rejection reason: {getattr(cluster, 'domestic_vs_external_rank_reason', None) or 'none'}",
+            f"Recovery score: {getattr(cluster, 'recovery_score', 0.0)}",
             "",
         ])
 
@@ -358,6 +391,10 @@ def main() -> None:
             f"External penalty: {item.get('external_penalty_applied', 0.0)}",
             f"Title-only domestic boost: {item.get('title_only_domestic_boost', 0.0)}",
             f"Rank reason: {item.get('domestic_vs_external_rank_reason') or 'none'}",
+            f"Recovery score: {item.get('recovery_score', 0.0)}",
+            f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
+            f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
+            f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
             "",

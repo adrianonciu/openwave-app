@@ -37,3 +37,7 @@ class ScoredStoryCluster(BaseModel):
     title_only_domestic_boost: float = 0.0
     cluster_event_family_hints: list[str] = Field(default_factory=list)
     domestic_vs_external_rank_reason: str | None = None
+    recovery_score: float = 0.0
+    recovered_domestic_candidate: bool = False
+    persistence_boost_applied: float = 0.0
+    top5_balance_adjustment_reason: str | None = None
