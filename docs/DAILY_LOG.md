@@ -830,3 +830,604 @@ Run Probe bulletin tests to validate presenter alternation and audio flow.
 - Refactored `story_summary_generator_service.py` into the explicit Story Editorial Composition stage, so selected clusters now become structured editorial stories before briefing assembly.
 - `GeneratedStorySummary` now carries `story_type`, `headline`, `lead`, `body`, `source_attribution`, `quotes`, and `editorial_notes` while preserving `summary_text` for downstream compatibility.
 - Written bulletin debug output now exposes the composed story structure directly for manual editorial inspection.
+
+Improved major-story editorial composition in story_summary_generator_service. Added a dedicated major-story headline path, reduced generic lead fallback, shortened Romanian source-attribution phrasing, broadened quote extraction to scan cluster titles, and explicitly record no_usable_quotes_detected when no attributed statements are available. Major-story output is now structurally stronger and more radio-ready, though short-story headline quality still needs follow-up.
+
+# OpenWave — Daily Log
+
+## Date
+
+Development session covering the last ~20 conversation steps.
+
+---
+
+# Summary
+
+Today's work focused on **stabilizing the editorial selection pipeline**, especially for:
+
+* international news clustering
+* source diversity
+* Romanian national news selection
+* candidate pool diagnostics
+* preparation for classifier precision improvements
+
+The goal of the session was to move the system from **experimental ingestion + clustering** to a **more editorially plausible bulletin output**.
+
+---
+
+# Major Architecture Progress
+
+## 1. International clustering improvements
+
+A new **event-family clustering system** was introduced.
+
+Event families implemented:
+
+* regional_conflict
+* military_movement
+* energy_shipping_disruption
+* political_crisis
+* attack_or_strike
+* economic_shock
+
+Regional context buckets added:
+
+* gulf_escalation
+* black_sea_security
+* eu_security
+
+This allowed clustering to merge related articles even when lexical similarity was low but the **event context was shared**.
+
+Example improvement:
+
+AP + CNA + ABC Australia → merged into a single Iran/Gulf escalation cluster.
+
+Result:
+
+* multi-source clusters began appearing
+* cluster confirmation became stronger
+
+---
+
+# 2. International source mix overhaul
+
+The international ingestion mix was redesigned to avoid BBC dominance.
+
+BBC sources were disabled.
+
+New active international mix includes:
+
+* Associated Press
+* NPR
+* Al Jazeera
+* DW
+* ABC News Australia
+* CBC
+* Sky News
+* NBC News
+* Kyodo News
+* CNA
+* CNBC
+* The Guardian
+
+Result:
+
+* more editorial diversity
+* stronger multi-source confirmation
+* clusters with **3–4 sources began appearing**
+
+---
+
+# 3. International selection validation
+
+New debug runner created:
+
+run_top5_scope_selection.py
+
+New debug artifacts:
+
+* story_selection_debug.json
+* international_merge_debug.json
+* candidate_pool_audit.json
+* international_source_coverage.json
+
+These allowed inspection of:
+
+* clustering decisions
+* source overlap
+* merge reasoning
+* candidate pool size
+
+Important discovery:
+
+The main bottleneck was **source diversity**, not clustering logic.
+
+After expanding the source mix, cluster strength improved.
+
+---
+
+# 4. Romanian source mix redesign
+
+The national ingestion mix was replaced with a **hard-news oriented Romanian source set**:
+
+* Agerpres
+* News.ro
+* HotNews
+* G4Media
+* Digi24
+* Stirile ProTV
+* Libertatea
+* Adevarul
+* ZF
+* Cotidianul
+* Europa Libera Romania
+* Ziare.com
+* Gandul
+* Antena3
+* SpotMedia
+
+Non-editorial placeholders were filtered:
+
+* ACTUALITATE
+* STIRI
+* LIVE
+* context
+
+Result:
+
+* cleaner candidate pool
+* fewer junk headlines entering clustering.
+
+---
+
+# 5. Romanian candidate pool diagnostics
+
+New debugging artifacts introduced:
+
+romanian_source_coverage.json
+romanian_candidate_pool_audit.json
+
+Findings:
+
+* 12 of 15 Romanian sources produced candidates
+* but **multi-source overlap was initially zero**
+
+Each outlet produced one story, but about **different events**.
+
+Therefore clustering had nothing to merge.
+
+---
+
+# 6. National-first discovery preference
+
+To increase overlap, a **Romanian source prioritization mechanism** was introduced.
+
+Romanian candidates are now bucketed into:
+
+* domestic_hard_news
+* external_direct_impact
+* off_target
+
+Selection preference:
+
+1 → domestic_hard_news
+2 → external_direct_impact
+3 → off_target
+
+Result:
+
+* domestic candidate density increased
+* off-target stories disappeared
+
+Bucket distribution in test run:
+
+domestic_hard_news → 8
+external_direct_impact → 2
+off_target → 0
+
+---
+
+# 7. First Romanian multi-source cluster
+
+After enabling national-first discovery, the first Romanian multi-source cluster appeared:
+
+News.ro + SpotMedia
+
+Story example:
+
+Ukraine war update referenced by Romanian outlets.
+
+Result:
+
+Romanian clusters with **unique_sources ≥2** finally appeared.
+
+This confirms that the national-first mechanism works.
+
+---
+
+# 8. Breaking bulletin runner
+
+A simplified editorial runner was created:
+
+run_top5_breaking_bulletin.py
+
+Purpose:
+
+Test **selection-only output** without invoking:
+
+* editorial composition
+* audio
+* TTS
+
+Output files:
+
+top5_breaking_bulletin.txt
+top5_breaking_bulletin.json
+
+Used to validate:
+
+* selection quality
+* cluster strength
+* editorial plausibility
+
+---
+
+# Current Weakness Identified
+
+The **domestic classifier is too permissive**.
+
+Examples incorrectly treated as domestic hard news:
+
+* lifestyle financial advice
+* generic global business stories
+* soft feature pieces
+
+Examples observed:
+
+* Economisirea dusă la extrem
+* Meta concediază angajați
+
+These should not rank in the top national bulletin.
+
+---
+
+# Next Planned Task
+
+Improve **domestic_hard_news classifier precision**.
+
+Planned improvements:
+
+1. Stronger negative signals
+
+Deprioritize:
+
+* lifestyle
+* personal finance advice
+* wellness
+* feature stories
+* generic corporate news without Romania impact.
+
+2. Stronger Romanian institutional signals
+
+Boost stories referencing:
+
+* Romanian government
+* parliament
+* ministries
+* courts
+* BNR
+* ANAF
+* infrastructure
+* taxes
+* public policy.
+
+3. Use entity density instead of article length.
+
+Prefer articles containing:
+
+* Romanian institutions
+* public actors
+* policy decisions.
+
+---
+
+# System Status
+
+Pipeline health:
+
+RSS ingestion ✔
+clustering ✔
+international clustering ✔
+international source diversity ✔
+Romanian source mix ✔
+national-first discovery ✔
+
+Remaining bottleneck:
+
+domestic classifier precision.
+
+---
+
+# Editorial Target
+
+The system should produce a **credible Romanian radio-style bulletin** with:
+
+* 5–12 stories depending on event intensity
+* balanced national and international coverage
+* multi-source confirmation prioritized
+* coherent event clustering.
+
+---
+
+# Next Development Step
+
+Implement **domestic classifier tightening** and rerun the breaking bulletin runner to confirm:
+
+* improved national story quality
+* continued multi-source clustering.
+
+DATE: 2026-03-15
+PROJECT: OpenWave
+FOCUS: Romanian editorial pipeline stabilization + domestic breadth recovery
+
+SUMMARY
+
+Major improvement in Romanian bulletin quality and stability.
+
+The Romanian editorial pipeline successfully transitioned from a thin bulletin
+(~1 domestic story per run) to a stable pattern:
+
+    1 domestic_hard_news
+    + 2 recovered_domestic_candidate
+    = 3 Romanian stories in Top 5
+
+This was achieved without weakening the main domestic classifier and without
+reintroducing lifestyle / corporate noise.
+
+KEY IMPLEMENTATIONS
+
+1. Recovery diagnostics
+Added explicit debugging fields to identify why Romanian candidates fail recovery:
+
+- recovery_rejection_reason
+- failed_threshold_name
+- threshold_required_value
+- candidate_current_value
+
+This significantly improved observability of near-miss domestic stories.
+
+2. Recovery threshold adjustment
+Recovery-only purity threshold relaxed to:
+
+    purity ≥ 0.35
+
+This allows legitimate institutional / justice / fiscal stories to enter
+the recovered_domestic_candidate path without affecting the main classifier.
+
+3. Justice / fiscal scoring improvements
+Expanded romania_impact_evidence_hits signals to include:
+
+Justice signals:
+- csm
+- dna
+- diicot
+- audieri
+- procuror_sef
+
+Fiscal / policy signals:
+- deficit bugetar
+- amendamente buget
+- taxe
+- salariu minim
+
+These changes improved recovery of real public-interest stories.
+
+4. Recovery path activation confirmed
+Recovered stories now consistently appear:
+
+Recovered examples:
+- "CSM reia luni votul... DNA..."
+- "Toti ochii pe sedinta PSD... voteaza bugetul propriului Guvern"
+
+Observed stable pattern across repeat runs:
+
+    domestic_hard_news = 1
+    recovered_domestic_candidate = 2
+    Romanian items in Top 5 = 3
+
+Coverage summary now reports:
+
+    1 hard-news / 2 recovered / 0 near-miss -> balance: GOOD
+
+5. External dominance protection confirmed
+External clusters remain capped and do not dominate Top 5
+when domestic coverage exists.
+
+PRECISION STATUS
+
+No regressions observed.
+
+Still excluded correctly:
+- lifestyle content
+- wellness
+- entertainment
+- personal finance advice
+- generic corporate stories
+
+NEXT DEVELOPMENT FOCUS
+
+Move from logic tuning → **editorial stability validation**.
+
+Planned next steps:
+
+1. Run spaced snapshots across multiple hours/days
+2. Monitor coverage summary stability (GOOD / THIN / WEAK)
+3. Strengthen Justice domain coverage across:
+   - local
+   - national
+   - international
+4. Improve event-family persistence for justice and institutional decisions
+
+Current Romanian pipeline state:
+
+Classifier: stable  
+Ranking: stable  
+Recovery path: active  
+Domestic breadth: significantly improved  
+Debug visibility: strong
+
+The system is now ready for stability validation across real-time news cycles.
+
+DATE: 2026-03-15
+PROJECT: OpenWave
+FOCUS: Justice domain integration and Romanian editorial pipeline stabilization
+
+SUMMARY
+
+Justice is now implemented as a full editorial domain in the Romanian news
+selection pipeline.
+
+The system can now detect, score, and recover justice-related stories across:
+
+- local justice events (courts, police, prosecutors)
+- national institutional decisions (CSM, DNA, DIICOT)
+- anti-corruption cases and prosecutorial appointments
+
+Justice stories now enter the Romanian national Top 5 through persistence
+and recovery mechanisms when appropriate.
+
+KEY IMPLEMENTATIONS
+
+1. Justice signal expansion
+
+Extended justice signal detection in:
+
+story_selection_config.json
+
+New Romanian justice phrases added:
+
+- tentativa omor
+- grupare rivala
+- maceta
+- audieri csm
+- procuror sef dna
+- aviz negativ csm
+- dosar anti-coruptie
+
+These signals contribute to:
+
+- romania_impact_evidence_hits
+- justice event-family hints
+- recovery scoring
+- persistence activation
+
+Justice recovery purity floor remains unchanged:
+
+purity ≥ 0.2
+
+2. Justice event-family hints
+
+Justice coverage now uses explicit hints:
+
+- romanian_justice_case
+- romanian_prosecutor_decision
+- romanian_high_court_decision
+- romanian_anti_corruption_case
+
+These hints trigger:
+
+- persistence bonus
+- recovery scoring
+- Romanian relevance signals
+
+3. Justice debug visibility
+
+Added new debug section:
+
+JUSTICE BOOSTED STORIES
+
+in:
+
+backend/debug_output/top5_breaking_bulletin.txt
+
+Example format:
+
+JUSTICE BOOSTED STORIES
+
+- story_title
+  reason: romanian_anti_corruption_case + persistence
+  recovery_score: 0.0
+
+This makes justice-related ranking behavior transparent during debugging.
+
+4. Validation result
+
+Example justice story successfully entering the national bulletin:
+
+CSM reia luni votul pentru Alex Florenta si Marius Voineag... candidatul la sefia DNA
+
+Signals detected:
+
+romanian_anti_corruption_case  
+persistence boost
+
+Justice story appeared in Romanian national Top 5.
+
+5. Precision status
+
+No regressions observed.
+
+Still correctly excluded:
+
+- lifestyle content
+- wellness
+- entertainment
+- personal finance
+- generic corporate news
+
+Romanian classifier remains strict and stable.
+
+CURRENT PIPELINE STATE
+
+Classifier: stable  
+Ranking: stable  
+Recovery path: active  
+Justice domain: integrated  
+Debug visibility: improved  
+
+Romanian bulletin pattern currently fluctuates between:
+
+1 hard-news  
++ 1 recovered  
++ 1 borderline  
+
+Balance status:
+
+THIN → approaching GOOD when justice/fiscal stories overlap.
+
+NEXT DEVELOPMENT FOCUS
+
+Shift from logic changes → stability validation.
+
+Planned next steps:
+
+1. Run spaced bulletin snapshots (evening + next morning).
+2. Observe justice persistence across real-time feed changes.
+3. Monitor coverage summary (GOOD / THIN / WEAK).
+4. Evaluate whether justice stories appear consistently across runs.
+
+If stability is confirmed, the next domain candidates for expansion are:
+
+- energy_security_ro
+- pnrr_closing_2026
+- fiscal_policy_followups
+
+The Romanian editorial pipeline is now approaching a stable production shape.
+
+
+2026-03-15
+
+- extracted a shared `EditorialSelectionCoreService` for debug Top 5 routing
+- added config-backed `EditorialProfile` definitions for `national_ro`, `international`, and placeholder `local`
+- updated `run_top5_scope_selection.py` and `run_top5_breaking_bulletin.py` to support `--profile` routing through the shared core
+- preserved current national/international behavior broadly while validating that `--profile=local` returns a clean zero-candidate result instead of failing

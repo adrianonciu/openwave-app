@@ -47,3 +47,6 @@ class ScoredStoryCluster(BaseModel):
     candidate_current_value: float | str | None = None
     story_family_id: str | None = None
     family_attach_reason: str | None = None
+    editorial_profile_used: str | None = None
+    profile_config_name: str | None = None
+    shared_core_path_used: bool = False

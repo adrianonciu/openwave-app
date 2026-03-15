@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
@@ -30,6 +31,8 @@ NATIONAL_JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_national_selection.json"
 NATIONAL_TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_national_selection.txt"
 GLOBAL_JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_global_selection.json"
 GLOBAL_TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_global_selection.txt"
+LOCAL_JSON_OUTPUT_PATH = OUTPUT_DIR / "top5_local_selection.json"
+LOCAL_TEXT_OUTPUT_PATH = OUTPUT_DIR / "top5_local_selection.txt"
 STORY_SELECTION_DEBUG_JSON_PATH = OUTPUT_DIR / "story_selection_debug.json"
 STORY_SELECTION_DEBUG_TEXT_PATH = OUTPUT_DIR / "story_selection_debug.txt"
 INTERNATIONAL_MERGE_DEBUG_JSON_PATH = OUTPUT_DIR / "international_merge_debug.json"
@@ -1011,6 +1014,9 @@ def _serialize_candidate(scored_cluster, selection_status: str = "selected") -> 
         "europe_romania_impact_explanation": breakdown.europe_romania_impact.explanation,
         "editorial_fit_score": breakdown.editorial_fit.contribution,
         "final_score": scored_cluster.score_total,
+        "editorial_profile_used": getattr(scored_cluster, "editorial_profile_used", None),
+        "profile_config_name": getattr(scored_cluster, "profile_config_name", None),
+        "shared_core_path_used": getattr(scored_cluster, "shared_core_path_used", False),
     }
 
 
@@ -1033,7 +1039,14 @@ def _cluster_signals(scored_cluster, article_by_url: dict[str, FetchedArticle], 
     }
 
 
-def _write_scope_outputs(label: str, selected_clusters: list, candidate_clusters: list, json_path: Path, txt_path: Path) -> dict[str, object]:
+def _write_scope_outputs(
+    label: str,
+    selected_clusters: list,
+    candidate_clusters: list,
+    json_path: Path,
+    txt_path: Path,
+    profile_metadata: dict[str, object],
+) -> dict[str, object]:
     selected_payload = [_serialize_candidate(cluster, selection_status="selected") for cluster in selected_clusters[:5]]
     if len(selected_payload) < 5:
         selected_ids = {item["cluster_id"] for item in selected_payload}
@@ -1043,6 +1056,9 @@ def _write_scope_outputs(label: str, selected_clusters: list, candidate_clusters
     candidate_payload = [_serialize_candidate(cluster, selection_status="candidate") for cluster in candidate_clusters]
     payload = {
         "scope": label,
+        "editorial_profile_used": profile_metadata.get("editorial_profile_used"),
+        "profile_config_name": profile_metadata.get("profile_config_name"),
+        "shared_core_path_used": profile_metadata.get("shared_core_path_used", False),
         "candidate_cluster_count": len(candidate_clusters),
         "selected_count": len(selected_clusters[:5]),
         "debug_fallback_count": sum(1 for item in selected_payload if item["selection_status"] == "debug_rank_fallback"),
@@ -1052,7 +1068,15 @@ def _write_scope_outputs(label: str, selected_clusters: list, candidate_clusters
     }
     json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    lines = [f"TOP 5 {label.upper()} SELECTION", "", f"Candidate clusters: {len(candidate_clusters)}", ""]
+    lines = [
+        f"TOP 5 {label.upper()} SELECTION",
+        "",
+        f"Editorial profile used: {profile_metadata.get('editorial_profile_used')}",
+        f"Profile config name: {profile_metadata.get('profile_config_name')}",
+        f"Shared core path used: {profile_metadata.get('shared_core_path_used', False)}",
+        f"Candidate clusters: {len(candidate_clusters)}",
+        "",
+    ]
     for index, item in enumerate(selected_payload, start=1):
         lines.extend([
             f"{index}. {item['normalized_headline'] or item['top_headline']}",
@@ -1068,6 +1092,8 @@ def _write_scope_outputs(label: str, selected_clusters: list, candidate_clusters
             f"   freshness_score: {item['freshness_score']}",
             f"   europe_romania_impact_score: {item['europe_romania_impact_score']}",
             f"   editorial_fit_score: {item['editorial_fit_score']}",
+            f"   editorial_profile_used: {item.get('editorial_profile_used') or 'none'}",
+            f"   shared_core_path_used: {item.get('shared_core_path_used', False)}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1213,6 +1239,8 @@ def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: se
             f"   freshness_score: {item['freshness_score']}",
             f"   europe_romania_impact_score: {item['europe_romania_impact_score']}",
             f"   editorial_fit_score: {item['editorial_fit_score']}",
+            f"   editorial_profile_used: {item.get('editorial_profile_used') or 'none'}",
+            f"   shared_core_path_used: {item.get('shared_core_path_used', False)}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1369,76 +1397,104 @@ def _write_candidate_pool_audit(scored_clusters: list, article_by_url: dict[str,
             f"   category: {item['source_category']}",
             f"   freshness_score: {item['freshness_score']}",
             f"   editorial_fit_score: {item['editorial_fit_score']}",
+            f"   editorial_profile_used: {item.get('editorial_profile_used') or 'none'}",
+            f"   shared_core_path_used: {item.get('shared_core_path_used', False)}",
             f"   final_score: {item['final_score']}",
             "",
         ])
     CANDIDATE_POOL_AUDIT_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Debug top-5 editorial selection by profile.")
+    parser.add_argument(
+        "--profile",
+        choices=("all", "national", "international", "local"),
+        default="all",
+        help="Editorial profile to route through the shared core. 'all' preserves the existing national + international debug outputs.",
+    )
+    return parser.parse_args()
+
+
+def _profile_names_from_arg(profile_arg: str) -> list[str]:
+    mapping = {
+        "national": ["national_ro"],
+        "international": ["international"],
+        "local": ["local"],
+        "all": ["national_ro", "international"],
+    }
+    return mapping[profile_arg]
+
+
+def _scope_output_paths(profile_name: str) -> tuple[Path, Path, str]:
+    if profile_name == "national_ro":
+        return NATIONAL_JSON_OUTPUT_PATH, NATIONAL_TEXT_OUTPUT_PATH, "national"
+    if profile_name == "international":
+        return GLOBAL_JSON_OUTPUT_PATH, GLOBAL_TEXT_OUTPUT_PATH, "global"
+    return LOCAL_JSON_OUTPUT_PATH, LOCAL_TEXT_OUTPUT_PATH, "local"
+
+
 def main() -> None:
+    args = _parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     personalization = _build_general_personalization()
     pipeline_service = EditorialPipelineService()
+    core_service = pipeline_service.editorial_selection_core_service
 
     articles, _, source_coverage = _build_articles(personalization)
     article_by_url = {article.url: article for article in articles}
     story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
     scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
 
-    national_candidates = [cluster for cluster in scored_clusters if _dominant_scope(cluster) == "national"]
-    global_candidates = [cluster for cluster in scored_clusters if _dominant_scope(cluster) == "international"]
+    profile_names = _profile_names_from_arg(args.profile)
+    core_results: dict[str, object] = {}
+    payloads: dict[str, dict[str, object]] = {}
+    selected_cluster_ids: set[str] = set()
 
-    national_selection = pipeline_service.selection_service.select_stories(
-        national_candidates,
-        max_stories=5,
-        editorial_preferences=personalization.editorial_preferences,
-        personalization=personalization,
-    )
-    global_selection = pipeline_service.selection_service.select_stories(
-        global_candidates,
-        max_stories=5,
-        editorial_preferences=personalization.editorial_preferences,
-        personalization=personalization,
-    )
+    for profile_name in profile_names:
+        core_result = core_service.run_profile(
+            scored_clusters,
+            profile_name,
+            max_stories=5,
+            editorial_preferences=personalization.editorial_preferences,
+            personalization=personalization,
+        )
+        core_results[profile_name] = core_result
+        json_path, txt_path, label = _scope_output_paths(profile_name)
+        payloads[profile_name] = _write_scope_outputs(
+            label,
+            core_result.selection_result.selected_clusters,
+            core_result.candidate_clusters,
+            json_path,
+            txt_path,
+            core_result.debug_metadata,
+        )
+        selected_cluster_ids.update(cluster.cluster.cluster_id for cluster in core_result.selection_result.selected_clusters)
 
-    national_payload = _write_scope_outputs(
-        "national",
-        national_selection.selected_clusters,
-        national_candidates,
-        NATIONAL_JSON_OUTPUT_PATH,
-        NATIONAL_TEXT_OUTPUT_PATH,
-    )
-    global_payload = _write_scope_outputs(
-        "global",
-        global_selection.selected_clusters,
-        global_candidates,
-        GLOBAL_JSON_OUTPUT_PATH,
-        GLOBAL_TEXT_OUTPUT_PATH,
-    )
-
-    selected_cluster_ids = {cluster.cluster.cluster_id for cluster in national_selection.selected_clusters + global_selection.selected_clusters}
     _write_story_selection_debug(scored_clusters, selected_cluster_ids)
-    _write_international_merge_debug(global_candidates, article_by_url, pipeline_service.clustering_service)
+    if "international" in core_results:
+        international_candidates = core_results["international"].candidate_clusters
+        _write_international_merge_debug(international_candidates, article_by_url, pipeline_service.clustering_service)
+        _write_international_source_coverage(source_coverage, international_candidates, pipeline_service.clustering_service)
     _write_candidate_pool_audit(scored_clusters, article_by_url, pipeline_service.clustering_service)
-    _write_international_source_coverage(source_coverage, scored_clusters, pipeline_service.clustering_service)
 
-    print(f"Wrote {NATIONAL_JSON_OUTPUT_PATH}")
-    print(f"Wrote {NATIONAL_TEXT_OUTPUT_PATH}")
-    print(f"Wrote {GLOBAL_JSON_OUTPUT_PATH}")
-    print(f"Wrote {GLOBAL_TEXT_OUTPUT_PATH}")
+    for profile_name in profile_names:
+        json_path, txt_path, _ = _scope_output_paths(profile_name)
+        print(f"Wrote {json_path}")
+        print(f"Wrote {txt_path}")
     print(f"Wrote {STORY_SELECTION_DEBUG_JSON_PATH}")
     print(f"Wrote {STORY_SELECTION_DEBUG_TEXT_PATH}")
-    print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_JSON_PATH}")
-    print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_TEXT_PATH}")
+    if "international" in core_results:
+        print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_JSON_PATH}")
+        print(f"Wrote {INTERNATIONAL_MERGE_DEBUG_TEXT_PATH}")
+        print(f"Wrote {INTERNATIONAL_SOURCE_COVERAGE_JSON_PATH}")
+        print(f"Wrote {INTERNATIONAL_SOURCE_COVERAGE_TEXT_PATH}")
     print(f"Wrote {CANDIDATE_POOL_AUDIT_JSON_PATH}")
     print(f"Wrote {CANDIDATE_POOL_AUDIT_TEXT_PATH}")
-    print(f"Wrote {INTERNATIONAL_SOURCE_COVERAGE_JSON_PATH}")
-    print(f"Wrote {INTERNATIONAL_SOURCE_COVERAGE_TEXT_PATH}")
     print(json.dumps({
-        "national_candidate_clusters": national_payload["candidate_cluster_count"],
-        "global_candidate_clusters": global_payload["candidate_cluster_count"],
-        "national_selected": national_payload["selected_count"],
-        "global_selected": global_payload["selected_count"],
+        "profiles_run": profile_names,
+        "candidate_clusters": {profile_name: payloads[profile_name]["candidate_cluster_count"] for profile_name in profile_names},
+        "selected": {profile_name: payloads[profile_name]["selected_count"] for profile_name in profile_names},
     }, ensure_ascii=False))
 
 

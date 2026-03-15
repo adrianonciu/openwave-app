@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
@@ -16,7 +17,6 @@ from run_top5_scope_selection import (
     _build_articles,
     _build_general_personalization,
     _cluster_signals,
-    _dominant_scope,
     _serialize_candidate,
 )
 
@@ -124,6 +124,9 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "national_preference_bucket": Counter([member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]).most_common(1)[0][0] if [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket] else None,
         "attached_story_family": getattr(scored_cluster, "story_family_id", None),
         "family_attach_reason": getattr(scored_cluster, "family_attach_reason", None),
+        "editorial_profile_used": getattr(scored_cluster, "editorial_profile_used", None),
+        "profile_config_name": getattr(scored_cluster, "profile_config_name", None),
+        "shared_core_path_used": getattr(scored_cluster, "shared_core_path_used", False),
     }
 
 
@@ -360,6 +363,9 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "classifier_decision_reason": getattr(debug_article, "classifier_decision_reason", None) if debug_article is not None else None,
             "attached_story_family": getattr(cluster, "story_family_id", None),
             "family_attach_reason": getattr(cluster, "family_attach_reason", None),
+            "editorial_profile_used": getattr(cluster, "editorial_profile_used", None),
+            "profile_config_name": getattr(cluster, "profile_config_name", None),
+            "shared_core_path_used": getattr(cluster, "shared_core_path_used", False),
             "final_score": cluster.score_total,
         })
 
@@ -373,10 +379,41 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
     ROMANIAN_CANDIDATE_POOL_AUDIT_JSON_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Debug breaking bulletin by editorial profile.")
+    parser.add_argument(
+        "--profile",
+        choices=("all", "national", "international", "local"),
+        default="all",
+        help="Editorial profile to route through the shared core. 'all' preserves the combined national + international bulletin view.",
+    )
+    return parser.parse_args()
+
+
+def _profile_names_from_arg(profile_arg: str) -> list[str]:
+    mapping = {
+        "national": ["national_ro"],
+        "international": ["international"],
+        "local": ["local"],
+        "all": ["national_ro", "international"],
+    }
+    return mapping[profile_arg]
+
+
+def _section_title(profile_name: str) -> str:
+    return {
+        "national_ro": "TOP 5 NATIONAL",
+        "international": "TOP 5 INTERNATIONAL",
+        "local": "TOP 5 LOCAL",
+    }[profile_name]
+
+
 def main() -> None:
+    args = _parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     personalization = _build_general_personalization()
     pipeline_service = EditorialPipelineService()
+    core_service = pipeline_service.editorial_selection_core_service
 
     articles, _, source_coverage = _build_articles(personalization)
     article_by_url = {article.url: article for article in articles}
@@ -384,36 +421,49 @@ def main() -> None:
     scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
     pipeline_service.story_family_service.attach_story_families(scored_clusters)
 
-    national_candidates = [cluster for cluster in scored_clusters if _dominant_scope(cluster) == "national"]
-    global_candidates = [cluster for cluster in scored_clusters if _dominant_scope(cluster) == "international"]
+    profile_names = _profile_names_from_arg(args.profile)
+    core_results: dict[str, object] = {}
+    top5_by_profile: dict[str, list[dict[str, object]]] = {}
 
-    national_selection = pipeline_service.selection_service.select_stories(
-        national_candidates,
-        max_stories=5,
-        editorial_preferences=personalization.editorial_preferences,
-        personalization=personalization,
-    )
-    global_selection = pipeline_service.selection_service.select_stories(
-        global_candidates,
-        max_stories=5,
-        editorial_preferences=personalization.editorial_preferences,
-        personalization=personalization,
-    )
+    for profile_name in profile_names:
+        core_result = core_service.run_profile(
+            scored_clusters,
+            profile_name,
+            max_stories=5,
+            editorial_preferences=personalization.editorial_preferences,
+            personalization=personalization,
+        )
+        core_results[profile_name] = core_result
+        top5_by_profile[profile_name] = _pick_top5(
+            core_result.selection_result.selected_clusters,
+            core_result.candidate_clusters,
+            article_by_url,
+            pipeline_service.clustering_service,
+            core_result.profile.scope,
+        )
 
-    national_top5 = _pick_top5(national_selection.selected_clusters, national_candidates, article_by_url, pipeline_service.clustering_service, "national")
-    global_top5 = _pick_top5(global_selection.selected_clusters, global_candidates, article_by_url, pipeline_service.clustering_service, "international")
-
-    _write_romanian_source_coverage(source_coverage, national_candidates, pipeline_service.clustering_service)
-    _write_romanian_candidate_pool_audit(national_candidates, article_by_url, pipeline_service.clustering_service)
+    national_candidates = core_results.get("national_ro").candidate_clusters if "national_ro" in core_results else []
+    if national_candidates:
+        _write_romanian_source_coverage(source_coverage, national_candidates, pipeline_service.clustering_service)
+        _write_romanian_candidate_pool_audit(national_candidates, article_by_url, pipeline_service.clustering_service)
 
     payload = {
-        "top5_national": national_top5,
-        "top5_global": global_top5,
+        "editorial_profiles_run": profile_names,
+        "top5_by_profile": top5_by_profile,
     }
     JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    lines = ["TOP 5 NATIONAL", ""]
-    for item in national_top5:
+    primary_profile = profile_names[0]
+    primary_top5 = top5_by_profile.get(primary_profile, [])
+    lines = [
+        _section_title(primary_profile),
+        "",
+        f"Editorial profile used: {core_results[primary_profile].debug_metadata['editorial_profile_used']}",
+        f"Profile config name: {core_results[primary_profile].debug_metadata['profile_config_name']}",
+        f"Shared core path used: {core_results[primary_profile].debug_metadata['shared_core_path_used']}",
+        "",
+    ]
+    for item in primary_top5:
         lines.extend([
             f"{item['rank']}.",
             f"Headline: {item['headline']}",
@@ -431,6 +481,8 @@ def main() -> None:
             f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
             f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
             f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
+            f"Editorial profile used: {item.get('editorial_profile_used') or 'none'}",
+            f"Shared core path used: {item.get('shared_core_path_used', False)}",
             f"Attached story family: {item.get('attached_story_family') or 'none'}",
             f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
@@ -439,7 +491,7 @@ def main() -> None:
         ])
 
     justice_boosted_stories = [
-        item for item in national_top5
+        item for item in primary_top5
         if any(hint in JUSTICE_HINTS for hint in (item.get("cluster_event_family_hints") or []))
         and (
             item.get("recovered_domestic_candidate")
@@ -475,7 +527,7 @@ def main() -> None:
     else:
         lines.extend(["none", ""])
 
-    selected_national_ids = {item["cluster_id"] for item in national_top5}
+    selected_national_ids = {item["cluster_id"] for item in primary_top5}
     near_miss_candidates = [
         cluster for cluster in national_candidates
         if cluster.cluster.cluster_id not in selected_national_ids
@@ -500,8 +552,8 @@ def main() -> None:
             "",
         ])
 
-    hard_news_count = sum(1 for item in national_top5 if item.get("national_preference_bucket") == "domestic_hard_news")
-    recovered_count = sum(1 for item in national_top5 if item.get("recovered_domestic_candidate"))
+    hard_news_count = sum(1 for item in primary_top5 if item.get("national_preference_bucket") == "domestic_hard_news")
+    recovered_count = sum(1 for item in primary_top5 if item.get("recovered_domestic_candidate"))
     near_miss_count = len(near_miss_candidates)
     if hard_news_count + recovered_count >= 3:
         balance_label = "GOOD"
@@ -511,42 +563,46 @@ def main() -> None:
         balance_label = "WEAK"
     lines.extend([f"Domestic coverage today: {hard_news_count} hard-news / {recovered_count} recovered / {near_miss_count} near-miss -> balance: {balance_label}", ""])
 
-    lines.extend(["TOP 5 INTERNATIONAL", ""])
-    for item in global_top5:
-        lines.extend([
-            f"{item['rank']}.",
-            f"Headline: {item['headline']}",
-            f"Normalized headline: {item['normalized_headline']}",
-            f"Sources: {', '.join(item['source_list'])}",
-            f"Unique sources: {item['unique_source_count']}",
-            f"Event family: {', '.join(item['event_family']) or 'none'}",
-            f"Regional bucket: {', '.join(item['regional_bucket']) or 'none'}",
-            f"Domestic purity: {item.get('domestic_purity_score', 0.0)}",
-            f"Romania impact hits: {', '.join(item.get('romania_impact_evidence_hits') or []) or 'none'}",
-            f"External penalty: {item.get('external_penalty_applied', 0.0)}",
-            f"Title-only domestic boost: {item.get('title_only_domestic_boost', 0.0)}",
-            f"Rank reason: {item.get('domestic_vs_external_rank_reason') or 'none'}",
-            f"Recovery score: {item.get('recovery_score', 0.0)}",
-            f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
-            f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
-            f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
-            f"Attached story family: {item.get('attached_story_family') or 'none'}",
-            f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
-            f"Freshness: {item['freshness_score']}",
-            f"Score: {item['final_score']}",
-            "",
-        ])
+    if "international" in top5_by_profile:
+        lines.extend(["TOP 5 INTERNATIONAL", ""])
+        for item in top5_by_profile["international"]:
+            lines.extend([
+                f"{item['rank']}.",
+                f"Headline: {item['headline']}",
+                f"Normalized headline: {item['normalized_headline']}",
+                f"Sources: {', '.join(item['source_list'])}",
+                f"Unique sources: {item['unique_source_count']}",
+                f"Event family: {', '.join(item['event_family']) or 'none'}",
+                f"Regional bucket: {', '.join(item['regional_bucket']) or 'none'}",
+                f"Domestic purity: {item.get('domestic_purity_score', 0.0)}",
+                f"Romania impact hits: {', '.join(item.get('romania_impact_evidence_hits') or []) or 'none'}",
+                f"External penalty: {item.get('external_penalty_applied', 0.0)}",
+                f"Title-only domestic boost: {item.get('title_only_domestic_boost', 0.0)}",
+                f"Rank reason: {item.get('domestic_vs_external_rank_reason') or 'none'}",
+                f"Recovery score: {item.get('recovery_score', 0.0)}",
+                f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
+                f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
+                f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
+                f"Editorial profile used: {item.get('editorial_profile_used') or 'none'}",
+                f"Shared core path used: {item.get('shared_core_path_used', False)}",
+                f"Attached story family: {item.get('attached_story_family') or 'none'}",
+                f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
+                f"Freshness: {item['freshness_score']}",
+                f"Score: {item['final_score']}",
+                "",
+            ])
 
     TEXT_OUTPUT_PATH.write_text("\n".join(lines), encoding="utf-8")
 
     print(f"Wrote {TEXT_OUTPUT_PATH}")
     print(f"Wrote {JSON_OUTPUT_PATH}")
-    print(f"Wrote {ROMANIAN_SOURCE_COVERAGE_JSON_PATH}")
-    print(f"Wrote {ROMANIAN_SOURCE_COVERAGE_TEXT_PATH}")
-    print(f"Wrote {ROMANIAN_CANDIDATE_POOL_AUDIT_JSON_PATH}")
+    if national_candidates:
+        print(f"Wrote {ROMANIAN_SOURCE_COVERAGE_JSON_PATH}")
+        print(f"Wrote {ROMANIAN_SOURCE_COVERAGE_TEXT_PATH}")
+        print(f"Wrote {ROMANIAN_CANDIDATE_POOL_AUDIT_JSON_PATH}")
     print(json.dumps({
-        "national": len(national_top5),
-        "global": len(global_top5),
+        "profiles_run": profile_names,
+        "selected_counts": {name: len(items) for name, items in top5_by_profile.items()},
         "national_candidate_clusters": len(national_candidates),
     }, ensure_ascii=False))
 

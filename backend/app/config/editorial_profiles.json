@@ -1,0 +1,158 @@
+{
+  "national_ro": {
+    "name": "national_ro",
+    "scope": "national",
+    "display_name": "National RO",
+    "priority_domains": [
+      "politics",
+      "economy",
+      "justice",
+      "energy",
+      "infrastructure"
+    ],
+    "impact_keywords": [
+      "romania",
+      "guvern",
+      "parlament",
+      "bnr",
+      "anaf",
+      "pnrr",
+      "buget",
+      "deficit",
+      "csm",
+      "dna",
+      "diicot"
+    ],
+    "source_preferences": [
+      "romanian_public_affairs",
+      "romanian_generalist",
+      "romanian_business"
+    ],
+    "purity_thresholds": {
+      "domestic_recovery": 0.35,
+      "justice_recovery": 0.2
+    },
+    "recovery_flags": {
+      "allow_near_miss_recovery": true,
+      "allow_persistence_boost": true,
+      "allow_soft_external_cap": true
+    },
+    "diversity_rules": {
+      "max_stories": 5,
+      "max_external_direct_impact_when_2_domestic": 2,
+      "max_external_direct_impact_when_3_domestic": 1
+    },
+    "geographic_signals": [
+      "romania",
+      "bucuresti",
+      "cluj",
+      "iasi",
+      "constanta"
+    ],
+    "debug_sections": [
+      "romanian_source_coverage",
+      "romanian_candidate_pool_audit",
+      "breaking_bulletin"
+    ]
+  },
+  "international": {
+    "name": "international",
+    "scope": "international",
+    "display_name": "International",
+    "priority_domains": [
+      "geopolitics",
+      "security",
+      "economy",
+      "europe"
+    ],
+    "impact_keywords": [
+      "eu",
+      "europe",
+      "romania",
+      "ukraine",
+      "moldova",
+      "nato",
+      "black sea",
+      "brussels"
+    ],
+    "source_preferences": [
+      "international_wire",
+      "international_generalist",
+      "regional_security"
+    ],
+    "purity_thresholds": {
+      "romania_impact_floor": 0.0
+    },
+    "recovery_flags": {
+      "allow_near_miss_recovery": false,
+      "allow_persistence_boost": false,
+      "allow_soft_external_cap": false
+    },
+    "diversity_rules": {
+      "max_stories": 5
+    },
+    "geographic_signals": [
+      "europe",
+      "black sea",
+      "ukraine",
+      "moldova",
+      "middle east"
+    ],
+    "debug_sections": [
+      "candidate_pool_audit",
+      "international_merge_debug",
+      "international_source_coverage"
+    ]
+  },
+  "local": {
+    "name": "local",
+    "scope": "local",
+    "display_name": "Local",
+    "priority_domains": [
+      "local_governance",
+      "public_safety",
+      "justice",
+      "utilities",
+      "health",
+      "education"
+    ],
+    "impact_keywords": [
+      "primarie",
+      "consiliul judetean",
+      "spital",
+      "scoala",
+      "politie",
+      "parchet",
+      "tribunal",
+      "trafic",
+      "apa",
+      "curent"
+    ],
+    "source_preferences": [
+      "county_local",
+      "municipal_public_affairs"
+    ],
+    "purity_thresholds": {
+      "local_relevance_floor": 0.0
+    },
+    "recovery_flags": {
+      "allow_near_miss_recovery": false,
+      "allow_persistence_boost": false,
+      "allow_soft_external_cap": false
+    },
+    "diversity_rules": {
+      "max_stories": 5
+    },
+    "geographic_signals": [
+      "judet",
+      "oras",
+      "municipiu",
+      "comuna",
+      "primarie",
+      "consiliul local"
+    ],
+    "debug_sections": [
+      "candidate_pool_audit"
+    ]
+  }
+}

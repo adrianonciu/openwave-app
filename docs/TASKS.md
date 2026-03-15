@@ -821,3 +821,8 @@ Still intentionally excluded from this task:
 - TTS changes
 - broad editorial-pipeline redesign
 - open-ended generative rewriting
+
+
+- [x] Extract shared editorial selection core for national/international debug flows
+- [x] Introduce config-backed editorial profiles (`national_ro`, `international`, `local`)
+- [ ] Build full local selection policy on top of the shared editorial core

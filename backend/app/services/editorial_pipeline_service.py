@@ -13,6 +13,7 @@ from app.models.final_editorial_briefing import (
 from app.services.briefing_assembly_service import BriefingAssemblyService
 from app.services.bulletin_sizing_service import BulletinSizingService
 from app.services.news_clustering_service import NewsClusteringService
+from app.services.editorial_selection_core_service import EditorialSelectionCoreService
 from app.services.story_family_service import StoryFamilyService
 from app.services.story_scoring_service import StoryScoringService
 from app.services.story_selection_service import StorySelectionService
@@ -28,6 +29,7 @@ class EditorialPipelineService:
         self.scoring_service = StoryScoringService()
         self.story_family_service = StoryFamilyService()
         self.selection_service = StorySelectionService()
+        self.editorial_selection_core_service = EditorialSelectionCoreService(self.selection_service)
         self.summary_generator_service = StorySummaryGeneratorService()
         self.briefing_assembly_service = BriefingAssemblyService()
         self.bulletin_sizing_service = BulletinSizingService()

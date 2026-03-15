@@ -1642,3 +1642,30 @@ OpenWave now includes a deterministic editorial validation gate between final te
 ## Story Editorial Composition
 
 `StorySummaryGeneratorService` now acts as the explicit Story Editorial Composition stage in the pipeline. Instead of only returning a compact summary string, it composes structured editorial story fields such as `story_type`, `headline`, `lead`, `body`, `source_attribution`, `quotes`, and `editorial_notes`, while still preserving `summary_text` for downstream assembly and audio compatibility.
+
+
+---
+
+# 32. Shared Editorial Core And Profiles
+
+OpenWave now has an explicit shared editorial selection boundary for profile-driven Top 5 debugging and future expansion.
+
+Current structure:
+
+- `EditorialSelectionCoreService` is the shared newsroom core
+- `EditorialProfile` defines profile-specific behavior
+- profile config currently covers `national_ro`, `international`, and a skeletal `local` placeholder
+
+Current behavior:
+
+- common candidate routing and selection invocation now run through one injected profile path
+- national and international debug flows no longer need separate ad-hoc selection codepaths
+- clusters routed through the shared core are annotated with `editorial_profile_used`, `profile_config_name`, and `shared_core_path_used`
+- debug runners support `--profile=all|national|international|local`
+- the local profile currently validates the route and output contract without enabling a full local editorial policy yet
+
+Architectural intent:
+
+- same architecture, different editorial lenses
+- profile differences should keep moving into `EditorialProfile` config instead of branching inside the shared core
+- local selection should be the next feature built on top of this structure rather than a third standalone pipeline
