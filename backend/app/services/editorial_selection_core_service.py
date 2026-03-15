@@ -10,6 +10,7 @@ from app.models.editorial_profile import EditorialProfile
 from app.models.story_score import ScoredStoryCluster
 from app.models.story_selection import StorySelectionResult
 from app.models.user_personalization import UserPersonalization
+from app.services.story_scoring_service import StoryScoringService
 from app.services.story_selection_service import StorySelectionService
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "editorial_profiles.json"
@@ -30,8 +31,13 @@ class EditorialSelectionCoreService:
     Do not add Romania-specific or international-specific logic directly here unless unavoidable.
     """
 
-    def __init__(self, selection_service: StorySelectionService | None = None) -> None:
+    def __init__(
+        self,
+        selection_service: StorySelectionService | None = None,
+        scoring_service: StoryScoringService | None = None,
+    ) -> None:
         self.selection_service = selection_service or StorySelectionService()
+        self.scoring_service = scoring_service or StoryScoringService()
         raw_config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
         self._profiles = {name: EditorialProfile.model_validate(payload) for name, payload in raw_config.items()}
 
@@ -57,8 +63,18 @@ class EditorialSelectionCoreService:
         personalization: UserPersonalization | None = None,
     ) -> EditorialSelectionCoreResult:
         resolved_profile = profile if isinstance(profile, EditorialProfile) else self.get_profile(profile)
-        candidate_clusters = [cluster for cluster in scored_clusters if self.dominant_scope(cluster) == resolved_profile.scope]
+        candidate_clusters = [
+            cluster.model_copy(deep=True)
+            for cluster in scored_clusters
+            if self._cluster_matches_profile(cluster, resolved_profile)
+        ]
         self._annotate_clusters(candidate_clusters, resolved_profile)
+        self.scoring_service.apply_editorial_profile_adjustments(candidate_clusters, resolved_profile)
+        if resolved_profile.scope == "local":
+            candidate_clusters = [
+                cluster for cluster in candidate_clusters
+                if cluster.local_relevance_boost > 0
+            ]
         effective_max_stories = max_stories or int(resolved_profile.diversity_rules.get("max_stories", 5))
         selection_result = self.selection_service.select_stories(
             candidate_clusters,
@@ -74,6 +90,7 @@ class EditorialSelectionCoreService:
             "selected_count": len(selection_result.selected_clusters),
             "priority_domains": resolved_profile.priority_domains,
             "debug_sections": resolved_profile.debug_sections,
+            "candidate_scopes": resolved_profile.effective_candidate_scopes,
         }
         return EditorialSelectionCoreResult(
             profile=resolved_profile,
@@ -81,6 +98,10 @@ class EditorialSelectionCoreService:
             selection_result=selection_result,
             debug_metadata=debug_metadata,
         )
+
+    def _cluster_matches_profile(self, cluster: ScoredStoryCluster, profile: EditorialProfile) -> bool:
+        dominant_scope = self.dominant_scope(cluster)
+        return dominant_scope in profile.effective_candidate_scopes
 
     def _annotate_clusters(self, candidate_clusters: list[ScoredStoryCluster], profile: EditorialProfile) -> None:
         for cluster in candidate_clusters:

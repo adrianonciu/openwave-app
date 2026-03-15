@@ -1,0 +1,54 @@
+{
+  "editorial_profiles_run": [
+    "local"
+  ],
+  "top5_by_profile": {
+    "local": [
+      {
+        "rank": 1,
+        "cluster_id": "cluster-0f2c03563f0d",
+        "headline": "Accident rutier in Iasi Au fost implicate doua autoturisme",
+        "normalized_headline": "accident rutier in iasi au fost implicate doua autoturisme",
+        "source_list": [
+          "BZI.ro"
+        ],
+        "unique_source_count": 1,
+        "event_family": [],
+        "regional_bucket": [],
+        "freshness_score": 30.0,
+        "final_score": 55.5,
+        "domestic_purity_score": 0.0,
+        "romania_impact_evidence_hits": [],
+        "external_penalty_applied": 0.0,
+        "title_only_domestic_boost": 0.0,
+        "cluster_event_family_hints": [],
+        "domestic_vs_external_rank_reason": "non-national cluster: Romanian domestic balancing not applied",
+        "recovery_score": 0.0,
+        "recovered_domestic_candidate": false,
+        "persistence_boost_applied": 0.0,
+        "top5_balance_adjustment_reason": null,
+        "recovery_rejection_reason": null,
+        "failed_threshold_name": null,
+        "threshold_required_value": null,
+        "candidate_current_value": null,
+        "national_preference_bucket": null,
+        "attached_story_family": "accident_autoturisme_doua",
+        "family_attach_reason": "shared topic keywords",
+        "editorial_profile_used": "local",
+        "profile_config_name": "local",
+        "shared_core_path_used": true,
+        "family_first_seen": "2026-03-15T12:25:48.458992+00:00",
+        "family_last_seen": "2026-03-15T12:29:07.632561+00:00",
+        "family_run_count": 2,
+        "family_age_hours": 0.06,
+        "family_lifecycle_boost": 0.2,
+        "geographic_signal_detected": "iasi",
+        "local_relevance_boost": 0.3,
+        "local_domain_signal_hits": [
+          "accident"
+        ],
+        "local_county_tag": "iasi"
+      }
+    ]
+  }
+}

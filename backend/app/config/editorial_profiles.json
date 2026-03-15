@@ -3,6 +3,10 @@
     "name": "national_ro",
     "scope": "national",
     "display_name": "National RO",
+    "description": "Romanian generalist national bulletin focused on domestic public-interest hard news.",
+    "candidate_scopes": [
+      "national"
+    ],
     "priority_domains": [
       "politics",
       "economy",
@@ -59,6 +63,10 @@
     "name": "international",
     "scope": "international",
     "display_name": "International",
+    "description": "International bulletin with Europe and Romania-adjacent impact awareness.",
+    "candidate_scopes": [
+      "international"
+    ],
     "priority_domains": [
       "geopolitics",
       "security",
@@ -108,51 +116,91 @@
     "name": "local",
     "scope": "local",
     "display_name": "Local",
+    "description": "Hyper-local Romanian coverage using county/city geography plus local public-interest domains.",
+    "candidate_scopes": [
+      "local",
+      "national"
+    ],
     "priority_domains": [
-      "local_governance",
       "public_safety",
-      "justice",
+      "emergencies",
+      "local_admin",
       "utilities",
-      "health",
-      "education"
+      "local_justice"
     ],
-    "impact_keywords": [
-      "primarie",
-      "consiliul judetean",
-      "spital",
-      "scoala",
-      "politie",
-      "parchet",
-      "tribunal",
-      "trafic",
-      "apa",
-      "curent"
-    ],
+    "impact_keywords": {
+      "incendiu": 1.4,
+      "accident": 1.3,
+      "perchezitii": 1.3,
+      "politie": 1.2,
+      "primar": 1.2,
+      "consiliu local": 1.2,
+      "consiliul local": 1.2,
+      "spital": 1.1,
+      "scoala": 1.1,
+      "primarie": 1.2,
+      "tribunal": 1.2,
+      "parchet": 1.2,
+      "petitie": 1.1,
+      "pompieri": 1.2,
+      "ambulanta": 1.2,
+      "utilitati": 1.2,
+      "apa": 1.1,
+      "curent": 1.1,
+      "trafic": 1.1
+    },
     "source_preferences": [
       "county_local",
-      "municipal_public_affairs"
+      "municipal_public_affairs",
+      "romanian_generalist_local_angle"
     ],
     "purity_thresholds": {
-      "local_relevance_floor": 0.0
+      "hard_news": 0.75,
+      "recovery": 0.3,
+      "local_relevance_floor": 0.2
     },
     "recovery_flags": {
+      "enable_second_pass": true,
+      "enable_persistence": true,
       "allow_near_miss_recovery": false,
       "allow_persistence_boost": false,
       "allow_soft_external_cap": false
     },
     "diversity_rules": {
-      "max_stories": 5
+      "max_stories": 5,
+      "max_per_geography_top5": 2,
+      "county_diversity_rule": "max 2 per county in Top5"
     },
     "geographic_signals": [
+      "bucuresti",
+      "cluj",
+      "iasi",
+      "timisoara",
+      "constanta",
+      "prahova",
+      "brasov",
+      "sibiu",
+      "craiova",
+      "ploiesti",
+      "ilfov",
+      "arad",
+      "oradea",
+      "bacau",
+      "galati",
+      "suceava",
+      "mures",
       "judet",
-      "oras",
       "municipiu",
+      "oras",
+      "localitate",
       "comuna",
-      "primarie",
-      "consiliul local"
+      "judete",
+      "judetele",
+      "braila"
     ],
     "debug_sections": [
-      "candidate_pool_audit"
+      "candidate_pool_audit",
+      "breaking_bulletin"
     ]
   }
 }

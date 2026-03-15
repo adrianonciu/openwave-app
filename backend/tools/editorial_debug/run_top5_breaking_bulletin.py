@@ -15,7 +15,7 @@ from app.models.article_fetch import FetchedArticle
 from app.services.editorial_pipeline_service import EditorialPipelineService
 from run_top5_scope_selection import (
     _build_articles,
-    _build_general_personalization,
+    _build_personalization,
     _cluster_signals,
     _serialize_candidate,
 )
@@ -132,6 +132,10 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "family_run_count": getattr(scored_cluster, "family_run_count", 0),
         "family_age_hours": getattr(scored_cluster, "family_age_hours", 0.0),
         "family_lifecycle_boost": getattr(scored_cluster, "family_lifecycle_boost", 0.0),
+        "geographic_signal_detected": getattr(scored_cluster, "geographic_signal_detected", None),
+        "local_relevance_boost": getattr(scored_cluster, "local_relevance_boost", 0.0),
+        "local_domain_signal_hits": getattr(scored_cluster, "local_domain_signal_hits", []),
+        "local_county_tag": getattr(scored_cluster, "local_county_tag", None),
     }
 
 
@@ -425,7 +429,7 @@ def _section_title(profile_name: str) -> str:
 def main() -> None:
     args = _parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    personalization = _build_general_personalization()
+    personalization = _build_personalization(args.profile)
     pipeline_service = EditorialPipelineService()
     core_service = pipeline_service.editorial_selection_core_service
 
@@ -504,6 +508,10 @@ def main() -> None:
             f"Family run count: {item.get('family_run_count', 0)}",
             f"Family age hours: {item.get('family_age_hours', 0.0)}",
             f"Lifecycle boost: {item.get('family_lifecycle_boost', 0.0)}",
+            f"Geographic signal detected: {item.get('geographic_signal_detected') or 'none'}",
+            f"Local relevance boost: {item.get('local_relevance_boost', 0.0)}",
+            f"Local domain signal hits: {', '.join(item.get('local_domain_signal_hits') or []) or 'none'}",
+            f"Local county tag: {item.get('local_county_tag') or 'none'}",
             f"Entered via: {'lifecycle_support' if item.get('family_lifecycle_boost', 0.0) > 0 else 'standard_selection'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
@@ -611,6 +619,10 @@ def main() -> None:
                 f"Shared core path used: {item.get('shared_core_path_used', False)}",
                 f"Attached story family: {item.get('attached_story_family') or 'none'}",
                 f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
+                f"Geographic signal detected: {item.get('geographic_signal_detected') or 'none'}",
+                f"Local relevance boost: {item.get('local_relevance_boost', 0.0)}",
+                f"Local domain signal hits: {', '.join(item.get('local_domain_signal_hits') or []) or 'none'}",
+                f"Local county tag: {item.get('local_county_tag') or 'none'}",
                 f"Freshness: {item['freshness_score']}",
                 f"Score: {item['final_score']}",
                 "",

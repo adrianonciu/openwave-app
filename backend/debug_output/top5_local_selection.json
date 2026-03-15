@@ -1,0 +1,53 @@
+{
+  "scope": "local",
+  "editorial_profile_used": "local",
+  "profile_config_name": "local",
+  "shared_core_path_used": true,
+  "candidate_cluster_count": 1,
+  "selected_count": 1,
+  "debug_fallback_count": 0,
+  "selected_with_unique_source_count_gte_2": 0,
+  "selected_with_unique_source_count_gte_3": 0,
+  "top5": [
+    {
+      "selection_status": "selected",
+      "cluster_id": "cluster-0f2c03563f0d",
+      "top_headline": "Accident rutier in Iasi Au fost implicate doua autoturisme",
+      "normalized_headline": "Accident rutier in Iasi Au fost implicate doua autoturisme",
+      "cluster_size": 1,
+      "unique_source_count": 1,
+      "source_list": [
+        "BZI.ro"
+      ],
+      "source_scope": "local",
+      "source_category": "general",
+      "editorial_priority_summary": {
+        "best": 3,
+        "all": [
+          3
+        ]
+      },
+      "freshness_score": 30.0,
+      "europe_romania_impact_score": 0.0,
+      "europe_romania_impact_explanation": "Europe/Romania impact boost applies only to international clusters.",
+      "editorial_fit_score": 12.0,
+      "final_score": 55.3,
+      "editorial_profile_used": "local",
+      "profile_config_name": "local",
+      "shared_core_path_used": true,
+      "story_family_id": null,
+      "family_attach_reason": null,
+      "family_first_seen": null,
+      "family_last_seen": null,
+      "family_run_count": 0,
+      "family_age_hours": 0.0,
+      "family_lifecycle_boost": 0.0,
+      "geographic_signal_detected": "iasi",
+      "local_relevance_boost": 0.3,
+      "local_domain_signal_hits": [
+        "accident"
+      ],
+      "local_county_tag": "iasi"
+    }
+  ]
+}

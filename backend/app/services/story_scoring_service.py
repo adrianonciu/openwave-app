@@ -4,7 +4,9 @@ from datetime import UTC, datetime
 import json
 from pathlib import Path
 import re
+import unicodedata
 
+from app.models.editorial_profile import EditorialProfile
 from app.models.news_cluster import StoryCluster
 from app.models.story_score import ScoredStoryCluster, ScoreComponent, StoryScoreBreakdown
 
@@ -89,6 +91,16 @@ class StoryScoringService:
             "rss_fallback": -0.2,
             "unknown": -0.05,
         }
+
+    def apply_editorial_profile_adjustments(
+        self,
+        scored_clusters: list[ScoredStoryCluster],
+        profile: EditorialProfile,
+    ) -> None:
+        if profile.scope != "local":
+            return
+        for cluster in scored_clusters:
+            self._apply_local_profile_signals(cluster, profile)
 
     def score_clusters(
         self,
@@ -522,6 +534,64 @@ class StoryScoringService:
     def _cluster_text(self, cluster: StoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.member_articles)
         return f"{cluster.representative_title} {titles}".lower()
+
+    def _apply_local_profile_signals(
+        self,
+        cluster: ScoredStoryCluster,
+        profile: EditorialProfile,
+    ) -> None:
+        text = self._normalize_local_text(self._cluster_text(cluster.cluster))
+        geographic_hits = [
+            signal
+            for signal in profile.geographic_signals
+            if self._contains_normalized_term(text, signal)
+        ]
+        source_region_hits = [
+            member.source_region
+            for member in cluster.cluster.member_articles
+            if member.is_local_source and member.source_region
+        ]
+        domain_hits = [
+            keyword
+            for keyword, _weight in profile.impact_keyword_weights.items()
+            if self._contains_normalized_term(text, keyword)
+        ]
+
+        geographic_signal = geographic_hits[0] if geographic_hits else (source_region_hits[0] if source_region_hits else None)
+        cluster.geographic_signal_detected = geographic_signal
+        cluster.local_county_tag = geographic_signal
+        cluster.local_domain_signal_hits = domain_hits[:5]
+
+        if not geographic_signal or not domain_hits:
+            cluster.local_relevance_boost = 0.0
+            return
+
+        weighted_domain_score = sum(
+            profile.impact_keyword_weights.get(keyword, 1.0)
+            for keyword in domain_hits[:3]
+        )
+        base_boost = 0.2 if geographic_hits else 0.16
+        boost = min(0.45, base_boost + min(0.25, weighted_domain_score * 0.08))
+        cluster.local_relevance_boost = round(boost, 2)
+        cluster.score_total = round(cluster.score_total + cluster.local_relevance_boost, 2)
+        source_region_note = '' if geographic_hits else ' using source-region fallback'
+        cluster.scoring_explanation = (
+            f"{cluster.scoring_explanation} Local profile boost +{cluster.local_relevance_boost} from geographic signal "
+            f"'{cluster.geographic_signal_detected}'{source_region_note} and local-domain hits {', '.join(cluster.local_domain_signal_hits[:3])}."
+        )
+
+    def _normalize_local_text(self, text: str) -> str:
+        ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+        ascii_text = ascii_text.lower().replace("-", " ")
+        return re.sub(r"\s+", " ", ascii_text).strip()
+
+    def _contains_normalized_term(self, normalized_text: str, term: str) -> bool:
+        normalized_term = self._normalize_local_text(term)
+        if not normalized_term:
+            return False
+        escaped = re.escape(normalized_term).replace(r"\ ", r"\s+")
+        pattern = rf"(?<![0-9a-z]){escaped}(?![0-9a-z])"
+        return re.search(pattern, normalized_text) is not None
 
     def _build_explanation(
         self,

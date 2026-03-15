@@ -692,6 +692,7 @@ def _build_source_candidate_from_rss(rss_article, mapped_meta: dict[str, object]
         editorial_priority=mapped_meta.get("editorial_priority", 3),
         source_scope=mapped_meta.get("scope"),
         source_category=mapped_meta.get("category"),
+        source_region=mapped_meta.get("region"),
         is_local_source=mapped_meta.get("scope") == "local",
     )
 
@@ -707,6 +708,7 @@ def _build_source_candidate_from_latest_item(latest_item, mapped_meta: dict[str,
         editorial_priority=mapped_meta.get("editorial_priority", 3),
         source_scope=mapped_meta.get("scope"),
         source_category=mapped_meta.get("category"),
+        source_region=mapped_meta.get("region"),
         is_local_source=mapped_meta.get("scope") == "local",
     )
 
@@ -761,6 +763,37 @@ def _build_general_personalization() -> UserPersonalization:
             ),
         ),
     )
+
+
+def _build_local_personalization() -> UserPersonalization:
+    # Use the proven Iasi local anchor for repeatable local debug runs.
+    return UserPersonalization(
+        listener_profile=ListenerProfile(
+            first_name=None,
+            country="Romania",
+            region="Iasi",
+            city="Iasi",
+        ),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=70, national=20, international=10),
+            domains=DomainPreferenceMix(
+                politics=18,
+                economy=12,
+                sport=4,
+                entertainment=2,
+                education=16,
+                health=16,
+                tech=8,
+                justice=24,
+            ),
+        ),
+    )
+
+
+def _build_personalization(profile_arg: str) -> UserPersonalization:
+    if profile_arg == "local":
+        return _build_local_personalization()
+    return _build_general_personalization()
 
 
 def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedArticle], dict[str, dict[str, object]], dict[str, dict[str, object]]]:
@@ -850,6 +883,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
                 "editorial_priority": source_config.editorial_priority,
                 "source_scope": source_config.scope,
                 "source_category": source_config.category,
+                "source_region": source_config.region,
                 "is_local_source": source_config.scope == "local",
             }
         )
@@ -1024,6 +1058,10 @@ def _serialize_candidate(scored_cluster, selection_status: str = "selected") -> 
         "family_run_count": getattr(scored_cluster, "family_run_count", 0),
         "family_age_hours": getattr(scored_cluster, "family_age_hours", 0.0),
         "family_lifecycle_boost": getattr(scored_cluster, "family_lifecycle_boost", 0.0),
+        "geographic_signal_detected": getattr(scored_cluster, "geographic_signal_detected", None),
+        "local_relevance_boost": getattr(scored_cluster, "local_relevance_boost", 0.0),
+        "local_domain_signal_hits": getattr(scored_cluster, "local_domain_signal_hits", []),
+        "local_county_tag": getattr(scored_cluster, "local_county_tag", None),
     }
 
 
@@ -1105,6 +1143,10 @@ def _write_scope_outputs(
             f"   family_run_count: {item.get('family_run_count', 0)}",
             f"   family_age_hours: {item.get('family_age_hours', 0.0)}",
             f"   family_lifecycle_boost: {item.get('family_lifecycle_boost', 0.0)}",
+            f"   geographic_signal_detected: {item.get('geographic_signal_detected') or 'none'}",
+            f"   local_relevance_boost: {item.get('local_relevance_boost', 0.0)}",
+            f"   local_domain_signal_hits: {', '.join(item.get('local_domain_signal_hits') or []) or 'none'}",
+            f"   local_county_tag: {item.get('local_county_tag') or 'none'}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1256,6 +1298,10 @@ def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: se
             f"   family_run_count: {item.get('family_run_count', 0)}",
             f"   family_age_hours: {item.get('family_age_hours', 0.0)}",
             f"   family_lifecycle_boost: {item.get('family_lifecycle_boost', 0.0)}",
+            f"   geographic_signal_detected: {item.get('geographic_signal_detected') or 'none'}",
+            f"   local_relevance_boost: {item.get('local_relevance_boost', 0.0)}",
+            f"   local_domain_signal_hits: {', '.join(item.get('local_domain_signal_hits') or []) or 'none'}",
+            f"   local_county_tag: {item.get('local_county_tag') or 'none'}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1418,6 +1464,10 @@ def _write_candidate_pool_audit(scored_clusters: list, article_by_url: dict[str,
             f"   family_run_count: {item.get('family_run_count', 0)}",
             f"   family_age_hours: {item.get('family_age_hours', 0.0)}",
             f"   family_lifecycle_boost: {item.get('family_lifecycle_boost', 0.0)}",
+            f"   geographic_signal_detected: {item.get('geographic_signal_detected') or 'none'}",
+            f"   local_relevance_boost: {item.get('local_relevance_boost', 0.0)}",
+            f"   local_domain_signal_hits: {', '.join(item.get('local_domain_signal_hits') or []) or 'none'}",
+            f"   local_county_tag: {item.get('local_county_tag') or 'none'}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1456,7 +1506,7 @@ def _scope_output_paths(profile_name: str) -> tuple[Path, Path, str]:
 def main() -> None:
     args = _parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    personalization = _build_general_personalization()
+    personalization = _build_personalization(args.profile)
     pipeline_service = EditorialPipelineService()
     core_service = pipeline_service.editorial_selection_core_service
 

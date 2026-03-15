@@ -16,6 +16,7 @@ class NewsClusteringArticle(BaseModel):
     editorial_priority: int = 3
     source_scope: Literal["local", "national", "international"] | None = None
     source_category: str | None = None
+    source_region: str | None = None
     is_local_source: bool = False
     national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
     national_preference_reason: str | None = None
@@ -39,6 +40,7 @@ class NewsClusteringArticle(BaseModel):
             editorial_priority=article.editorial_priority,
             source_scope=article.source_scope,
             source_category=article.source_category,
+            source_region=article.source_region,
             is_local_source=article.is_local_source,
             national_preference_bucket=article.national_preference_bucket,
             national_preference_reason=article.national_preference_reason,
@@ -60,6 +62,7 @@ class ClusterMemberArticle(BaseModel):
     editorial_priority: int = Field(default=3, ge=1, le=5)
     source_scope: Literal["local", "national", "international"] | None = None
     source_category: str | None = None
+    source_region: str | None = None
     is_local_source: bool = False
     national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
     national_preference_reason: str | None = None

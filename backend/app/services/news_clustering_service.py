@@ -482,6 +482,7 @@ class NewsClusteringService:
                 editorial_priority=item.article.editorial_priority,
                 source_scope=item.article.source_scope,
                 source_category=item.article.source_category,
+                source_region=item.article.source_region,
                 is_local_source=item.article.is_local_source,
                 national_preference_bucket=item.article.national_preference_bucket,
                 national_preference_reason=item.article.national_preference_reason,

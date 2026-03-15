@@ -17,6 +17,7 @@ class FetchedArticle(BaseModel):
     editorial_priority: int = 3
     source_scope: Literal["local", "national", "international"] | None = None
     source_category: str | None = None
+    source_region: str | None = None
     is_local_source: bool = False
     national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
     national_preference_reason: str | None = None
