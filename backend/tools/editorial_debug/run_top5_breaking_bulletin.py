@@ -194,6 +194,11 @@ def _write_romanian_source_coverage(source_coverage: dict[str, dict[str, object]
             f"   multi_source_clusters_contributed_to: {item['multi_source_clusters_contributed_to']}",
             f"   selected_national_preference_bucket: {item.get('selected_national_preference_bucket') or 'none'}",
             f"   selected_national_preference_reason: {item.get('selected_national_preference_reason') or 'none'}",
+            f"   selected_primary_candidate: {item.get('selected_primary_candidate') or 'none'}",
+            f"   competing_candidate_titles: {', '.join(item.get('competing_candidate_titles') or []) or 'none'}",
+            f"   selected_event_family_hint: {item.get('selected_event_family_hint') or 'none'}",
+            f"   selection_reason: {item.get('selection_reason') or 'none'}",
+            f"   overlapping_sources_for_same_event: {', '.join(item.get('overlapping_sources_for_same_event') or []) or 'none'}",
             "",
         ])
     ROMANIAN_SOURCE_COVERAGE_TEXT_PATH.write_text("\n".join(lines), encoding="utf-8")

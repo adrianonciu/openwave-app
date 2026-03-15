@@ -27,6 +27,8 @@ class FetchedArticle(BaseModel):
     romanian_entity_hits_count: int | None = None
     public_interest_hits_count: int | None = None
     negative_signal_count: int | None = None
+    romanian_event_family_hints: list[str] = []
+    source_selection_reason: str | None = None
     classifier_decision_reason: str | None = None
 
 
