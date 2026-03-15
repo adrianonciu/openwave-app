@@ -82,7 +82,12 @@
       "audieri csm",
       "procuror sef dna",
       "aviz negativ csm",
-      "dosar anti-coruptie"
+      "dosar anti-coruptie",
+      "balotaj csm",
+      "aviz consultativ csm",
+      "voineag adjunct",
+      "florenta diicot",
+      "cerbu dna"
     ]
   },
   "preference_near_tie_tolerance": 4,
@@ -202,7 +207,12 @@
       "audieri csm",
       "procuror sef dna",
       "aviz negativ csm",
-      "dosar anti-coruptie"
+      "dosar anti-coruptie",
+      "balotaj csm",
+      "aviz consultativ csm",
+      "voineag adjunct",
+      "florenta diicot",
+      "cerbu dna"
     ]
   },
   "geography_labels": {

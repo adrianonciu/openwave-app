@@ -55,6 +55,14 @@ def _justice_boost_reason(item: dict[str, object]) -> str:
     return " + ".join(reasons) or "justice hint scoring"
 
 
+def _justice_entered_via(item: dict[str, object]) -> str:
+    if item.get("recovered_domestic_candidate"):
+        return "recovery"
+    if (item.get("persistence_boost_applied") or 0.0) > 0:
+        return "persistence"
+    return "first_pass"
+
+
 def _is_placeholder(title: str) -> bool:
     return (title or "").strip().lower() in PLACEHOLDER_HEADLINES
 
@@ -405,7 +413,9 @@ def main() -> None:
             lines.extend([
                 f"- {item['headline']}",
                 f"  reason: {_justice_boost_reason(item)}",
+                f"  purity: {item.get('domestic_purity_score', 0.0)}",
                 f"  recovery_score: {item.get('recovery_score', 0.0)}",
+                f"  entered_via: {_justice_entered_via(item)}",
                 "",
             ])
     else:
