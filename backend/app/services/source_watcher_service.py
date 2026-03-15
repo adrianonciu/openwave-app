@@ -215,13 +215,21 @@ class SourceWatcherService:
         )
 
     def get_latest_content(self, source_config: SourceConfig) -> LatestContentItem:
+        recent_items = self.get_recent_content_items(source_config, limit=1)
+        if recent_items:
+            return recent_items[0]
+        raise ValueError(
+            f"Unable to detect latest content for source '{source_config.source_id}': no parser returned a dated content item."
+        )
+
+    def get_recent_content_items(self, source_config: SourceConfig, limit: int = 3) -> list[LatestContentItem]:
         errors: list[str] = []
 
         if source_config.rss_url:
             try:
-                latest_from_rss = self._get_latest_from_rss(source_config)
-                if latest_from_rss is not None:
-                    return latest_from_rss
+                recent_from_rss = self._get_recent_from_rss(source_config, limit=limit)
+                if recent_from_rss:
+                    return recent_from_rss
             except Exception as exc:
                 errors.append(f"rss: {exc}")
 
@@ -229,7 +237,7 @@ class SourceWatcherService:
             try:
                 latest_from_listing = self._get_latest_from_listing(source_config)
                 if latest_from_listing is not None:
-                    return latest_from_listing
+                    return [latest_from_listing]
             except Exception as exc:
                 errors.append(f"listing: {exc}")
 
@@ -237,7 +245,7 @@ class SourceWatcherService:
             try:
                 latest_from_page = self._get_latest_from_page(source_config)
                 if latest_from_page is not None:
-                    return latest_from_page
+                    return [latest_from_page]
             except Exception as exc:
                 errors.append(f"page: {exc}")
 
@@ -348,8 +356,12 @@ class SourceWatcherService:
         return sorted(source_configs, key=lambda item: item.priority_rank or 999)
 
     def _get_latest_from_rss(self, source_config: SourceConfig) -> LatestContentItem | None:
+        recent_items = self._get_recent_from_rss(source_config, limit=1)
+        return recent_items[0] if recent_items else None
+
+    def _get_recent_from_rss(self, source_config: SourceConfig, limit: int = 3) -> list[LatestContentItem]:
         if not source_config.rss_url:
-            return None
+            return []
 
         root = self._parse_rss_root(source_config.rss_url)
         candidates: list[LatestContentItem] = []
@@ -392,7 +404,7 @@ class SourceWatcherService:
                 candidates.append(candidate)
 
         if not candidates:
-            for title, url in pending_page_resolution[:5]:
+            for title, url in pending_page_resolution[: max(5, limit * 2)]:
                 candidate = self._get_latest_from_article_page(
                     source_config=source_config,
                     article_url=url,
@@ -401,10 +413,17 @@ class SourceWatcherService:
                 if candidate is not None:
                     candidates.append(candidate)
 
-        if not candidates:
-            return None
+        deduped: list[LatestContentItem] = []
+        seen_urls: set[str] = set()
+        for candidate in sorted(candidates, key=lambda item: item.published_at, reverse=True):
+            if candidate.url in seen_urls:
+                continue
+            seen_urls.add(candidate.url)
+            deduped.append(candidate)
+            if len(deduped) >= max(1, limit):
+                break
 
-        return max(candidates, key=lambda item: item.published_at)
+        return deduped
 
     def _parse_rss_root(self, rss_url: str) -> ET.Element:
         raw_feed = self._fetch_bytes(rss_url).lstrip()

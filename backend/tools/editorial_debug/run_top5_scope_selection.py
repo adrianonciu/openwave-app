@@ -40,7 +40,11 @@ INTERNATIONAL_SOURCE_COVERAGE_JSON_PATH = OUTPUT_DIR / "international_source_cov
 INTERNATIONAL_SOURCE_COVERAGE_TEXT_PATH = OUTPUT_DIR / "international_source_coverage.txt"
 MAX_INPUT_ARTICLES = 20
 MAX_RSS_FALLBACK_ARTICLES = 20
-MAX_SOURCE_FETCH_ATTEMPTS = 32
+MAX_SOURCE_FETCH_ATTEMPTS = 48
+ROMANIAN_SOURCE_RECENT_ITEMS = 3
+MAX_FULL_FETCHES_PER_ROMANIAN_SOURCE = 2
+ROMANIAN_TITLE_ONLY_FALLBACKS_PER_SOURCE = 1
+ROMANIAN_CLASSIFIER_BODY_CHAR_LIMIT = 900
 TOKEN_PATTERN = re.compile(r"[0-9A-Za-z\u00C0-\u024F][0-9A-Za-z\u00C0-\u024F\-']*")
 NOISY_PREFIX_PATTERN = re.compile(r"^(?:live(?:-text)?|video|foto|breaking|update)\s*[:\-]+\s*", re.IGNORECASE)
 SEPARATOR_PATTERN = re.compile(r"\s*(?:\||::| - |  |  )\s*")
@@ -110,6 +114,13 @@ ROMANIAN_INSTITUTION_TERMS = {
     "primarul": 3,
     "consiliul judetean": 3,
     "prefect": 3,
+    "guvernul romaniei": 4,
+    "parlamentul romaniei": 4,
+    "mae": 4,
+    "mapn": 4,
+    "ministerul finantelor": 4,
+    "ministerul energiei": 4,
+    "ministerul justitiei": 4,
 }
 
 ROMANIAN_POLITICAL_ACTOR_TERMS = {
@@ -163,6 +174,9 @@ ROMANIAN_PUBLIC_IMPACT_TERMS = {
     "facturi": 2,
     "subventii": 2,
     "fonduri": 2,
+    "pnrr": 3,
+    "reforma": 2,
+    "reforme": 2,
     "licitatie": 2,
     "trafic rutier": 2,
     "coalitie": 2,
@@ -302,18 +316,21 @@ ROMANIAN_GENERIC_CORPORATE_NEGATIVE_TERMS = {
 }
 
 ROMANIAN_EVENT_FAMILY_HINTS = {
-    "romanian_budget_fiscal": {"buget", "deficit", "taxe", "impozit", "fiscal", "anaf", "bnr", "bvb"},
-    "romanian_party_government_negotiation": {"coalitie", "negocieri", "psd", "pnl", "usr", "guvern", "parlament", "premier"},
-    "romanian_energy_supply": {"energie", "motorina", "combustibil", "carburant", "gaze", "electricitate", "romgaz", "hidroelectrica"},
-    "romanian_justice_case": {"justitie", "instanta", "tribunal", "curte", "procuror", "dna", "diicot", "iccj"},
+    "romanian_domestic_politics": {"guvern", "guvernul", "guvernul romaniei", "parlament", "parlamentul", "parlamentul romaniei", "coalitie", "negocieri", "premier", "prim-ministru", "presedintie", "psd", "pnl", "usr", "udmr", "aur"},
+    "romanian_budget_fiscal": {"buget", "deficit", "taxe", "impozit", "impozite", "fiscal", "anaf", "bnr", "bvb", "ministerul finantelor"},
+    "romanian_economic_policy": {"inflatie", "preturi", "facturi", "subventii", "fonduri", "pnrr", "reforma", "reforme", "comisia europeana", "ordonanta", "lege", "masuri", "investitii", "licitatie"},
+    "romanian_energy_security": {"energie", "motorina", "combustibil", "carburant", "gaze", "electricitate", "romgaz", "hidroelectrica", "transgaz", "transelectrica", "ministerul energiei"},
+    "romanian_eu_relations": {"ue", "uniunea europeana", "bruxelles", "brussels", "schengen", "mae", "diplomatic"},
+    "romanian_regional_security": {"ucraina", "ukraine", "rusia", "moldova", "transnistria", "nato", "mapn", "securitate", "marea neagra", "black sea"},
+    "romanian_justice": {"justitie", "instanta", "tribunal", "curte", "procuror", "dna", "diicot", "iccj", "ccr", "ministerul justitiei"},
     "romanian_major_policy_decision": {"ordonanta", "lege", "decizie", "masuri", "minister", "ministru", "guvernul"},
     "romanian_public_protest": {"protest", "proteste", "greva", "manifestatie", "studentii", "sindicat"},
     "romanian_infrastructure_issue": {"infrastructura", "autostrada", "trafic", "spital", "scoala", "metrou", "cale ferata"},
 }
 ROMANIAN_CORE_EVENT_TERMS = {
-    "decide", "vot", "voteaza", "adopta", "adoptare", "anunta", "aproba", "prelungit", "prelungeste",
+    "decide", "decizia", "vot", "voteaza", "adopta", "adoptare", "anunta", "aproba", "prelungit", "prelungeste",
     "negocieri", "masuri", "sanctiuni", "securitate", "criza", "deficit", "buget", "motorina", "energie",
-    "ordonanta", "lege", "protest", "greva", "instanta", "ancheta", "investigatie",
+    "ordonanta", "lege", "protest", "greva", "instanta", "ancheta", "investigatie", "guvern", "parlament",
 }
 ROMANIAN_SIDE_ANGLE_TERMS = {
     "opinie", "analiza", "comentariu", "editorial", "explicam", "explicatii", "cum", "de ce", "scenariu",
@@ -322,7 +339,10 @@ ROMANIAN_SIDE_ANGLE_TERMS = {
 
 
 def _article_classifier_text(article: FetchedArticle) -> str:
-    return f"{article.title} {article.content_text}".lower()
+    # Limit classification to the headline and lead so footer/sidebar contamination does not create false Romanian anchors.
+    body = re.sub(r"\s+", " ", article.content_text or "").strip()
+    lead = body[:ROMANIAN_CLASSIFIER_BODY_CHAR_LIMIT]
+    return f"{article.title} {lead}".lower()
 
 
 def _romanian_event_family_hints(article: FetchedArticle) -> list[str]:
@@ -340,6 +360,9 @@ def _romanian_core_event_score(article: FetchedArticle) -> int:
     score = 0
     score += sum(2 for term in ROMANIAN_CORE_EVENT_TERMS if _text_contains_term(title_text, term))
     score += sum(1 for hint in _romanian_event_family_hints(article))
+    score += min(4, len(article.institutional_signal_hits or []))
+    if article.domestic_score_total is not None:
+        score += max(0, min(4, int(article.domestic_score_total // 4)))
     score -= sum(2 for term in ROMANIAN_SIDE_ANGLE_TERMS if _text_contains_term(title_text, term))
     if article.source_category == 'analysis':
         score -= 1
@@ -350,9 +373,11 @@ def _romanian_core_event_score(article: FetchedArticle) -> int:
 
 def _romanian_source_selection_reason(article: FetchedArticle) -> str:
     hints = article.romanian_event_family_hints or []
+    institutions = article.institutional_signal_hits or []
     return (
         f"bucket={article.national_preference_bucket or 'none'}; core_event_score={_romanian_core_event_score(article)}; "
         f"event_family_hints={', '.join(hints) if hints else 'none'}; "
+        f"institutions={', '.join(institutions[:4]) if institutions else 'none'}; "
         f"classifier={article.classifier_decision_reason or article.national_preference_reason or 'none'}"
     )
 
@@ -506,6 +531,11 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
     article.domestic_hard_news_positive_signals = positive_signals
     article.domestic_hard_news_negative_signals = negative_signals
     article.romanian_event_family_hints = _romanian_event_family_hints(article)
+    article.institutional_signal_hits = sorted({
+        *(term for term, _ in institution_matches),
+        *(term for term, _ in actor_matches if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "premier", "prim-ministru"}),
+        *(signal for signal in governance_location_signals if signal.startswith("governance_")),
+    })
     article.domestic_score_total = domestic_score_total
     article.headline_gate_passed = headline_gate_passed
     article.romanian_entity_hits_count = romanian_entity_hits_count
@@ -560,13 +590,14 @@ def _effective_priority_for_romanian_candidate(base_priority: int, bucket: str) 
     return base_priority
 
 
-def _candidate_choice_key(article: FetchedArticle) -> tuple[int, int, int, int, float]:
+def _candidate_choice_key(article: FetchedArticle) -> tuple[int, float, int, int, int, float]:
     bucket_rank = NATIONAL_PREFERENCE_BUCKET_ORDER.get(article.national_preference_bucket or "off_target", 2)
+    domestic_score_rank = -(article.domestic_score_total if article.domestic_score_total is not None else -999.0)
     core_event_rank = -_romanian_core_event_score(article)
     hint_rank = -(len(article.romanian_event_family_hints or []))
     fetch_rank = 0 if article.ingestion_kind == "full_fetch" else 1
     published_at = article.published_at.timestamp() if article.published_at else 0.0
-    return (bucket_rank, core_event_rank, hint_rank, fetch_rank, -published_at)
+    return (bucket_rank, domestic_score_rank, core_event_rank, hint_rank, fetch_rank, -published_at)
 
 
 def _build_source_candidate_from_rss(rss_article, mapped_meta: dict[str, object]) -> FetchedArticle:
@@ -576,6 +607,21 @@ def _build_source_candidate_from_rss(rss_article, mapped_meta: dict[str, object]
         published_at=rss_article.published_at,
         source=rss_article.source,
         content_text=rss_article.summary,
+        ingestion_kind="rss_fallback",
+        editorial_priority=mapped_meta.get("editorial_priority", 3),
+        source_scope=mapped_meta.get("scope"),
+        source_category=mapped_meta.get("category"),
+        is_local_source=mapped_meta.get("scope") == "local",
+    )
+
+
+def _build_source_candidate_from_latest_item(latest_item, mapped_meta: dict[str, object]) -> FetchedArticle:
+    return FetchedArticle(
+        url=latest_item.url,
+        title=latest_item.title,
+        published_at=latest_item.published_at,
+        source=latest_item.source_name,
+        content_text="",
         ingestion_kind="rss_fallback",
         editorial_priority=mapped_meta.get("editorial_priority", 3),
         source_scope=mapped_meta.get("scope"),
@@ -597,6 +643,7 @@ def _apply_romanian_national_preference(article: FetchedArticle, mapped_meta: di
         "public_interest_hits_count": article.public_interest_hits_count,
         "negative_signal_count": article.negative_signal_count,
         "romanian_event_family_hints": article.romanian_event_family_hints,
+        "institutional_signal_hits": article.institutional_signal_hits,
         "source_selection_reason": article.source_selection_reason,
         "classifier_decision_reason": article.classifier_decision_reason,
         "editorial_priority": _effective_priority_for_romanian_candidate(article.editorial_priority, bucket),
@@ -641,6 +688,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
     base_source_configs, _ = watcher_service.resolve_monitored_source_configs(personalization)
     source_by_domain: dict[str, dict[str, object]] = {}
     latest_items: list[tuple[object, object]] = []
+    source_recent_items: dict[str, list[object]] = {}
     source_coverage: dict[str, dict[str, object]] = {}
 
     for source_config in base_source_configs:
@@ -663,6 +711,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             "articles_discovered": 0,
             "articles_fetched_successfully": 0,
             "candidate_articles_produced": 0,
+            "recent_feed_items_considered": 0,
             "clusters_contributed_to": 0,
             "multi_source_clusters_contributed_to": 0,
             "selected_national_preference_bucket": None,
@@ -671,12 +720,21 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             "competing_candidate_titles": [],
             "selected_event_family_hint": None,
             "selection_reason": None,
+            "institutional_signal_hits": [],
             "overlapping_sources_for_same_event": [],
         }
         try:
-            latest = watcher_service.get_latest_content(source_config)
-            latest_items.append((source_config, latest))
-            source_coverage[source_config.source_id]["articles_discovered"] += 1
+            if source_config.scope == "national" and source_config.country == "Romania":
+                recent_items = watcher_service.get_recent_content_items(source_config, limit=ROMANIAN_SOURCE_RECENT_ITEMS)
+                source_recent_items[source_config.source_id] = list(recent_items)
+                latest_items.extend((source_config, item) for item in recent_items)
+                source_coverage[source_config.source_id]["articles_discovered"] += len(recent_items)
+                source_coverage[source_config.source_id]["recent_feed_items_considered"] = len(recent_items)
+            else:
+                latest = watcher_service.get_latest_content(source_config)
+                latest_items.append((source_config, latest))
+                source_coverage[source_config.source_id]["articles_discovered"] += 1
+                source_coverage[source_config.source_id]["recent_feed_items_considered"] = 1
         except Exception:
             continue
 
@@ -685,11 +743,15 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
     provenance_by_url: dict[str, dict[str, object]] = {}
     seen_urls: set[str] = set()
     candidates_by_source: dict[str, list[FetchedArticle]] = {config.source_id: [] for config in base_source_configs}
+    config_by_id = {config.source_id: config for config in base_source_configs}
 
     source_attempts = 0
+    full_fetch_candidates_per_source: dict[str, int] = Counter()
     for source_config, latest in latest_items:
         if source_attempts >= MAX_SOURCE_FETCH_ATTEMPTS:
             break
+        if source_config.scope == "national" and source_config.country == "Romania" and full_fetch_candidates_per_source[source_config.source_id] >= MAX_FULL_FETCHES_PER_ROMANIAN_SOURCE:
+            continue
         source_attempts += 1
         if latest.url in seen_urls:
             continue
@@ -708,10 +770,28 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
         )
         source_coverage[source_config.source_id]["articles_fetched_successfully"] += 1
         source_coverage[source_config.source_id]["candidate_articles_produced"] += 1
+        full_fetch_candidates_per_source[source_config.source_id] += 1
         mapped_meta = source_by_domain.get(_normalize_domain(source_config.source_url), {})
         if source_config.scope == "national" and source_config.country == "Romania":
             article = _apply_romanian_national_preference(article, mapped_meta)
         candidates_by_source[source_config.source_id].append(article)
+
+    for source_id, recent_items in source_recent_items.items():
+        if source_id not in candidates_by_source:
+            continue
+        source_config = config_by_id[source_id] if 'config_by_id' in locals() else None
+        mapped_meta = source_by_domain.get(_normalize_domain(config_by_id[source_id].source_url), {})
+        title_only_added = 0
+        existing_urls = {candidate.url for candidate in candidates_by_source[source_id]}
+        for recent_item in recent_items:
+            if recent_item.url in existing_urls or title_only_added >= ROMANIAN_TITLE_ONLY_FALLBACKS_PER_SOURCE:
+                continue
+            article = _build_source_candidate_from_latest_item(recent_item, mapped_meta)
+            article = _apply_romanian_national_preference(article, mapped_meta)
+            candidates_by_source[source_id].append(article)
+            source_coverage[source_id]["candidate_articles_produced"] += 1
+            existing_urls.add(recent_item.url)
+            title_only_added += 1
 
     rss_articles_added = 0
     rss_candidates_per_source: dict[str, int] = Counter()
@@ -740,7 +820,6 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
     prioritized_national: list[FetchedArticle] = []
     other_articles: list[FetchedArticle] = []
 
-    config_by_id = {config.source_id: config for config in base_source_configs}
     for source_id, source_candidates in candidates_by_source.items():
         if not source_candidates:
             continue
@@ -755,6 +834,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             source_coverage[source_id]["competing_candidate_titles"] = [candidate.title for candidate in sorted_candidates[1:4]]
             source_coverage[source_id]["selected_event_family_hint"] = (chosen.romanian_event_family_hints or [None])[0]
             source_coverage[source_id]["selection_reason"] = chosen.source_selection_reason
+            source_coverage[source_id]["institutional_signal_hits"] = chosen.institutional_signal_hits or []
             prioritized_national.append(chosen)
         else:
             full_fetch_candidates = [candidate for candidate in source_candidates if candidate.ingestion_kind == "full_fetch"]
@@ -766,6 +846,7 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
 
     prioritized_national.sort(key=lambda article: (
         NATIONAL_PREFERENCE_BUCKET_ORDER.get(article.national_preference_bucket or "off_target", 2),
+        -(article.domestic_score_total if article.domestic_score_total is not None else -999.0),
         -len(article.romanian_event_family_hints or []),
         _romanian_core_event_score(article) * -1,
         -(article.published_at.timestamp() if article.published_at else 0.0),
