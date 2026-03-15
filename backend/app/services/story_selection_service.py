@@ -262,6 +262,8 @@ class StorySelectionService:
             )
 
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
+        selected = self._rebalance_national_domestic_selection(selected, ordered_clusters, effective_max_stories)
+        selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         stats = StorySelectionStats(
             total_input_clusters=len(scored_clusters),
             selected_count=len(selected),
@@ -303,7 +305,8 @@ class StorySelectionService:
             return "non_hard_news_national_cluster"
         unique_source_count = self._unique_source_count(cluster)
         if unique_source_count < self.minimum_unique_sources and not is_local:
-            return "single_source_cluster_without_local_relevance"
+            if not self._single_source_national_exception(cluster):
+                return "single_source_cluster_without_local_relevance"
         if "low-value title markers" in editorial_fit_explanation and not is_local:
             return "low_value_headline_cluster"
         if "english-heavy title tokens" in editorial_fit_explanation and not is_local:
@@ -652,11 +655,112 @@ class StorySelectionService:
     def _is_anchor_candidate(self, cluster: ScoredStoryCluster) -> bool:
         return self._unique_source_count(cluster) >= self.anchor_min_unique_sources
 
-    def _selection_sort_key(self, cluster: ScoredStoryCluster) -> tuple[float, float, float, float]:
+    def _selection_sort_key(self, cluster: ScoredStoryCluster) -> tuple[float, float, float, float, float]:
         anchor_bonus = 1.0 if self._is_anchor_candidate(cluster) else 0.0
         unique_sources = float(self._unique_source_count(cluster))
         priority_bonus = float(6 - self._best_editorial_priority(cluster))
-        return (anchor_bonus, unique_sources, priority_bonus, cluster.score_total)
+        adjusted_score = self._selection_adjusted_score(cluster)
+        domestic_priority = self._national_domestic_priority(cluster)
+        return (adjusted_score, domestic_priority, anchor_bonus, unique_sources, priority_bonus)
+
+
+    def _dominant_national_bucket(self, cluster: ScoredStoryCluster) -> str | None:
+        national_buckets = [
+            member.national_preference_bucket
+            for member in cluster.cluster.member_articles
+            if member.source_scope == "national" and member.national_preference_bucket
+        ]
+        if not national_buckets:
+            return None
+        return Counter(national_buckets).most_common(1)[0][0]
+
+    def _single_source_national_exception(self, cluster: ScoredStoryCluster) -> bool:
+        if "national" not in self._cluster_scopes(cluster):
+            return False
+        bucket = self._dominant_national_bucket(cluster)
+        if bucket == "domestic_hard_news":
+            return (
+                cluster.domestic_purity_score >= 0.34
+                or len(cluster.romania_impact_evidence_hits) >= 2
+                or cluster.title_only_domestic_boost > 0
+            )
+        return (
+            bucket == "off_target"
+            and cluster.domestic_purity_score >= 0.45
+            and len(cluster.romania_impact_evidence_hits) >= 2
+            and cluster.external_penalty_applied <= 0.0
+        )
+
+    def _national_domestic_priority(self, cluster: ScoredStoryCluster) -> float:
+        bucket = self._dominant_national_bucket(cluster)
+        if "national" not in self._cluster_scopes(cluster):
+            return 0.0
+        if bucket == "domestic_hard_news":
+            return 2.5 + (cluster.domestic_purity_score * 2.5)
+        if bucket == "external_direct_impact":
+            return 0.8 + max(0.0, (len(cluster.romania_impact_evidence_hits) - 1) * 0.3) - cluster.external_penalty_applied
+        return max(0.0, cluster.domestic_purity_score - cluster.external_penalty_applied)
+
+    def _selection_adjusted_score(self, cluster: ScoredStoryCluster) -> float:
+        bucket = self._dominant_national_bucket(cluster)
+        adjusted = cluster.score_total
+        if "national" in self._cluster_scopes(cluster):
+            adjusted += cluster.domestic_purity_score * 4.0
+            adjusted += min(cluster.title_only_domestic_boost, 1.5)
+            adjusted -= cluster.external_penalty_applied * 5.0
+            if bucket == "domestic_hard_news":
+                adjusted += 3.0
+            elif bucket == "external_direct_impact" and len(cluster.romania_impact_evidence_hits) < 2:
+                adjusted -= 2.5
+        return round(adjusted, 2)
+
+    def _is_all_national_input(self, clusters: list[ScoredStoryCluster]) -> bool:
+        if not clusters:
+            return False
+        return all(self._cluster_scopes(cluster) <= {"national"} for cluster in clusters)
+
+    def _is_credible_domestic_candidate(self, cluster: ScoredStoryCluster) -> bool:
+        bucket = self._dominant_national_bucket(cluster)
+        if bucket == "domestic_hard_news":
+            return cluster.domestic_purity_score >= 0.3 or len(cluster.romania_impact_evidence_hits) >= 2 or cluster.title_only_domestic_boost > 0
+        return (
+            bucket == "off_target"
+            and cluster.domestic_purity_score >= 0.45
+            and len(cluster.romania_impact_evidence_hits) >= 2
+            and cluster.external_penalty_applied <= 0.0
+        )
+
+    def _rebalance_national_domestic_selection(
+        self,
+        selected: list[ScoredStoryCluster],
+        ordered_clusters: list[ScoredStoryCluster],
+        max_stories: int,
+    ) -> list[ScoredStoryCluster]:
+        if not self._is_all_national_input(ordered_clusters):
+            return selected
+        domestic_candidates = [cluster for cluster in ordered_clusters if self._is_credible_domestic_candidate(cluster)]
+        if len(domestic_candidates) < 2:
+            return selected
+        selected_ids = {cluster.cluster.cluster_id for cluster in selected}
+        selected_domestic = [cluster for cluster in selected if self._is_credible_domestic_candidate(cluster)]
+        if len(selected_domestic) >= 2:
+            return selected
+        replacement_pool = [cluster for cluster in domestic_candidates if cluster.cluster.cluster_id not in selected_ids]
+        if not replacement_pool:
+            return selected
+        external_selected = [
+            cluster for cluster in selected
+            if self._dominant_national_bucket(cluster) != "domestic_hard_news"
+        ]
+        external_selected.sort(key=lambda cluster: (self._selection_adjusted_score(cluster), -cluster.external_penalty_applied))
+        while len(selected_domestic) < 2 and replacement_pool and external_selected:
+            incoming = replacement_pool.pop(0)
+            outgoing = external_selected.pop(0)
+            selected = [incoming if item.cluster.cluster_id == outgoing.cluster.cluster_id else item for item in selected]
+            selected_ids.discard(outgoing.cluster.cluster_id)
+            selected_ids.add(incoming.cluster.cluster_id)
+            selected_domestic = [cluster for cluster in selected if self._is_credible_domestic_candidate(cluster)]
+        return selected[:max_stories]
 
     def _cluster_text(self, cluster: ScoredStoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.cluster.member_articles)

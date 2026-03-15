@@ -15,6 +15,11 @@ ENGLISH_HEADLINE_MARKERS = {
     "evidence", "federal", "investigation", "judge", "justice", "losers", "record", "rock",
     "selling", "shoots", "sold", "sports", "taliban", "winners", "year",
 }
+ROMANIA_IMPACT_TERMS = {
+    "romania", "romaniei", "roman", "romani", "bucuresti", "guvern", "guvernul", "parlament",
+    "presedintie", "pnrr", "fonduri europene", "buget", "deficit", "energie", "carburant",
+    "motorina", "bnr", "ccr", "anaf", "mae", "mapn", "psd", "pnl", "usr",
+}
 LOW_VALUE_TITLE_MARKERS = {
     "live-text", "live text", "video", "photos", "gallery", "highlights", "odds", "preview",
     "recap", "bracketology", "winners", "losers", "propozitie cu", "cum se scrie", "definitie",
@@ -104,6 +109,7 @@ class StoryScoringService:
         topic_weight = self._score_topic_weight(cluster)
         title_strength = self._score_title_strength(cluster)
         europe_romania_impact = self._score_europe_romania_impact(cluster)
+        romanian_domestic_balance = self._score_romanian_domestic_balance(cluster)
         editorial_fit = self._score_editorial_fit(cluster)
 
         total = round(
@@ -114,6 +120,7 @@ class StoryScoringService:
             + topic_weight.contribution
             + title_strength.contribution
             + europe_romania_impact.contribution
+            + romanian_domestic_balance.contribution
             + editorial_fit.contribution,
             2,
         )
@@ -125,15 +132,23 @@ class StoryScoringService:
             topic_weight=topic_weight,
             title_strength=title_strength,
             europe_romania_impact=europe_romania_impact,
+            romanian_domestic_balance=romanian_domestic_balance,
             editorial_fit=editorial_fit,
         )
         explanation = self._build_explanation(cluster, breakdown, total)
+        balance_meta = self._romanian_balance_metadata(cluster)
         return ScoredStoryCluster(
             cluster=cluster,
             score_total=total,
             score_breakdown=breakdown,
             scoring_explanation=explanation,
             scored_at=scored_at,
+            domestic_purity_score=balance_meta['domestic_purity_score'],
+            romania_impact_evidence_hits=balance_meta['romania_impact_evidence_hits'],
+            external_penalty_applied=balance_meta['external_penalty_applied'],
+            title_only_domestic_boost=balance_meta['title_only_domestic_boost'],
+            cluster_event_family_hints=balance_meta['cluster_event_family_hints'],
+            domestic_vs_external_rank_reason=balance_meta['domestic_vs_external_rank_reason'],
         )
 
     def _score_recency(self, cluster: StoryCluster, reference_time: datetime) -> ScoreComponent:
@@ -316,6 +331,94 @@ class StoryScoringService:
             ),
         )
 
+
+    def _romanian_balance_metadata(self, cluster: StoryCluster) -> dict[str, object]:
+        national_members = [
+            member for member in cluster.member_articles
+            if member.source_scope == "national"
+        ]
+        if not national_members:
+            return {
+                "domestic_purity_score": 0.0,
+                "romania_impact_evidence_hits": [],
+                "external_penalty_applied": 0.0,
+                "title_only_domestic_boost": 0.0,
+                "cluster_event_family_hints": [],
+                "domestic_vs_external_rank_reason": "non-national cluster: Romanian domestic balancing not applied",
+            }
+
+        total_members = len(national_members)
+        domestic_members = [member for member in national_members if member.national_preference_bucket == "domestic_hard_news"]
+        external_members = [member for member in national_members if member.national_preference_bucket == "external_direct_impact"]
+        off_target_members = [member for member in national_members if member.national_preference_bucket == "off_target"]
+        hints = sorted({hint for member in national_members for hint in (member.romanian_event_family_hints or [])})
+        institutions = sorted({hit for member in national_members for hit in (member.institutional_signal_hits or [])})
+        impact_hits = sorted({hit for member in national_members for hit in (member.romania_impact_evidence_hits or [])})
+        title_only_boost = round(sum(member.title_only_domestic_boost or 0.0 for member in national_members), 2)
+        avg_domestic_score = sum((member.domestic_score_total or 0.0) for member in national_members) / max(total_members, 1)
+        title_text = self._cluster_text_from_members(cluster.member_articles)
+        title_hits = sorted(term for term in ROMANIA_IMPACT_TERMS if term in title_text)
+        combined_impact_hits = sorted(set(impact_hits) | set(title_hits))
+        strong_impact_hits = [
+            hit for hit in combined_impact_hits
+            if hit not in {"roman", "romani", "romania", "romaniei", "bucuresti"}
+        ]
+
+        domestic_ratio = len(domestic_members) / total_members
+        external_ratio = len(external_members) / total_members
+        off_target_ratio = len(off_target_members) / total_members
+        purity = (
+            (domestic_ratio * 0.55)
+            + (min(len(hints), 4) * 0.06)
+            + (min(len(institutions), 4) * 0.05)
+            + (min(len(combined_impact_hits), 5) * 0.04)
+            + min(max(avg_domestic_score, 0.0) / 24.0, 0.18)
+            + min(title_only_boost / 6.0, 0.12)
+            - (external_ratio * 0.24)
+            - (off_target_ratio * 0.18)
+        )
+        domestic_purity_score = round(min(max(purity, 0.0), 1.0), 3)
+
+        external_penalty_applied = 0.0
+        reason_parts: list[str] = []
+        if external_ratio >= 0.5 and len(strong_impact_hits) < 2:
+            external_penalty_applied = round(min(0.38, 0.14 + (external_ratio * 0.24)), 2)
+            reason_parts.append("weak Romania-specific impact evidence for external-leaning cluster")
+        if domestic_ratio >= 0.34 or domestic_purity_score >= 0.45:
+            reason_parts.append("credible Romanian domestic evidence improved national ranking")
+        if title_only_boost > 0:
+            reason_parts.append("title-only domestic candidate added survivability")
+        if not reason_parts:
+            reason_parts.append("Romanian balance stayed neutral")
+
+        return {
+            "domestic_purity_score": domestic_purity_score,
+            "romania_impact_evidence_hits": combined_impact_hits[:8],
+            "external_penalty_applied": external_penalty_applied,
+            "title_only_domestic_boost": round(min(title_only_boost, 3.0), 2),
+            "cluster_event_family_hints": hints[:8],
+            "domestic_vs_external_rank_reason": "; ".join(reason_parts),
+        }
+
+    def _score_romanian_domestic_balance(self, cluster: StoryCluster) -> ScoreComponent:
+        max_points = 8.0
+        metadata = self._romanian_balance_metadata(cluster)
+        normalized = metadata["domestic_purity_score"]
+        penalty = metadata["external_penalty_applied"]
+        contribution = round(max((normalized - penalty) * max_points, -2.0), 2)
+        explanation = (
+            f"Romanian domestic purity={normalized}, impact_hits={', '.join(metadata['romania_impact_evidence_hits']) or 'none'}, "
+            f"event_hints={', '.join(metadata['cluster_event_family_hints']) or 'none'}, external_penalty={penalty}, "
+            f"title_only_domestic_boost={metadata['title_only_domestic_boost']}. {metadata['domestic_vs_external_rank_reason']}."
+        )
+        return ScoreComponent(
+            name="romanian_domestic_balance",
+            value=round(normalized, 3),
+            max_points=max_points,
+            contribution=contribution,
+            explanation=explanation,
+        )
+
     def _score_editorial_fit(self, cluster: StoryCluster) -> ScoreComponent:
         max_points = 12.0
         categories = {member.source_category or "general" for member in cluster.member_articles}
@@ -397,6 +500,10 @@ class StoryScoringService:
             ),
         )
 
+    def _cluster_text_from_members(self, members: list) -> str:
+        titles = " ".join(member.title for member in members)
+        return titles.lower()
+
     def _cluster_text(self, cluster: StoryCluster) -> str:
         titles = " ".join(member.title for member in cluster.member_articles)
         return f"{cluster.representative_title} {titles}".lower()
@@ -416,6 +523,7 @@ class StoryScoringService:
                 breakdown.topic_weight,
                 breakdown.title_strength,
                 breakdown.europe_romania_impact,
+                breakdown.romanian_domestic_balance,
                 breakdown.editorial_fit,
             ],
             key=lambda component: component.contribution,

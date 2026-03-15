@@ -19,6 +19,12 @@ class NewsClusteringArticle(BaseModel):
     is_local_source: bool = False
     national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
     national_preference_reason: str | None = None
+    domestic_score_total: float | None = None
+    headline_gate_passed: bool | None = None
+    romanian_event_family_hints: list[str] = Field(default_factory=list)
+    institutional_signal_hits: list[str] = Field(default_factory=list)
+    romania_impact_evidence_hits: list[str] = Field(default_factory=list)
+    title_only_domestic_boost: float = 0.0
 
     @classmethod
     def from_fetched_article(cls, article: FetchedArticle) -> "NewsClusteringArticle":
@@ -36,6 +42,12 @@ class NewsClusteringArticle(BaseModel):
             is_local_source=article.is_local_source,
             national_preference_bucket=article.national_preference_bucket,
             national_preference_reason=article.national_preference_reason,
+            domestic_score_total=article.domestic_score_total,
+            headline_gate_passed=article.headline_gate_passed,
+            romanian_event_family_hints=article.romanian_event_family_hints,
+            institutional_signal_hits=article.institutional_signal_hits,
+            romania_impact_evidence_hits=article.romania_impact_evidence_hits,
+            title_only_domestic_boost=article.title_only_domestic_boost,
         )
 
 
@@ -51,6 +63,12 @@ class ClusterMemberArticle(BaseModel):
     is_local_source: bool = False
     national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
     national_preference_reason: str | None = None
+    domestic_score_total: float | None = None
+    headline_gate_passed: bool | None = None
+    romanian_event_family_hints: list[str] = Field(default_factory=list)
+    institutional_signal_hits: list[str] = Field(default_factory=list)
+    romania_impact_evidence_hits: list[str] = Field(default_factory=list)
+    title_only_domestic_boost: float = 0.0
 
 
 class StoryCluster(BaseModel):

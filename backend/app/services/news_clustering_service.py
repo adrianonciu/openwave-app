@@ -485,6 +485,12 @@ class NewsClusteringService:
                 is_local_source=item.article.is_local_source,
                 national_preference_bucket=item.article.national_preference_bucket,
                 national_preference_reason=item.article.national_preference_reason,
+                domestic_score_total=item.article.domestic_score_total,
+                headline_gate_passed=item.article.headline_gate_passed,
+                romanian_event_family_hints=item.article.romanian_event_family_hints,
+                institutional_signal_hits=item.article.institutional_signal_hits,
+                romania_impact_evidence_hits=item.article.romania_impact_evidence_hits,
+                title_only_domestic_boost=item.article.title_only_domestic_boost,
             )
             for item in sorted(cluster_signals, key=lambda value: value.article.published_at)
         ]

@@ -21,6 +21,7 @@ class StoryScoreBreakdown(BaseModel):
     topic_weight: ScoreComponent
     title_strength: ScoreComponent
     europe_romania_impact: ScoreComponent
+    romanian_domestic_balance: ScoreComponent
     editorial_fit: ScoreComponent
 
 
@@ -30,3 +31,9 @@ class ScoredStoryCluster(BaseModel):
     score_breakdown: StoryScoreBreakdown
     scoring_explanation: str
     scored_at: datetime
+    domestic_purity_score: float = 0.0
+    romania_impact_evidence_hits: list[str] = Field(default_factory=list)
+    external_penalty_applied: float = 0.0
+    title_only_domestic_boost: float = 0.0
+    cluster_event_family_hints: list[str] = Field(default_factory=list)
+    domestic_vs_external_rank_reason: str | None = None

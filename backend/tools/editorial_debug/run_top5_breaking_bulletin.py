@@ -49,8 +49,13 @@ def _is_usable_breaking_candidate(scored_cluster, scope: str) -> bool:
         return False
     if scope == "national":
         buckets = [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]
-        if buckets and Counter(buckets).most_common(1)[0][0] == "off_target":
-            return False
+        dominant_bucket = Counter(buckets).most_common(1)[0][0] if buckets else None
+        if dominant_bucket == "off_target":
+            domestic_purity = getattr(scored_cluster, "domestic_purity_score", 0.0)
+            impact_hits = getattr(scored_cluster, "romania_impact_evidence_hits", []) or []
+            title_only_boost = getattr(scored_cluster, "title_only_domestic_boost", 0.0)
+            if domestic_purity < 0.4 and len(impact_hits) < 2 and title_only_boost <= 0:
+                return False
     return True
 
 
@@ -68,6 +73,12 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "regional_bucket": signals["regional_buckets"],
         "freshness_score": serialized["freshness_score"],
         "final_score": serialized["final_score"],
+        "domestic_purity_score": getattr(scored_cluster, "domestic_purity_score", 0.0),
+        "romania_impact_evidence_hits": getattr(scored_cluster, "romania_impact_evidence_hits", []),
+        "external_penalty_applied": getattr(scored_cluster, "external_penalty_applied", 0.0),
+        "title_only_domestic_boost": getattr(scored_cluster, "title_only_domestic_boost", 0.0),
+        "cluster_event_family_hints": getattr(scored_cluster, "cluster_event_family_hints", []),
+        "domestic_vs_external_rank_reason": getattr(scored_cluster, "domestic_vs_external_rank_reason", None),
     }
 
 
@@ -199,6 +210,8 @@ def _write_romanian_source_coverage(source_coverage: dict[str, dict[str, object]
             f"   competing_candidate_titles: {', '.join(item.get('competing_candidate_titles') or []) or 'none'}",
             f"   selected_event_family_hint: {item.get('selected_event_family_hint') or 'none'}",
             f"   institutional_signal_hits: {', '.join(item.get('institutional_signal_hits') or []) or 'none'}",
+            f"   romania_impact_evidence_hits: {', '.join(item.get('romania_impact_evidence_hits') or []) or 'none'}",
+            f"   title_only_domestic_boost: {item.get('title_only_domestic_boost', 0.0)}",
             f"   selection_reason: {item.get('selection_reason') or 'none'}",
             f"   overlapping_sources_for_same_event: {', '.join(item.get('overlapping_sources_for_same_event') or []) or 'none'}",
             "",
@@ -252,6 +265,12 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "negative_signal_count": getattr(debug_article, "negative_signal_count", None) if debug_article is not None else None,
             "candidate_event_family_hints": getattr(debug_article, "romanian_event_family_hints", None) if debug_article is not None else None,
             "institutional_signal_hits": getattr(debug_article, "institutional_signal_hits", None) if debug_article is not None else None,
+            "romania_impact_evidence_hits": getattr(cluster, "romania_impact_evidence_hits", None),
+            "domestic_purity_score": getattr(cluster, "domestic_purity_score", None),
+            "external_penalty_applied": getattr(cluster, "external_penalty_applied", None),
+            "title_only_domestic_boost": getattr(cluster, "title_only_domestic_boost", None),
+            "cluster_event_family_hints": getattr(cluster, "cluster_event_family_hints", None),
+            "domestic_vs_external_rank_reason": getattr(cluster, "domestic_vs_external_rank_reason", None),
             "classifier_decision_reason": getattr(debug_article, "classifier_decision_reason", None) if debug_article is not None else None,
             "final_score": cluster.score_total,
         })
@@ -314,6 +333,11 @@ def main() -> None:
             f"Unique sources: {item['unique_source_count']}",
             f"Event family: {', '.join(item['event_family']) or 'none'}",
             f"Regional bucket: {', '.join(item['regional_bucket']) or 'none'}",
+            f"Domestic purity: {item.get('domestic_purity_score', 0.0)}",
+            f"Romania impact hits: {', '.join(item.get('romania_impact_evidence_hits') or []) or 'none'}",
+            f"External penalty: {item.get('external_penalty_applied', 0.0)}",
+            f"Title-only domestic boost: {item.get('title_only_domestic_boost', 0.0)}",
+            f"Rank reason: {item.get('domestic_vs_external_rank_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
             "",
@@ -329,6 +353,11 @@ def main() -> None:
             f"Unique sources: {item['unique_source_count']}",
             f"Event family: {', '.join(item['event_family']) or 'none'}",
             f"Regional bucket: {', '.join(item['regional_bucket']) or 'none'}",
+            f"Domestic purity: {item.get('domestic_purity_score', 0.0)}",
+            f"Romania impact hits: {', '.join(item.get('romania_impact_evidence_hits') or []) or 'none'}",
+            f"External penalty: {item.get('external_penalty_applied', 0.0)}",
+            f"Title-only domestic boost: {item.get('title_only_domestic_boost', 0.0)}",
+            f"Rank reason: {item.get('domestic_vs_external_rank_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
             "",

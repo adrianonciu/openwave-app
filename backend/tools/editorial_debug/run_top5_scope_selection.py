@@ -318,6 +318,9 @@ ROMANIAN_GENERIC_CORPORATE_NEGATIVE_TERMS = {
 ROMANIAN_EVENT_FAMILY_HINTS = {
     "romanian_domestic_politics": {"guvern", "guvernul", "guvernul romaniei", "parlament", "parlamentul", "parlamentul romaniei", "coalitie", "negocieri", "premier", "prim-ministru", "presedintie", "psd", "pnl", "usr", "udmr", "aur"},
     "romanian_budget_fiscal": {"buget", "deficit", "taxe", "impozit", "impozite", "fiscal", "anaf", "bnr", "bvb", "ministerul finantelor"},
+    "romanian_pnrr_funds": {"pnrr", "fonduri europene", "comisia europeana", "miliarde de euro", "reforma", "reforme"},
+    "romanian_eu_funds_loss": {"pierdut", "pierde", "fonduri europene", "pnrr", "comisia europeana", "miliarde de euro"},
+    "romanian_fiscal_policy_2026": {"bugetul pe 2026", "deficit", "taxe", "buget 2026", "masuri fiscale"},
     "romanian_economic_policy": {"inflatie", "preturi", "facturi", "subventii", "fonduri", "pnrr", "reforma", "reforme", "comisia europeana", "ordonanta", "lege", "masuri", "investitii", "licitatie"},
     "romanian_energy_security": {"energie", "motorina", "combustibil", "carburant", "gaze", "electricitate", "romgaz", "hidroelectrica", "transgaz", "transelectrica", "ministerul energiei"},
     "romanian_eu_relations": {"ue", "uniunea europeana", "bruxelles", "brussels", "schengen", "mae", "diplomatic"},
@@ -374,10 +377,13 @@ def _romanian_core_event_score(article: FetchedArticle) -> int:
 def _romanian_source_selection_reason(article: FetchedArticle) -> str:
     hints = article.romanian_event_family_hints or []
     institutions = article.institutional_signal_hits or []
+    impact_hits = article.romania_impact_evidence_hits or []
     return (
         f"bucket={article.national_preference_bucket or 'none'}; core_event_score={_romanian_core_event_score(article)}; "
         f"event_family_hints={', '.join(hints) if hints else 'none'}; "
         f"institutions={', '.join(institutions[:4]) if institutions else 'none'}; "
+        f"romania_impact={', '.join(impact_hits[:4]) if impact_hits else 'none'}; "
+        f"title_only_domestic_boost={article.title_only_domestic_boost}; "
         f"classifier={article.classifier_decision_reason or article.national_preference_reason or 'none'}"
     )
 
@@ -536,6 +542,22 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
         *(term for term, _ in actor_matches if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "premier", "prim-ministru"}),
         *(signal for signal in governance_location_signals if signal.startswith("governance_")),
     })
+    article.romania_impact_evidence_hits = sorted({
+        *(term for term, _ in title_institution_matches),
+        *(term for term, _ in title_actor_matches if term in {"psd", "pnl", "usr", "udmr", "coalitia de guvernare", "premier", "prim-ministru"}),
+        *(term for term, _ in title_public_impact_matches if term in {"buget", "deficit", "taxe", "impozit", "fiscal", "pnrr", "reforma", "reforme", "energie", "combustibil", "carburant", "motorina", "ordonanta", "lege", "decizie"}),
+        *(term for term, _ in title_public_economy_matches),
+        *(term for term, _ in institution_matches if term in {"guvernul romaniei", "parlamentul romaniei", "anaf", "bnr", "ccr", "dna", "diicot", "mae", "mapn"}),
+    })
+    strong_institutional_hits = [hit for hit in (article.institutional_signal_hits or []) if hit not in {"aur"}]
+    article.title_only_domestic_boost = round(
+        1.5 if article.ingestion_kind == "rss_fallback" and not (article.content_text or "").strip() and (
+            len(article.romania_impact_evidence_hits) >= 2
+            or (article.romanian_event_family_hints and strong_institutional_hits and public_interest_hits_count >= 1)
+            or (headline_gate_passed and public_interest_hits_count >= 1)
+        ) else 0.0,
+        2,
+    )
     article.domestic_score_total = domestic_score_total
     article.headline_gate_passed = headline_gate_passed
     article.romanian_entity_hits_count = romanian_entity_hits_count
@@ -590,14 +612,15 @@ def _effective_priority_for_romanian_candidate(base_priority: int, bucket: str) 
     return base_priority
 
 
-def _candidate_choice_key(article: FetchedArticle) -> tuple[int, float, int, int, int, float]:
+def _candidate_choice_key(article: FetchedArticle) -> tuple[int, float, float, int, int, int, float]:
     bucket_rank = NATIONAL_PREFERENCE_BUCKET_ORDER.get(article.national_preference_bucket or "off_target", 2)
     domestic_score_rank = -(article.domestic_score_total if article.domestic_score_total is not None else -999.0)
+    title_only_rank = -(article.title_only_domestic_boost or 0.0)
     core_event_rank = -_romanian_core_event_score(article)
     hint_rank = -(len(article.romanian_event_family_hints or []))
     fetch_rank = 0 if article.ingestion_kind == "full_fetch" else 1
     published_at = article.published_at.timestamp() if article.published_at else 0.0
-    return (bucket_rank, domestic_score_rank, core_event_rank, hint_rank, fetch_rank, -published_at)
+    return (bucket_rank, domestic_score_rank, title_only_rank, core_event_rank, hint_rank, fetch_rank, -published_at)
 
 
 def _build_source_candidate_from_rss(rss_article, mapped_meta: dict[str, object]) -> FetchedArticle:
@@ -644,6 +667,8 @@ def _apply_romanian_national_preference(article: FetchedArticle, mapped_meta: di
         "negative_signal_count": article.negative_signal_count,
         "romanian_event_family_hints": article.romanian_event_family_hints,
         "institutional_signal_hits": article.institutional_signal_hits,
+        "romania_impact_evidence_hits": article.romania_impact_evidence_hits,
+        "title_only_domestic_boost": article.title_only_domestic_boost,
         "source_selection_reason": article.source_selection_reason,
         "classifier_decision_reason": article.classifier_decision_reason,
         "editorial_priority": _effective_priority_for_romanian_candidate(article.editorial_priority, bucket),
@@ -721,6 +746,8 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             "selected_event_family_hint": None,
             "selection_reason": None,
             "institutional_signal_hits": [],
+            "romania_impact_evidence_hits": [],
+            "title_only_domestic_boost": 0.0,
             "overlapping_sources_for_same_event": [],
         }
         try:
@@ -835,6 +862,8 @@ def _build_articles(personalization: UserPersonalization) -> tuple[list[FetchedA
             source_coverage[source_id]["selected_event_family_hint"] = (chosen.romanian_event_family_hints or [None])[0]
             source_coverage[source_id]["selection_reason"] = chosen.source_selection_reason
             source_coverage[source_id]["institutional_signal_hits"] = chosen.institutional_signal_hits or []
+            source_coverage[source_id]["romania_impact_evidence_hits"] = chosen.romania_impact_evidence_hits or []
+            source_coverage[source_id]["title_only_domestic_boost"] = chosen.title_only_domestic_boost or 0.0
             prioritized_national.append(chosen)
         else:
             full_fetch_candidates = [candidate for candidate in source_candidates if candidate.ingestion_kind == "full_fetch"]
