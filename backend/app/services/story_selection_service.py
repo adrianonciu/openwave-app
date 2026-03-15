@@ -291,6 +291,7 @@ class StorySelectionService:
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         selected = self._rebalance_national_domestic_selection(selected, ordered_clusters, effective_max_stories)
         selected = self._recover_near_miss_domestic_candidates(selected, rejected, ordered_clusters, effective_max_stories)
+        selected = self._apply_soft_external_cap(selected, ordered_clusters, effective_max_stories)
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         self._persist_romanian_event_persistence_state(selected, selected_at)
         stats = StorySelectionStats(
@@ -911,6 +912,45 @@ class StorySelectionService:
                 selected_ids.discard(outgoing.cluster.cluster_id)
                 selected_ids.add(candidate.cluster.cluster_id)
                 replacements += 1
+        return selected[:max_stories]
+
+
+    def _apply_soft_external_cap(
+        self,
+        selected: list[ScoredStoryCluster],
+        ordered_clusters: list[ScoredStoryCluster],
+        max_stories: int,
+    ) -> list[ScoredStoryCluster]:
+        if not self._is_all_national_input(ordered_clusters):
+            return selected
+        domestic_count = sum(1 for cluster in ordered_clusters if self._dominant_national_bucket(cluster) == "domestic_hard_news")
+        if domestic_count >= 3:
+            external_cap = 1
+        elif domestic_count == 2:
+            external_cap = 2
+        else:
+            return selected
+        external_selected = [cluster for cluster in selected if self._dominant_national_bucket(cluster) == "external_direct_impact"]
+        if len(external_selected) <= external_cap:
+            return selected
+        selected_ids = {cluster.cluster.cluster_id for cluster in selected}
+        replacement_pool = [
+            cluster for cluster in ordered_clusters
+            if cluster.cluster.cluster_id not in selected_ids
+            and self._dominant_national_bucket(cluster) != "external_direct_impact"
+        ]
+        replacement_pool.sort(key=self._selection_sort_key, reverse=True)
+        for outgoing in sorted(external_selected, key=self._selection_sort_key)[: max(0, len(external_selected) - external_cap)]:
+            if not replacement_pool:
+                break
+            incoming = replacement_pool.pop(0)
+            incoming.top5_balance_adjustment_reason = (
+                incoming.top5_balance_adjustment_reason
+                or f"Selected under soft external cap replacing '{outgoing.cluster.representative_title}'"
+            )
+            selected = [incoming if item.cluster.cluster_id == outgoing.cluster.cluster_id else item for item in selected]
+            selected_ids.discard(outgoing.cluster.cluster_id)
+            selected_ids.add(incoming.cluster.cluster_id)
         return selected[:max_stories]
 
     def _cluster_text(self, cluster: ScoredStoryCluster) -> str:

@@ -83,6 +83,7 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "recovered_domestic_candidate": getattr(scored_cluster, "recovered_domestic_candidate", False),
         "persistence_boost_applied": getattr(scored_cluster, "persistence_boost_applied", 0.0),
         "top5_balance_adjustment_reason": getattr(scored_cluster, "top5_balance_adjustment_reason", None),
+        "national_preference_bucket": Counter([member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]).most_common(1)[0][0] if [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket] else None,
     }
 
 
@@ -375,6 +376,17 @@ def main() -> None:
             f"Recovery score: {getattr(cluster, 'recovery_score', 0.0)}",
             "",
         ])
+
+    hard_news_count = sum(1 for item in national_top5 if item.get("national_preference_bucket") == "domestic_hard_news")
+    recovered_count = sum(1 for item in national_top5 if item.get("recovered_domestic_candidate"))
+    near_miss_count = len(near_miss_candidates)
+    if hard_news_count + recovered_count >= 3:
+        balance_label = "GOOD"
+    elif hard_news_count + recovered_count == 2:
+        balance_label = "THIN"
+    else:
+        balance_label = "WEAK"
+    lines.extend([f"Domestic coverage today: {hard_news_count} hard-news / {recovered_count} recovered / {near_miss_count} near-miss -> balance: {balance_label}", ""])
 
     lines.extend(["TOP 5 INTERNATIONAL", ""])
     for item in global_top5:
