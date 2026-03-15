@@ -83,6 +83,10 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "recovered_domestic_candidate": getattr(scored_cluster, "recovered_domestic_candidate", False),
         "persistence_boost_applied": getattr(scored_cluster, "persistence_boost_applied", 0.0),
         "top5_balance_adjustment_reason": getattr(scored_cluster, "top5_balance_adjustment_reason", None),
+        "recovery_rejection_reason": getattr(scored_cluster, "recovery_rejection_reason", None),
+        "failed_threshold_name": getattr(scored_cluster, "failed_threshold_name", None),
+        "threshold_required_value": getattr(scored_cluster, "threshold_required_value", None),
+        "candidate_current_value": getattr(scored_cluster, "candidate_current_value", None),
         "national_preference_bucket": Counter([member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]).most_common(1)[0][0] if [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket] else None,
     }
 
@@ -280,6 +284,10 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "recovered_domestic_candidate": getattr(cluster, "recovered_domestic_candidate", False),
             "persistence_boost_applied": getattr(cluster, "persistence_boost_applied", 0.0),
             "top5_balance_adjustment_reason": getattr(cluster, "top5_balance_adjustment_reason", None),
+            "recovery_rejection_reason": getattr(cluster, "recovery_rejection_reason", None),
+            "failed_threshold_name": getattr(cluster, "failed_threshold_name", None),
+            "threshold_required_value": getattr(cluster, "threshold_required_value", None),
+            "candidate_current_value": getattr(cluster, "candidate_current_value", None),
             "classifier_decision_reason": getattr(debug_article, "classifier_decision_reason", None) if debug_article is not None else None,
             "final_score": cluster.score_total,
         })
@@ -374,6 +382,10 @@ def main() -> None:
             f"Event family hints: {', '.join(getattr(cluster, 'cluster_event_family_hints', []) or []) or 'none'}",
             f"Rejection reason: {getattr(cluster, 'domestic_vs_external_rank_reason', None) or 'none'}",
             f"Recovery score: {getattr(cluster, 'recovery_score', 0.0)}",
+            f"Recovery rejection: {getattr(cluster, 'recovery_rejection_reason', None) or 'none'}",
+            f"Failed threshold: {getattr(cluster, 'failed_threshold_name', None) or 'none'}",
+            f"Required value: {getattr(cluster, 'threshold_required_value', None) or 'none'}",
+            f"Current value: {getattr(cluster, 'candidate_current_value', None) or 'none'}",
             "",
         ])
 

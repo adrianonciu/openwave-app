@@ -13,6 +13,7 @@ ROMANIAN_PERSISTENCE_HINTS = {
     "romanian_pnrr_funds",
     "romanian_energy_security",
     "romanian_justice",
+    "romanian_justice_case",
     "romanian_major_policy_decision",
 }
 ROMANIAN_RECOVERY_HINTS = {
@@ -21,15 +22,27 @@ ROMANIAN_RECOVERY_HINTS = {
     "romanian_pnrr_funds",
     "romanian_energy_security",
     "romanian_justice",
+    "romanian_justice_case",
+    "romanian_major_policy_decision",
+    "romanian_budget_fiscal",
+}
+ROMANIAN_PRIORITY_RECOVERY_HINTS = {
+    "romanian_domestic_politics",
+    "romanian_fiscal_policy_2026",
+    "romanian_justice",
+    "romanian_justice_case",
     "romanian_major_policy_decision",
     "romanian_budget_fiscal",
 }
 ROMANIAN_RECOVERY_POLICY_TERMS = {
-    "buget", "deficit", "taxe", "salariu minim", "energie", "pnrr", "reforme", "carburant", "motorina"
+    "buget", "deficit", "deficit bugetar", "taxe", "salariu minim", "energie", "pnrr", "reforme", "carburant", "motorina", "amendamente buget"
 }
 ROMANIAN_RECOVERY_INSTITUTIONS = {
-    "guvern", "guvernul", "parlament", "ccr", "bnr", "anaf", "mae", "mapn", "psd", "pnl", "usr"
+    "guvern", "guvernul", "parlament", "ccr", "bnr", "anaf", "mae", "mapn", "psd", "pnl", "usr", "csm", "dna", "diicot", "procuror sef", "procuror-sef", "procuror", "procurorilor", "audieri"
 }
+ROMANIAN_RECOVERY_MIN_PURITY = 0.35
+ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS = 1
+ROMANIAN_RECOVERY_SCORE_RATIO = 0.52
 
 from app.models.editorial_preferences import EditorialPreferenceProfile
 from app.models.story_score import ScoredStoryCluster
@@ -840,29 +853,52 @@ class StorySelectionService:
         longest = max(streaks)
         return round(min(2.4, 0.8 + (longest * 0.4)), 2)
 
+    def _set_recovery_rejection(
+        self,
+        cluster: ScoredStoryCluster,
+        reason: str,
+        threshold_name: str,
+        required_value: float | str | None,
+        current_value: float | str | None,
+    ) -> bool:
+        cluster.recovery_rejection_reason = reason
+        cluster.failed_threshold_name = threshold_name
+        cluster.threshold_required_value = required_value
+        cluster.candidate_current_value = current_value
+        cluster.recovered_domestic_candidate = False
+        return False
+
     def _near_miss_domestic_eligible(self, cluster: ScoredStoryCluster) -> bool:
         if "national" not in self._cluster_scopes(cluster):
-            return False
+            current_scope = ", ".join(sorted(self._cluster_scopes(cluster))) or "unknown"
+            return self._set_recovery_rejection(cluster, "candidate is not in the Romanian national scope", "scope", "national", current_scope)
         bucket = self._dominant_national_bucket(cluster)
         if bucket not in {"off_target", "external_direct_impact"}:
-            return False
-        return cluster.domestic_purity_score > 0.4 and len(cluster.romania_impact_evidence_hits) >= 1
+            return self._set_recovery_rejection(cluster, "candidate is already classified outside the near-miss recovery buckets", "bucket", "off_target|external_direct_impact", bucket or "none")
+        purity = cluster.domestic_purity_score
+        if purity < ROMANIAN_RECOVERY_MIN_PURITY:
+            return self._set_recovery_rejection(cluster, f"purity={purity:.2f} < required={ROMANIAN_RECOVERY_MIN_PURITY:.2f}", "domestic_purity_score", ROMANIAN_RECOVERY_MIN_PURITY, round(purity, 2))
+        impact_hits = len(cluster.romania_impact_evidence_hits or [])
+        if impact_hits < ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS:
+            return self._set_recovery_rejection(cluster, f"romania_impact_hits={impact_hits} < required={ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS}", "romania_impact_evidence_hits", ROMANIAN_RECOVERY_REQUIRED_IMPACT_HITS, impact_hits)
+        return True
 
     def _mini_domestic_recovery_score(self, cluster: ScoredStoryCluster, leading_domestic_score: float) -> float:
         hints = set(cluster.cluster_event_family_hints or []) & ROMANIAN_RECOVERY_HINTS
-        impact_hits = set(cluster.romania_impact_evidence_hits or [])
+        priority_hints = set(cluster.cluster_event_family_hints or []) & ROMANIAN_PRIORITY_RECOVERY_HINTS
         institutional_count = len([hit for hit in (cluster.romania_impact_evidence_hits or []) if hit in ROMANIAN_RECOVERY_INSTITUTIONS])
         policy_count = len([hit for hit in (cluster.romania_impact_evidence_hits or []) if hit in ROMANIAN_RECOVERY_POLICY_TERMS])
         score = (
-            (cluster.domestic_purity_score * 45.0)
-            + (min(len(hints), 3) * 10.0)
-            + (min(institutional_count, 3) * 8.0)
-            + (min(policy_count, 3) * 7.0)
+            (cluster.domestic_purity_score * 48.0)
+            + (min(len(hints), 3) * 9.0)
+            + (min(len(priority_hints), 2) * 8.0)
+            + (min(institutional_count, 3) * 9.0)
+            + (min(policy_count, 3) * 8.0)
             + min(cluster.title_only_domestic_boost, 1.5) * 8.0
-            + min(cluster.persistence_boost_applied, 2.4) * 4.0
+            + min(cluster.persistence_boost_applied, 2.4) * 5.0
         )
         if leading_domestic_score > 0:
-            score += min(15.0, (cluster.score_total / leading_domestic_score) * 15.0)
+            score += min(18.0, (cluster.score_total / leading_domestic_score) * 18.0)
         return round(score, 2)
 
     def _recover_near_miss_domestic_candidates(
@@ -878,16 +914,31 @@ class StorySelectionService:
         leading_domestic_score = max((cluster.score_total for cluster in domestic_selected), default=0.0)
         recovery_pool: list[ScoredStoryCluster] = []
         for cluster in ordered_clusters:
-            if cluster in selected or not self._near_miss_domestic_eligible(cluster):
+            cluster.recovery_score = 0.0
+            cluster.recovery_rejection_reason = None
+            cluster.failed_threshold_name = None
+            cluster.threshold_required_value = None
+            cluster.candidate_current_value = None
+            if cluster in selected:
+                continue
+            if not self._near_miss_domestic_eligible(cluster):
                 continue
             recovery_score = self._mini_domestic_recovery_score(cluster, leading_domestic_score)
             cluster.recovery_score = recovery_score
-            if leading_domestic_score <= 0 or recovery_score >= (leading_domestic_score * 0.6):
-                cluster.recovered_domestic_candidate = True
-                cluster.top5_balance_adjustment_reason = (
-                    f"Recovered as Romanian near-miss domestic candidate (recovery_score={recovery_score}, leading_domestic_score={leading_domestic_score})"
-                )
-                recovery_pool.append(cluster)
+            required_score = round(leading_domestic_score * ROMANIAN_RECOVERY_SCORE_RATIO, 2) if leading_domestic_score > 0 else 0.0
+            hints = set(cluster.cluster_event_family_hints or [])
+            impact_hits = len(cluster.romania_impact_evidence_hits or [])
+            if not hints & ROMANIAN_PRIORITY_RECOVERY_HINTS and impact_hits < 2:
+                self._set_recovery_rejection(cluster, "missing required justice/fiscal event hint or second Romania impact signal", "priority_hint_or_impact_hits", "priority hint or 2 impact hits", f"hints={sorted(hints)}, impact_hits={impact_hits}")
+                continue
+            if leading_domestic_score > 0 and recovery_score < required_score:
+                self._set_recovery_rejection(cluster, f"recovery_score={recovery_score} < required={required_score}", "recovery_score_ratio", required_score, recovery_score)
+                continue
+            cluster.recovered_domestic_candidate = True
+            cluster.top5_balance_adjustment_reason = (
+                f"Recovered as Romanian near-miss domestic candidate (recovery_score={recovery_score}, leading_domestic_score={leading_domestic_score})"
+            )
+            recovery_pool.append(cluster)
         recovery_pool.sort(key=lambda cluster: (cluster.recovery_score, self._selection_adjusted_score(cluster)), reverse=True)
         recovered_limit = 2
         replacements = 0

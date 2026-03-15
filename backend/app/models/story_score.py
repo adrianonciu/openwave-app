@@ -41,3 +41,7 @@ class ScoredStoryCluster(BaseModel):
     recovered_domestic_candidate: bool = False
     persistence_boost_applied: float = 0.0
     top5_balance_adjustment_reason: str | None = None
+    recovery_rejection_reason: str | None = None
+    failed_threshold_name: str | None = None
+    threshold_required_value: float | str | None = None
+    candidate_current_value: float | str | None = None

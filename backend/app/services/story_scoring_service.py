@@ -17,8 +17,9 @@ ENGLISH_HEADLINE_MARKERS = {
 }
 ROMANIA_IMPACT_TERMS = {
     "romania", "romaniei", "roman", "romani", "bucuresti", "guvern", "guvernul", "parlament",
-    "presedintie", "pnrr", "fonduri europene", "buget", "deficit", "energie", "carburant",
-    "motorina", "bnr", "ccr", "anaf", "mae", "mapn", "psd", "pnl", "usr",
+    "presedintie", "pnrr", "fonduri europene", "buget", "deficit", "deficit bugetar", "energie", "carburant",
+    "motorina", "bnr", "ccr", "anaf", "mae", "mapn", "psd", "pnl", "usr", "csm", "dna",
+    "diicot", "audieri", "procuror sef", "procuror-sef", "amendamente buget", "taxe", "salariu minim",
 }
 LOW_VALUE_TITLE_MARKERS = {
     "live-text", "live text", "video", "photos", "gallery", "highlights", "odds", "preview",
