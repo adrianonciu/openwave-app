@@ -165,6 +165,15 @@ ROMANIAN_PUBLIC_IMPACT_TERMS = {
     "fonduri": 2,
     "licitatie": 2,
     "trafic rutier": 2,
+    "coalitie": 2,
+    "negocieri": 2,
+    "ordonanta": 2,
+    "lege": 2,
+    "decizie": 2,
+    "masuri": 2,
+    "motorina": 2,
+    "carburant": 2,
+    "combustibil": 2,
 }
 
 ROMANIAN_PUBLIC_ECONOMY_TERMS = {
@@ -400,61 +409,91 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
     negative_score += sum(weight for _, weight in corporate_negative_matches)
     negative_score += len(off_target_matches)
 
+    romanian_entity_hits_count = len(institution_matches) + len(actor_matches) + (1 if governance_location_hit else 0) + romania_reference_count
+    public_interest_hits_count = len(public_impact_matches) + len(public_economy_matches)
+    negative_signal_count = len(negative_signals)
     institution_density = round(((len(institution_matches) + len(actor_matches) + (1 if governance_location_hit else 0)) / token_count) * 100, 2)
-    public_interest_density = round(((len(public_impact_matches) + len(public_economy_matches) + len(institution_matches) + len(actor_matches) + (1 if governance_location_hit else 0)) / token_count) * 100, 2)
+    public_interest_density = round(((public_interest_hits_count + len(institution_matches) + len(actor_matches) + (1 if governance_location_hit else 0)) / token_count) * 100, 2)
     strong_domestic_core = bool(institution_matches or actor_matches or governance_location_hit)
-    strong_public_interest = bool(public_impact_matches or public_economy_matches)
+    strong_public_interest = public_interest_hits_count > 0
     has_romanian_anchor = domestic_anchor_count > 0
     headline_public_interest = bool(title_public_impact_matches or title_public_economy_matches)
     headline_domestic_anchor = bool(title_institution_matches or title_actor_matches or title_governance_location_hit)
     headline_supports_domestic = headline_domestic_anchor or (headline_public_interest and romania_reference_count > 0)
-    strong_negative_profile = negative_score >= 6 and positive_score < 8
+    headline_gate_passed = headline_supports_domestic or public_interest_hits_count >= 2 or (romania_reference_count > 0 and domestic_anchor_count > 0)
+    domestic_score_total = round(
+        positive_score
+        - negative_score
+        + min(2, romania_reference_count)
+        + public_interest_hits_count
+        + (2 if headline_supports_domestic else 0),
+        2,
+    )
+    strong_negative_profile = negative_score >= 6 and domestic_score_total < 8
     corporate_without_romania_impact = bool(corporate_negative_matches) and not has_romanian_anchor and not strong_public_interest
+    moderate_domestic_case = (
+        domestic_score_total >= 6
+        and public_interest_hits_count >= 1
+        and (
+            has_romanian_anchor
+            or (romania_reference_count > 0 and public_interest_hits_count >= 2)
+            or (romania_reference_count > 0 and domestic_score_total >= 8 and negative_score <= 3)
+            or (domestic_score_total >= 8 and romanian_entity_hits_count >= 2 and public_interest_hits_count >= 1 and negative_score <= 1)
+        )
+        and negative_score <= max(5, positive_score + 1)
+        and negative_signal_count <= 6
+    )
+    strong_domestic_case = (
+        domestic_score_total >= 9
+        and has_romanian_anchor
+        and strong_domestic_core
+        and strong_public_interest
+        and negative_score <= max(4, positive_score - 1)
+    )
 
     article.domestic_hard_news_positive_signals = positive_signals
     article.domestic_hard_news_negative_signals = negative_signals
+    article.domestic_score_total = domestic_score_total
+    article.headline_gate_passed = headline_gate_passed
+    article.romanian_entity_hits_count = romanian_entity_hits_count
+    article.public_interest_hits_count = public_interest_hits_count
+    article.negative_signal_count = negative_signal_count
 
     if strong_negative_profile or corporate_without_romania_impact:
         reason = (
             f"off_target: negative profile outweighed Romanian public-interest signals "
-            f"(positive_score={positive_score}, negative_score={negative_score}, "
-            f"institution_density={institution_density}, public_interest_density={public_interest_density})"
+            f"(domestic_score_total={domestic_score_total}, positive_score={positive_score}, negative_score={negative_score}, "
+            f"romanian_entity_hits_count={romanian_entity_hits_count}, public_interest_hits_count={public_interest_hits_count}, "
+            f"headline_gate_passed={headline_gate_passed})"
         )
         article.classifier_decision_reason = reason
         return "off_target", reason
 
-    if (
-        positive_score >= 6
-        and has_romanian_anchor
-        and strong_domestic_core
-        and strong_public_interest
-        and headline_supports_domestic
-        and (institution_density >= 0.6 or public_interest_density >= 0.8)
-        and negative_score <= max(4, positive_score - 1)
-    ):
+    if strong_domestic_case or moderate_domestic_case:
         reason = (
-            f"domestic_hard_news: Romanian public-interest density cleared threshold "
-            f"(positive_score={positive_score}, negative_score={negative_score}, "
-            f"institution_density={institution_density}, public_interest_density={public_interest_density})"
+            f"domestic_hard_news: Romanian public-interest evidence passed rebalance threshold "
+            f"(domestic_score_total={domestic_score_total}, positive_score={positive_score}, negative_score={negative_score}, "
+            f"romanian_entity_hits_count={romanian_entity_hits_count}, public_interest_hits_count={public_interest_hits_count}, "
+            f"headline_gate_passed={headline_gate_passed})"
         )
         article.classifier_decision_reason = reason
         return "domestic_hard_news", reason
 
-    if external_matches and title_external_matches:
+    if external_matches and (title_external_matches or len(external_matches) >= 2):
         reason = (
-            f"external_direct_impact: headline carried external-impact terms without enough Romanian public-interest density "
-            f"(external_hits={', '.join(external_matches[:4])}, title_external_hits={', '.join(title_external_matches[:4])}, "
-            f"positive_score={positive_score}, institution_density={institution_density}, "
-            f"public_interest_density={public_interest_density}, headline_supports_domestic={headline_supports_domestic})"
+            f"external_direct_impact: external-impact signals outweighed domestic evidence "
+            f"(external_hits={', '.join(external_matches[:4])}, title_external_hits={', '.join(title_external_matches[:4]) or 'none'}, "
+            f"domestic_score_total={domestic_score_total}, romanian_entity_hits_count={romanian_entity_hits_count}, "
+            f"public_interest_hits_count={public_interest_hits_count}, headline_gate_passed={headline_gate_passed})"
         )
         article.classifier_decision_reason = reason
         return "external_direct_impact", reason
 
     reason = (
-        f"off_target: insufficient Romanian public-interest density "
-        f"(positive_score={positive_score}, negative_score={negative_score}, "
-        f"institution_density={institution_density}, public_interest_density={public_interest_density}, "
-        f"headline_supports_domestic={headline_supports_domestic})"
+        f"off_target: Romanian public-interest evidence stayed below domestic threshold "
+        f"(domestic_score_total={domestic_score_total}, positive_score={positive_score}, negative_score={negative_score}, "
+        f"romanian_entity_hits_count={romanian_entity_hits_count}, public_interest_hits_count={public_interest_hits_count}, "
+        f"headline_gate_passed={headline_gate_passed})"
     )
     article.classifier_decision_reason = reason
     return "off_target", reason
@@ -498,6 +537,11 @@ def _apply_romanian_national_preference(article: FetchedArticle, mapped_meta: di
         "national_preference_reason": reason,
         "domestic_hard_news_positive_signals": article.domestic_hard_news_positive_signals,
         "domestic_hard_news_negative_signals": article.domestic_hard_news_negative_signals,
+        "domestic_score_total": article.domestic_score_total,
+        "headline_gate_passed": article.headline_gate_passed,
+        "romanian_entity_hits_count": article.romanian_entity_hits_count,
+        "public_interest_hits_count": article.public_interest_hits_count,
+        "negative_signal_count": article.negative_signal_count,
         "classifier_decision_reason": article.classifier_decision_reason,
         "editorial_priority": _effective_priority_for_romanian_candidate(article.editorial_priority, bucket),
     })

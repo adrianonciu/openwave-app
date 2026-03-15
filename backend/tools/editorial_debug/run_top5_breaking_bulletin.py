@@ -218,12 +218,15 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             for article in cluster_articles
             for signal in getattr(article, "domestic_hard_news_negative_signals", [])
         })
-        decision_reasons = [
-            article.classifier_decision_reason
-            for article in cluster_articles
-            if getattr(article, "classifier_decision_reason", None)
-        ]
         dominant_bucket = Counter(buckets).most_common(1)[0][0] if buckets else None
+        dominant_bucket_articles = [
+            article for article in cluster_articles
+            if getattr(article, "national_preference_bucket", None) == dominant_bucket
+        ]
+        debug_article = max(
+            dominant_bucket_articles or cluster_articles,
+            key=lambda article: getattr(article, "domestic_score_total", float('-inf')) if getattr(article, "domestic_score_total", None) is not None else float('-inf'),
+        ) if cluster_articles else None
         payload_clusters.append({
             "cluster_id": cluster.cluster.cluster_id,
             "headline": cluster.cluster.representative_title,
@@ -232,10 +235,15 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "named_entities_detected": _cluster_named_entities(cluster, article_by_url, clustering_service),
             "cluster_similarity_score": _cluster_similarity_score(cluster, article_by_url, clustering_service),
             "national_preference_bucket": dominant_bucket,
-            "national_preference_reason": reasons[0] if reasons else None,
+            "national_preference_reason": getattr(debug_article, "national_preference_reason", None) if debug_article is not None else (reasons[0] if reasons else None),
             "domestic_hard_news_positive_signals": positive_signals,
             "domestic_hard_news_negative_signals": negative_signals,
-            "classifier_decision_reason": decision_reasons[0] if decision_reasons else None,
+            "domestic_score_total": getattr(debug_article, "domestic_score_total", None) if debug_article is not None else None,
+            "headline_gate_passed": getattr(debug_article, "headline_gate_passed", None) if debug_article is not None else None,
+            "romanian_entity_hits_count": getattr(debug_article, "romanian_entity_hits_count", None) if debug_article is not None else None,
+            "public_interest_hits_count": getattr(debug_article, "public_interest_hits_count", None) if debug_article is not None else None,
+            "negative_signal_count": getattr(debug_article, "negative_signal_count", None) if debug_article is not None else None,
+            "classifier_decision_reason": getattr(debug_article, "classifier_decision_reason", None) if debug_article is not None else None,
             "final_score": cluster.score_total,
         })
 

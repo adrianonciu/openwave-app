@@ -22,6 +22,11 @@ class FetchedArticle(BaseModel):
     national_preference_reason: str | None = None
     domestic_hard_news_positive_signals: list[str] = []
     domestic_hard_news_negative_signals: list[str] = []
+    domestic_score_total: float | None = None
+    headline_gate_passed: bool | None = None
+    romanian_entity_hits_count: int | None = None
+    public_interest_hits_count: int | None = None
+    negative_signal_count: int | None = None
     classifier_decision_reason: str | None = None
 
 
