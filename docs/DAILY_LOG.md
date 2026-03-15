@@ -1875,3 +1875,93 @@ Conclusion:
 * lifecycle behavior remains stable
 * diversity protections remain active
 * the next bottleneck is now stronger same-story overlap across Romanian outlets, not missing domestic signal vocabulary
+
+## 2026-03-15 - Task 8 Romanian multi-source convergence
+
+Goal for this pass:
+
+* improve Romanian multi-source convergence without changing the shared editorial core
+* keep the ranking formula structurally unchanged
+* add only small, safe coverage and confirmation improvements
+
+Changes made:
+
+* enabled two already-modeled Romanian mainstream sources in [backend/app/config/source_watchers.json](D:/aplicatie_telefon/openwave-app/backend/app/config/source_watchers.json)
+  * `Mediafax`
+  * `Ziarul Financiar`
+* added a source-limited discovery fallback in [backend/app/services/source_watcher_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/source_watcher_service.py)
+  * if generic listing discovery returns no dated items for `Mediafax` or `Ziarul Financiar`
+  * the watcher now scans clean anchor candidates and resolves dates from article pages
+  * this keeps the parser change conservative and source-specific
+* added canonical Romanian source normalization in [backend/app/services/news_clustering_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/news_clustering_service.py)
+  * `Mediafax -> Mediafax`
+  * `Ziarul Financiar -> ZF.ro`
+* added one narrow Romanian public-affairs merge clause in [backend/app/services/news_clustering_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/news_clustering_service.py)
+  * requires:
+    * compatible national buckets
+    * shared Romanian family hints
+    * shared institutional hits
+    * some minimum overlap in public-affairs topics or event overlap
+  * this was added to improve same-event convergence without loosening general clustering globally
+* added a small Romanian multi-source confirmation bonus in [backend/app/services/story_scoring_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/story_scoring_service.py)
+  * applies only inside the existing Romanian domestic-balance component
+  * `+0.05` for `2` Romanian sources
+  * `+0.10` for `3+` Romanian sources
+  * no lifecycle logic was changed
+* exposed the new debug fields in:
+  * [backend/app/models/story_score.py](D:/aplicatie_telefon/openwave-app/backend/app/models/story_score.py)
+  * [backend/tools/editorial_debug/run_top5_breaking_bulletin.py](D:/aplicatie_telefon/openwave-app/backend/tools/editorial_debug/run_top5_breaking_bulletin.py)
+  * fields:
+    * `romanian_source_count`
+    * `romanian_multi_source_bonus_applied`
+
+Validation run:
+
+* `backend\venv\Scripts\python.exe backend/tools/editorial_debug/run_top5_breaking_bulletin.py --profile=national`
+
+Observed results in this live window:
+
+* `selected_count: 5`
+* `national_candidate_clusters: 9`
+* `national_preference_bucket_distribution`:
+  * `domestic_hard_news: 4`
+  * `external_direct_impact: 2`
+  * `off_target: 3`
+* `multi_source_clusters: 0`
+
+What improved:
+
+* `Mediafax` moved from `0 discovered / 0 candidates` to:
+  * `articles_discovered: 1`
+  * `candidate_articles_produced: 1`
+* `Ziarul Financiar` remained active but still produced `0` usable candidates in this run
+* the national debug output now shows Romanian confirmation metadata explicitly
+* source overlap visibility improved:
+  * `Libertatea` now shows overlap candidates including `Mediafax`
+  * `Digi24` now shows overlap candidates including `Mediafax`
+
+What did not improve enough yet:
+
+* the current live run still produced `0` actual Romanian multi-source clusters
+* that means the remaining bottleneck is still live same-event overlap in the fetched Romanian pool, not only clustering rules
+* the multi-source confirmation bonus was implemented, but no cluster in this run qualified to receive it
+
+Interpretation:
+
+* Task 8 improved Romanian source breadth and convergence diagnostics
+* we now have one more mainstream source producing live candidates
+* we also have a safer national-only merge path and an explicit confirmation bonus ready for real multi-source clusters
+* however, this specific live fetch window still did not produce enough same-event overlap for `multi_source_clusters > 0`
+
+Conclusion:
+
+* the convergence layer is improved technically
+* the next real bottleneck is still Romanian same-event coverage overlap in live fetches
+* future work should focus on:
+  * improving Romanian source discovery yield further
+  * tightening off-target selection at source level so national sources spend their primary candidate on domestic public-affairs stories more consistently
+
+Validation note:
+
+* true spaced validation across evening and next-morning runs was not possible within this single implementation turn
+* this task documents the immediate live baseline after the convergence changes

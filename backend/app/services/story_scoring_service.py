@@ -165,6 +165,8 @@ class StoryScoringService:
             scored_at=scored_at,
             domestic_purity_score=balance_meta['domestic_purity_score'],
             romania_impact_evidence_hits=balance_meta['romania_impact_evidence_hits'],
+            romanian_source_count=balance_meta['romanian_source_count'],
+            romanian_multi_source_bonus_applied=balance_meta['romanian_multi_source_bonus_applied'],
             external_penalty_applied=balance_meta['external_penalty_applied'],
             title_only_domestic_boost=balance_meta['title_only_domestic_boost'],
             cluster_event_family_hints=balance_meta['cluster_event_family_hints'],
@@ -361,6 +363,8 @@ class StoryScoringService:
             return {
                 "domestic_purity_score": 0.0,
                 "romania_impact_evidence_hits": [],
+                "romanian_source_count": 0,
+                "romanian_multi_source_bonus_applied": 0.0,
                 "external_penalty_applied": 0.0,
                 "title_only_domestic_boost": 0.0,
                 "cluster_event_family_hints": [],
@@ -368,6 +372,7 @@ class StoryScoringService:
             }
 
         total_members = len(national_members)
+        romanian_source_count = len({member.source for member in national_members if member.source})
         domestic_members = [member for member in national_members if member.national_preference_bucket == "domestic_hard_news"]
         external_members = [member for member in national_members if member.national_preference_bucket == "external_direct_impact"]
         off_target_members = [member for member in national_members if member.national_preference_bucket == "off_target"]
@@ -397,6 +402,12 @@ class StoryScoringService:
             - (external_ratio * 0.24)
             - (off_target_ratio * 0.18)
         )
+        multi_source_bonus = 0.0
+        if domestic_members and romanian_source_count >= 3:
+            multi_source_bonus = 0.10
+        elif domestic_members and romanian_source_count >= 2:
+            multi_source_bonus = 0.05
+        purity += multi_source_bonus
         domestic_purity_score = round(min(max(purity, 0.0), 1.0), 3)
 
         external_penalty_applied = 0.0
@@ -406,6 +417,8 @@ class StoryScoringService:
             reason_parts.append("weak Romania-specific impact evidence for external-leaning cluster")
         if domestic_ratio >= 0.34 or domestic_purity_score >= 0.45:
             reason_parts.append("credible Romanian domestic evidence improved national ranking")
+        if multi_source_bonus > 0:
+            reason_parts.append(f"Romanian multi-source confirmation bonus +{multi_source_bonus:.2f}")
         if title_only_boost > 0:
             reason_parts.append("title-only domestic candidate added survivability")
         if not reason_parts:
@@ -414,6 +427,8 @@ class StoryScoringService:
         return {
             "domestic_purity_score": domestic_purity_score,
             "romania_impact_evidence_hits": combined_impact_hits[:8],
+            "romanian_source_count": romanian_source_count,
+            "romanian_multi_source_bonus_applied": round(multi_source_bonus, 2),
             "external_penalty_applied": external_penalty_applied,
             "title_only_domestic_boost": round(min(title_only_boost, 3.0), 2),
             "cluster_event_family_hints": hints[:8],
@@ -428,7 +443,8 @@ class StoryScoringService:
         contribution = round(max((normalized - penalty) * max_points, -2.0), 2)
         explanation = (
             f"Romanian domestic purity={normalized}, impact_hits={', '.join(metadata['romania_impact_evidence_hits']) or 'none'}, "
-            f"event_hints={', '.join(metadata['cluster_event_family_hints']) or 'none'}, external_penalty={penalty}, "
+            f"event_hints={', '.join(metadata['cluster_event_family_hints']) or 'none'}, romanian_source_count={metadata['romanian_source_count']}, "
+            f"multi_source_bonus={metadata['romanian_multi_source_bonus_applied']}, external_penalty={penalty}, "
             f"title_only_domestic_boost={metadata['title_only_domestic_boost']}. {metadata['domestic_vs_external_rank_reason']}."
         )
         return ScoreComponent(

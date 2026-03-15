@@ -152,10 +152,9 @@
       "scope": "national",
       "country": "Romania",
       "language": "ro",
-      "enabled": false,
+      "enabled": true,
       "priority_rank": 6,
-      "editorial_priority": 3,
-      "notes": "inactive in default national hard-news mix"
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-adevarul",
@@ -264,10 +263,9 @@
       "scope": "national",
       "country": "Romania",
       "language": "ro",
-      "enabled": false,
+      "enabled": true,
       "priority_rank": 13,
-      "editorial_priority": 3,
-      "notes": "inactive in default national hard-news mix"
+      "editorial_priority": 3
     },
     {
       "source_id": "ro-capital",

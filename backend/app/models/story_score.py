@@ -34,6 +34,8 @@ class ScoredStoryCluster(BaseModel):
     scored_at: datetime
     domestic_purity_score: float = 0.0
     romania_impact_evidence_hits: list[str] = Field(default_factory=list)
+    romanian_source_count: int = 0
+    romanian_multi_source_bonus_applied: float = 0.0
     external_penalty_applied: float = 0.0
     title_only_domestic_boost: float = 0.0
     cluster_event_family_hints: list[str] = Field(default_factory=list)
@@ -56,3 +58,7 @@ class ScoredStoryCluster(BaseModel):
     family_last_seen: str | None = None
     family_run_count: int = 0
     family_age_hours: float = 0.0
+    geographic_signal_detected: str | None = None
+    local_relevance_boost: float = 0.0
+    local_domain_signal_hits: list[str] = Field(default_factory=list)
+    local_county_tag: str | None = None

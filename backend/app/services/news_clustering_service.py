@@ -52,8 +52,10 @@ SOURCE_CANONICAL_MAP = {
     "g4media": "G4Media",
     "hotnews": "HotNews",
     "libertatea": "Libertatea",
+    "mediafax": "Mediafax",
     "spotmedia": "SpotMedia",
     "stirile protv": "Stirile ProTV",
+    "ziarul financiar": "ZF.ro",
     "zf ro": "ZF.ro",
     "zf": "ZF.ro",
     "ziare com": "Ziare.com",
@@ -770,6 +772,8 @@ class NewsClusteringService:
         shared_romanian_terms = shared_terms & ROMANIAN_HARD_NEWS_TERMS
         shared_locations = shared_terms & ROMANIAN_LOCATION_TERMS
         shared_public_affairs_topics = left.public_affairs_topics & right.public_affairs_topics
+        shared_family_hints = set(left.article.romanian_event_family_hints or []) & set(right.article.romanian_event_family_hints or [])
+        shared_institutional_hits = set(left.article.institutional_signal_hits or []) & set(right.article.institutional_signal_hits or [])
         left_entities = {entity.lower() for entity in left.entities}
         right_entities = {entity.lower() for entity in right.entities}
         shared_named = left_entities & right_entities
@@ -800,6 +804,14 @@ class NewsClusteringService:
             and len(shared_romanian_terms) >= 2
             and (has_named_overlap or shared_locations)
             and max(keyword_overlap, event_overlap) >= 0.14
+        ):
+            return True
+        if (
+            compatible_buckets
+            and shared_family_hints
+            and shared_institutional_hits
+            and (shared_public_affairs_topics or shared_romanian_terms or has_named_overlap)
+            and max(normalized_title_similarity, keyword_overlap, event_overlap) >= 0.1
         ):
             return True
         return False

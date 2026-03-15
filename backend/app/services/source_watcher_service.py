@@ -140,6 +140,37 @@ class _ListingParser(HTMLParser):
             self._capture_time_parts.append(data)
 
 
+class _LooseAnchorParser(HTMLParser):
+    def __init__(self, base_url: str) -> None:
+        super().__init__(convert_charrefs=True)
+        self.base_url = base_url
+        self.candidates: list[dict[str, str]] = []
+        self._current_href: str | None = None
+        self._current_parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag != "a":
+            return
+        attributes = {key.lower(): value or "" for key, value in attrs}
+        href = attributes.get("href", "").strip()
+        if href:
+            self._current_href = urljoin(self.base_url, href)
+            self._current_parts = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag != "a" or not self._current_href:
+            return
+        title = " ".join("".join(self._current_parts).split())
+        if title:
+            self.candidates.append({"href": self._current_href, "title": title})
+        self._current_href = None
+        self._current_parts = []
+
+    def handle_data(self, data: str) -> None:
+        if self._current_href is not None:
+            self._current_parts.append(data)
+
+
 class SourceWatcherService:
     def __init__(self) -> None:
         self.local_source_registry_service = LocalSourceRegistryService()
@@ -470,6 +501,31 @@ class SourceWatcherService:
                 )
                 if resolved_candidate is not None:
                     candidates.append(resolved_candidate)
+
+        if not candidates and source_config.source_name in {"Mediafax", "Ziarul Financiar"}:
+            seen_urls = {candidate["href"] for candidate in parser.candidates}
+            loose_parser = _LooseAnchorParser(source_config.source_url)
+            loose_parser.feed(html)
+            for candidate in loose_parser.candidates:
+                href = candidate.get("href", "").strip()
+                title = candidate.get("title", "").strip()
+                if not href or not title or href in seen_urls:
+                    continue
+                if source_config.source_url.rstrip("/") not in href:
+                    continue
+                if len(title) < 24:
+                    continue
+                if any(marker in href.lower() for marker in ("/tag/", "/categorie/", "/category/", "/video", "/foto", "/opinii", "/opinie")):
+                    continue
+                resolved_candidate = self._get_latest_from_article_page(
+                    source_config=source_config,
+                    article_url=href,
+                    fallback_title=title,
+                )
+                if resolved_candidate is not None:
+                    candidates.append(resolved_candidate)
+                if len(candidates) >= 5:
+                    break
 
         if not candidates:
             return None
