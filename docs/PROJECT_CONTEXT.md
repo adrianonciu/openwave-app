@@ -112,3 +112,5 @@ Shared editorial profile routing now exists in backend debug selection flows. Na
 
 
 Story families now provide light lifecycle support in ranking. Recurring families persist `first_seen`, `last_seen`, and `run_count`, and can add a small continuity boost while still respecting profile selection logic and family diversity limits.
+
+Current backend infrastructure also includes a lightweight bulletin shaping layer after story selection. This stage keeps scoring and selection unchanged, then reorders the already selected stories deterministically using lead-story choice, family separation, topic diversity, and confirmation-aware tie-breaking before briefing assembly.

@@ -11,6 +11,7 @@ from app.models.final_editorial_briefing import (
     FinalEditorialBriefingPackage,
 )
 from app.services.briefing_assembly_service import BriefingAssemblyService
+from app.services.bulletin_shaping_service import BulletinShapingService
 from app.services.bulletin_sizing_service import BulletinSizingService
 from app.services.news_clustering_service import NewsClusteringService
 from app.services.editorial_selection_core_service import EditorialSelectionCoreService
@@ -29,8 +30,12 @@ class EditorialPipelineService:
         self.scoring_service = StoryScoringService()
         self.story_family_service = StoryFamilyService()
         self.selection_service = StorySelectionService()
-        self.editorial_selection_core_service = EditorialSelectionCoreService(self.selection_service)
+        self.editorial_selection_core_service = EditorialSelectionCoreService(
+            selection_service=self.selection_service,
+            scoring_service=self.scoring_service,
+        )
         self.summary_generator_service = StorySummaryGeneratorService()
+        self.bulletin_shaping_service = BulletinShapingService()
         self.briefing_assembly_service = BriefingAssemblyService()
         self.bulletin_sizing_service = BulletinSizingService()
         self.source_watcher_service = SourceWatcherService()
@@ -68,17 +73,27 @@ class EditorialPipelineService:
             editorial_preferences=resolved_personalization.editorial_preferences,
             personalization=resolved_personalization,
         )
+        profile_name = (
+            selection_result.selected_clusters[0].editorial_profile_used
+            if selection_result.selected_clusters and selection_result.selected_clusters[0].editorial_profile_used
+            else "general"
+        )
+        bulletin_shaping_result = self.bulletin_shaping_service.shape_selected_clusters(
+            selection_result.selected_clusters,
+            profile_name=profile_name,
+        )
         self.summary_generator_service.reset_variation_state()
         generated_summaries = [
             self.summary_generator_service.generate_story_summary(
                 cluster,
                 previous_bulletin_clusters=continuity_records,
             )
-            for cluster in selection_result.selected_clusters
+            for cluster in bulletin_shaping_result.ordered_clusters
         ]
         briefing_draft = self.briefing_assembly_service.assemble_briefing(
             generated_summaries,
             personalization=resolved_personalization,
+            preserve_input_order=True,
         )
         sized_briefing = self.bulletin_sizing_service.size_briefing(
             briefing_draft,
@@ -138,6 +153,7 @@ class EditorialPipelineService:
             local_sources_monitored=local_source_resolution.local_sources_enabled,
             personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
+            bulletin_shaping_explanation=bulletin_shaping_result.shaping_explanation,
             assembly_explanation=briefing_draft.assembly_explanation,
             sizing_explanation=sized_briefing.sizing_explanation,
             sizing_actions=sized_briefing.sizing_actions,

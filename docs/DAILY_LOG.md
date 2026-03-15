@@ -1965,3 +1965,47 @@ Validation note:
 
 * true spaced validation across evening and next-morning runs was not possible within this single implementation turn
 * this task documents the immediate live baseline after the convergence changes
+
+## 2026-03-15 - Task 9 editorial bulletin shaping
+
+Goal for this pass:
+
+- keep story scoring and story selection unchanged
+- add a lightweight deterministic shaping layer after selection
+- turn the selected set into a more radio-style bulletin order
+
+Changes made:
+
+- added [backend/app/models/bulletin_shaping.py](D:/aplicatie_telefon/openwave-app/backend/app/models/bulletin_shaping.py)
+  - `BulletinShapingDecision`
+  - `BulletinShapingResult`
+- added [backend/app/services/bulletin_shaping_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/bulletin_shaping_service.py)
+  - deterministic lead-story choice
+  - family-aware ordering
+  - topic-diversity ordering
+  - confirmation-aware tie breaking
+- updated [backend/app/services/editorial_pipeline_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/editorial_pipeline_service.py)
+  - inserted `BulletinShapingService` after selection and before story editorial composition / briefing assembly
+- updated [backend/app/services/briefing_assembly_service.py](D:/aplicatie_telefon/openwave-app/backend/app/services/briefing_assembly_service.py)
+  - added `preserve_input_order` so the assembly layer can keep the editorially shaped order
+- updated [backend/app/models/final_editorial_briefing.py](D:/aplicatie_telefon/openwave-app/backend/app/models/final_editorial_briefing.py)
+  - carries `bulletin_shaping_explanation` in the final package
+- updated [backend/tools/editorial_debug/run_top5_breaking_bulletin.py](D:/aplicatie_telefon/openwave-app/backend/tools/editorial_debug/run_top5_breaking_bulletin.py)
+  - prints a `BULLETIN SHAPING` section with lead choice and per-position reasons
+
+Validation run:
+
+- `backend\venv\Scripts\python.exe backend/tools/editorial_debug/run_top5_breaking_bulletin.py --profile=national`
+
+Observed result after the shaping fix:
+
+- lead story is now chosen from a `domestic_hard_news` cluster instead of an `off_target` cluster
+- the shaped order separates topic buckets and story families more cleanly
+- current example lead: `Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei`
+- next placements kept a government story separate from the lead and pushed the external off-target cluster later
+
+Important note:
+
+- shaping is working as intended structurally
+- the national pool itself still needs stronger Romanian same-event convergence and cleaner domestic classification
+- shaping improves the order of the available selected set, but it does not and should not repair upstream candidate-quality issues

@@ -44,6 +44,7 @@ class FinalEditorialBriefingPackage(BaseModel):
     local_sources_monitored: bool = False
     personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     selection_explanation: str
+    bulletin_shaping_explanation: str = "Bulletin shaping was not applied."
     assembly_explanation: str
     sizing_explanation: str
     sizing_actions: list[BulletinSizingAction]

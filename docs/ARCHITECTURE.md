@@ -1688,3 +1688,36 @@ Editorial intent:
 - keep evolving story arcs visible across runs
 - avoid bulletin spam from too many near-duplicate follow-ups in the same family
 - preserve the shared editorial-core architecture introduced in the previous milestone
+
+
+# 34. Bulletin Shaping Layer
+
+OpenWave now includes a lightweight editorial shaping step between story selection and briefing assembly.
+
+Pipeline position:
+
+```
+Source Watcher -> Article Fetch -> Clean Text -> News Clustering -> Story Scoring -> Story Selection -> Bulletin Shaping -> Story Editorial Composition -> Briefing Assembly
+```
+
+Current behavior:
+
+- keeps selection unchanged and only reorders the selected set
+- chooses one lead story deterministically
+- avoids consecutive same-family placement when alternatives exist
+- improves topic flow across politics, economy, justice, public safety, local public interest, and international impact
+- uses confirmation and family maturity as tie-break support
+- preserves existing family and county diversity caps because it does not add or remove stories
+
+Debug visibility:
+
+- lead cluster id
+- shaping explanation
+- per-position shaping decisions
+
+This layer does not perform:
+
+- story rescoring
+- cluster changes
+- source discovery changes
+- TTS or Flutter changes

@@ -37,11 +37,12 @@ class BriefingAssemblyService:
         self,
         stories: list[GeneratedStorySummary],
         personalization: UserPersonalization | None = None,
+        preserve_input_order: bool = False,
     ) -> GeneratedBriefingDraft:
         assembled_at = datetime.now(UTC)
         resolved_personalization = UserPersonalization.from_input(personalization=personalization)
         listener_first_name = resolved_personalization.listener_profile.first_name
-        ordered_stories = self._order_stories(stories)
+        ordered_stories = self._preserve_story_order(stories) if preserve_input_order else self._order_stories(stories)
         briefing_seed = "|".join(story.cluster_id for story, _ in ordered_stories) or assembled_at.isoformat()
         intro_variant = self._pick_variant(self.intro_variants, briefing_seed)
         outro_variant = self._pick_variant(self.outro_variants, briefing_seed + ":outro")
@@ -240,6 +241,19 @@ class BriefingAssemblyService:
     def _pick_variant(self, variants: list[dict[str, str]], seed: str) -> dict[str, str]:
         index = sum(ord(char) for char in seed) % len(variants)
         return variants[index]
+
+
+    def _preserve_story_order(
+        self,
+        stories: list[GeneratedStorySummary],
+    ) -> list[tuple[GeneratedStorySummary, str]]:
+        ordered: list[tuple[GeneratedStorySummary, str]] = []
+        for index, story in enumerate(stories, start=1):
+            reason = "preserved_editorial_shaping_order"
+            if index == 1:
+                reason = "opened_bulletin_from_editorial_shaping_lead"
+            ordered.append((story, reason))
+        return ordered
 
     def _order_stories(
         self,

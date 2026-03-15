@@ -828,3 +828,23 @@ Still intentionally excluded from this task:
 - [ ] Build full local selection policy on top of the shared editorial core
 
 - [x] Add family-aware lifecycle scoring and family diversity cap to the shared editorial core
+
+
+### Bulletin Shaping Layer
+
+Backend now includes a deterministic bulletin-shaping stage after story selection.
+
+Current scope:
+
+- reorder already selected stories without changing the selected set
+- choose a lead story using editorial signals such as domestic purity, family maturity, lifecycle support, and confirmation signals
+- separate repeated families when alternatives exist
+- improve topic flow across the final bulletin order
+- expose shaping decisions in debug output
+
+Still intentionally excluded from this task:
+
+- ranking-formula changes
+- clustering changes
+- source-discovery changes
+- Flutter or TTS changes

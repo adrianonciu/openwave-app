@@ -12,6 +12,7 @@ if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
 from app.models.article_fetch import FetchedArticle
+from app.services.bulletin_shaping_service import BulletinShapingService
 from app.services.editorial_pipeline_service import EditorialPipelineService
 from run_top5_scope_selection import (
     _build_articles,
@@ -433,6 +434,7 @@ def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     personalization = _build_personalization(args.profile)
     pipeline_service = EditorialPipelineService()
+    shaping_service = BulletinShapingService()
     core_service = pipeline_service.editorial_selection_core_service
 
     articles, _, source_coverage = _build_articles(personalization)
@@ -443,6 +445,7 @@ def main() -> None:
 
     profile_names = _profile_names_from_arg(args.profile)
     core_results: dict[str, object] = {}
+    shaping_results: dict[str, object] = {}
     top5_by_profile: dict[str, list[dict[str, object]]] = {}
 
     for profile_name in profile_names:
@@ -454,8 +457,13 @@ def main() -> None:
             personalization=personalization,
         )
         core_results[profile_name] = core_result
-        top5_by_profile[profile_name] = _pick_top5(
+        shaping_result = shaping_service.shape_selected_clusters(
             core_result.selection_result.selected_clusters,
+            profile_name=profile_name,
+        )
+        shaping_results[profile_name] = shaping_result
+        top5_by_profile[profile_name] = _pick_top5(
+            shaping_result.ordered_clusters,
             core_result.candidate_clusters,
             article_by_url,
             pipeline_service.clustering_service,
@@ -470,6 +478,14 @@ def main() -> None:
     payload = {
         "editorial_profiles_run": profile_names,
         "top5_by_profile": top5_by_profile,
+        "bulletin_shaping": {
+            profile_name: {
+                "lead_cluster_id": shaping_results[profile_name].lead_cluster_id,
+                "shaping_explanation": shaping_results[profile_name].shaping_explanation,
+                "decisions": [decision.model_dump(mode="json") for decision in shaping_results[profile_name].decisions],
+            }
+            for profile_name in profile_names
+        },
     }
     JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -482,7 +498,21 @@ def main() -> None:
         f"Profile config name: {core_results[primary_profile].debug_metadata['profile_config_name']}",
         f"Shared core path used: {core_results[primary_profile].debug_metadata['shared_core_path_used']}",
         "",
+        "BULLETIN SHAPING",
+        "",
+        f"Lead story chosen: {shaping_results[primary_profile].lead_cluster_id or 'none'}",
+        f"Shaping explanation: {shaping_results[primary_profile].shaping_explanation}",
+        "",
     ]
+    for decision in shaping_results[primary_profile].decisions:
+        lines.extend([
+            f"Position {decision.position}: {decision.headline}",
+            f"  topic_bucket: {decision.topic_bucket}",
+            f"  family: {decision.story_family_id or 'none'}",
+            f"  reason: {decision.decision_reason}",
+            "",
+        ])
+
     for item in primary_top5:
         lines.extend([
             f"{item['rank']}.",
