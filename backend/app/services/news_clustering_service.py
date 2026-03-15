@@ -46,13 +46,10 @@ SOURCE_CANONICAL_MAP = {
     "euronews ro stiri de ultima ora breaking news allviews": "Euronews Romania",
     "news ro": "News.ro",
     "news.ro": "News.ro",
-    "agerpres": "Agerpres",
     "antena 3": "Antena 3",
     "antena 3 cnn": "Antena 3",
     "digi24": "Digi24",
-    "europa libera romania": "Europa Libera Romania",
     "g4media": "G4Media",
-    "gandul": "Gandul",
     "hotnews": "HotNews",
     "libertatea": "Libertatea",
     "spotmedia": "SpotMedia",
@@ -116,7 +113,7 @@ ENTERTAINMENT_TERMS = {
 HUMAN_INTEREST_TERMS = {
     "treasure", "hunter", "philosopher", "classic", "style", "fashion", "beauty", "nails", "award",
 }
-GENERALIST_SOURCES = {"AP", "BBC", "DW", "Euronews Romania", "Reuters", "Agerpres", "Antena 3", "Digi24", "Europa Libera Romania", "G4Media", "Gandul", "HotNews", "Libertatea", "News.ro", "SpotMedia", "Stirile ProTV", "ZF.ro", "Ziare.com"}
+GENERALIST_SOURCES = {"AP", "BBC", "DW", "Euronews Romania", "Reuters", "Antena 3", "Digi24", "G4Media", "HotNews", "Libertatea", "News.ro", "SpotMedia", "Stirile ProTV", "ZF.ro", "Ziare.com"}
 REGIONAL_ESCALATION_TERMS = {
     "iran", "golful", "emiratele", "ormuz", "orientul", "mijlociu", "porturi", "nave", "marines", "hamas", "atac",
 }
@@ -136,7 +133,7 @@ ROMANIAN_LOCATION_TERMS = {
 ROMANIAN_PUBLIC_AFFAIRS_BUCKET = "romanian_public_affairs"
 ROMANIAN_ENTITY_HINTS = {
     "Romania", "Bucuresti", "Guvern", "Parlament", "CCR", "DNA", "DIICOT", "BNR", "HotNews", "G4Media",
-    "Digi24", "Agerpres", "News.ro", "Antena 3", "Libertatea", "Europa Libera", "SpotMedia", "Gandul",
+    "Digi24", "News.ro", "Antena 3", "Libertatea", "SpotMedia",
 }
 ROMANIAN_PUBLIC_AFFAIRS_TOPICS = {
     "alegeri", "buget", "deficit", "taxe", "impozit", "fiscal", "inflatie", "energie", "motorina",
