@@ -74,6 +74,7 @@ class BulletinShapingService:
 
         lead_score = base
         bucket_priority = 1
+        dominant_scope = self._dominant_scope(cluster)
         if profile_name == "national_ro":
             lead_score += domestic_score + family_run_count + lifecycle + romanian_sources + multi_source_bonus
             if national_bucket == "domestic_hard_news":
@@ -87,6 +88,23 @@ class BulletinShapingService:
                 lead_score -= 16
             else:
                 bucket_priority = 1
+            return (bucket_priority, round(lead_score, 3), base, cluster.cluster.cluster_id)
+        if profile_name == "generalist":
+            lead_score += domestic_score + local_relevance + family_run_count + lifecycle + romanian_sources + multi_source_bonus
+            if dominant_scope in {"national", "local"}:
+                bucket_priority = 3
+                lead_score += 8
+            elif dominant_scope == "international":
+                bucket_priority = 2
+                lead_score += 2
+            if local_relevance > 0:
+                lead_score += 4
+            if national_bucket == "domestic_hard_news":
+                lead_score += 6
+            elif national_bucket == "external_direct_impact":
+                lead_score += 2
+            elif national_bucket == "off_target":
+                lead_score -= 6
             return (bucket_priority, round(lead_score, 3), base, cluster.cluster.cluster_id)
         if profile_name == "local":
             lead_score += local_relevance + family_run_count + lifecycle
@@ -129,6 +147,21 @@ class BulletinShapingService:
                 editorial_strength += 2
             elif national_bucket == "off_target":
                 editorial_strength -= 8
+        elif profile_name == "generalist":
+            dominant_scope = self._dominant_scope(candidate)
+            national_bucket = self._dominant_national_bucket(candidate)
+            if dominant_scope in {"national", "local"}:
+                editorial_strength += 4
+            elif dominant_scope == "international":
+                editorial_strength += 1
+            if getattr(candidate, "local_relevance_boost", 0.0) > 0:
+                editorial_strength += 3
+            if national_bucket == "domestic_hard_news":
+                editorial_strength += 4
+            elif national_bucket == "external_direct_impact":
+                editorial_strength += 2
+            elif national_bucket == "off_target":
+                editorial_strength -= 4
 
         return (
             family_penalty,
@@ -192,11 +225,17 @@ class BulletinShapingService:
 
     def _topic_bucket(self, cluster: ScoredStoryCluster, profile_name: str) -> str:
         national_bucket = self._dominant_national_bucket(cluster)
+        dominant_scope = self._dominant_scope(cluster)
         if profile_name == "national_ro":
             if national_bucket == "external_direct_impact":
                 return "international_impact"
             if national_bucket == "off_target":
                 return "general"
+        if profile_name == "generalist":
+            if getattr(cluster, "local_relevance_boost", 0.0) > 0 or dominant_scope == "local":
+                return "local_public_interest"
+            if dominant_scope == "international":
+                return "international_impact"
 
         hints = set(getattr(cluster, "cluster_event_family_hints", []) or [])
         impact_hits = set(getattr(cluster, "romania_impact_evidence_hits", []) or [])
@@ -227,3 +266,12 @@ class BulletinShapingService:
         if not buckets:
             return None
         return max(sorted(buckets), key=lambda bucket: buckets[bucket])
+
+    def _dominant_scope(self, cluster: ScoredStoryCluster) -> str:
+        scopes: dict[str, int] = {}
+        for member in cluster.cluster.member_articles:
+            scope = member.source_scope or ("local" if member.is_local_source else "unknown")
+            scopes[scope] = scopes.get(scope, 0) + 1
+        if not scopes:
+            return "unknown"
+        return max(sorted(scopes), key=lambda scope: scopes[scope])
