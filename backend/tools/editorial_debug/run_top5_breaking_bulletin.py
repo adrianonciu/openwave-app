@@ -47,6 +47,10 @@ def _is_usable_breaking_candidate(scored_cluster, scope: str) -> bool:
     category = _dominant_category(scored_cluster).lower()
     if scope == "national" and category in EXCLUDED_NATIONAL_CATEGORIES:
         return False
+    if scope == "national":
+        buckets = [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]
+        if buckets and Counter(buckets).most_common(1)[0][0] == "off_target":
+            return False
     return True
 
 
@@ -200,6 +204,25 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
     for cluster in national_candidates:
         buckets = [member.national_preference_bucket for member in cluster.cluster.member_articles if member.national_preference_bucket]
         reasons = [member.national_preference_reason for member in cluster.cluster.member_articles if member.national_preference_reason]
+        cluster_articles = [
+            article_by_url.get(member.url, member)
+            for member in cluster.cluster.member_articles
+        ]
+        positive_signals = sorted({
+            signal
+            for article in cluster_articles
+            for signal in getattr(article, "domestic_hard_news_positive_signals", [])
+        })
+        negative_signals = sorted({
+            signal
+            for article in cluster_articles
+            for signal in getattr(article, "domestic_hard_news_negative_signals", [])
+        })
+        decision_reasons = [
+            article.classifier_decision_reason
+            for article in cluster_articles
+            if getattr(article, "classifier_decision_reason", None)
+        ]
         dominant_bucket = Counter(buckets).most_common(1)[0][0] if buckets else None
         payload_clusters.append({
             "cluster_id": cluster.cluster.cluster_id,
@@ -210,6 +233,9 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "cluster_similarity_score": _cluster_similarity_score(cluster, article_by_url, clustering_service),
             "national_preference_bucket": dominant_bucket,
             "national_preference_reason": reasons[0] if reasons else None,
+            "domestic_hard_news_positive_signals": positive_signals,
+            "domestic_hard_news_negative_signals": negative_signals,
+            "classifier_decision_reason": decision_reasons[0] if decision_reasons else None,
             "final_score": cluster.score_total,
         })
 

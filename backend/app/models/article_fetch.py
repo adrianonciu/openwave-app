@@ -20,6 +20,9 @@ class FetchedArticle(BaseModel):
     is_local_source: bool = False
     national_preference_bucket: Literal["domestic_hard_news", "external_direct_impact", "off_target"] | None = None
     national_preference_reason: str | None = None
+    domestic_hard_news_positive_signals: list[str] = []
+    domestic_hard_news_negative_signals: list[str] = []
+    classifier_decision_reason: str | None = None
 
 
 class ArticleFetchResult(BaseModel):

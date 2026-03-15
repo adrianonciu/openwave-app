@@ -66,7 +66,7 @@ ROMANIAN_DOMESTIC_HARD_NEWS_TERMS = {
     "proteste", "greva", "administratie", "romania", "bucuresti", "cluj", "iasi", "constanta",
 }
 ROMANIAN_EXTERNAL_DIRECT_IMPACT_TERMS = {
-    "uniunea europeana", "ue", "eu", "nato", "schengen", "ucraina", "ukraine", "moldova", "transnistria",
+    "uniunea europeana", "ue", "nato", "schengen", "ucraina", "ukraine", "moldova", "transnistria",
     "marea neagra", "black sea", "rusia", "razboi", "war", "gaz", "energie", "border",
     "migratie", "defence", "defense", "securitate", "bruxelles", "brussels", "tarife",
 }
@@ -75,25 +75,389 @@ ROMANIAN_OFF_TARGET_TERMS = {
     "whatsapp", "instagram", "facebook", "fenomen", "anorexia financiara", "seriale", "tv", "show",
 }
 
+ROMANIAN_INSTITUTION_TERMS = {
+    "guvern": 3,
+    "guvernul": 3,
+    "parlament": 3,
+    "parlamentul": 3,
+    "senat": 3,
+    "senatul": 3,
+    "camera deputatilor": 3,
+    "presedintie": 3,
+    "presedintia": 3,
+    "administratia prezidentiala": 3,
+    "minister": 3,
+    "ministerul": 3,
+    "ministerului": 3,
+    "anaf": 4,
+    "bnr": 4,
+    "bvb": 3,
+    "bursa de valori bucuresti": 3,
+    "ccr": 4,
+    "curtea constitutionala": 4,
+    "dna": 4,
+    "diicot": 4,
+    "iccj": 4,
+    "inalta curte": 4,
+    "instanta": 3,
+    "instantei": 3,
+    "tribunal": 3,
+    "curte de apel": 3,
+    "procuror": 3,
+    "procurorii": 3,
+    "procurorilor": 3,
+    "primarie": 3,
+    "primarul": 3,
+    "consiliul judetean": 3,
+    "prefect": 3,
+}
+
+ROMANIAN_POLITICAL_ACTOR_TERMS = {
+    "premier": 3,
+    "prim-ministru": 3,
+    "ministru": 3,
+    "ministrul": 3,
+    "deputat": 2,
+    "deputatii": 2,
+    "senator": 2,
+    "senatorii": 2,
+    "primar": 2,
+    "consiliul": 2,
+    "psd": 3,
+    "pnl": 3,
+    "usr": 3,
+    "udmr": 3,
+    "aur": 3,
+    "coalitia de guvernare": 3,
+}
+
+ROMANIAN_PUBLIC_IMPACT_TERMS = {
+    "alegeri": 2,
+    "electoral": 2,
+    "buget": 3,
+    "deficit": 3,
+    "taxe": 3,
+    "impozit": 3,
+    "impozite": 3,
+    "fiscal": 3,
+    "inflatie": 3,
+    "salariu minim": 3,
+    "pensii": 3,
+    "energie": 2,
+    "gaze": 2,
+    "electricitate": 2,
+    "infrastructura": 2,
+    "autostrada": 2,
+    "autostrazi": 2,
+    "cale ferata": 2,
+    "metrou": 2,
+    "spital": 2,
+    "spitale": 2,
+    "educatie": 2,
+    "scoala": 2,
+    "scoli": 2,
+    "munca": 2,
+    "somaj": 2,
+    "salarii": 2,
+    "preturi": 2,
+    "facturi": 2,
+    "subventii": 2,
+    "fonduri": 2,
+    "licitatie": 2,
+    "trafic rutier": 2,
+}
+
+ROMANIAN_PUBLIC_ECONOMY_TERMS = {
+    "hidroelectrica": 3,
+    "romgaz": 3,
+    "transgaz": 3,
+    "transelectrica": 3,
+    "nuclearelectrica": 3,
+    "metrorex": 3,
+    "cfr": 3,
+    "tarom": 3,
+    "compania nationala": 2,
+}
+
+ROMANIAN_ADMINISTRATIVE_AREAS = {
+    "romania",
+    "romaniei",
+    "bucuresti",
+    "bucurestiului",
+    "cluj",
+    "iasi",
+    "constanta",
+    "timis",
+    "timisoara",
+    "sibiu",
+    "brasov",
+    "dolj",
+    "craiova",
+    "prahova",
+    "ploiesti",
+    "ilfov",
+    "arad",
+    "oradea",
+    "bacau",
+    "galati",
+    "suceava",
+    "mures",
+}
+
+ROMANIAN_GOVERNANCE_CONTEXT_TERMS = {
+    "primarie",
+    "consiliul",
+    "consiliu",
+    "prefect",
+    "prefectura",
+    "ministru",
+    "minister",
+    "ministerul",
+    "guvern",
+    "guvernul",
+    "buget",
+    "taxe",
+    "impozit",
+    "investitie",
+    "investitii",
+    "infrastructura",
+    "trafic",
+    "proiect",
+    "licitatie",
+    "spital",
+    "scoala",
+}
+
+ROMANIAN_LIFESTYLE_NEGATIVE_TERMS = {
+    "lifestyle": 4,
+    "wellness": 4,
+    "sanatate personala": 4,
+    "dieta": 4,
+    "nutritie": 4,
+    "slabire": 4,
+    "psiholog": 3,
+    "psihologii": 3,
+    "relatii": 3,
+    "frumusete": 4,
+    "moda": 4,
+    "vacanta": 3,
+    "vedeta": 4,
+    "monden": 4,
+    "show": 3,
+}
+
+ROMANIAN_PERSONAL_FINANCE_NEGATIVE_TERMS = {
+    "economisire": 4,
+    "economisirea": 4,
+    "cheltui": 4,
+    "cheltuieli personale": 4,
+    "bani": 3,
+    "card": 3,
+    "credit": 3,
+    "rate": 3,
+    "finante personale": 4,
+    "sfaturi": 4,
+}
+
+ROMANIAN_SOFT_FEATURE_NEGATIVE_TERMS = {
+    "fenomen": 3,
+    "trend": 3,
+    "poveste": 3,
+    "cum sa": 4,
+    "top": 3,
+    "cele mai": 3,
+    "explicatii": 2,
+    "de ce": 2,
+}
+
+ROMANIAN_GENERIC_CORPORATE_NEGATIVE_TERMS = {
+    "compania": 3,
+    "companie": 3,
+    "corporatie": 3,
+    "ceo": 4,
+    "facebook": 3,
+    "instagram": 3,
+    "whatsapp": 3,
+    "meta": 3,
+    "google": 3,
+    "amazon": 3,
+    "apple": 3,
+    "tesla": 3,
+    "microsoft": 3,
+    "openai": 3,
+    "angajati": 2,
+    "forta de munca": 2,
+    "inteligenta artificiala": 2,
+    "nasdaq": 2,
+    "reuters": 1,
+}
+
+
+def _article_classifier_text(article: FetchedArticle) -> str:
+    return f"{article.title} {article.content_text}".lower()
+
+
+def _article_classifier_tokens(text: str) -> list[str]:
+    return [match.group(0).lower() for match in TOKEN_PATTERN.finditer(text)]
+
+
+def _text_contains_term(text: str, term: str) -> bool:
+    escaped = re.escape(term).replace(r"\ ", r"\s+")
+    pattern = rf"(?<![0-9A-Za-z\u00C0-\u024F]){escaped}(?![0-9A-Za-z\u00C0-\u024F])"
+    return re.search(pattern, text, flags=re.IGNORECASE) is not None
+
+
+def _matched_terms(text: str, weighted_terms: dict[str, int]) -> list[tuple[str, int]]:
+    return [(term, weight) for term, weight in weighted_terms.items() if _text_contains_term(text, term)]
+
+
+def _signal_labels(prefix: str, matches: list[tuple[str, int]]) -> list[str]:
+    return [f"{prefix}:{term}" for term, _ in sorted(matches, key=lambda item: (-item[1], item[0]))]
+
+
+def _has_governance_location_signal(text: str) -> tuple[bool, list[str]]:
+    locations = sorted(term for term in ROMANIAN_ADMINISTRATIVE_AREAS if _text_contains_term(text, term))
+    context = sorted(term for term in ROMANIAN_GOVERNANCE_CONTEXT_TERMS if _text_contains_term(text, term))
+    if locations and context:
+        return True, [f"governance_location:{locations[0]}", f"governance_context:{context[0]}"]
+    return False, []
+
 
 def _classify_romanian_national_preference(article: FetchedArticle, source_meta: dict[str, object]) -> tuple[str, str]:
-    text = f"{article.title} {article.content_text}".lower()
+    title_text = (article.title or "").lower()
+    text = _article_classifier_text(article)
+    tokens = _article_classifier_tokens(text)
+    token_count = max(len(tokens), 1)
     category = str(source_meta.get("category") or article.source_category or "general").lower()
     if category in {"sport", "entertainment", "lifestyle", "culture", "tv"}:
-        return "off_target", f"source category '{category}' is outside national hard-news priority"
+        article.domestic_hard_news_positive_signals = []
+        article.domestic_hard_news_negative_signals = [f"source_category:{category}"]
+        article.classifier_decision_reason = f"off_target: source category '{category}' is outside national hard-news priority"
+        return "off_target", article.classifier_decision_reason
 
-    domestic_hits = [term for term in ROMANIAN_DOMESTIC_HARD_NEWS_TERMS if term in text]
-    external_hits = [term for term in ROMANIAN_EXTERNAL_DIRECT_IMPACT_TERMS if term in text]
-    off_target_hits = [term for term in ROMANIAN_OFF_TARGET_TERMS if term in text]
+    institution_matches = _matched_terms(text, ROMANIAN_INSTITUTION_TERMS)
+    actor_matches = _matched_terms(text, ROMANIAN_POLITICAL_ACTOR_TERMS)
+    public_impact_matches = _matched_terms(text, ROMANIAN_PUBLIC_IMPACT_TERMS)
+    public_economy_matches = _matched_terms(text, ROMANIAN_PUBLIC_ECONOMY_TERMS)
+    domestic_legacy_matches = [(term, 1) for term in ROMANIAN_DOMESTIC_HARD_NEWS_TERMS if _text_contains_term(text, term)]
+    external_matches = [term for term in ROMANIAN_EXTERNAL_DIRECT_IMPACT_TERMS if _text_contains_term(text, term)]
+    off_target_matches = [term for term in ROMANIAN_OFF_TARGET_TERMS if _text_contains_term(text, term)]
+    lifestyle_negative_matches = _matched_terms(text, ROMANIAN_LIFESTYLE_NEGATIVE_TERMS)
+    finance_negative_matches = _matched_terms(text, ROMANIAN_PERSONAL_FINANCE_NEGATIVE_TERMS)
+    feature_negative_matches = _matched_terms(text, ROMANIAN_SOFT_FEATURE_NEGATIVE_TERMS)
+    corporate_negative_matches = _matched_terms(text, ROMANIAN_GENERIC_CORPORATE_NEGATIVE_TERMS)
+    governance_location_hit, governance_location_signals = _has_governance_location_signal(text)
+    title_institution_matches = _matched_terms(title_text, ROMANIAN_INSTITUTION_TERMS)
+    title_actor_matches = _matched_terms(title_text, ROMANIAN_POLITICAL_ACTOR_TERMS)
+    title_public_impact_matches = _matched_terms(title_text, ROMANIAN_PUBLIC_IMPACT_TERMS)
+    title_public_economy_matches = _matched_terms(title_text, ROMANIAN_PUBLIC_ECONOMY_TERMS)
+    title_external_matches = [term for term in ROMANIAN_EXTERNAL_DIRECT_IMPACT_TERMS if _text_contains_term(title_text, term)]
+    title_governance_location_hit, _ = _has_governance_location_signal(title_text)
 
-    if domestic_hits:
-        return "domestic_hard_news", f"matched domestic hard-news signals: {', '.join(domestic_hits[:4])}"
-    if external_hits:
-        return "external_direct_impact", f"matched external direct-impact signals: {', '.join(external_hits[:4])}"
-    if off_target_hits or len(article.title.split()) > 22:
-        reason = ", ".join(off_target_hits[:4]) if off_target_hits else "headline looked feature-like or diffuse"
-        return "off_target", f"off-target signals: {reason}"
-    return "off_target", "no strong domestic or Romania-relevant external signal detected"
+    positive_signals = [
+        *_signal_labels("institution", institution_matches),
+        *_signal_labels("actor", actor_matches),
+        *_signal_labels("public_impact", public_impact_matches),
+        *_signal_labels("public_economy", public_economy_matches),
+        *governance_location_signals,
+    ]
+    negative_signals = [
+        *_signal_labels("lifestyle", lifestyle_negative_matches),
+        *_signal_labels("personal_finance", finance_negative_matches),
+        *_signal_labels("soft_feature", feature_negative_matches),
+        *_signal_labels("generic_corporate", corporate_negative_matches),
+        *[f"off_target:{term}" for term in sorted(off_target_matches)],
+    ]
+
+    positive_score = sum(weight for _, weight in institution_matches)
+    positive_score += sum(weight for _, weight in actor_matches)
+    positive_score += sum(weight for _, weight in public_impact_matches)
+    positive_score += sum(weight for _, weight in public_economy_matches)
+    if governance_location_hit:
+        positive_score += 3
+
+    romania_reference_count = sum(1 for term in ROMANIAN_ADMINISTRATIVE_AREAS if _text_contains_term(text, term))
+    specific_institution_anchor_count = sum(
+        1
+        for term, _ in institution_matches
+        if term in {"anaf", "bnr", "bvb", "bursa de valori bucuresti", "ccr", "curtea constitutionala", "dna", "diicot", "iccj", "inalta curte", "camera deputatilor", "administratia prezidentiala", "consiliul judetean", "primarie", "prefect"}
+    )
+    specific_actor_anchor_count = sum(
+        1
+        for term, _ in actor_matches
+        if term in {"psd", "pnl", "usr", "udmr", "aur", "coalitia de guvernare", "premier", "prim-ministru"}
+    )
+    domestic_anchor_count = specific_institution_anchor_count + specific_actor_anchor_count + (1 if governance_location_hit else 0)
+    if romania_reference_count and (institution_matches or actor_matches or public_impact_matches or public_economy_matches):
+        domestic_anchor_count += 1
+        positive_signals.append(f"romania_reference_count:{romania_reference_count}")
+    if domestic_legacy_matches and romania_reference_count:
+        positive_score += min(2, len(domestic_legacy_matches))
+
+    negative_score = sum(weight for _, weight in lifestyle_negative_matches)
+    negative_score += sum(weight for _, weight in finance_negative_matches)
+    negative_score += sum(weight for _, weight in feature_negative_matches)
+    negative_score += sum(weight for _, weight in corporate_negative_matches)
+    negative_score += len(off_target_matches)
+
+    institution_density = round(((len(institution_matches) + len(actor_matches) + (1 if governance_location_hit else 0)) / token_count) * 100, 2)
+    public_interest_density = round(((len(public_impact_matches) + len(public_economy_matches) + len(institution_matches) + len(actor_matches) + (1 if governance_location_hit else 0)) / token_count) * 100, 2)
+    strong_domestic_core = bool(institution_matches or actor_matches or governance_location_hit)
+    strong_public_interest = bool(public_impact_matches or public_economy_matches)
+    has_romanian_anchor = domestic_anchor_count > 0
+    headline_public_interest = bool(title_public_impact_matches or title_public_economy_matches)
+    headline_domestic_anchor = bool(title_institution_matches or title_actor_matches or title_governance_location_hit)
+    headline_supports_domestic = headline_domestic_anchor or (headline_public_interest and romania_reference_count > 0)
+    strong_negative_profile = negative_score >= 6 and positive_score < 8
+    corporate_without_romania_impact = bool(corporate_negative_matches) and not has_romanian_anchor and not strong_public_interest
+
+    article.domestic_hard_news_positive_signals = positive_signals
+    article.domestic_hard_news_negative_signals = negative_signals
+
+    if strong_negative_profile or corporate_without_romania_impact:
+        reason = (
+            f"off_target: negative profile outweighed Romanian public-interest signals "
+            f"(positive_score={positive_score}, negative_score={negative_score}, "
+            f"institution_density={institution_density}, public_interest_density={public_interest_density})"
+        )
+        article.classifier_decision_reason = reason
+        return "off_target", reason
+
+    if (
+        positive_score >= 6
+        and has_romanian_anchor
+        and strong_domestic_core
+        and strong_public_interest
+        and headline_supports_domestic
+        and (institution_density >= 0.6 or public_interest_density >= 0.8)
+        and negative_score <= max(4, positive_score - 1)
+    ):
+        reason = (
+            f"domestic_hard_news: Romanian public-interest density cleared threshold "
+            f"(positive_score={positive_score}, negative_score={negative_score}, "
+            f"institution_density={institution_density}, public_interest_density={public_interest_density})"
+        )
+        article.classifier_decision_reason = reason
+        return "domestic_hard_news", reason
+
+    if external_matches and title_external_matches:
+        reason = (
+            f"external_direct_impact: headline carried external-impact terms without enough Romanian public-interest density "
+            f"(external_hits={', '.join(external_matches[:4])}, title_external_hits={', '.join(title_external_matches[:4])}, "
+            f"positive_score={positive_score}, institution_density={institution_density}, "
+            f"public_interest_density={public_interest_density}, headline_supports_domestic={headline_supports_domestic})"
+        )
+        article.classifier_decision_reason = reason
+        return "external_direct_impact", reason
+
+    reason = (
+        f"off_target: insufficient Romanian public-interest density "
+        f"(positive_score={positive_score}, negative_score={negative_score}, "
+        f"institution_density={institution_density}, public_interest_density={public_interest_density}, "
+        f"headline_supports_domestic={headline_supports_domestic})"
+    )
+    article.classifier_decision_reason = reason
+    return "off_target", reason
 
 
 def _effective_priority_for_romanian_candidate(base_priority: int, bucket: str) -> int:
@@ -132,6 +496,9 @@ def _apply_romanian_national_preference(article: FetchedArticle, mapped_meta: di
     return article.model_copy(update={
         "national_preference_bucket": bucket,
         "national_preference_reason": reason,
+        "domestic_hard_news_positive_signals": article.domestic_hard_news_positive_signals,
+        "domestic_hard_news_negative_signals": article.domestic_hard_news_negative_signals,
+        "classifier_decision_reason": article.classifier_decision_reason,
         "editorial_priority": _effective_priority_for_romanian_candidate(article.editorial_priority, bucket),
     })
 
