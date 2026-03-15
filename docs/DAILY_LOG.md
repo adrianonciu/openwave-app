@@ -1431,3 +1431,11 @@ The Romanian editorial pipeline is now approaching a stable production shape.
 - added config-backed `EditorialProfile` definitions for `national_ro`, `international`, and placeholder `local`
 - updated `run_top5_scope_selection.py` and `run_top5_breaking_bulletin.py` to support `--profile` routing through the shared core
 - preserved current national/international behavior broadly while validating that `--profile=local` returns a clean zero-candidate result instead of failing
+
+
+2026-03-15
+
+- extended story-family state with lifecycle metadata (`first_seen`, `last_seen`, `run_count`)
+- added conservative family lifecycle scoring and debug visibility to scored clusters
+- capped Top 5 selection at two stories per story family to prevent event-arc spam
+- validated the national breaking-bulletin profile with repeated immediate runs and confirmed lifecycle metadata in debug artifacts

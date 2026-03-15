@@ -109,3 +109,6 @@ Current backend infrastructure also treats `story_summary_generator_service.py` 
 
 
 Shared editorial profile routing now exists in backend debug selection flows. National RO and international Top 5 runs are routed through a common `EditorialSelectionCoreService`, while a skeletal `local` profile already validates the future local path without changing Flutter or audio behavior.
+
+
+Story families now provide light lifecycle support in ranking. Recurring families persist `first_seen`, `last_seen`, and `run_count`, and can add a small continuity boost while still respecting profile selection logic and family diversity limits.

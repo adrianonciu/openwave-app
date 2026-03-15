@@ -23,6 +23,7 @@ class StoryScoreBreakdown(BaseModel):
     europe_romania_impact: ScoreComponent
     romanian_domestic_balance: ScoreComponent
     editorial_fit: ScoreComponent
+    family_lifecycle_boost: ScoreComponent
 
 
 class ScoredStoryCluster(BaseModel):
@@ -50,3 +51,8 @@ class ScoredStoryCluster(BaseModel):
     editorial_profile_used: str | None = None
     profile_config_name: str | None = None
     shared_core_path_used: bool = False
+    family_lifecycle_boost: float = 0.0
+    family_first_seen: str | None = None
+    family_last_seen: str | None = None
+    family_run_count: int = 0
+    family_age_hours: float = 0.0

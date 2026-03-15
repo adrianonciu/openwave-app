@@ -1669,3 +1669,22 @@ Architectural intent:
 - same architecture, different editorial lenses
 - profile differences should keep moving into `EditorialProfile` config instead of branching inside the shared core
 - local selection should be the next feature built on top of this structure rather than a third standalone pipeline
+
+
+# 33. Story Lifecycle Scoring
+
+OpenWave story families now influence ranking conservatively instead of acting only as debug continuity metadata.
+
+Current behavior:
+
+- `story_family_state.json` persists `first_seen`, `last_seen`, and `run_count` per family
+- recurring families can add a small lifecycle continuity boost during scoring
+- lifecycle boost is capped and remains secondary to hard-news and recovery logic
+- selection now enforces a `max 2 stories per family` rule inside the Top 5 candidate set
+- breaking-bulletin debug output exposes family age, run count, and lifecycle boost per story
+
+Editorial intent:
+
+- keep evolving story arcs visible across runs
+- avoid bulletin spam from too many near-duplicate follow-ups in the same family
+- preserve the shared editorial-core architecture introduced in the previous milestone

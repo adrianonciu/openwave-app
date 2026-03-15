@@ -127,6 +127,11 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "editorial_profile_used": getattr(scored_cluster, "editorial_profile_used", None),
         "profile_config_name": getattr(scored_cluster, "profile_config_name", None),
         "shared_core_path_used": getattr(scored_cluster, "shared_core_path_used", False),
+        "family_first_seen": getattr(scored_cluster, "family_first_seen", None),
+        "family_last_seen": getattr(scored_cluster, "family_last_seen", None),
+        "family_run_count": getattr(scored_cluster, "family_run_count", 0),
+        "family_age_hours": getattr(scored_cluster, "family_age_hours", 0.0),
+        "family_lifecycle_boost": getattr(scored_cluster, "family_lifecycle_boost", 0.0),
     }
 
 
@@ -223,6 +228,10 @@ def _story_family_summary(scored_clusters: list) -> list[dict[str, object]]:
                 "stories": entry["story_count"],
                 "sources": sorted(entry["sources"]),
                 "event_hints": sorted(entry["event_hints"]),
+                "first_seen": min((getattr(cluster, "family_first_seen", None) for cluster in scored_clusters if getattr(cluster, "story_family_id", None) == family_id), default=None),
+                "last_seen": max((getattr(cluster, "family_last_seen", None) for cluster in scored_clusters if getattr(cluster, "story_family_id", None) == family_id), default=None),
+                "run_count": max((getattr(cluster, "family_run_count", 0) for cluster in scored_clusters if getattr(cluster, "story_family_id", None) == family_id), default=0),
+                "age_hours": max((getattr(cluster, "family_age_hours", 0.0) for cluster in scored_clusters if getattr(cluster, "story_family_id", None) == family_id), default=0.0),
             }
         )
     payload.sort(key=lambda item: (-item["stories"], -len(item["sources"]), item["family_id"]))
@@ -366,6 +375,11 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "editorial_profile_used": getattr(cluster, "editorial_profile_used", None),
             "profile_config_name": getattr(cluster, "profile_config_name", None),
             "shared_core_path_used": getattr(cluster, "shared_core_path_used", False),
+            "family_first_seen": getattr(cluster, "family_first_seen", None),
+            "family_last_seen": getattr(cluster, "family_last_seen", None),
+            "family_run_count": getattr(cluster, "family_run_count", 0),
+            "family_age_hours": getattr(cluster, "family_age_hours", 0.0),
+            "family_lifecycle_boost": getattr(cluster, "family_lifecycle_boost", 0.0),
             "final_score": cluster.score_total,
         })
 
@@ -485,6 +499,12 @@ def main() -> None:
             f"Shared core path used: {item.get('shared_core_path_used', False)}",
             f"Attached story family: {item.get('attached_story_family') or 'none'}",
             f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
+            f"Family first seen: {item.get('family_first_seen') or 'none'}",
+            f"Family last seen: {item.get('family_last_seen') or 'none'}",
+            f"Family run count: {item.get('family_run_count', 0)}",
+            f"Family age hours: {item.get('family_age_hours', 0.0)}",
+            f"Lifecycle boost: {item.get('family_lifecycle_boost', 0.0)}",
+            f"Entered via: {'lifecycle_support' if item.get('family_lifecycle_boost', 0.0) > 0 else 'standard_selection'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
             "",
@@ -508,6 +528,10 @@ def main() -> None:
                 f"stories: {family['stories']}",
                 f"sources: {', '.join(family['sources']) or 'none'}",
                 f"event_hints: {', '.join(family['event_hints']) or 'none'}",
+                f"first_seen: {family.get('first_seen') or 'none'}",
+                f"last_seen: {family.get('last_seen') or 'none'}",
+                f"run_count: {family.get('run_count', 0)}",
+                f"age_hours: {family.get('age_hours', 0.0)}",
                 "",
             ])
     else:

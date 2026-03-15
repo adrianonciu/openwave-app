@@ -322,6 +322,7 @@ class StorySelectionService:
         selected = self._rebalance_national_domestic_selection(selected, ordered_clusters, effective_max_stories)
         selected = self._recover_near_miss_domestic_candidates(selected, rejected, ordered_clusters, effective_max_stories)
         selected = self._apply_soft_external_cap(selected, ordered_clusters, effective_max_stories)
+        selected = self._enforce_story_family_diversity_cap(selected, ordered_clusters, effective_max_stories)
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         self._persist_romanian_event_persistence_state(selected, selected_at)
         stats = StorySelectionStats(
@@ -987,6 +988,63 @@ class StorySelectionService:
                 replacements += 1
         return selected[:max_stories]
 
+
+    def _enforce_story_family_diversity_cap(
+        self,
+        selected: list[ScoredStoryCluster],
+        ordered_clusters: list[ScoredStoryCluster],
+        max_stories: int,
+    ) -> list[ScoredStoryCluster]:
+        family_cap = 2
+        family_counts = Counter(
+            cluster.story_family_id
+            for cluster in selected
+            if cluster.story_family_id
+        )
+        if not any(count > family_cap for count in family_counts.values()):
+            return selected[:max_stories]
+
+        selected_ids = {cluster.cluster.cluster_id for cluster in selected}
+        replacement_pool = [
+            cluster for cluster in ordered_clusters
+            if cluster.cluster.cluster_id not in selected_ids
+        ]
+        replacement_pool.sort(key=self._selection_sort_key, reverse=True)
+        adjusted_selected = sorted(selected, key=self._selection_sort_key, reverse=True)
+
+        for family_id, count in list(family_counts.items()):
+            if not family_id or count <= family_cap:
+                continue
+            family_members = [cluster for cluster in adjusted_selected if cluster.story_family_id == family_id]
+            for outgoing in family_members[family_cap:]:
+                adjusted_selected = [
+                    cluster for cluster in adjusted_selected
+                    if cluster.cluster.cluster_id != outgoing.cluster.cluster_id
+                ]
+                selected_ids.discard(outgoing.cluster.cluster_id)
+                family_counts[family_id] -= 1
+
+                replacement_index = next(
+                    (
+                        index for index, candidate in enumerate(replacement_pool)
+                        if not candidate.story_family_id or family_counts[candidate.story_family_id] < family_cap
+                    ),
+                    None,
+                )
+                if replacement_index is None:
+                    continue
+                incoming = replacement_pool.pop(replacement_index)
+                incoming.top5_balance_adjustment_reason = (
+                    incoming.top5_balance_adjustment_reason
+                    or f"Selected under story-family diversity cap replacing '{outgoing.cluster.representative_title}'"
+                )
+                adjusted_selected.append(incoming)
+                adjusted_selected = sorted(adjusted_selected, key=self._selection_sort_key, reverse=True)
+                selected_ids.add(incoming.cluster.cluster_id)
+                if incoming.story_family_id:
+                    family_counts[incoming.story_family_id] += 1
+
+        return adjusted_selected[:max_stories]
 
     def _apply_soft_external_cap(
         self,

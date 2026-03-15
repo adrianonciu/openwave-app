@@ -826,3 +826,5 @@ Still intentionally excluded from this task:
 - [x] Extract shared editorial selection core for national/international debug flows
 - [x] Introduce config-backed editorial profiles (`national_ro`, `international`, `local`)
 - [ ] Build full local selection policy on top of the shared editorial core
+
+- [x] Add family-aware lifecycle scoring and family diversity cap to the shared editorial core

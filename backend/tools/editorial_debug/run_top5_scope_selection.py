@@ -1017,6 +1017,13 @@ def _serialize_candidate(scored_cluster, selection_status: str = "selected") -> 
         "editorial_profile_used": getattr(scored_cluster, "editorial_profile_used", None),
         "profile_config_name": getattr(scored_cluster, "profile_config_name", None),
         "shared_core_path_used": getattr(scored_cluster, "shared_core_path_used", False),
+        "story_family_id": getattr(scored_cluster, "story_family_id", None),
+        "family_attach_reason": getattr(scored_cluster, "family_attach_reason", None),
+        "family_first_seen": getattr(scored_cluster, "family_first_seen", None),
+        "family_last_seen": getattr(scored_cluster, "family_last_seen", None),
+        "family_run_count": getattr(scored_cluster, "family_run_count", 0),
+        "family_age_hours": getattr(scored_cluster, "family_age_hours", 0.0),
+        "family_lifecycle_boost": getattr(scored_cluster, "family_lifecycle_boost", 0.0),
     }
 
 
@@ -1094,6 +1101,10 @@ def _write_scope_outputs(
             f"   editorial_fit_score: {item['editorial_fit_score']}",
             f"   editorial_profile_used: {item.get('editorial_profile_used') or 'none'}",
             f"   shared_core_path_used: {item.get('shared_core_path_used', False)}",
+            f"   story_family_id: {item.get('story_family_id') or 'none'}",
+            f"   family_run_count: {item.get('family_run_count', 0)}",
+            f"   family_age_hours: {item.get('family_age_hours', 0.0)}",
+            f"   family_lifecycle_boost: {item.get('family_lifecycle_boost', 0.0)}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1241,6 +1252,10 @@ def _write_story_selection_debug(scored_clusters: list, selected_cluster_ids: se
             f"   editorial_fit_score: {item['editorial_fit_score']}",
             f"   editorial_profile_used: {item.get('editorial_profile_used') or 'none'}",
             f"   shared_core_path_used: {item.get('shared_core_path_used', False)}",
+            f"   story_family_id: {item.get('story_family_id') or 'none'}",
+            f"   family_run_count: {item.get('family_run_count', 0)}",
+            f"   family_age_hours: {item.get('family_age_hours', 0.0)}",
+            f"   family_lifecycle_boost: {item.get('family_lifecycle_boost', 0.0)}",
             f"   final_score: {item['final_score']}",
             "",
         ])
@@ -1399,6 +1414,10 @@ def _write_candidate_pool_audit(scored_clusters: list, article_by_url: dict[str,
             f"   editorial_fit_score: {item['editorial_fit_score']}",
             f"   editorial_profile_used: {item.get('editorial_profile_used') or 'none'}",
             f"   shared_core_path_used: {item.get('shared_core_path_used', False)}",
+            f"   story_family_id: {item.get('story_family_id') or 'none'}",
+            f"   family_run_count: {item.get('family_run_count', 0)}",
+            f"   family_age_hours: {item.get('family_age_hours', 0.0)}",
+            f"   family_lifecycle_boost: {item.get('family_lifecycle_boost', 0.0)}",
             f"   final_score: {item['final_score']}",
             "",
         ])

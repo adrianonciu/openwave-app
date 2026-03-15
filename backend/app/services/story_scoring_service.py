@@ -114,6 +114,7 @@ class StoryScoringService:
         europe_romania_impact = self._score_europe_romania_impact(cluster)
         romanian_domestic_balance = self._score_romanian_domestic_balance(cluster)
         editorial_fit = self._score_editorial_fit(cluster)
+        family_lifecycle_boost = self._score_family_lifecycle_boost()
 
         total = round(
             recency.contribution
@@ -124,7 +125,8 @@ class StoryScoringService:
             + title_strength.contribution
             + europe_romania_impact.contribution
             + romanian_domestic_balance.contribution
-            + editorial_fit.contribution,
+            + editorial_fit.contribution
+            + family_lifecycle_boost.contribution,
             2,
         )
         breakdown = StoryScoreBreakdown(
@@ -137,6 +139,7 @@ class StoryScoringService:
             europe_romania_impact=europe_romania_impact,
             romanian_domestic_balance=romanian_domestic_balance,
             editorial_fit=editorial_fit,
+            family_lifecycle_boost=family_lifecycle_boost,
         )
         explanation = self._build_explanation(cluster, breakdown, total)
         balance_meta = self._romanian_balance_metadata(cluster)
@@ -422,6 +425,15 @@ class StoryScoringService:
             explanation=explanation,
         )
 
+    def _score_family_lifecycle_boost(self) -> ScoreComponent:
+        return ScoreComponent(
+            name="family_lifecycle_boost",
+            value=0.0,
+            max_points=0.4,
+            contribution=0.0,
+            explanation="Story family lifecycle boost is applied after family attachment and continuity lookup.",
+        )
+
     def _score_editorial_fit(self, cluster: StoryCluster) -> ScoreComponent:
         max_points = 12.0
         categories = {member.source_category or "general" for member in cluster.member_articles}
@@ -528,6 +540,7 @@ class StoryScoringService:
                 breakdown.europe_romania_impact,
                 breakdown.romanian_domestic_balance,
                 breakdown.editorial_fit,
+                breakdown.family_lifecycle_boost,
             ],
             key=lambda component: component.contribution,
             reverse=True,
