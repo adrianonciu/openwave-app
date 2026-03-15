@@ -1439,3 +1439,345 @@ The Romanian editorial pipeline is now approaching a stable production shape.
 - added conservative family lifecycle scoring and debug visibility to scored clusters
 - capped Top 5 selection at two stories per story family to prevent event-arc spam
 - validated the national breaking-bulletin profile with repeated immediate runs and confirmed lifecycle metadata in debug artifacts
+
+# DAILY_LOG — Task 5 Completed (Local Selection Phase 1)
+
+## Date
+
+15 March 2026
+
+## Milestone
+
+Local editorial selection became operational inside the shared newsroom architecture.
+
+This closes the **first-level selection layer** across all three editorial lenses:
+
+* local
+* national
+* international
+
+All three now run through the **same shared editorial core**.
+
+---
+
+# What was implemented
+
+Commit:
+`9dc5f70 — Enable phase1 local relevance selection`
+
+Local news detection was implemented conservatively using:
+
+```
+geographic signal
++
+local-domain signal
+```
+
+The system now recognizes local relevance through:
+
+* county / city geographic signals
+* public-safety / emergency keywords
+* local-domain signals
+* propagated county tags from local sources
+
+Local candidate admission is intentionally strict:
+
+```
+only clusters with a real local_relevance_boost
+enter the local candidate pool
+```
+
+This prevents filler content from local domains.
+
+Example filtered correctly:
+
+```
+Cuvinte cu ghi din 3 silabe
+```
+
+---
+
+# First successful local selection
+
+Local debug run:
+
+```
+python run_top5_breaking_bulletin.py --profile=local
+```
+
+Before implementation:
+
+```
+candidate_clusters={"local":0}
+selected={"local":0}
+```
+
+After implementation:
+
+```
+candidate_clusters={"local":1}
+selected={"local":1}
+```
+
+Selected story example:
+
+```
+Accident rutier in Iasi
+Au fost implicate doua autoturisme
+```
+
+Detected signals:
+
+```
+editorial_profile_used: local
+geographic_signal_detected: iasi
+local_domain_signal_hits: accident
+local_relevance_boost: 0.3
+local_county_tag: iasi
+```
+
+This confirms:
+
+* geographic detection works
+* local-domain detection works
+* county tagging works
+* shared editorial core routing works
+
+---
+
+# Architecture status after Task 5
+
+OpenWave editorial pipeline now supports:
+
+```
+Shared Editorial Core
+        ↓
+National profile
+International profile
+Local profile
+```
+
+All profiles share:
+
+* clustering
+* scoring
+* recovery
+* story-family continuity
+* lifecycle scoring
+* diversity protection
+* debug instrumentation
+
+Differences between editorial lenses are now entirely **profile-driven**.
+
+---
+
+# Current system capabilities
+
+The system now includes:
+
+* national story selection
+* international story selection
+* local story selection (phase 1)
+* justice editorial domain
+* story-family continuity tracking
+* lifecycle scoring
+* editorial profile routing
+* shared newsroom architecture
+
+The pipeline has effectively moved from a **snapshot aggregator** to a **memory-aware editorial system**.
+
+---
+
+# Next development focus
+
+With the first-level selection layer complete, the next development stage shifts toward:
+
+**editorial continuity and bulletin structure refinement**
+
+Future tasks will focus on:
+
+* validation on spaced runs
+* follow-up story continuity across bulletins
+* refining editorial ordering
+* improving story lifecycle behavior
+* later expansion of local relevance rules
+
+Local selection Phase 2 (future):
+
+* county lists
+* stronger geofilters
+* local administration signals
+* utilities / infrastructure signals
+
+---
+
+# Status
+
+Task 5 is considered **successfully completed**.
+
+The system now has a working **three-lens newsroom architecture** ready for the next editorial layer.
+
+
+---
+
+# Task 6 - Editorial Stability Validation
+
+Date: 2026-03-15 14:42:58 +02:00
+
+## Scope
+
+This task was a validation pass only.
+No ranking or pipeline logic was added.
+The goal was to observe whether the three-lens newsroom architecture behaves consistently under the shared editorial core.
+
+Validated profiles:
+
+* national
+* international
+* local
+
+Debug runners used:
+
+* `backend\venv\Scripts\python.exe backend/tools/editorial_debug/run_top5_breaking_bulletin.py --profile=national`
+* `backend\venv\Scripts\python.exe backend/tools/editorial_debug/run_top5_breaking_bulletin.py --profile=international`
+* `backend\venv\Scripts\python.exe backend/tools/editorial_debug/run_top5_breaking_bulletin.py --profile=local`
+
+Reviewed artifacts:
+
+* `backend/debug_output/top5_breaking_bulletin.txt`
+* `backend/debug_output/top5_breaking_bulletin.json`
+* `backend/debug_output/romanian_candidate_pool_audit.json`
+* `backend/data/story_family_state.json`
+
+## Validation summary
+
+### Shared core routing
+
+All three profiles still route through the same shared path.
+Observed debug fields remained stable:
+
+* `editorial_profile_used`
+* `profile_config_name`
+* `shared_core_path_used = true`
+
+This confirms the architecture has not regressed into profile-specific pipelines.
+
+### Story-family continuity
+
+Story families continue to persist and evolve across repeated runs.
+Observed examples from `story_family_state.json`:
+
+* `domestic_politics`
+  * `run_count: 14`
+  * `first_seen: 2026-03-15T11:18:27.158472Z`
+  * `last_seen: 2026-03-15T12:42:31.313645Z`
+* `accident_autoturisme_doua`
+  * `run_count: 3`
+  * `first_seen: 2026-03-15T12:25:48.458992Z`
+  * `last_seen: 2026-03-15T12:42:31.313645Z`
+* `chiefs_china_clear`
+  * `run_count: 11`
+
+This confirms family attachment and persistence are functioning.
+
+### Lifecycle scoring behavior
+
+Lifecycle boosts are still being applied gradually and predictably.
+Observed values:
+
+* mature families repeatedly reached `family_lifecycle_boost: 0.4`
+* newer local family `accident_autoturisme_doua` reached `family_lifecycle_boost: 0.25`
+* local family metadata updated correctly:
+  * `family_run_count: 3`
+  * `family_age_hours: 0.28`
+
+This is consistent with the intended gradual boost behavior.
+
+### National profile stability
+
+The national profile remained on the shared core and continued attaching family metadata.
+However, the output is still weak editorially in this baseline.
+
+Observed baseline:
+
+* `selected_count: 1`
+* the selected story was external-leaning rather than domestic hard news
+* `romanian_candidate_pool_audit.json` showed:
+  * `national_cluster_count: 11`
+  * `multi_source_clusters: 1`
+  * `national_preference_bucket_distribution` heavily skewed to `off_target`
+
+Conclusion:
+
+* family continuity is stable
+* lifecycle scoring is stable
+* diversity/recovery code still runs
+* but current national candidate quality remains weak and fragmented
+
+### International profile stability
+
+The international profile remained isolated from Romanian domestic balancing in ranking explanation.
+Observed output remained profile-correct:
+
+* `selected_count: 4`
+* top international cluster had `unique_source_count: 5`
+* the strongest cluster attached consistently to family `chiefs_china_clear`
+* debug explanations still said:
+  * `non-national cluster: Romanian domestic balancing not applied`
+
+This confirms national logic is not leaking into the international lens.
+
+### Local profile stability
+
+Local Phase 1 remained precise after the Task 5 fixes.
+Observed local baseline:
+
+* `selected_count: 1`
+* selected story:
+  * `Accident rutier in Iasi Au fost implicate doua autoturisme`
+* local debug signals:
+  * `geographic_signal_detected: iasi`
+  * `local_domain_signal_hits: accident`
+  * `local_relevance_boost: 0.3`
+  * `local_county_tag: iasi`
+
+This confirms:
+
+* geographic detection works
+* local-domain matching works
+* local relevance boost is visible in debug output
+* low-signal local filler did not survive the local candidate gate in the validated baseline
+
+### Diversity protections
+
+No regressions were observed in the current diversity protections.
+In this baseline there was no case where more than two stories from the same family or county entered Top 5.
+So the caps were not stress-tested by overflow in this run, but they also did not fail.
+
+## What this task confirms today
+
+Confirmed stable now:
+
+* shared-core routing
+* story-family persistence
+* lifecycle metadata progression
+* local relevance precision
+* profile-specific debug fields
+
+Not yet fully validated by this single session:
+
+* true spaced-run continuity across 1 to 2 hours and next-day intervals
+* whether justice or domestic policy families remain editorially competitive later in the day
+* whether diversity caps activate under heavier same-family pressure
+
+## Conclusion
+
+Task 6 is partially validated as a same-session editorial stability baseline.
+
+The architecture is stable enough to confirm:
+
+* no routing regression
+* no lifecycle regression
+* no local selection regression
+
+But the full spaced-snapshot requirement still needs scheduled follow-up runs later today and next morning to complete the time-separation validation properly.
