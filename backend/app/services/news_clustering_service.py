@@ -138,6 +138,13 @@ ROMANIAN_ENTITY_HINTS = {
     "Romania", "Bucuresti", "Guvern", "Parlament", "CCR", "DNA", "DIICOT", "BNR", "HotNews", "G4Media",
     "Digi24", "Agerpres", "News.ro", "Antena 3", "Libertatea", "Europa Libera", "SpotMedia", "Gandul",
 }
+ROMANIAN_PUBLIC_AFFAIRS_TOPICS = {
+    "alegeri", "buget", "deficit", "taxe", "impozit", "fiscal", "inflatie", "energie", "motorina",
+    "combustibil", "carburant", "protest", "greva", "justitie", "instanta", "procuror", "dna",
+    "diicot", "lege", "ordonanta", "coalitie", "negocieri", "guvern", "guvernul", "parlament",
+    "parlamentul", "ministru", "minister", "bnr", "anaf", "bvb", "munca", "salarii", "pensii",
+    "infrastructura", "autostrada", "spital", "educatie", "scoala", "decizie", "masuri",
+}
 EVENT_FAMILY_KEYWORDS = {
     "regional_conflict": {"war", "conflict", "escalation", "tensions", "strike", "strikes", "attack", "atac", "hamas", "iran", "israel"},
     "military_movement": {"troops", "marines", "warships", "naval", "deployment", "nave", "military"},
@@ -170,6 +177,7 @@ class _ArticleSignals:
     body_keywords: set[str]
     entities: set[str]
     event_terms: set[str]
+    public_affairs_topics: set[str]
     event_families: set[str]
     regional_buckets: set[str]
 
@@ -241,6 +249,7 @@ class NewsClusteringService:
         event_terms = self._event_terms(
             f"{normalized_article.title}. {normalized_article.content_text[:1600]}"
         )
+        public_affairs_topics = event_terms & ROMANIAN_PUBLIC_AFFAIRS_TOPICS
         if self._should_suppress_hard_news_signals(
             normalized_article.source_category,
             normalized_article.title,
@@ -261,6 +270,7 @@ class NewsClusteringService:
             body_keywords=body_keywords,
             entities=entities,
             event_terms=event_terms,
+            public_affairs_topics=public_affairs_topics,
             event_families=event_families,
             regional_buckets=regional_buckets,
         )
@@ -755,18 +765,38 @@ class NewsClusteringService:
         shared_terms = left.event_terms & right.event_terms
         shared_romanian_terms = shared_terms & ROMANIAN_HARD_NEWS_TERMS
         shared_locations = shared_terms & ROMANIAN_LOCATION_TERMS
+        shared_public_affairs_topics = left.public_affairs_topics & right.public_affairs_topics
         left_entities = {entity.lower() for entity in left.entities}
         right_entities = {entity.lower() for entity in right.entities}
         shared_named = left_entities & right_entities
         has_named_overlap = len(shared_entities) >= 1 or any(
             hint.lower() in shared_named for hint in ROMANIAN_ENTITY_HINTS
         )
+        compatible_buckets = {
+            left.article.national_preference_bucket,
+            right.article.national_preference_bucket,
+        } <= {"domestic_hard_news", "external_direct_impact", None}
 
         if len(shared_romanian_terms) >= 3 and (normalized_title_similarity >= 0.22 or keyword_overlap >= 0.24):
             return True
         if has_named_overlap and len(shared_romanian_terms) >= 2 and (event_overlap >= 0.16 or keyword_overlap >= 0.2):
             return True
         if shared_locations and has_named_overlap and max(normalized_title_similarity, keyword_overlap) >= 0.18:
+            return True
+        if (
+            compatible_buckets
+            and len(shared_public_affairs_topics) >= 2
+            and (shared_locations or has_named_overlap or keyword_overlap >= 0.18 or event_overlap >= 0.14)
+            and max(normalized_title_similarity, keyword_overlap, event_overlap) >= 0.12
+        ):
+            return True
+        if (
+            compatible_buckets
+            and len(shared_public_affairs_topics) >= 1
+            and len(shared_romanian_terms) >= 2
+            and (has_named_overlap or shared_locations)
+            and max(keyword_overlap, event_overlap) >= 0.14
+        ):
             return True
         return False
 
