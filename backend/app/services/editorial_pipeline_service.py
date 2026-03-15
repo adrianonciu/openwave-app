@@ -13,6 +13,7 @@ from app.models.final_editorial_briefing import (
 from app.services.briefing_assembly_service import BriefingAssemblyService
 from app.services.bulletin_sizing_service import BulletinSizingService
 from app.services.news_clustering_service import NewsClusteringService
+from app.services.story_family_service import StoryFamilyService
 from app.services.story_scoring_service import StoryScoringService
 from app.services.story_selection_service import StorySelectionService
 from app.services.story_summary_generator_service import StorySummaryGeneratorService
@@ -25,6 +26,7 @@ class EditorialPipelineService:
     def __init__(self) -> None:
         self.clustering_service = NewsClusteringService()
         self.scoring_service = StoryScoringService()
+        self.story_family_service = StoryFamilyService()
         self.selection_service = StorySelectionService()
         self.summary_generator_service = StorySummaryGeneratorService()
         self.briefing_assembly_service = BriefingAssemblyService()
@@ -57,6 +59,7 @@ class EditorialPipelineService:
         continuity_records = self._load_previous_bulletin_clusters(previous_bulletin_clusters)
         story_clusters = self.clustering_service.cluster_articles(articles)
         scored_clusters = self.scoring_service.score_clusters(story_clusters)
+        self.story_family_service.attach_story_families(scored_clusters)
         selection_result = self.selection_service.select_stories(
             scored_clusters,
             max_stories=max_stories,

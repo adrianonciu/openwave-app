@@ -122,6 +122,8 @@ def _breaking_entry(scored_cluster, article_by_url, clustering_service, rank: in
         "threshold_required_value": getattr(scored_cluster, "threshold_required_value", None),
         "candidate_current_value": getattr(scored_cluster, "candidate_current_value", None),
         "national_preference_bucket": Counter([member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket]).most_common(1)[0][0] if [member.national_preference_bucket for member in scored_cluster.cluster.member_articles if member.national_preference_bucket] else None,
+        "attached_story_family": getattr(scored_cluster, "story_family_id", None),
+        "family_attach_reason": getattr(scored_cluster, "family_attach_reason", None),
     }
 
 
@@ -189,6 +191,39 @@ def _cluster_similarity_score(cluster, article_by_url: dict[str, FetchedArticle]
         decision = clustering_service.explain_pair(left, right)
         scores.append(clustering_service._decision_score(decision))
     return round(sum(scores) / len(scores), 3) if scores else 0.0
+
+
+
+def _story_family_summary(scored_clusters: list) -> list[dict[str, object]]:
+    families: dict[str, dict[str, object]] = {}
+    for cluster in scored_clusters:
+        family_id = getattr(cluster, "story_family_id", None)
+        if not family_id:
+            continue
+        entry = families.setdefault(
+            family_id,
+            {
+                "family_id": family_id,
+                "story_count": 0,
+                "sources": set(),
+                "event_hints": set(),
+            },
+        )
+        entry["story_count"] += 1
+        entry["sources"].update(member.source for member in cluster.cluster.member_articles)
+        entry["event_hints"].update(getattr(cluster, "cluster_event_family_hints", []) or [])
+    payload = []
+    for family_id, entry in families.items():
+        payload.append(
+            {
+                "family_id": family_id,
+                "stories": entry["story_count"],
+                "sources": sorted(entry["sources"]),
+                "event_hints": sorted(entry["event_hints"]),
+            }
+        )
+    payload.sort(key=lambda item: (-item["stories"], -len(item["sources"]), item["family_id"]))
+    return payload
 
 
 def _write_romanian_source_coverage(source_coverage: dict[str, dict[str, object]], national_candidates: list, clustering_service) -> None:
@@ -323,6 +358,8 @@ def _write_romanian_candidate_pool_audit(national_candidates: list, article_by_u
             "threshold_required_value": getattr(cluster, "threshold_required_value", None),
             "candidate_current_value": getattr(cluster, "candidate_current_value", None),
             "classifier_decision_reason": getattr(debug_article, "classifier_decision_reason", None) if debug_article is not None else None,
+            "attached_story_family": getattr(cluster, "story_family_id", None),
+            "family_attach_reason": getattr(cluster, "family_attach_reason", None),
             "final_score": cluster.score_total,
         })
 
@@ -345,6 +382,7 @@ def main() -> None:
     article_by_url = {article.url: article for article in articles}
     story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
     scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
+    pipeline_service.story_family_service.attach_story_families(scored_clusters)
 
     national_candidates = [cluster for cluster in scored_clusters if _dominant_scope(cluster) == "national"]
     global_candidates = [cluster for cluster in scored_clusters if _dominant_scope(cluster) == "international"]
@@ -393,6 +431,8 @@ def main() -> None:
             f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
             f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
             f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
+            f"Attached story family: {item.get('attached_story_family') or 'none'}",
+            f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
             "",
@@ -407,6 +447,20 @@ def main() -> None:
             or any(hint in JUSTICE_HINTS for hint in (item.get("cluster_event_family_hints") or []))
         )
     ]
+    family_summaries = _story_family_summary(scored_clusters)
+    lines.extend(["STORY FAMILIES DETECTED", ""])
+    if family_summaries:
+        for family in family_summaries:
+            lines.extend([
+                f"family_id: {family['family_id']}",
+                f"stories: {family['stories']}",
+                f"sources: {', '.join(family['sources']) or 'none'}",
+                f"event_hints: {', '.join(family['event_hints']) or 'none'}",
+                "",
+            ])
+    else:
+        lines.extend(["none", ""])
+
     lines.extend(["JUSTICE BOOSTED STORIES", ""])
     if justice_boosted_stories:
         for item in justice_boosted_stories:
@@ -476,6 +530,8 @@ def main() -> None:
             f"Recovered domestic: {item.get('recovered_domestic_candidate', False)}",
             f"Persistence boost: {item.get('persistence_boost_applied', 0.0)}",
             f"Balance adjustment: {item.get('top5_balance_adjustment_reason') or 'none'}",
+            f"Attached story family: {item.get('attached_story_family') or 'none'}",
+            f"Family attach reason: {item.get('family_attach_reason') or 'none'}",
             f"Freshness: {item['freshness_score']}",
             f"Score: {item['final_score']}",
             "",

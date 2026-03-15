@@ -1,0 +1,177 @@
+{
+  "updated_at": "2026-03-15T11:19:47.389727+00:00",
+  "families": [
+    {
+      "id": "chiefs_china_clear",
+      "topic_hint": "chiefs_china_clear",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 2,
+      "event_hints": []
+    },
+    {
+      "id": "congo_election_presidential",
+      "topic_hint": "congo_election_presidential",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "aparut_buni_celor",
+      "topic_hint": "aparut_buni_celor",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "bijuterie_blinders_cunoscuta",
+      "topic_hint": "bijuterie_blinders_cunoscuta",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "cotroceni_delegatie_intalneste",
+      "topic_hint": "cotroceni_delegatie_intalneste",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "already_asia_changes",
+      "topic_hint": "already_asia_changes",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "antonelli_aproape_atac",
+      "topic_hint": "antonelli_aproape_atac",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "energy_security",
+      "topic_hint": "romanian_energy_security",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 4,
+      "source_count": 1,
+      "event_hints": [
+        "romanian_energy_security",
+        "romanian_regional_security"
+      ]
+    },
+    {
+      "id": "domestic_politics",
+      "topic_hint": "romanian_domestic_politics",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": [
+        "romanian_domestic_politics"
+      ]
+    },
+    {
+      "id": "anticipa_aparitia_dementa",
+      "topic_hint": "anticipa_aparitia_dementa",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "crackdown_fleets_global",
+      "topic_hint": "crackdown_fleets_global",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "10th_football_japan",
+      "topic_hint": "10th_football_japan",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "criminalul_criza_despre",
+      "topic_hint": "criminalul_criza_despre",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "again_antonelli_fails",
+      "topic_hint": "again_antonelli_fails",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "celebrities_lip-reading_royals",
+      "topic_hint": "celebrities_lip-reading_royals",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "funds_loss",
+      "topic_hint": "romanian_eu_funds_loss",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": [
+        "romanian_eu_funds_loss"
+      ]
+    },
+    {
+      "id": "decision_major_policy",
+      "topic_hint": "romanian_major_policy_decision",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": [
+        "romanian_major_policy_decision",
+        "romanian_regional_security"
+      ]
+    },
+    {
+      "id": "acord_anunta_despre",
+      "topic_hint": "acord_anunta_despre",
+      "first_seen_timestamp": "2026-03-15T11:18:27.158472Z",
+      "last_seen_timestamp": "2026-03-15T11:19:47.381839Z",
+      "story_count": 2,
+      "source_count": 1,
+      "event_hints": []
+    }
+  ]
+}

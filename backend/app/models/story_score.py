@@ -45,3 +45,5 @@ class ScoredStoryCluster(BaseModel):
     failed_threshold_name: str | None = None
     threshold_required_value: float | str | None = None
     candidate_current_value: float | str | None = None
+    story_family_id: str | None = None
+    family_attach_reason: str | None = None
