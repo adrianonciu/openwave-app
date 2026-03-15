@@ -204,6 +204,14 @@ ROMANIAN_PUBLIC_IMPACT_TERMS = {
     "rechizitoriu": 3,
     "judecata": 3,
     "dosar": 2,
+    "tentativa omor": 2,
+    "grupare rivala": 2,
+    "maceta": 2,
+    "audieri csm": 2,
+    "procuror sef dna": 2,
+    "aviz negativ csm": 2,
+    "dosar anti coruptie": 2,
+    "dosar anti-coruptie": 2,
 }
 
 ROMANIAN_PUBLIC_ECONOMY_TERMS = {
@@ -341,11 +349,11 @@ ROMANIAN_EVENT_FAMILY_HINTS = {
     "romanian_energy_security": {"energie", "motorina", "combustibil", "carburant", "gaze", "electricitate", "romgaz", "hidroelectrica", "transgaz", "transelectrica", "ministerul energiei"},
     "romanian_eu_relations": {"ue", "uniunea europeana", "bruxelles", "brussels", "schengen", "mae", "diplomatic"},
     "romanian_regional_security": {"ucraina", "ukraine", "rusia", "moldova", "transnistria", "nato", "mapn", "securitate", "marea neagra", "black sea"},
-    "romanian_justice": {"justitie", "instanta", "tribunal", "curte", "procuror", "dna", "diicot", "iccj", "ccr", "ministerul justitiei", "csm", "parchet", "judecator", "judecata", "dosar", "politie"},
-    "romanian_justice_case": {"csm", "dna", "diicot", "iccj", "instanta", "tribunal", "parchet", "procuror", "procuror-sef", "rechizitoriu", "audieri", "judecata", "dosar", "arestari"},
-    "romanian_prosecutor_decision": {"procuror-sef", "procuror sef", "numiri procurori", "csm", "dna", "diicot", "parchetul general", "audieri", "rechizitoriu"},
-    "romanian_high_court_decision": {"iccj", "inalta curte", "curte de apel", "ccr", "instanta", "judecator", "judecata"},
-    "romanian_anti_corruption_case": {"dna", "diicot", "perchezitii", "arest", "arestari", "rechizitoriu", "coruptie", "dosar"},
+    "romanian_justice": {"justitie", "instanta", "tribunal", "curte", "procuror", "dna", "diicot", "iccj", "ccr", "ministerul justitiei", "csm", "parchet", "judecator", "judecata", "dosar", "politie", "tentativa omor", "maceta"},
+    "romanian_justice_case": {"csm", "dna", "diicot", "iccj", "instanta", "tribunal", "parchet", "procuror", "procuror-sef", "rechizitoriu", "audieri", "judecata", "dosar", "arestari", "tentativa omor", "grupare rivala", "maceta"},
+    "romanian_prosecutor_decision": {"procuror-sef", "procuror sef", "numiri procurori", "csm", "dna", "diicot", "parchetul general", "audieri", "rechizitoriu", "audieri csm", "procuror sef dna", "aviz negativ csm"},
+    "romanian_high_court_decision": {"iccj", "inalta curte", "curte de apel", "ccr", "instanta", "judecator", "judecata", "aviz negativ csm"},
+    "romanian_anti_corruption_case": {"dna", "diicot", "perchezitii", "arest", "arestari", "rechizitoriu", "coruptie", "dosar", "dosar anti coruptie", "dosar anti-coruptie"},
     "romanian_major_policy_decision": {"ordonanta", "lege", "decizie", "masuri", "minister", "ministru", "guvernul"},
     "romanian_public_protest": {"protest", "proteste", "greva", "manifestatie", "studentii", "sindicat"},
     "romanian_infrastructure_issue": {"infrastructura", "autostrada", "trafic", "spital", "scoala", "metrou", "cale ferata"},
@@ -565,7 +573,7 @@ def _classify_romanian_national_preference(article: FetchedArticle, source_meta:
     article.romania_impact_evidence_hits = sorted({
         *(term for term, _ in title_institution_matches if term in {"csm", "ccr", "dna", "diicot", "iccj", "inalta curte", "parchet", "parchetul general", "tribunal", "instanta", "judecator", "procuror", "procuror-sef", "procuror sef", "guvernul romaniei", "parlamentul romaniei", "anaf", "bnr", "mae", "mapn"}),
         *(term for term, _ in title_actor_matches if term in {"psd", "pnl", "usr", "udmr", "coalitia de guvernare", "premier", "prim-ministru"}),
-        *(term for term, _ in title_public_impact_matches if term in {"buget", "deficit", "taxe", "impozit", "fiscal", "pnrr", "reforma", "reforme", "energie", "combustibil", "carburant", "motorina", "ordonanta", "lege", "decizie", "perchezitii", "arest", "arestari", "audieri", "rechizitoriu", "judecata", "dosar"}),
+        *(term for term, _ in title_public_impact_matches if term in {"buget", "deficit", "taxe", "impozit", "fiscal", "pnrr", "reforma", "reforme", "energie", "combustibil", "carburant", "motorina", "ordonanta", "lege", "decizie", "perchezitii", "arest", "arestari", "audieri", "rechizitoriu", "judecata", "dosar", "tentativa omor", "grupare rivala", "maceta", "audieri csm", "procuror sef dna", "aviz negativ csm", "dosar anti coruptie", "dosar anti-coruptie"}),
         *(term for term, _ in title_public_economy_matches),
         *(term for term, _ in institution_matches if term in {"csm", "ccr", "dna", "diicot", "iccj", "inalta curte", "parchet", "parchetul general", "tribunal", "instanta", "judecator", "procuror", "procuror-sef", "procuror sef", "guvernul romaniei", "parlamentul romaniei", "anaf", "bnr", "mae", "mapn"}),
     })
@@ -646,7 +654,7 @@ def _romanian_justice_signal_score(article: FetchedArticle) -> int:
         "perchezitii", "arest", "arestari", "audieri", "rechizitoriu",
     }
     title_text = (article.title or '').lower()
-    direct_justice_terms = sum(1 for term in {"judecata", "dosar", "perchezitii", "arest", "arestari", "rechizitoriu"} if _text_contains_term(title_text, term))
+    direct_justice_terms = sum(1 for term in {"judecata", "dosar", "perchezitii", "arest", "arestari", "rechizitoriu", "tentativa omor", "grupare rivala", "maceta", "audieri csm", "procuror sef dna", "aviz negativ csm", "dosar anti coruptie", "dosar anti-coruptie"} if _text_contains_term(title_text, term))
     return (len(justice_hints) * 3) + min(len(justice_hits), 4) + min(direct_justice_terms, 3)
 
 

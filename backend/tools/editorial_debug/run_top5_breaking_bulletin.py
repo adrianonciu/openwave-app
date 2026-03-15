@@ -31,6 +31,30 @@ EXCLUDED_NATIONAL_CATEGORIES = {"sport", "entertainment", "lifestyle", "culture"
 PLACEHOLDER_HEADLINES = {"actualitate", "stiri", "live", "breaking", "updates", "context"}
 
 
+
+JUSTICE_HINTS = {
+    "romanian_justice",
+    "romanian_justice_case",
+    "romanian_prosecutor_decision",
+    "romanian_high_court_decision",
+    "romanian_anti_corruption_case",
+}
+
+
+def _justice_boost_reason(item: dict[str, object]) -> str:
+    reasons: list[str] = []
+    hints = [hint for hint in (item.get("cluster_event_family_hints") or []) if hint in JUSTICE_HINTS]
+    if hints:
+        reasons.append(hints[0])
+    if item.get("recovered_domestic_candidate"):
+        reasons.append("recovery")
+    if (item.get("persistence_boost_applied") or 0.0) > 0:
+        reasons.append("persistence")
+    if hints and not item.get("recovered_domestic_candidate") and (item.get("persistence_boost_applied") or 0.0) <= 0:
+        reasons.append("justice hint scoring")
+    return " + ".join(reasons) or "justice hint scoring"
+
+
 def _is_placeholder(title: str) -> bool:
     return (title or "").strip().lower() in PLACEHOLDER_HEADLINES
 
@@ -365,6 +389,27 @@ def main() -> None:
             f"Score: {item['final_score']}",
             "",
         ])
+
+    justice_boosted_stories = [
+        item for item in national_top5
+        if any(hint in JUSTICE_HINTS for hint in (item.get("cluster_event_family_hints") or []))
+        and (
+            item.get("recovered_domestic_candidate")
+            or (item.get("persistence_boost_applied") or 0.0) > 0
+            or any(hint in JUSTICE_HINTS for hint in (item.get("cluster_event_family_hints") or []))
+        )
+    ]
+    lines.extend(["JUSTICE BOOSTED STORIES", ""])
+    if justice_boosted_stories:
+        for item in justice_boosted_stories:
+            lines.extend([
+                f"- {item['headline']}",
+                f"  reason: {_justice_boost_reason(item)}",
+                f"  recovery_score: {item.get('recovery_score', 0.0)}",
+                "",
+            ])
+    else:
+        lines.extend(["none", ""])
 
     selected_national_ids = {item["cluster_id"] for item in national_top5}
     near_miss_candidates = [

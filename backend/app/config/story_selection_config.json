@@ -75,7 +75,14 @@
       "cedo",
       "icc",
       "extradare",
-      "mandat international"
+      "mandat international",
+      "tentativa omor",
+      "grupare rivala",
+      "maceta",
+      "audieri csm",
+      "procuror sef dna",
+      "aviz negativ csm",
+      "dosar anti-coruptie"
     ]
   },
   "preference_near_tie_tolerance": 4,
@@ -188,7 +195,14 @@
       "investigatii europene",
       "procuror",
       "procuror-sef",
-      "procuror sef"
+      "procuror sef",
+      "tentativa omor",
+      "grupare rivala",
+      "maceta",
+      "audieri csm",
+      "procuror sef dna",
+      "aviz negativ csm",
+      "dosar anti-coruptie"
     ]
   },
   "geography_labels": {
