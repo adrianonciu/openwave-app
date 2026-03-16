@@ -12,3 +12,5 @@ backend/data/live_source_feed_cache.json
 tests/real_samples/latest_*/
 backend/data/bulletin_continuity_state.json
 backend/data/story_family_state.json
+backend/data/bulletin_continuity_state.json
+backend/data/story_family_state.json
