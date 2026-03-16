@@ -1,4 +1,4 @@
-OPENWAVE RADIO EDITING PREVIEW V1.6
+OPENWAVE RADIO EDITING PREVIEW V1.7
 
 Stories: 5
 Bulletin estimated duration: 158 secunde
@@ -8,6 +8,13 @@ Average lead/title overlap: 0.5
 Leads rewritten to reduce title repetition: 2
 Continuation lead rewrites: 1
 Lead opening counts: {"consequence": 0, "concrete_action": 1, "affected_audience": 0, "actor_action": 4}
+Stories with personal attribution: 2
+Lead personal attribution count: 1
+Second-sentence personal attribution count: 1
+Promoted person-attribution sentences: 2
+Role-based attribution insertions: 1
+Stories with institution-only attribution: 3
+Stories with media attribution: 0
 Stories with high title/lead overlap: 1
 International stories with Romania impact: 1
 Stories with strong closure: 5
@@ -29,6 +36,12 @@ Lead/title overlap: 0.5
 Lead rewrite applied: False
 Lead continuation rewrite: False
 Lead opening type: actor_action
+Attribution type used: named_person
+Attribution position used: lead
+Lead personal attribution: True
+Second sentence personal attribution: False
+Has named person: True
+Has role-based person: True
 Estimated duration: 33 secunde
 Attribution: person
 Romania impact included: False
@@ -55,6 +68,12 @@ Lead/title overlap: 0.67
 Lead rewrite applied: False
 Lead continuation rewrite: False
 Lead opening type: actor_action
+Attribution type used: institution
+Attribution position used: sentence_2
+Lead personal attribution: False
+Second sentence personal attribution: False
+Has named person: False
+Has role-based person: False
 Estimated duration: 33 secunde
 Attribution: institution
 Romania impact included: False
@@ -81,6 +100,12 @@ Lead/title overlap: 0.62
 Lead rewrite applied: False
 Lead continuation rewrite: False
 Lead opening type: actor_action
+Attribution type used: institution
+Attribution position used: lead
+Lead personal attribution: False
+Second sentence personal attribution: False
+Has named person: False
+Has role-based person: True
 Estimated duration: 36 secunde
 Attribution: institution
 Romania impact included: False
@@ -107,6 +132,12 @@ Lead/title overlap: 0.57
 Lead rewrite applied: True
 Lead continuation rewrite: False
 Lead opening type: actor_action
+Attribution type used: institution
+Attribution position used: lead
+Lead personal attribution: False
+Second sentence personal attribution: False
+Has named person: False
+Has role-based person: False
 Estimated duration: 34 secunde
 Attribution: institution
 Romania impact included: True
@@ -133,8 +164,14 @@ Lead/title overlap: 0.14
 Lead rewrite applied: True
 Lead continuation rewrite: True
 Lead opening type: concrete_action
+Attribution type used: role_based_person
+Attribution position used: sentence_2
+Lead personal attribution: False
+Second sentence personal attribution: True
+Has named person: False
+Has role-based person: True
 Estimated duration: 22 secunde
-Attribution: institution
+Attribution: role
 Romania impact included: False
 Strong closure: True
 Repeated person names: 0
@@ -178,6 +215,13 @@ Validation summary:
     "affected_audience": 0,
     "actor_action": 4
   },
+  "stories_with_personal_attribution": 2,
+  "lead_has_personal_attribution_count": 1,
+  "second_sentence_has_personal_attribution_count": 1,
+  "promoted_person_attribution_sentence_count": 2,
+  "role_based_attribution_inserted_count": 1,
+  "stories_with_institution_only_attribution": 3,
+  "stories_with_media_attribution": 0,
   "stories_with_high_title_lead_overlap": 1,
   "international_stories_with_romania_impact": 1,
   "stories_with_strong_closure": 5,
@@ -188,7 +232,7 @@ Validation summary:
   "tts_pronunciation_entry_count": 3,
   "explicit_attribution_counts": {
     "person": 1,
-    "institution": 4,
+    "institution": 3,
     "media": 0
   }
 }

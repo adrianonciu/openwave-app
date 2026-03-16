@@ -20,6 +20,7 @@ JSON_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.json"
 TEXT_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.txt"
 GENERALIST_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_mihai_bacau.txt"
 VICTOR_VASLUI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_victor_vaslui.txt"
+ANA_TIMISOARA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ana_timisoara.txt"
 
 PREVIEW_FIXTURES = [
     {
@@ -317,6 +318,70 @@ VICTOR_VASLUI_LOCAL_FIXTURES = [
 ]
 
 
+ANA_TIMISOARA_LOCAL_FIXTURES = [
+    {
+        "story_id": "timis_01",
+        "source_label": "opiniatimisoarei.ro",
+        "local_geo_origin": "timis_county",
+        "headline": "Primaria Timisoara muta circulatia in zona Garii de Nord pentru lucrari",
+        "content_text": (
+            "Primaria Timisoara anunta lucrari noi la carosabil si la liniile de tramvai din zona Garii de Nord. "
+            "Soferii vor circula pe benzi ingustate si pe rute ocolitoare la orele de varf. "
+            "Primaria a transmis ca restrictiile vor fi etapizate pe parcursul urmatoarelor doua saptamani. "
+            "Primele limitari intra in vigoare de luni dimineata."
+        ),
+    },
+    {
+        "story_id": "timis_02",
+        "source_label": "timponline.ro",
+        "local_geo_origin": "timis_county",
+        "headline": "Spitalul de Copii din Timisoara extinde programul pentru urgente respiratorii",
+        "content_text": (
+            "Spitalul de Copii din Timisoara extinde programul pentru urgente respiratorii dupa cresterea numarului de prezentari. "
+            "Pacientii primesc triaj separat si consult mai rapid in intervalul de seara. "
+            "Directorul unitatii spune ca echipele suplimentare raman in garda pana la finalul lunii. "
+            "Programul extins functioneaza de la inceputul acestei saptamani."
+        ),
+    },
+    {
+        "story_id": "timis_03",
+        "source_label": "banatulazi.ro",
+        "local_geo_origin": "timis_county",
+        "headline": "ISU Timis dubleaza controalele la blocurile cu risc dupa incendiul din Complex",
+        "content_text": (
+            "ISU Timis a dublat controalele la blocurile cu risc dupa incendiul din Complexul Studentesc. "
+            "Inspectorii verifica instalatiile electrice, subsolurile si accesul autospecialelor in cartierele aglomerate. "
+            "Inspectorul sef a precizat ca amenzile vor merge mai intai spre cazurile cu pericol imediat. "
+            "Primele rezultate vor fi prezentate pana la finalul saptamanii."
+        ),
+    },
+    {
+        "story_id": "banat_01",
+        "source_label": "opiniatimisoarei.ro",
+        "local_geo_origin": "banat_region",
+        "headline": "Fermierii din Banat cer ajutor dupa pierderile provocate de seceta",
+        "content_text": (
+            "Fermierii din Banat cer ajutor dupa pierderile provocate de seceta si de vantul puternic din ultimele saptamani. "
+            "Fermierii spun ca lucrarile de primavara sunt deja intarziate in mai multe zone. "
+            "Asta poate pune presiune pe costurile din ferme si pe preturile unor produse agricole. "
+            "Primele evaluari oficiale sunt asteptate in cateva zile."
+        ),
+    },
+    {
+        "story_id": "banat_02",
+        "source_label": "banatulazi.ro",
+        "local_geo_origin": "banat_region",
+        "headline": "Trenurile spre Timisoara au intarzieri dupa reparatii pe magistrala din vest",
+        "content_text": (
+            "Trenurile spre Timisoara au intarzieri dupa reparatii pe magistrala din vest. "
+            "Calatorii vor vedea timpi mai mari de asteptare si modificari de peron in mai multe gari. "
+            "CFR a transmis ca interventiile rapide vizeaza siguranta circulatiei pe tronsoanele cele mai uzate. "
+            "Programul normal ar putea fi reluat la inceputul saptamanii viitoare."
+        ),
+    },
+]
+
+
 def _note_value(notes: list[str], key: str, default: str) -> str:
     prefix = f"{key}="
     for note in notes:
@@ -349,6 +414,18 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     lead_rewritten_to_reduce_title_repetition = _note_value(edited.editing_debug_notes, "lead_rewritten_to_reduce_title_repetition", "False") == "True"
     lead_continuation_rewrite_applied = _note_value(edited.editing_debug_notes, "lead_continuation_rewrite_applied", "False") == "True"
     lead_opening_type = _note_value(edited.editing_debug_notes, "lead_opening_type", "actor_action")
+    lead_has_personal_attribution = _note_value(edited.editing_debug_notes, "lead_has_personal_attribution", "False") == "True"
+    second_sentence_has_personal_attribution = _note_value(edited.editing_debug_notes, "second_sentence_has_personal_attribution", "False") == "True"
+    promoted_person_attribution_sentence_count = int(_note_value(edited.editing_debug_notes, "promoted_person_attribution_sentence_count", "0"))
+    role_based_attribution_inserted_count = int(_note_value(edited.editing_debug_notes, "role_based_attribution_inserted_count", "0"))
+    stories_with_personal_attribution = _note_value(edited.editing_debug_notes, "stories_with_personal_attribution", "False") == "True"
+    stories_with_institution_only_attribution = _note_value(edited.editing_debug_notes, "stories_with_institution_only_attribution", "False") == "True"
+    stories_with_media_attribution = _note_value(edited.editing_debug_notes, "stories_with_media_attribution", "False") == "True"
+    attribution_type_used = _note_value(edited.editing_debug_notes, "attribution_type_used", "none")
+    attribution_position_used = _note_value(edited.editing_debug_notes, "attribution_position_used", "none")
+    has_named_person = _note_value(edited.editing_debug_notes, "has_named_person", "False") == "True"
+    has_role_based_person = _note_value(edited.editing_debug_notes, "has_role_based_person", "False") == "True"
+    lead_has_quote_or_person = _note_value(edited.editing_debug_notes, "lead_has_quote_or_person", "False") == "True"
     high_title_lead_overlap = _note_value(edited.editing_debug_notes, "high_title_lead_overlap", "False") == "True"
     romania_impact_included = _note_value(edited.editing_debug_notes, "romania_impact_included", "False") == "True"
     strong_closure = _note_value(edited.editing_debug_notes, "strong_closure", "False") == "True"
@@ -370,6 +447,18 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "lead_rewritten_to_reduce_title_repetition": lead_rewritten_to_reduce_title_repetition,
         "lead_continuation_rewrite_applied": lead_continuation_rewrite_applied,
         "lead_opening_type": lead_opening_type,
+        "lead_has_personal_attribution": lead_has_personal_attribution,
+        "second_sentence_has_personal_attribution": second_sentence_has_personal_attribution,
+        "promoted_person_attribution_sentence_count": promoted_person_attribution_sentence_count,
+        "role_based_attribution_inserted_count": role_based_attribution_inserted_count,
+        "stories_with_personal_attribution": stories_with_personal_attribution,
+        "stories_with_institution_only_attribution": stories_with_institution_only_attribution,
+        "stories_with_media_attribution": stories_with_media_attribution,
+        "attribution_type_used": attribution_type_used,
+        "attribution_position_used": attribution_position_used,
+        "has_named_person": has_named_person,
+        "has_role_based_person": has_role_based_person,
+        "lead_has_quote_or_person": lead_has_quote_or_person,
         "high_title_lead_overlap": high_title_lead_overlap,
         "local_geo_origin": fixture.get("local_geo_origin"),
         "main_actor_early_in_lead": main_actor_early,
@@ -395,7 +484,7 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.6",
+        "OPENWAVE RADIO EDITING PREVIEW V1.7",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
@@ -405,6 +494,13 @@ def _render_preview_text(payload: dict[str, object]) -> str:
         f"Leads rewritten to reduce title repetition: {summary['leads_rewritten_to_reduce_title_repetition']}",
         f"Continuation lead rewrites: {summary['lead_continuation_rewrite_count']}",
         f"Lead opening counts: {json.dumps(summary['lead_opening_type_counts'], ensure_ascii=False)}",
+        f"Stories with personal attribution: {summary['stories_with_personal_attribution']}",
+        f"Lead personal attribution count: {summary['lead_has_personal_attribution_count']}",
+        f"Second-sentence personal attribution count: {summary['second_sentence_has_personal_attribution_count']}",
+        f"Promoted person-attribution sentences: {summary['promoted_person_attribution_sentence_count']}",
+        f"Role-based attribution insertions: {summary['role_based_attribution_inserted_count']}",
+        f"Stories with institution-only attribution: {summary['stories_with_institution_only_attribution']}",
+        f"Stories with media attribution: {summary['stories_with_media_attribution']}",
         f"Stories with high title/lead overlap: {summary['stories_with_high_title_lead_overlap']}",
         f"International stories with Romania impact: {summary['international_stories_with_romania_impact']}",
         f"Stories with strong closure: {summary['stories_with_strong_closure']}",
@@ -430,6 +526,12 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
                 f"Lead continuation rewrite: {item['lead_continuation_rewrite_applied']}",
                 f"Lead opening type: {item['lead_opening_type']}",
+                f"Attribution type used: {item['attribution_type_used']}",
+                f"Attribution position used: {item['attribution_position_used']}",
+                f"Lead personal attribution: {item['lead_has_personal_attribution']}",
+                f"Second sentence personal attribution: {item['second_sentence_has_personal_attribution']}",
+                f"Has named person: {item['has_named_person']}",
+                f"Has role-based person: {item['has_role_based_person']}",
                 f"Estimated duration: {item['estimated_duration_seconds']} secunde",
                 f"Attribution: {item['attribution_type']}",
                 f"Romania impact included: {item['romania_impact_included']}",
@@ -478,7 +580,7 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
 
 
 def _fixture_scope(story_id: str) -> str:
-    if story_id.startswith(("bacau_", "vaslui_", "moldova_")):
+    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_")):
         return "local"
     if story_id.startswith("national_"):
         return "national"
@@ -503,13 +605,13 @@ def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
         signals["direct_listener_impact_score"] += 2.6
         signals["emotional_proximity_score"] += 2.0
         signals["locality_proximity_score"] += 2.5
-    if item.get("local_geo_origin") == "vaslui_county":
+    if item.get("local_geo_origin") in {"vaslui_county", "timis_county"}:
         signals["direct_listener_impact_score"] += 1.4
         signals["locality_proximity_score"] += 2.2
-    if item.get("local_geo_origin") == "moldova_region":
+    if item.get("local_geo_origin") in {"moldova_region", "banat_region"}:
         signals["romania_relevance_score"] += 1.2
         signals["locality_proximity_score"] += 1.0
-    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "regiune")):
+    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "regiune")):
         signals["romania_relevance_score"] += 1.6
         signals["locality_proximity_score"] += 1.4
     if any(term in text for term in ("spital", "urgente", "incend", "isu", "siguranta", "cardiace")):
@@ -621,6 +723,44 @@ def _render_victor_vaslui_bulletin(stories: list[dict[str, object]], geo_debug: 
     return "\n".join(lines).strip() + "\n"
 
 
+def _render_ana_timisoara_bulletin(stories: list[dict[str, object]], geo_debug: dict[str, object]) -> str:
+    total_duration = sum(story["estimated_duration_seconds"] for story in stories)
+    lines = [
+        "OPENWAVE GENERALIST BULLETIN - ANA / TIMISOARA",
+        "",
+        f"Stories: {len(stories)}",
+        f"Estimated story-only duration: {total_duration} secunde",
+        "Editorial target mix: local 5, national 6, international 4.",
+        "Ordering rule: strongest listener impact first, with mixed local/national/international pacing.",
+        f"Resolved user city: {geo_debug['resolved_user_city']}",
+        f"Resolved user county: {geo_debug['resolved_user_county']}",
+        f"Resolved user region: {geo_debug['resolved_user_region']}",
+        f"Local source registry used: {geo_debug['local_source_registry_used']}",
+        f"Local sources selected for county: {', '.join(geo_debug['local_sources_selected']) or 'none'}",
+        f"Local story count from Timis: {geo_debug['local_story_count_from_timis']}",
+        f"Local story count from Banat region: {geo_debug['local_story_count_from_banat_region']}",
+        f"Stories with personal attribution: {geo_debug['stories_with_personal_attribution']}",
+        f"Lead continuation rewrites: {geo_debug['lead_continuation_rewrite_count']}",
+        f"Lead opening counts: {json.dumps(geo_debug['lead_opening_type_counts'], ensure_ascii=False)}",
+        "",
+    ]
+    for item in stories:
+        lines.extend([
+            f"{item['position']}. {item['headline_original']}",
+            f"   Scope: {item['source_scope']}",
+            f"   Local origin: {item.get('local_geo_origin') or 'none'}",
+            f"   Radio priority: {item['radio_priority_score']}",
+            f"   Ordering signals: {json.dumps(item['ordering_signals'], ensure_ascii=False)}",
+            f"   Lead/title overlap: {item['lead_title_overlap_score']}",
+            f"   Attribution type used: {item['attribution_type_used']}",
+            f"   Attribution position used: {item['attribution_position_used']}",
+            f"   Lead continuation rewrite applied: {item['lead_continuation_rewrite_applied']}",
+            item["radio_text"],
+            "",
+        ])
+    return "\n".join(lines).strip() + "\n"
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
@@ -665,6 +805,13 @@ def main() -> None:
         "leads_rewritten_to_reduce_title_repetition": sum(1 for item in preview_stories if item["lead_rewritten_to_reduce_title_repetition"]),
         "lead_continuation_rewrite_count": sum(1 for item in preview_stories if item["lead_continuation_rewrite_applied"]),
         "lead_opening_type_counts": lead_opening_type_counts,
+        "stories_with_personal_attribution": sum(1 for item in preview_stories if item["stories_with_personal_attribution"]),
+        "lead_has_personal_attribution_count": sum(1 for item in preview_stories if item["lead_has_personal_attribution"]),
+        "second_sentence_has_personal_attribution_count": sum(1 for item in preview_stories if item["second_sentence_has_personal_attribution"]),
+        "promoted_person_attribution_sentence_count": sum(item["promoted_person_attribution_sentence_count"] for item in preview_stories),
+        "role_based_attribution_inserted_count": sum(item["role_based_attribution_inserted_count"] for item in preview_stories),
+        "stories_with_institution_only_attribution": sum(1 for item in preview_stories if item["stories_with_institution_only_attribution"]),
+        "stories_with_media_attribution": sum(1 for item in preview_stories if item["stories_with_media_attribution"]),
         "stories_with_high_title_lead_overlap": sum(1 for item in preview_stories if item["high_title_lead_overlap"]),
         "international_stories_with_romania_impact": sum(
             1 for item in preview_stories if item["source_scope"] == "international" and item["romania_impact_included"]
@@ -722,6 +869,38 @@ def main() -> None:
         },
     }
     VICTOR_VASLUI_OUTPUT_PATH.write_text(_render_victor_vaslui_bulletin(victor_vaslui_stories, victor_geo_debug), encoding="utf-8")
+
+    ana_personalization = UserPersonalization(
+        listener_profile=ListenerProfile(first_name="Ana", country="Romania", city="Timisoara"),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=35, national=40, international=25),
+        ),
+    )
+    ana_geo = resolve_listener_geography(city="Timisoara", region=None)
+    ana_local_resolution = SourceWatcherService().resolve_local_sources_for_personalization(ana_personalization)
+    ana_mix_fixtures = ANA_TIMISOARA_LOCAL_FIXTURES + [
+        fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
+    ]
+    ana_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(ana_mix_fixtures, start=1)]
+    ana_timisoara_stories = _order_victor_vaslui_bulletin(ana_base_stories)
+    ana_geo_debug = {
+        "resolved_user_city": ana_geo.resolved_city,
+        "resolved_user_county": ana_geo.resolved_county,
+        "resolved_user_region": ana_geo.resolved_macro_region,
+        "local_source_registry_used": ana_local_resolution.local_source_registry_used,
+        "local_sources_selected": [item.source_name for item in ana_local_resolution.resolved_sources],
+        "local_story_count_from_timis": sum(1 for item in ana_timisoara_stories if item.get("local_geo_origin") == "timis_county"),
+        "local_story_count_from_banat_region": sum(1 for item in ana_timisoara_stories if item.get("local_geo_origin") == "banat_region"),
+        "stories_with_personal_attribution": sum(1 for item in ana_timisoara_stories if item["stories_with_personal_attribution"]),
+        "lead_continuation_rewrite_count": sum(1 for item in ana_timisoara_stories if item["lead_continuation_rewrite_applied"]),
+        "lead_opening_type_counts": {
+            "consequence": sum(1 for item in ana_timisoara_stories if item["lead_opening_type"] == "consequence"),
+            "concrete_action": sum(1 for item in ana_timisoara_stories if item["lead_opening_type"] == "concrete_action"),
+            "affected_audience": sum(1 for item in ana_timisoara_stories if item["lead_opening_type"] == "affected_audience"),
+            "actor_action": sum(1 for item in ana_timisoara_stories if item["lead_opening_type"] == "actor_action"),
+        },
+    }
+    ANA_TIMISOARA_OUTPUT_PATH.write_text(_render_ana_timisoara_bulletin(ana_timisoara_stories, ana_geo_debug), encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,181 @@
+OPENWAVE GENERALIST BULLETIN - ANA / TIMISOARA
+
+Stories: 15
+Estimated story-only duration: 360 secunde
+Editorial target mix: local 5, national 6, international 4.
+Ordering rule: strongest listener impact first, with mixed local/national/international pacing.
+Resolved user city: Timisoara
+Resolved user county: Timis
+Resolved user region: Banat
+Local source registry used: True
+Local sources selected for county: opiniatimisoarei.ro, timponline.ro, banatulazi.ro
+Local story count from Timis: 3
+Local story count from Banat region: 2
+Stories with personal attribution: 4
+Lead continuation rewrites: 7
+Lead opening counts: {"consequence": 0, "concrete_action": 3, "affected_audience": 5, "actor_action": 7}
+
+1. Fermierii din Banat cer ajutor dupa pierderile provocate de seceta.
+   Scope: local
+   Local origin: banat_region
+   Radio priority: 31.72
+   Ordering signals: {"direct_listener_impact_score": 4.9, "urgency_score": 2.6, "emotional_proximity_score": 2.0, "cost_of_living_score": 3.2, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 3.0, "romania_relevance_score": 2.8, "locality_proximity_score": 4.9, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.14
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: True
+Fermierii spun ca lucrarile de primavara sunt deja intarziate in mai multe zone. Asta poate pune presiune pe costurile din ferme si pe preturile unor produse agricole. Primele evaluari oficiale sunt asteptate in cateva zile.
+
+2. ISU Timis dubleaza controalele la blocurile cu risc dupa incendiul din Complex.
+   Scope: local
+   Local origin: timis_county
+   Radio priority: 29.9
+   Ordering signals: {"direct_listener_impact_score": 5.4, "urgency_score": 2.6, "emotional_proximity_score": 2.0, "cost_of_living_score": 0.0, "health_and_safety_score": 3.4, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 1.6, "locality_proximity_score": 6.1, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.0
+   Attribution type used: role_based_person
+   Attribution position used: sentence_2
+   Lead continuation rewrite applied: True
+Inspectorii verifica instalatiile electrice, subsolurile si accesul autospecialelor in cartierele aglomerate. Inspectorul sef a precizat ca amenzile vor merge mai intai spre cazurile cu pericol imediat. Primele rezultate vor fi prezentate pana la finalul saptamanii.
+
+3. Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz.
+   Scope: international
+   Local origin: none
+   Radio priority: 15.52
+   Ordering signals: {"direct_listener_impact_score": 2.3, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 3.2, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 3.0, "romania_relevance_score": 2.4, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.57
+   Attribution type used: institution
+   Attribution position used: lead
+   Lead continuation rewrite applied: False
+Casa Alba a anuntat trimiterea unor nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Traderii urmaresc deja riscul unui nou soc pe piata transportului. Asta poate aduce noi scumpiri la petrol si energie in Europa. Primele efecte sunt asteptate in cateva saptamani.
+
+4. Trenurile spre Timisoara au intarzieri dupa reparatii pe magistrala din vest.
+   Scope: local
+   Local origin: banat_region
+   Radio priority: 27.46
+   Ordering signals: {"direct_listener_impact_score": 4.0, "urgency_score": 2.6, "emotional_proximity_score": 2.0, "cost_of_living_score": 0.0, "health_and_safety_score": 3.4, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 2.8, "locality_proximity_score": 4.9, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.0
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: True
+Calatorii vor vedea timpi mai mari de asteptare si modificari de peron in mai multe gari. CFR a transmis ca interventiile rapide vizeaza siguranta circulatiei pe tronsoanele cele mai uzate. Programul normal ar putea fi reluat la inceputul saptamanii viitoare.
+
+5. Primaria Timisoara muta circulatia in zona Garii de Nord pentru lucrari.
+   Scope: local
+   Local origin: timis_county
+   Radio priority: 27.32
+   Ordering signals: {"direct_listener_impact_score": 5.1, "urgency_score": 2.6, "emotional_proximity_score": 2.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 3.0, "romania_relevance_score": 1.6, "locality_proximity_score": 6.1, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.0
+   Attribution type used: role_based_person
+   Attribution position used: sentence_2
+   Lead continuation rewrite applied: True
+Soferii vor circula pe benzi ingustate si pe rute ocolitoare la orele de varf. Primarul a transmis ca restrictiile vor fi etapizate pe parcursul urmatoarelor doua saptamani. Primele limitari intra in vigoare de luni dimineata.
+
+6. Guvernul pregateste schema noua de sprijin pentru facturile la energie.
+   Scope: national
+   Local origin: none
+   Radio priority: 8.8
+   Ordering signals: {"direct_listener_impact_score": 1.2, "urgency_score": 2.6, "emotional_proximity_score": 0.0, "cost_of_living_score": 3.2, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 0.0, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 1.4}
+   Lead/title overlap: 0.67
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: False
+Guvernul lucreaza la un nou sprijin pentru facturile la energie. Asta poate schimba costurile lunare pentru consumatori vulnerabili. Ministerul Energiei vrea ajutor tintit pentru gospodariile cu venituri mici si pentru unele firme. Proiectul ar urma sa fie prezentat in cateva zile.
+
+7. Spitalul de Copii din Timisoara extinde programul pentru urgente respiratorii.
+   Scope: local
+   Local origin: timis_county
+   Radio priority: 26.26
+   Ordering signals: {"direct_listener_impact_score": 5.4, "urgency_score": 0.0, "emotional_proximity_score": 2.0, "cost_of_living_score": 0.0, "health_and_safety_score": 3.4, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 1.6, "locality_proximity_score": 6.1, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.0
+   Attribution type used: role_based_person
+   Attribution position used: sentence_2
+   Lead continuation rewrite applied: True
+Pacientii primesc triaj separat si consult mai rapid in intervalul de seara. Directorul unitatii spune ca echipele suplimentare raman in garda pana la finalul lunii. Programul extins functioneaza de la inceputul acestei saptamani.
+
+8. NATO muta exercitii suplimentare in zona Marii Negre.
+   Scope: international
+   Local origin: none
+   Radio priority: 8.68
+   Ordering signals: {"direct_listener_impact_score": 1.1, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 3.0, "romania_relevance_score": 2.4, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.83
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: False
+NATO a decis mutarea unor exercitii suplimentare in zona Marii Negre in urmatoarele saptamani. Pentru Romania, asta inseamna atentie mai mare la securitatea regionala si la transportul militar. Alianta spune ca manevrele urmaresc reactii mai rapide pe flancul estic. Programul final al exercitiilor va fi confirmat in curand.
+
+9. ANAF extinde verificarile dupa o frauda cu TVA.
+   Scope: national
+   Local origin: none
+   Radio priority: 6.84
+   Ordering signals: {"direct_listener_impact_score": 1.2, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 3.2, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 0.0, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.17
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: True
+Inspectorii spun ca prejudiciul trece de 2,3 milioane lei si ca o parte din rambursari a fost deja blocata. Asta inseamna presiune mai mare pe companiile verificate si pe colectarea la buget. Primele rezultate oficiale sunt asteptate dupa inchiderea controalelor din teritoriu.
+
+10. Fermierii cer sprijin dupa seceta din sud si est.
+   Scope: national
+   Local origin: none
+   Radio priority: 6.84
+   Ordering signals: {"direct_listener_impact_score": 1.2, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 3.2, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 0.0, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.67
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: False
+Fermierii solicita ajutor dupa seceta din sud si est. Ministerul Agriculturii pregateste evaluari finale pe teren. Asta poate ridica presiunea pe preturile la alimente in urmatoarele luni. Primele efecte sunt asteptate in cateva saptamani.
+
+11. SUA pregatesc restrictii noi pentru exporturile de cipuri AI.
+   Scope: international
+   Local origin: none
+   Radio priority: 4.72
+   Ordering signals: {"direct_listener_impact_score": 0.0, "urgency_score": 2.6, "emotional_proximity_score": 0.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 2.4, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 1.4}
+   Lead/title overlap: 0.6
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: False
+Statele Unite lucreaza la restrictii suplimentare pentru exporturile de cipuri AI. Pentru Romania, efectul se poate vedea in costuri mai mari si intarzieri pe lanturile de aprovizionare. Asta poate lovi lanturile globale de aprovizionare si costurile din industria tech. Primele detalii oficiale sunt asteptate in aceasta luna.
+
+12. Premierul Ilie Bolojan anunta reguli noi pentru marile investitii.
+   Scope: national
+   Local origin: none
+   Radio priority: 3.64
+   Ordering signals: {"direct_listener_impact_score": 0.0, "urgency_score": 2.6, "emotional_proximity_score": 0.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 0.0, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.43
+   Attribution type used: named_person
+   Attribution position used: lead
+   Lead continuation rewrite applied: False
+Premierul Ilie Bolojan a anuntat simplificarea avizelor pentru investitiile mari. Guvernul reduce numarul de avize si promite termene mai scurte pentru aprobari. Asta ar putea grabi santierele mari si reduce costurile pentru firme. Primele masuri intra in vigoare luna viitoare.
+
+13. Uniunea Europeana impune reguli noi pentru bateriile importate.
+   Scope: international
+   Local origin: none
+   Radio priority: 1.08
+   Ordering signals: {"direct_listener_impact_score": 0.0, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 2.4, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 1.4}
+   Lead/title overlap: 0.0
+   Attribution type used: media
+   Attribution position used: sentence_2
+   Lead continuation rewrite applied: True
+Companiile vor trebui sa arate mai clar originea materialelor si standardele de reciclare. Pentru Romania, efectul se poate vedea in costuri mai mari si intarzieri pe lanturile de aprovizionare. Noile cerinte se aplica treptat de anul viitor.
+
+14. CSM respinge propunerea pentru un post-cheie la DNA.
+   Scope: national
+   Local origin: none
+   Radio priority: 0.0
+   Ordering signals: {"direct_listener_impact_score": 0.0, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 0.0, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.67
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: False
+CSM a dat aviz negativ pentru un post-cheie la DNA. Avizul negativ vine dupa audieri si lasa Ministerul Justitiei fara un nume acceptat pentru functie. Decizia mentine presiunea asupra numirilor din marile parchete. Ministerul poate reveni cu o noua propunere in zilele urmatoare.
+
+15. Ministerul Educatiei lanseaza catalogul digital in mai multe judete.
+   Scope: national
+   Local origin: none
+   Radio priority: 0.0
+   Ordering signals: {"direct_listener_impact_score": 0.0, "urgency_score": 0.0, "emotional_proximity_score": 0.0, "cost_of_living_score": 0.0, "health_and_safety_score": 0.0, "traffic_and_daily_life_score": 0.0, "romania_relevance_score": 0.0, "locality_proximity_score": 0.0, "long_term_vs_immediate_penalty": 0.0}
+   Lead/title overlap: 0.38
+   Attribution type used: none
+   Attribution position used: none
+   Lead continuation rewrite applied: False
+Ministerul Educatiei duce sistemul online de note in alte judete. Platforma va aduna absentele, notele si comunicarile dintre profesori si parinti in acelasi loc. Asta poate reduce timpul pierdut cu hartiile in scoli si licee. Primele unitati intra in program la inceputul anului scolar.

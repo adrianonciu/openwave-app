@@ -72,7 +72,7 @@ ACTION_VERBS = {
     "confirma", "spune", "transmite", "estimeaza", "respinge", "reduce", "introduce",
     "poate", "promite", "da", "vizeaza", "lucreaza", "urmareste", "schimba", "inseamna",
 }
-REACTION_VERBS = {"spune", "a spus", "transmite", "a transmis", "confirma", "a confirmat", "estimeaza", "a anuntat", "anunta", "promite", "respinge"}
+REACTION_VERBS = {"spune", "a spus", "transmite", "a transmis", "confirma", "a confirmat", "estimeaza", "a anuntat", "anunta", "promite", "respinge", "a declarat", "declara", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "a avertizat", "avertizeaza"}
 DETAIL_KEYWORDS = {
     "ordonanta", "aviz", "controale", "schema", "frauda", "nave", "lucrari", "benzi",
     "audieri", "rambursarile", "santierul", "prejudiciul", "transportul", "actul", "semaforizare",
@@ -181,7 +181,24 @@ LEAD_EVENT_NOMINALIZATIONS = {
 }
 CONSEQUENCE_LEAD_STARTS = ("de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata", "de duminica", "primele restrictii", "primele efecte", "in cateva", "din aceasta", "de la inceputul")
 CONCRETE_ACTION_LEAD_STARTS = ("pompierii", "soferii", "pacientii", "inspectorii", "autoritatile", "echipele", "medicii", "elevii", "parintii", "companiile", "santierul")
-AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii")
+AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii", "calatorii")
+PERSONAL_ATTRIBUTION_VERBS = ("a declarat", "declara", "a spus", "spune", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "promite", "a avertizat", "avertizeaza", "a anuntat", "anunta", "a transmis", "transmite")
+ROLE_BASED_PERSON_MARKERS = ("primarul", "directorul", "director", "inspectorul", "inspectorii", "prefectul", "medicul", "medicul sef", "medicul coordonator", "fermierii", "soferii", "autoritatile locale", "managerul", "ministrul", "premierul")
+PERSONAL_ATTRIBUTION_ENCOURAGED_TERMS = ("primarie", "spital", "isu", "trafic", "lucrari", "restrictii", "drum", "educatie", "scoala", "elev", "fermier", "seceta", "preturi", "servicii", "controverse", "controale", "urgente")
+ROLE_BASED_ATTRIBUTION_MAP = {
+    "primaria": "Primarul",
+    "spitalul": "Directorul spitalului",
+    "spital": "Directorul spitalului",
+    "isu": "Inspectorul ISU",
+    "inspectoratul": "Inspectorul ISU",
+    "guvernul": "Premierul",
+    "ministerul educatiei": "Ministrul Educatiei",
+    "ministerul agriculturii": "Ministrul Agriculturii",
+    "ministerul energiei": "Ministrul Energiei",
+    "ministerul": "Ministrul",
+    "consiliul judetean": "Presedintele Consiliului Judetean",
+    "autoritatile locale": "Autoritatile locale",
+}
 
 
 class RadioEditingService:
@@ -207,6 +224,18 @@ class RadioEditingService:
         debug_notes.append(f"lead_rewritten_to_reduce_title_repetition={polish_metrics['lead_rewritten_to_reduce_title_repetition']}")
         debug_notes.append(f"lead_continuation_rewrite_applied={polish_metrics['lead_continuation_rewrite_applied']}")
         debug_notes.append(f"lead_opening_type={polish_metrics['lead_opening_type']}")
+        debug_notes.append(f"lead_has_personal_attribution={polish_metrics['lead_has_personal_attribution']}")
+        debug_notes.append(f"second_sentence_has_personal_attribution={polish_metrics['second_sentence_has_personal_attribution']}")
+        debug_notes.append(f"promoted_person_attribution_sentence_count={polish_metrics['promoted_person_attribution_sentence_count']}")
+        debug_notes.append(f"role_based_attribution_inserted_count={polish_metrics['role_based_attribution_inserted_count']}")
+        debug_notes.append(f"stories_with_personal_attribution={polish_metrics['stories_with_personal_attribution']}")
+        debug_notes.append(f"stories_with_institution_only_attribution={polish_metrics['stories_with_institution_only_attribution']}")
+        debug_notes.append(f"stories_with_media_attribution={polish_metrics['stories_with_media_attribution']}")
+        debug_notes.append(f"attribution_type_used={polish_metrics['attribution_type_used']}")
+        debug_notes.append(f"attribution_position_used={polish_metrics['attribution_position_used']}")
+        debug_notes.append(f"has_named_person={polish_metrics['has_named_person']}")
+        debug_notes.append(f"has_role_based_person={polish_metrics['has_role_based_person']}")
+        debug_notes.append(f"lead_has_quote_or_person={polish_metrics['lead_has_quote_or_person']}")
         debug_notes.append(f"high_title_lead_overlap={polish_metrics['high_title_lead_overlap']}")
         debug_notes.append(f"romania_impact_included={polish_metrics['romania_impact_included']}")
         debug_notes.append(f"strong_closure={polish_metrics['strong_closure']}")
@@ -347,6 +376,7 @@ class RadioEditingService:
             "source_scope": self._infer_story_scope(article_or_story, str(source_label).strip() if source_label else None, full_text),
             "top_person": top_person,
             "top_person_role": self._extract_role_alias(full_text, top_person) if top_person else None,
+            "available_role_markers": self._extract_role_markers(full_text),
         }
 
     def _determine_story_band(self, payload: dict[str, object]) -> str:
@@ -386,6 +416,8 @@ class RadioEditingService:
         reaction = any(verb in lowered for verb in REACTION_VERBS)
         next_step = any(keyword in lowered for keyword in NEXT_STEP_KEYWORDS)
         contrast = any(keyword in lowered for keyword in CONTRAST_MARKERS)
+        named_personal_attribution = self._has_named_personal_attribution_sentence(sentence, people)
+        role_based_personal_attribution = self._has_role_based_personal_attribution_sentence(sentence)
 
         score = 22 - (index * 2)
         reasons = [f"position={index + 1}"]
@@ -411,6 +443,12 @@ class RadioEditingService:
         if next_step:
             score += 6
             reasons.append("next_step")
+        if named_personal_attribution:
+            score += 14
+            reasons.append("named_personal_attribution")
+        elif role_based_personal_attribution:
+            score += 9
+            reasons.append("role_based_personal_attribution")
         if contrast:
             score -= 4
             reasons.append("contrast_penalty")
@@ -501,6 +539,7 @@ class RadioEditingService:
         polished = [self._simplify_operational_language(sentence) for sentence in sentences if sentence]
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
         polished, lead_rewrite_meta = self._rewrite_title_like_lead(payload, compression, polished)
+        polished = self._promote_personal_attribution(payload, compression, polished)
         polished = self._reinforce_romania_impact(payload, compression, polished)
         polished = self._replace_repeated_person_names(payload, polished)
         polished = self._limit_attribution_slots(polished)
@@ -511,6 +550,8 @@ class RadioEditingService:
             if sentence
         ]
         lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], polished[0] if polished else ""), 2)
+        attribution_type_used = self._story_attribution_type(polished, payload)
+        attribution_position_used = self._attribution_position_used(polished, payload)
         metrics = {
             "lead_title_overlap_score": lead_title_overlap_score,
             "lead_rewritten_to_reduce_title_repetition": lead_rewrite_meta["lead_rewritten_to_reduce_title_repetition"],
@@ -523,6 +564,18 @@ class RadioEditingService:
             "multiple_attributions": self._count_explicit_attributions(polished) > 1,
             "administrative_closure": bool(polished and self._is_administrative_sentence(polished[-1])),
             "simplified_operational_description_count": simplified_count,
+            "stories_with_personal_attribution": attribution_type_used in {"named_person", "role_based_person"},
+            "lead_has_personal_attribution": bool(polished and self._sentence_personal_attribution_type(polished[0], payload) in {"named_person", "role_based_person"}),
+            "second_sentence_has_personal_attribution": len(polished) > 1 and self._sentence_personal_attribution_type(polished[1], payload) in {"named_person", "role_based_person"},
+            "promoted_person_attribution_sentence_count": 1 if attribution_position_used in {"lead", "sentence_2"} and attribution_type_used in {"named_person", "role_based_person"} else 0,
+            "role_based_attribution_inserted_count": 1 if any(self._sentence_personal_attribution_type(sentence, payload) == "role_based_person" for sentence in polished) else 0,
+            "stories_with_institution_only_attribution": attribution_type_used == "institution",
+            "stories_with_media_attribution": attribution_type_used == "media",
+            "attribution_type_used": attribution_type_used,
+            "attribution_position_used": attribution_position_used,
+            "has_named_person": bool(payload.get("top_person")),
+            "has_role_based_person": bool(payload.get("available_role_markers")),
+            "lead_has_quote_or_person": bool(polished and self._sentence_personal_attribution_type(polished[0], payload) != "none"),
         }
         return polished[:MAX_SENTENCE_COUNT], metrics
 
@@ -1068,6 +1121,133 @@ class RadioEditingService:
             return "Masura intra in vigoare luna viitoare."
         return ""
 
+    def _promote_personal_attribution(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        if not sentences or not self._personal_attribution_is_helpful(payload):
+            return sentences
+        if any(self._sentence_personal_attribution_type(sentence, payload) in {"named_person", "role_based_person"} for sentence in sentences[:2]):
+            return sentences
+        candidate = self._best_personal_attribution_sentence(payload, compression, sentences)
+        if not candidate:
+            return sentences
+        updated = list(sentences)
+        if candidate in updated:
+            updated.remove(candidate)
+        else:
+            updated = [sentence for sentence in updated if not self._is_near_duplicate(sentence, [candidate])]
+        insert_at = 1 if updated else 0
+        updated.insert(insert_at, candidate)
+        return updated[:MAX_SENTENCE_COUNT]
+
+    def _best_personal_attribution_sentence(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> str:
+        existing = list(sentences)
+        candidates: list[tuple[float, str]] = []
+        for sentence in list(sentences) + [item.text for item in compression.dropped_sentences] + list(payload["source_text_sentences"]):
+            candidate = self._candidate_personal_attribution_sentence(sentence, payload, compression.kept_entities)
+            if not candidate or self._is_near_duplicate(candidate, existing[:2]):
+                continue
+            attribution_type = self._sentence_personal_attribution_type(candidate, payload)
+            if attribution_type not in {"named_person", "role_based_person"}:
+                continue
+            score = 2.0 if attribution_type == "named_person" else 1.4
+            if self._sentence_has_impact(candidate) or self._sentence_has_next_step(candidate):
+                score += 0.4
+            candidates.append((score, candidate))
+        if not candidates:
+            return ""
+        return max(candidates, key=lambda item: (item[0], -self._word_count(item[1])))[1]
+
+    def _candidate_personal_attribution_sentence(
+        self,
+        sentence: str,
+        payload: dict[str, object],
+        kept_entities: list[str],
+    ) -> str:
+        rewritten = self._rewrite_for_radio(sentence, "reaction", kept_entities)
+        if self._sentence_personal_attribution_type(rewritten, payload) in {"named_person", "role_based_person"}:
+            return rewritten
+        role_based = self._convert_institution_to_role_attribution(sentence, payload)
+        if role_based:
+            return self._rewrite_for_radio(role_based, "reaction", kept_entities)
+        return ""
+
+    def _convert_institution_to_role_attribution(self, sentence: str, payload: dict[str, object]) -> str:
+        cleaned = self._clean_text(sentence)
+        lowered = cleaned.lower()
+        if not any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+            return ""
+        for institution, role in ROLE_BASED_ATTRIBUTION_MAP.items():
+            if lowered.startswith(institution):
+                pattern = re.compile(rf"^{re.escape(institution)}", re.IGNORECASE)
+                candidate = pattern.sub(role, cleaned, count=1)
+                if role.lower() == candidate.lower():
+                    continue
+                return candidate
+        return ""
+
+    def _personal_attribution_is_helpful(self, payload: dict[str, object]) -> bool:
+        lowered = payload["full_text"].lower()
+        if payload.get("source_scope") == "local":
+            return True
+        return any(term in lowered for term in PERSONAL_ATTRIBUTION_ENCOURAGED_TERMS)
+
+    def _extract_role_markers(self, text: str) -> list[str]:
+        lowered = text.lower()
+        found: list[str] = []
+        for marker in ROLE_BASED_PERSON_MARKERS:
+            if marker in lowered and marker not in found:
+                found.append(marker)
+        return found
+
+    def _has_named_personal_attribution_sentence(self, sentence: str, people: list[str]) -> bool:
+        lowered = sentence.lower()
+        return bool(people) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS)
+
+    def _has_role_based_personal_attribution_sentence(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        return any(marker in lowered for marker in ROLE_BASED_PERSON_MARKERS) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS)
+
+    def _sentence_personal_attribution_type(self, sentence: str, payload: dict[str, object]) -> str:
+        lowered = sentence.lower()
+        top_person = str(payload.get("top_person") or "").strip().lower()
+        source_label = str(payload.get("source_label") or "").strip().lower()
+        if top_person and top_person in lowered and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+            return "named_person"
+        if any(marker in lowered for marker in ROLE_BASED_PERSON_MARKERS) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+            return "role_based_person"
+        if any(institution.lower() in lowered for institution in self._extract_institutions(payload["full_text"])) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+            return "institution"
+        if source_label and source_label in lowered:
+            return "media"
+        return "none"
+
+    def _story_attribution_type(self, sentences: list[str], payload: dict[str, object]) -> str:
+        for sentence in sentences:
+            attribution_type = self._sentence_personal_attribution_type(sentence, payload)
+            if attribution_type != "none":
+                return attribution_type
+        return "none"
+
+    def _attribution_position_used(self, sentences: list[str], payload: dict[str, object]) -> str:
+        for index, sentence in enumerate(sentences):
+            if self._sentence_personal_attribution_type(sentence, payload) == "none":
+                continue
+            if index == 0:
+                return "lead"
+            if index == 1:
+                return "sentence_2"
+            return "later"
+        return "none"
+
     def _extract_role_alias(self, text: str, person: str) -> str | None:
         if not person:
             return None
@@ -1276,16 +1456,26 @@ class RadioEditingService:
         return any(keyword in lowered for keyword in NEXT_STEP_KEYWORDS)
 
     def _detect_attribution_slot(self, radio_text: str, payload: dict[str, object]) -> str:
-        lowered = radio_text.lower()
-        for person in self._extract_persons(payload["full_text"]):
-            if person.lower() in lowered and any(token in lowered for token in ["a spus", "a anuntat", "spune", "anunta"]):
-                return f"person:{person}"
-        for institution in self._extract_institutions(payload["full_text"]):
-            if institution.lower() in lowered and any(token in lowered for token in ["a transmis", "spune", "anunta", "confirma"]):
-                return f"institution:{institution}"
-        source_label = str(payload.get("source_label") or "").strip()
-        if source_label and source_label.lower() in lowered:
-            return f"media:{source_label}"
+        sentences = [sentence.strip() for sentence in SENTENCE_SPLIT_PATTERN.split(radio_text) if sentence.strip()]
+        for sentence in sentences:
+            attribution_type = self._sentence_personal_attribution_type(sentence, payload)
+            if attribution_type == "named_person":
+                for person in self._extract_persons(payload["full_text"]):
+                    if person.lower() in sentence.lower():
+                        return f"person:{person}"
+            if attribution_type == "role_based_person":
+                for role_marker in payload.get("available_role_markers") or []:
+                    if role_marker in sentence.lower():
+                        return f"role:{role_marker}"
+                return "role:person"
+            if attribution_type == "institution":
+                for institution in self._extract_institutions(payload["full_text"]):
+                    if institution.lower() in sentence.lower():
+                        return f"institution:{institution}"
+            if attribution_type == "media":
+                source_label = str(payload.get("source_label") or "").strip()
+                if source_label:
+                    return f"media:{source_label}"
         return "none"
 
     def _main_actor_appears_early(self, lead_sentence: str, kept_entities: list[str]) -> bool:
