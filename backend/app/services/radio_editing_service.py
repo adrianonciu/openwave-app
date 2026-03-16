@@ -179,9 +179,9 @@ LEAD_EVENT_NOMINALIZATIONS = {
     "muta": "mutarea",
     "simplifica": "simplificarea",
 }
-CONSEQUENCE_LEAD_STARTS = ("de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata", "de duminica", "primele restrictii", "primele efecte", "in cateva", "din aceasta", "de la inceputul")
-CONCRETE_ACTION_LEAD_STARTS = ("pompierii", "soferii", "pacientii", "inspectorii", "autoritatile", "echipele", "medicii", "elevii", "parintii", "companiile", "santierul")
-AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii", "calatorii")
+CONSEQUENCE_LEAD_STARTS = ("asta inseamna", "de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata", "de duminica", "primele restrictii", "primele verificari", "primele efecte", "in cateva", "din aceasta", "de la inceputul")
+CONCRETE_ACTION_LEAD_STARTS = ("pompierii", "inspectorii", "echipele", "medicii", "autoritatile", "masura vizeaza", "masura aduce", "primele verificari")
+AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii", "calatorii", "administratorii")
 PERSONAL_ATTRIBUTION_VERBS = ("a declarat", "declara", "a spus", "spune", "spun", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "promite", "a avertizat", "avertizeaza", "a anuntat", "anunta", "a transmis", "transmite", "transmit", "relateaza", "scrie")
 ROLE_BASED_PERSON_MARKERS = ("primarul", "directorul", "director", "inspectorul", "inspectorii", "prefectul", "medicul", "medicul sef", "medicul coordonator", "fermierii", "soferii", "autoritatile locale", "managerul", "ministrul", "premierul")
 PERSONAL_ATTRIBUTION_ENCOURAGED_TERMS = ("primarie", "spital", "isu", "trafic", "lucrari", "restrictii", "drum", "educatie", "scoala", "elev", "fermier", "seceta", "preturi", "servicii", "controverse", "controale", "urgente")
@@ -198,6 +198,15 @@ ROLE_BASED_ATTRIBUTION_MAP = {
     "ministerul": "Ministrul",
     "consiliul judetean": "Presedintele Consiliului Judetean",
     "autoritatile locale": "Autoritatile locale",
+}
+
+TITLE_ACTION_FAMILY_MARKERS = {
+    "scale_up": ("dublez", "dubleaza", "dublat", "extinde", "extind", "mareste", "maresc", "verificari extinse"),
+    "prepare": ("pregateste", "pregatesc", "lucreaza la", "schema noua", "sprijin"),
+    "reroute": ("muta", "mutarea", "redirectioneaza", "deviaza", "rute ocolitoare"),
+    "reject": ("respinge", "respins", "aviz negativ", "blocheaza", "blocat"),
+    "launch": ("lanseaza", "introduce", "duce sistemul", "catalogul digital", "introduce sistemul"),
+    "start": ("incepe", "inceperea", "inceput", "deschide", "deschid", "porneste"),
 }
 
 
@@ -223,7 +232,14 @@ class RadioEditingService:
         debug_notes.append(f"lead_title_overlap_score={polish_metrics['lead_title_overlap_score']}")
         debug_notes.append(f"lead_rewritten_to_reduce_title_repetition={polish_metrics['lead_rewritten_to_reduce_title_repetition']}")
         debug_notes.append(f"lead_continuation_rewrite_applied={polish_metrics['lead_continuation_rewrite_applied']}")
+        debug_notes.append(f"stories_rewritten_via_continuation_strategy={polish_metrics['stories_rewritten_via_continuation_strategy']}")
         debug_notes.append(f"lead_opening_type={polish_metrics['lead_opening_type']}")
+        debug_notes.append(f"generated_lead_initial={polish_metrics['generated_lead_initial']}")
+        debug_notes.append(f"generated_lead_final={polish_metrics['generated_lead_final']}")
+        debug_notes.append(f"title_main_entity={polish_metrics['title_main_entity']}")
+        debug_notes.append(f"title_main_action_family={polish_metrics['title_main_action_family']}")
+        debug_notes.append(f"stories_with_lead_starting_with_institution={polish_metrics['stories_with_lead_starting_with_institution']}")
+        debug_notes.append(f"stories_with_lead_starting_with_institution_and_title_like_action={polish_metrics['stories_with_lead_starting_with_institution_and_title_like_action']}")
         debug_notes.append(f"lead_has_personal_attribution={polish_metrics['lead_has_personal_attribution']}")
         debug_notes.append(f"second_sentence_has_personal_attribution={polish_metrics['second_sentence_has_personal_attribution']}")
         debug_notes.append(f"promoted_person_attribution_sentence_count={polish_metrics['promoted_person_attribution_sentence_count']}")
@@ -548,6 +564,7 @@ class RadioEditingService:
     def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool | str]]:
         polished = [self._simplify_operational_language(sentence) for sentence in sentences if sentence]
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
+        initial_lead = polished[0] if polished else ""
         polished, lead_rewrite_meta = self._rewrite_title_like_lead(payload, compression, polished)
         polished = self._promote_personal_attribution(payload, compression, polished)
         polished = self._ensure_attributed_voice(payload, compression, polished)
@@ -561,16 +578,25 @@ class RadioEditingService:
             for index, sentence in enumerate(polished)
             if sentence
         ]
-        lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], polished[0] if polished else ""), 2)
+        final_lead = polished[0] if polished else ""
+        lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], final_lead), 2)
         attribution_type_used = self._story_attribution_type(polished, payload)
         attribution_position_used = self._attribution_position_used(polished, payload)
         attribution_details = self._attributed_voice_details(polished, payload)
         attribution_level_used = attribution_details["attribution_level_used"]
+        lead_restatement_meta = self._lead_restatement_meta(payload, final_lead)
         metrics = {
             "lead_title_overlap_score": lead_title_overlap_score,
             "lead_rewritten_to_reduce_title_repetition": lead_rewrite_meta["lead_rewritten_to_reduce_title_repetition"],
             "lead_continuation_rewrite_applied": lead_rewrite_meta["lead_continuation_rewrite_applied"],
-            "lead_opening_type": self._lead_opening_type(polished[0] if polished else ""),
+            "stories_rewritten_via_continuation_strategy": lead_rewrite_meta["lead_continuation_rewrite_applied"],
+            "lead_opening_type": self._lead_opening_type(final_lead, payload),
+            "generated_lead_initial": self._clean_text(initial_lead),
+            "generated_lead_final": self._clean_text(final_lead),
+            "title_main_entity": lead_restatement_meta["title_main_entity"],
+            "title_main_action_family": lead_restatement_meta["title_main_action_family"],
+            "stories_with_lead_starting_with_institution": lead_restatement_meta["lead_starts_with_institution"],
+            "stories_with_lead_starting_with_institution_and_title_like_action": lead_restatement_meta["lead_starts_with_title_entity_and_action"],
             "high_title_lead_overlap": lead_title_overlap_score >= TITLE_LEAD_OVERLAP_THRESHOLD,
             "romania_impact_included": self._has_romania_impact_sentence(payload, polished),
             "strong_closure": bool(polished and self._has_strong_closure(polished[-1])),
@@ -727,16 +753,16 @@ class RadioEditingService:
                 "lead_continuation_rewrite_applied": False,
             }
         lead = sentences[0]
-        overlap_score = self._lead_title_overlap_score(payload["headline_original"], lead)
+        restatement_meta = self._lead_restatement_meta(payload, lead)
         normalized_headline = self._comparison_text(payload["headline_original"])
         normalized_lead = self._comparison_text(lead)
-        if overlap_score < TITLE_LEAD_OVERLAP_THRESHOLD and normalized_headline not in normalized_lead:
+        if not restatement_meta["must_rewrite"] and normalized_headline not in normalized_lead:
             return sentences, {
                 "lead_rewritten_to_reduce_title_repetition": False,
                 "lead_continuation_rewrite_applied": False,
             }
 
-        continuation = self._continuation_style_lead(payload, sentences)
+        continuation = self._continuation_style_lead(payload, compression, sentences)
         if continuation:
             updated = [continuation["lead"]]
             for index, sentence in enumerate(sentences[1:], start=1):
@@ -765,6 +791,7 @@ class RadioEditingService:
     def _continuation_style_lead(
         self,
         payload: dict[str, object],
+        compression: CompressedStoryCore,
         sentences: list[str],
     ) -> dict[str, object] | None:
         headline_overlap = self._lead_title_overlap_score(payload["headline_original"], sentences[0] if sentences else "")
@@ -775,53 +802,145 @@ class RadioEditingService:
             if not candidate or candidate in seen_candidates:
                 continue
             seen_candidates.add(candidate)
-            score = self._continuation_lead_score(payload["headline_original"], candidate, index)
+            score = self._continuation_lead_score(payload, candidate, index)
             if score > 0:
                 candidates.append((score, index, candidate, True))
-        for index, sentence in enumerate(payload["source_text_sentences"][1:], start=len(sentences) + 1):
-            candidate = self._finalize_sentence(self._trim_sentence(self._rewrite_for_radio(sentence, "detail", compression.kept_entities) if False else sentence, LEAD_MAX_WORDS))
+        source_candidates = [item.text for item in compression.dropped_sentences] + list(payload["source_text_sentences"][1:])
+        for index, sentence in enumerate(source_candidates, start=len(sentences) + 1):
+            role = "reaction" if self._has_attribution_verb(sentence) else "detail"
+            candidate = self._finalize_sentence(self._trim_sentence(self._rewrite_for_radio(sentence, role, compression.kept_entities), LEAD_MAX_WORDS))
             if not candidate or candidate in seen_candidates:
                 continue
             seen_candidates.add(candidate)
-            score = self._continuation_lead_score(payload["headline_original"], candidate, index)
+            score = self._continuation_lead_score(payload, candidate, index)
             if score > 0:
                 candidates.append((score, index, candidate, False))
         if not candidates:
             return None
         best_score, best_index, best_candidate, existing_sentence = max(candidates, key=lambda item: (item[0], -item[1]))
-        if best_score < 1.5:
+        if best_score < 1.8:
             return None
-        if self._lead_title_overlap_score(payload["headline_original"], best_candidate) >= headline_overlap:
+        if self._lead_title_overlap_score(payload["headline_original"], best_candidate) >= headline_overlap and self._lead_restatement_meta(payload, best_candidate)["lead_starts_with_title_entity_and_action"]:
             return None
         return {"lead": best_candidate, "source_index": best_index if existing_sentence else -1}
 
-    def _continuation_lead_score(self, headline: str, sentence: str, source_index: int) -> float:
-        opening_type = self._lead_opening_type(sentence)
-        overlap_penalty = self._lead_title_overlap_score(headline, sentence)
+    def _continuation_lead_score(self, payload: dict[str, object], sentence: str, source_index: int) -> float:
+        opening_type = self._lead_opening_type(sentence, payload)
+        overlap_penalty = self._lead_title_overlap_score(payload["headline_original"], sentence)
+        restatement_meta = self._lead_restatement_meta(payload, sentence)
         base_scores = {
-            "consequence": 2.6,
-            "concrete_action": 2.2,
-            "affected_audience": 2.0,
-            "actor_action": 0.6,
+            "consequence": 4.0,
+            "action": 3.5,
+            "affected_audience": 3.2,
+            "person_role": 2.8,
+            "institution_action": 0.7,
         }
         base_score = base_scores.get(opening_type, 0.0)
         if not base_score:
             return 0.0
-        return round(base_score - overlap_penalty + max(0.0, 0.4 - (source_index * 0.08)), 2)
+        score = base_score - (overlap_penalty * 2.4) + max(0.0, 0.45 - (source_index * 0.07))
+        if self._sentence_has_impact(sentence):
+            score += 0.5
+        if self._sentence_has_next_step(sentence):
+            score += 0.35
+        if self._sentence_personal_attribution_type(sentence, payload) in {"named_person", "role_based_person"}:
+            score += 0.35
+        if restatement_meta["lead_starts_with_title_entity_and_action"]:
+            score -= 4.0
+        elif restatement_meta["lead_starts_with_institution"]:
+            score -= 1.6
+        if overlap_penalty > 0.5:
+            score -= 3.0
+        elif overlap_penalty > 0.4:
+            score -= 1.4
+        return round(score, 2)
 
-    def _lead_opening_type(self, sentence: str) -> str:
+    def _lead_opening_type(self, sentence: str, payload: dict[str, object] | None = None) -> str:
         normalized = self._comparison_text(sentence)
         if not normalized:
-            return "actor_action"
-        if normalized.startswith("primele rezultate"):
-            return "actor_action"
+            return "action"
         if normalized.startswith(CONSEQUENCE_LEAD_STARTS):
             return "consequence"
         if normalized.startswith(AFFECTED_AUDIENCE_LEAD_STARTS):
             return "affected_audience"
         if normalized.startswith(CONCRETE_ACTION_LEAD_STARTS):
-            return "concrete_action"
-        return "actor_action"
+            return "action"
+        if payload and self._sentence_personal_attribution_type(sentence, payload) in {"named_person", "role_based_person"}:
+            return "person_role"
+        if payload and self._lead_restatement_meta(payload, sentence)["lead_starts_with_institution"]:
+            return "institution_action"
+        return "action"
+
+    def _lead_restatement_meta(self, payload: dict[str, object], lead: str) -> dict[str, object]:
+        title_main_entity = self._title_main_entity(payload)
+        title_main_action_family = self._title_main_action_family(payload["headline_original"])
+        overlap_score = self._lead_title_overlap_score(payload["headline_original"], lead)
+        starts_with_title_entity = self._lead_starts_with_title_entity(lead, title_main_entity)
+        same_action_family = self._text_matches_action_family(lead, title_main_action_family)
+        lead_starts_with_institution = self._lead_starts_with_institution(payload, lead)
+        structural_restatement = starts_with_title_entity and same_action_family
+        return {
+            "title_main_entity": title_main_entity,
+            "title_main_action_family": title_main_action_family,
+            "lead_starts_with_institution": lead_starts_with_institution,
+            "lead_starts_with_title_entity_and_action": structural_restatement,
+            "must_rewrite": overlap_score > 0.4 or structural_restatement,
+            "overlap_score": round(overlap_score, 2),
+        }
+
+    def _title_main_entity(self, payload: dict[str, object]) -> str:
+        headline = str(payload.get("headline_original") or "").strip()
+        actor_phrase = self._extract_lead_actor_phrase(headline)
+        if actor_phrase:
+            return actor_phrase
+        institutions = self._extract_institutions(headline)
+        if institutions:
+            return institutions[0]
+        top_person = str(payload.get("top_person") or "").strip()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        if top_person and top_person_role and top_person in headline:
+            return f"{top_person_role} {top_person}"
+        return top_person
+
+    def _title_main_action_family(self, headline: str) -> str:
+        normalized = self._comparison_text(headline)
+        for family, markers in TITLE_ACTION_FAMILY_MARKERS.items():
+            if any(marker in normalized for marker in markers):
+                return family
+        action_verb, _ = self._headline_event_components(str(headline))
+        if action_verb in {"extinde", "cer"}:
+            return "scale_up" if action_verb == "extinde" else "prepare"
+        if action_verb in {"pregateste"}:
+            return "prepare"
+        if action_verb in {"muta", "trimite"}:
+            return "reroute"
+        if action_verb in {"respinge"}:
+            return "reject"
+        if action_verb in {"lanseaza", "impune"}:
+            return "launch"
+        if action_verb in {"incepe", "deschide", "aproba"}:
+            return "start"
+        return ""
+
+    def _lead_starts_with_title_entity(self, lead: str, title_entity: str) -> bool:
+        entity_tokens = self._comparison_tokens(title_entity)[:3]
+        lead_tokens = self._comparison_tokens(" ".join(str(lead).split()[:7]))
+        if not entity_tokens or not lead_tokens:
+            return False
+        significant = entity_tokens[:2] if len(entity_tokens) >= 2 else entity_tokens
+        return all(token in lead_tokens for token in significant)
+
+    def _lead_starts_with_institution(self, payload: dict[str, object], lead: str) -> bool:
+        lead_prefix = " ".join(str(lead).split()[:7])
+        if self._first_matching_institution(lead_prefix, payload):
+            return True
+        return self._lead_starts_with_title_entity(lead_prefix, self._title_main_entity(payload)) and self._sentence_personal_attribution_type(lead, payload) == "institution"
+
+    def _text_matches_action_family(self, text: str, family: str) -> bool:
+        if not family:
+            return False
+        normalized = self._comparison_text(text)
+        return any(marker in normalized for marker in TITLE_ACTION_FAMILY_MARKERS.get(family, ()))
 
     def _paraphrase_title_like_lead(
         self,
