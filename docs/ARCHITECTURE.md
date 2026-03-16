@@ -1725,3 +1725,7 @@ This layer does not perform:
 ## Geo Tagging Layer
 
 Live ingestion now passes normalized stories through a deterministic geo-tagging service before editorial selection. The service assigns county, macro-region, national, or international scope metadata and feeds county-first local routing without changing the downstream story contracts.
+
+## Real Sample Debug Workflow
+
+The editorial debug path now supports two separate data-entry modes without forking the main pipeline: live mode fetches real stories from configured sources, while debug mode can replay previously saved real article sets from `tests/real_samples/`. Synthetic fixtures remain only as a fallback path for minimal regression coverage when no saved sample is available.

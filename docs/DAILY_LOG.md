@@ -2015,3 +2015,6 @@ Important note:
 - added a deterministic geo-tagging layer for live-ingested stories with county, region, national, and international classification
 - generated Romanian county and macro-region config maps for the editorial pipeline
 - integrated geo tagging into live ingestion and exposed a geo preview artifact for debugging county-first routing
+
+- replaced the normal fixture-first debug workflow with an exclusively real-sample-based workflow backed by saved live article sets under tests/real_samples
+- added a sample loader, real-sample generation script, and offline debug replay path for editorial regression on saved live data

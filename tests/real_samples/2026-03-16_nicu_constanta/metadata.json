@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-03-16T20:52:36.681856+00:00",
+  "mode": "live",
+  "user": "Nicu",
+  "county": "Constanta",
+  "personalization": {
+    "listener_profile": {
+      "first_name": "Nicu",
+      "country": "Romania",
+      "region": "Constanta",
+      "city": null
+    },
+    "editorial_preferences": {
+      "geography": {
+        "local": 35.0,
+        "national": 40.0,
+        "international": 25.0
+      },
+      "domains": {
+        "politics": 12.5,
+        "economy": 12.5,
+        "justice": 12.5,
+        "sport": 12.5,
+        "entertainment": 12.5,
+        "education": 12.5,
+        "health": 12.5,
+        "tech": 12.5
+      }
+    }
+  },
+  "workflow": "live_real_sample_generation"
+}

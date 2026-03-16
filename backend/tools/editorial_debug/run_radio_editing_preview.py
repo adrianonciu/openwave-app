@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import statistics
 import sys
@@ -9,13 +10,21 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from app.config.env import get_openwave_mode
+from app.config.env import get_openwave_debug_sample_dir, get_openwave_mode, get_openwave_real_samples_root
 from app.models.user_personalization import EditorialPreferenceProfile, GeographyPreferenceMix, ListenerProfile, UserPersonalization
 from app.services.editorial_pipeline_service import EditorialPipelineService
 from app.services.radio_editing_service import RadioEditingService
 from app.services.romanian_geo_resolver import resolve_listener_geography
 from app.services.source_watcher_service import SourceWatcherService
 from app.services.tts_pronunciation_helper import get_tts_pronunciation_map
+from tools.editorial_debug.real_sample_workflow import (
+    build_personalization,
+    build_preview_payload_from_articles,
+    default_sample_output_dir,
+    load_real_sample,
+    resolve_real_sample_dir,
+    save_real_sample_bundle,
+)
 
 OUTPUT_DIR = BACKEND_ROOT / "debug_output"
 JSON_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.json"
@@ -30,6 +39,7 @@ NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_nicu_const
 LIVE_NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "live_generalist_bulletin_nicu_constanta.txt"
 LIVE_SOURCE_REGISTRY_AUDIT_PATH = OUTPUT_DIR / "live_source_registry_audit.json"
 GEO_TAGGING_PREVIEW_PATH = OUTPUT_DIR / "geo_tagging_preview.json"
+REAL_SAMPLE_BULLETIN_OUTPUT_PATH = OUTPUT_DIR / "sample_real_debug_bulletin.txt"
 
 PREVIEW_FIXTURES = [
     {
@@ -1382,7 +1392,7 @@ def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
         f"County-first local selection: {preview_payload['county_first_local_selection']}",
         f"Fetched articles: {preview_payload['article_count']}",
         f"Selected stories: {preview_payload['story_count']}",
-        f"Local stories from Constanta county: {preview_payload['local_story_count_from_constanta_county']}",
+        f"Local stories from county: {preview_payload.get('local_story_count_from_county', preview_payload.get('local_story_count_from_constanta_county', 0))}",
         f"Local stories from regional fallback: {preview_payload['local_story_count_from_regional_fallback']}",
         f"Media source credits emitted: {preview_payload['written_source_credits_emitted']}",
         f"Registry audit path: {preview_payload['registry_audit_path']}",
@@ -1412,13 +1422,13 @@ def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
 
 def _render_live_generalist_bulletin(preview_payload: dict[str, object]) -> str:
     lines = [
-        'OPENWAVE LIVE GENERALIST BULLETIN - NICU / CONSTANTA',
+        f"OPENWAVE LIVE GENERALIST BULLETIN - {str(preview_payload.get('listener_name') or 'Nicu').upper()} / {str(preview_payload.get('listener_county') or 'Constanta').upper()}",
         '',
         f"Stories: {preview_payload['story_count']}",
         f"Resolved user county: {preview_payload['resolved_user_county']}",
         f"Resolved user region: {preview_payload['resolved_user_region']}",
         f"County-first local selection: {preview_payload['county_first_local_selection']}",
-        f"Local story count from Constanta county: {preview_payload['local_story_count_from_constanta_county']}",
+        f"Local story count from county: {preview_payload.get('local_story_count_from_county', preview_payload.get('local_story_count_from_constanta_county', 0))}",
         f"Local story count from regional fallback: {preview_payload['local_story_count_from_regional_fallback']}",
         '',
     ]
@@ -1440,129 +1450,99 @@ def _render_live_generalist_bulletin(preview_payload: dict[str, object]) -> str:
     return '\n'.join(lines)
 
 
-def _run_live_mode() -> None:
+def _load_registry_audit(sample_dir: Path) -> dict[str, object] | None:
+    audit_path = sample_dir / "source_registry_audit.json"
+    if not audit_path.exists():
+        return None
+    return json.loads(audit_path.read_text(encoding="utf-8"))
+
+
+def _run_live_mode(user: str = "Nicu", county: str = "Constanta", save_sample_dir: str | None = None) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    personalization = _build_live_nicu_constanta_personalization()
+    personalization = build_personalization(user=user, county=county)
     pipeline_service = EditorialPipelineService()
     live_service = pipeline_service.live_source_ingestion_service
     live_service.write_registry()
     registry_audit = live_service.write_registry_audit(LIVE_SOURCE_REGISTRY_AUDIT_PATH, personalization=personalization)
     articles, ingestion_debug = live_service.fetch_articles(personalization=personalization)
-
-    if not articles:
-        geo_preview_payload = {
-            'stories': [],
-            'validation_summary': {
-                'story_count': 0,
-                'geo_tagged_county': 0,
-                'geo_tagged_regional': 0,
-                'geo_tagged_national': 0,
-                'geo_tagged_international': 0,
-                'stories_with_multiple_county_hits': 0,
-            },
-        }
-        GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-        payload = {
-            'mode': 'live',
-            'resolved_user_county': 'Constanta',
-            'resolved_user_region': 'Dobrogea',
-            'county_first_local_selection': True,
-            'article_count': 0,
-            'story_count': 0,
-            'local_story_count_from_constanta_county': 0,
-            'local_story_count_from_regional_fallback': 0,
-            'geo_tagging_preview_path': str(GEO_TAGGING_PREVIEW_PATH),
-            'geo_tagged_county': 0,
-            'geo_tagged_regional': 0,
-            'geo_tagged_national': 0,
-            'geo_tagged_international': 0,
-            'stories_with_multiple_county_hits': 0,
-            'stories': [],
-            'media_source_credits': [],
-            'written_source_credits_emitted': False,
-            'registry_audit_path': str(LIVE_SOURCE_REGISTRY_AUDIT_PATH),
-            'ingestion_debug': ingestion_debug,
-        }
-        JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-        TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding='utf-8')
-        LIVE_NICU_CONSTANTA_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding='utf-8')
-        return
-
-    story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
-    scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
-    pipeline_service.story_family_service.attach_story_families(scored_clusters)
-    selection_result = pipeline_service.selection_service.select_stories(
-        scored_clusters,
-        max_stories=15,
-        editorial_preferences=personalization.editorial_preferences,
-        personalization=personalization,
-    )
-    profile_name = (
-        selection_result.selected_clusters[0].editorial_profile_used
-        if selection_result.selected_clusters and selection_result.selected_clusters[0].editorial_profile_used
-        else 'generalist'
-    )
-    shaping_result = pipeline_service.bulletin_shaping_service.shape_selected_clusters(
-        selection_result.selected_clusters,
-        profile_name=profile_name,
-    )
-    final_briefing = pipeline_service.run_editorial_pipeline(
+    payload, geo_preview_payload = build_preview_payload_from_articles(
         articles=articles,
         personalization=personalization,
-        max_stories=15,
+        mode_label="live",
+        geo_tagging_preview_path=GEO_TAGGING_PREVIEW_PATH,
+        registry_audit_path=LIVE_SOURCE_REGISTRY_AUDIT_PATH,
+        registry_audit=registry_audit,
+        ingestion_debug=ingestion_debug,
+        sample_origin="live_fetch",
     )
+    GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    preview_text = _render_live_preview_text(payload)
+    bulletin_text = _render_live_generalist_bulletin(payload)
+    TEXT_OUTPUT_PATH.write_text(preview_text, encoding="utf-8")
+    LIVE_NICU_CONSTANTA_OUTPUT_PATH.write_text(bulletin_text, encoding="utf-8")
 
-    target_county = str(personalization.listener_profile.region or 'Constanta')
-    cluster_by_id = {cluster.cluster.cluster_id: cluster for cluster in shaping_result.ordered_clusters}
-    story_rows = []
-    for position, item in enumerate(final_briefing.story_items, start=1):
-        cluster = cluster_by_id.get(item.story.cluster_id)
-        members = list(cluster.cluster.member_articles) if cluster is not None else []
-        story_rows.append({
-            'position': position,
-            'headline': item.story.headline,
-            'summary_text': item.story.summary_text,
-            'source_labels': item.story.source_labels,
-            'original_urls': sorted({member.url for member in members})[:3],
-            'scope': next((member.source_scope for member in members if member.source_scope), 'unknown'),
-            'local_origin_type': _cluster_local_origin_type(cluster, target_county) if cluster is not None else 'unknown',
-        })
+    output_dir = Path(save_sample_dir) if save_sample_dir else None
+    if output_dir is not None:
+        save_real_sample_bundle(
+            output_dir=output_dir,
+            preview_payload=payload,
+            preview_text=preview_text,
+            bulletin_text=bulletin_text,
+            articles=articles,
+            personalization=personalization,
+            geo_preview_payload=geo_preview_payload,
+            registry_audit=registry_audit,
+            metadata={"workflow": "live_real_sample_generation"},
+        )
 
-    geo_preview_payload = live_service.geo_tagging_service.build_preview_payload(articles)
-    GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    geo_summary = geo_preview_payload['validation_summary']
 
-    payload = {
-        'mode': 'live',
-        'resolved_user_county': final_briefing.local_source_region_used or target_county,
-        'resolved_user_region': resolve_listener_geography(city=None, region=target_county).resolved_macro_region,
-        'county_first_local_selection': True,
-        'article_count': len(articles),
-        'story_count': len(story_rows),
-        'local_story_count_from_constanta_county': sum(1 for row in story_rows if row['local_origin_type'] == 'county'),
-        'local_story_count_from_regional_fallback': sum(1 for row in story_rows if row['local_origin_type'] == 'fallback_region'),
-        'geo_tagging_preview_path': str(GEO_TAGGING_PREVIEW_PATH),
-        'geo_tagged_county': geo_summary['geo_tagged_county'],
-        'geo_tagged_regional': geo_summary['geo_tagged_regional'],
-        'geo_tagged_national': geo_summary['geo_tagged_national'],
-        'geo_tagged_international': geo_summary['geo_tagged_international'],
-        'stories_with_multiple_county_hits': geo_summary['stories_with_multiple_county_hits'],
-        'stories': story_rows,
-        'media_source_credits': final_briefing.media_source_credits,
-        'written_source_credits_emitted': bool(final_briefing.media_source_credits),
-        'registry_audit_path': str(LIVE_SOURCE_REGISTRY_AUDIT_PATH),
-        'registry_audit_source_count': registry_audit['source_count'],
-        'ingestion_debug': ingestion_debug,
-    }
-    JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding='utf-8')
-    LIVE_NICU_CONSTANTA_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding='utf-8')
+def _run_saved_sample_mode(sample_dir: Path) -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    loaded_sample = load_real_sample(sample_dir)
+    registry_audit = _load_registry_audit(Path(sample_dir))
+    payload, geo_preview_payload = build_preview_payload_from_articles(
+        articles=loaded_sample["articles"],
+        personalization=loaded_sample["personalization"],
+        mode_label="debug",
+        geo_tagging_preview_path=GEO_TAGGING_PREVIEW_PATH,
+        registry_audit_path=Path(sample_dir) / "source_registry_audit.json",
+        registry_audit=registry_audit,
+        ingestion_debug={
+            "sample_dir": str(sample_dir),
+            "sample_generated_at": loaded_sample["metadata"].get("generated_at"),
+            "sample_origin": "saved_real_sample",
+        },
+        sample_origin=f"real_sample:{Path(sample_dir).name}",
+    )
+    GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding="utf-8")
+    REAL_SAMPLE_BULLETIN_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding="utf-8")
 
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run OpenWave radio editing preview in live or debug replay mode.")
+    parser.add_argument("--user", default="Nicu")
+    parser.add_argument("--county", default="Constanta")
+    parser.add_argument("--sample-dir", default=None)
+    parser.add_argument("--save-real-sample-dir", default=None)
+    return parser.parse_args()
 
 
 def main() -> None:
+    args = _parse_args()
     if get_openwave_mode() == "live":
-        _run_live_mode()
+        save_sample_dir = args.save_real_sample_dir or str(default_sample_output_dir(user=args.user, county=args.county, root=get_openwave_real_samples_root()))
+        _run_live_mode(user=args.user, county=args.county, save_sample_dir=save_sample_dir)
+        return
+
+    resolved_sample_dir = resolve_real_sample_dir(
+        explicit_dir=args.sample_dir or get_openwave_debug_sample_dir(),
+        root=get_openwave_real_samples_root(),
+    )
+    if resolved_sample_dir is not None:
+        _run_saved_sample_mode(resolved_sample_dir)
         return
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

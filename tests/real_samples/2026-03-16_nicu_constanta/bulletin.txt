@@ -1,0 +1,116 @@
+OPENWAVE LIVE GENERALIST BULLETIN - NICU / CONSTANTA
+
+Stories: 15
+Resolved user county: Constanta
+Resolved user region: Dobrogea
+County-first local selection: True
+Local story count from county: 5
+Local story count from regional fallback: 0
+
+1. Wants help guard Strait Hormuz but not
+   Scope: international
+   Local origin type: international
+   Sources: Al Jazeera, CBC News, DW, Fox News, NBC News
+   Original URLs: https://www.aljazeera.com/news/2026/3/16/bbc-files-motion-asking-us-court-to-throw-out-trumps-10bn-lawsuit?traffic_source=rss, https://www.cbc.ca/news/world/white-house-susie-wiles-breast-cancer-9.7130738?cmp=rss, https://www.dw.com/en/us-wants-help-to-guard-strait-of-hormuz-but-eu-is-not-keen/a-76380348?maca=en-rss-en-world-4025-xml-mrss, https://www.foxnews.com/politics/reporters-notebook-gop-weighs-nuking-filibuster-pass-trumps-save-act, https://www.nbcnews.com/world/iran/us-allies-respond-trump-strait-of-hormuz-demands-nato-iran-war-rcna263650
+Soferii ar putea plati mai mult pentru carburanti in urmatoarele saptamani. Al Jazeera relateaza ca autoritatile a luat o decizie importanta. Pentru Romania si restul Europei, tensiunea risca sa duca la benzina mai scumpa si facturi mai mari. Urmeaza reactii diplomatice si riscul unei noi escaladari, iar Not our conflict U S allies balk at Trump s Strait of Hormuz demands.
+
+2. Iranul SUA fost contact direct ultimele zile
+   Scope: national
+   Local origin type: national
+   Sources: Digi24, HotNews, Stirile ProTV, ZF.ro
+   Original URLs: https://hotnews.ro/iranul-si-sua-au-fost-in-contact-direct-in-ultimele-zile-inaltul-oficial-care-i-a-trimis-mesaje-emisarului-lui-trump-2195534, https://stirileprotv.ro/stiri/international/un-consilier-al-lui-donald-trump-avertizeaza-ca-exista-riscul-unei-escaladari-nucleare-in-conflictul-cu-iranul.html?category_slug=stiri%2Finternational, https://www.digi24.ro/stiri/externe/razboi-in-orientul-mijlociu-ziua-17-trump-spune-ca-washingtonul-poarta-discutii-cu-iranul-si-cere-ajutorul-aliatilor-nato-3677889, https://www.zf.ro/business-international/mancare-medicamente-transport-curier-autostrazi-totul-scumpi-23089841
+Razboi in Orientul Mijlociu ziua are planuri pentru cel putin inca trei saptamani de. Digi24 relateaza ca hotNews noteaza ca subiectul cere clarificari rapide si reactii oficiale. Specialistii avertizeaza ca situatia s-ar putea agrava daca presiunea continua.
+
+3. Razboiul Iran catapulteaza Asia prima linie crizei
+   Scope: national
+   Local origin type: national
+   Sources: Adevarul, Antena 3, Digi24, ZF.ro
+   Original URLs: https://adevarul.ro/stiri-externe/europa/trump-isi-pierde-interesul-pentru-negocierile-2515312.html, https://www.antena3.ro/externe/primul-dezacord-major-intre-sua-si-israel-in-razboiul-din-iran-axios-americanii-au-reactionat-dupa-atacul-idf-cu-mesajul-wtf-779993.html, https://www.digi24.ro/stiri/externe/ucraina-a-dejucat-o-ofensiva-strategica-ruseasca-planuita-pentru-martie-anunta-volodimir-zelenski-3679839, https://www.zf.ro/business-international/razboiul-din-iran-catapulteaza-asia-in-prima-linie-a-crizei-23089843
+Ucraina a dejucat o ofensiva strategica ruseasca planuita pentru martie anunta Volodimir Zelenski. Urmeaza clarificari oficiale si detalii noi. Trump isi pierde interesul pentru negocierile privind razboiul din Ucraina concentrandu se pe Iran.
+
+4. Marea intrebare privind razboiul cu Iranul
+   Scope: national
+   Local origin type: national
+   Sources: Adevarul, Economica.net, Mediafax, PressHub
+   Original URLs: https://adevarul.ro/stiri-externe/in-lume/forta-911-a-sua-cum-ar-putea-lua-puscasii-2515669.html, https://www.economica.net/zboruri-romania-orientul-mijlociu_923097.html, https://www.mediafax.ro/externe/marea-intrebare-privind-razboiul-cu-iranul-cum-se-va-termina-23704311, https://www.presshub.ro/aproape-11-000-de-cetateni-europeni-evacuati-cu-ajutorul-uniunii-europene-din-tarile-afectate-de-conflictul-din-orientul-mijlociu-403894/
+Oamenii pot vedea schimbari concrete chiar din urmatoarele saptamani. Adevarul relateaza ca tensiunile politice cresc. Tara din Orientul Mijlociu spre care se zboara cel mai mult din Romania Economica net, iar Tensiunile politice cresc. Impactul se poate vedea rapid in buzunarele oamenilor.
+
+5. Ministrul Apararii despre amenintarea Iranului exista risc
+   Scope: national
+   Local origin type: national
+   Sources: Cotidianul, HotNews, Observator News, SpotMedia, Ziare.com
+   Original URLs: https://hotnews.ro/ministrul-apararii-despre-amenintarea-venita-din-iran-nu-exista-un-risc-suplimentar-asociat-neaparat-romanilor-2195512, https://observatornews.ro/politic/45-milioane-de-euro-pentru-promovarea-turistica-a-romaniei-pe-pietele-externe-648955.html, https://spotmedia.ro/stiri/eveniment/ministrul-apararii-nu-exista-un-risc-suplimentar-asociat-romanilor-armata-americana-ne-a-transmis-in-scris-ca-de-pe-teritoriul-national-nu-se-va-pleca-cu-incarcatura-ofensiva, https://www.cotidianul.ro/ministrul-apararii-despre-amenintarea-iranului-nu-exista-un-risc-suplimentar-la-adresa-romanilor/, https://ziare.com/razboi-israel-iran/ministrul-apararii-demonteaza-scenariu-atac-iranian-lansat-basescu-2000667
+Cotidianul noteaza ca subiectul cere clarificari rapide si reactii oficiale. Ministrul Apararii Nu exista un risc suplimentar asociat romanilor Armata americana ne a transmis in scris ca de. Expertii spun ca intarzierile pot creste daca masura nu este respectata.
+
+6. Aeroportul Berlin blocat complet miercuri opera niciun
+   Scope: national
+   Local origin type: national
+   Sources: DC News, Digi24, News.ro, Stirile ProTV
+   Original URLs: https://stirileprotv.ro/stiri/international/aeroportul-din-berlin-va-fi-inchis-miercuri-din-cauza-unei-greve-zeci-de-mii-de-pasageri-afectati.html?category_slug=stiri%2Finternational, https://www.dcnews.ro/newsaeroportul-din-berlin-blocat-complet-miercuri-nu-va-opera-niciun-zbor-57-000-de-pasageri-afectati-1040646.html, https://www.digi24.ro/stiri/externe/ue/greva-in-germania-aeroportul-din-berlin-inchis-temporar-sute-de-zboruri-vor-fi-afectate-cat-timp-va-dura-interdictia-3679797, https://www.news.ro/externe/resturi-de-rachete-si-interceptori-au-cazut-in-locurile-sfinte-din-ierusalim-foto-1922403816082026032222380408
+Urmeaza clarificari oficiale si detalii noi. DC News noteaza ca subiectul cere clarificari rapide si reactii oficiale. Locuitorii pot simti schimbarea chiar din primele zile.
+
+7. Cauta solutii plina criza energiei Romania printre
+   Scope: national
+   Local origin type: national
+   Sources: Observator News, ZF.ro
+   Original URLs: https://observatornews.ro/extern/ue-cauta-solutii-in-plina-criza-a-energiei-romania-printre-tarile-care-refuza-revenirea-la-gazul-rusesc-648953.html, https://www.zf.ro/zf-24/raport-ey-tarifele-comerciale-impuse-de-trump-reduc-cresterea-23089977
+Familiile cu venituri mici pot vedea schimbari la facturi chiar din sezonul rece. Potrivit Observator News, subiectul cere clarificari rapide si reactii oficiale. Consumatorii ar putea vedea primele schimbari direct pe factura.
+
+8. Subiect cu impact public
+   Scope: national
+   Local origin type: international
+   Sources: CNA, Euronews Romania, Ziare.com
+   Original URLs: https://www.channelnewsasia.com/world/iran-supreme-leader-khamenei-rezaei-military-adviser-5997091, https://www.euronews.ro/topic/actualitate, https://ziare.com/polonia/guvern-dreapta-majorare-salarii-salarii-model-romania-2000638
+Iran supreme leader appoints former Guards chief as militar adviser media. CNA relateaza ca urmeaza clarificari oficiale si detalii noi. Impactul se poate vedea rapid in buzunarele oamenilor.
+
+9. Universitatea Cluj CFR Cluj meci play off
+   Scope: national
+   Local origin type: national
+   Sources: Adevarul, Libertatea, News.ro
+   Original URLs: https://adevarul.ro/sport/superliga-play-off-u-cluj-a-incasat-cel-mai-2515674.html, https://www.libertatea.ro/sport/u-cluj-cfr-cluj-superliga-meci-play-off-16-martie-2026-5663810, https://www.news.ro/sport/superliga-play-off-u-intrerupe-seria-cfr-ului-castigand-derby-ul-clujului-scor-2-1-1922403416142026032222380413
+Navetistii vor avea intarzieri si schimbari de traseu chiar din primele zile. Navetistii din judet spun ca superliga play off U Cluj a incasat cel mai rapid gol al sezonului i a luat toate. Primele schimbari se pot vedea chiar din aceasta perioada.
+
+10. Justitie Constanta Cristian Samara judecata Scoala Gimnaziala
+   Scope: local
+   Local origin type: county
+   Sources: ziuaconstanta.ro
+   Original URLs: https://www.ziuaconstanta.ro/stiri/justitie/justitie-constanta-cristian-samara-la-judecata-cu-scoala-gimnaziala-nr-18-jean-bart-constanta-termen-in-iunie-2026-la-tribunalul-constanta-931407.html
+Potrivit Ziuaconstanta ro, urmeaza reactii si clarificari pe aceasta tema. Locuitorii pot simti schimbarea chiar din primele zile.
+
+11. Nicusor Dan discutiile OMV Petrom Neptun Deep
+   Scope: local
+   Local origin type: county
+   Sources: tomisnews.ro
+   Original URLs: https://tomisnews.ro/nicusor-dan-dupa-discutiile-cu-omv-petrom-neptun-deep-avanseaza-conform-graficului-si-va-reduce-dependenta-noastra-de-importuri/
+Potrivit Tomisnews ro, urmeaza reactii si clarificari pe aceasta tema. tomisnews.ro relateaza ca urmeaza clarificari oficiale si detalii noi. Masura intra in vigoare chiar din aceasta saptamana.
+
+12. Autostrada Moldovei Risc semnificativ Romania piarda bani
+   Scope: national
+   Local origin type: national
+   Sources: Antena 3, Economedia
+   Original URLs: https://economedia.ro/autostrada-moldovei-a7-risc-semnificativ-ca-romania-sa-piarda-bani-gratuiti-din-pnrr-avertizeaza-asociatia-pro-infrastructura-umb-trebuie-sa-se-autodepaseasca-dar-un-heirup-va-afecta-ine.html, https://www.antena3.ro/actualitate/risc-semnificativ-sa-pierdem-banii-din-pnrr-pentru-autostrada-a7-expertii-avertizeaza-ca-muncitorii-trebuie-sa-lucreze-non-stop-780938.html
+Apar noi riscuri din PNRR avertizeaza Asociatia Pro Infrastru, avertizeaza Economedia. Specialistii avertizeaza ca situatia s-ar putea agrava daca presiunea continua.
+
+13. Ministrul Oana Toiu intalnirea CAE Bruxelles Romania
+   Scope: local
+   Local origin type: county
+   Sources: ziuaconstanta.ro
+   Original URLs: https://www.ziuaconstanta.ro/stiri/actualitate/ministrul-oana-toiu-la-intalnirea-cae-de-la-bruxelles-romania-sustine-dezescaladarea-in-orientul-mijlociu-si-parteneriatul-economic-cu-india-931408.html
+Potrivit Ziuaconstanta ro, urmeaza reactii si clarificari pe aceasta tema. Impactul se poate vedea rapid in buzunarele oamenilor.
+
+14. Justitie Constanta Amanare Judecatoria Constanta disputa juridica
+   Scope: local
+   Local origin type: county
+   Sources: ziuaconstanta.ro
+   Original URLs: https://www.ziuaconstanta.ro/stiri/justitie/justitie-constanta-amanare-la-judecatoria-constanta-in-disputa-juridica-dintre-societatea-pergole-aluminiu-din-constanta-si-o-firma-din-turcia-931406.html
+Potrivit Ziuaconstanta ro, urmeaza reactii si clarificari pe aceasta tema. ziuaconstanta.ro relateaza ca justitie Constanta Amanare la Judecatoria Constanta in disputa juridica dintre societatea Pergole Aluminiu din Constanta si o firma.
+
+15. Zborurile civile suspendate temporar pe aeroportul Kogalniceanu fara explicatii
+   Scope: local
+   Local origin type: county
+   Sources: tomisnews.ro
+   Original URLs: https://tomisnews.ro/zborurile-civile-suspendate-temporar-pe-aeroportul-kogalniceanu-fara-explicatii/
+Potrivit Tomisnews ro, urmeaza reactii si clarificari pe aceasta tema. Locuitorii pot simti schimbarea chiar din primele zile.
+
+Written source credits after outro:
+Adevarul, Al Jazeera, Antena 3, CBC News, CNA, Cotidianul, DC News, DW, Digi24, Economedia, Economica.net, Euronews Romania, Fox News, HotNews, Libertatea, Mediafax, NBC News, News.ro, Observator News, PressHub, SpotMedia, Stirile ProTV, ZF.ro, Ziare.com, tomisnews.ro, ziuaconstanta.ro

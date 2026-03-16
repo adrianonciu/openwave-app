@@ -7,3 +7,6 @@ __pycache__/
 # Generated editorial previews and debug artifacts stay local.
 backend/debug_output/
 # Curated editorial benchmarks live in backend/editorial_tests/ and stay tracked.
+backend/data/article_fetch_cache.json
+backend/data/live_source_feed_cache.json
+tests/real_samples/latest_*/

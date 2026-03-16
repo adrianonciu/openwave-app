@@ -851,3 +851,6 @@ Still intentionally excluded from this task:
 
 Geo tagging note:
 - Live-ingested stories now pass through a deterministic county/region detection layer before selection so county-first local routing can rely on explicit geo metadata as well as source provenance.
+
+Real-sample debug note:
+- Normal debug and editorial regression are now done exclusively with `tests/real_samples/` data loaded from disk. Hardcoded fixtures remain only as a minimal fallback path when no saved real sample is available.

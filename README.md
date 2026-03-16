@@ -114,3 +114,7 @@ OpenWave aims to become a personalized audio news platform where users control t
 - este **ideal pentru GitHub și AI agents**
 
 ---
+
+## Real Sample Debug Workflow
+
+Normal editorial debug is now done exclusively with saved real samples from `tests/real_samples/`, not with hardcoded synthetic fixtures. Generate or refresh a sample with `backend\venv\Scripts\python.exe scripts/generate_real_samples.py --user Nicu --county Constanta`, then replay it offline with `OPENWAVE_MODE=debug` and `backend/tools/editorial_debug/run_radio_editing_preview.py`. Regenerate real samples after major source-registry, geo-routing, or radio-editing changes.

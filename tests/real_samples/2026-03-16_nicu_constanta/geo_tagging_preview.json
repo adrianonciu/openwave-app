@@ -1,0 +1,1368 @@
+{
+  "stories": [
+    {
+      "title": "Se taie din impozit pentru casă și mașină. Decizie în București începând de azi, 16 martie. Care cetățeni se încadrează",
+      "source_name": "Capital",
+      "original_url": "https://www.capital.ro/se-taie-din-impozit-pentru-casa-si-masina-decizie-in-bucuresti-incepand-de-azi-16-martie-care-cetateni-se-incadreaza.html",
+      "geo_scope": "county",
+      "county_detected": "Bucuresti",
+      "region_detected": "Bucuresti-Ilfov",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Bucuresti",
+        "seat:Bucuresti",
+        "city:Bucuresti",
+        "variant:Bucuresti"
+      ]
+    },
+    {
+      "title": "Fotbal: Neymar nu se află în lotul Braziliei pentru ultimul cantonament înainte de Cupa Mondială.",
+      "source_name": "News.ro",
+      "original_url": "https://www.news.ro/sport/fotbal-neymar-nu-se-afla-in-lotul-braziliei-pentru-ultimul-cantonament-inainte-de-cupa-mondiala-1922405016002026032222380379",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Merz îi răspunde lui Trump: „Războiul din Iran nu e problema NATO”. Miniștrii UE refuză...",
+      "source_name": "Antena 3",
+      "original_url": "https://www.antena3.ro/externe/primul-dezacord-major-intre-sua-si-israel-in-razboiul-din-iran-axios-americanii-au-reactionat-dupa-atacul-idf-cu-mesajul-wtf-779993.html",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Un nou conflict militar degenerează în lume: Pakistanul bombardează Kabulul, transmite AFP",
+      "source_name": "G4Media",
+      "original_url": "https://www.g4media.ro/un-nou-conflict-militar-degenereaza-in-lume-pakistanul-bombardeaza-kabulul-transmite-afp.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Superliga, play-off: U Cluj a încasat cel mai rapid gol al sezonului, dar i-a luat toate punctele CFR-ului",
+      "source_name": "Adevarul",
+      "original_url": "https://adevarul.ro/sport/superliga-play-off-u-cluj-a-incasat-cel-mai-2515674.html",
+      "geo_scope": "county",
+      "county_detected": "Cluj",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Cluj",
+        "seat:Cluj",
+        "city:Cluj",
+        "variant:Cluj"
+      ]
+    },
+    {
+      "title": "Mâncare, medicamente, transport, curier, autostrăzi: totul se va scumpi dacă se scumpesc carburanţii. Iranul ştie să lovească precis şi dureros. Din cauza blocării strâmtorii Ormuz, ne lipsesc o cincime din petrol, o cincime din GNL şi o zecime din carburanţi şi nimeni nu ştie cât de mult va dura criza din Orientul Mijlociu",
+      "source_name": "ZF.ro",
+      "original_url": "https://www.zf.ro/business-international/mancare-medicamente-transport-curier-autostrazi-totul-scumpi-23089841",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Războiul din Iran catapultează Asia în prima linie a crizei energetice globale, iar cea mai mare suferinţă este resimţită în sudul continentului",
+      "source_name": "ZF.ro",
+      "original_url": "https://www.zf.ro/business-international/razboiul-din-iran-catapulteaza-asia-in-prima-linie-a-crizei-23089843",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Universitatea Cluj învinge CFR în Derbiul Clujului și ajunge pe locul 2 în Superliga, la un punct de lider, după etapa întâi din play-off",
+      "source_name": "Mediafax",
+      "original_url": "https://www.mediafax.ro/sport/universitatea-cluj-invinge-cfr-in-derbiul-clujului-si-ajunge-pe-locul-2-in-superliga-la-un-punct-de-lider-dupa-etapa-intai-din-play-off-23704303",
+      "geo_scope": "county",
+      "county_detected": "Cluj",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Cluj",
+        "seat:Cluj",
+        "city:Cluj",
+        "variant:Cluj"
+      ]
+    },
+    {
+      "title": "&bdquo;Țarul AI&rdquo; al lui Donald Trump avertizează că există riscul unei escaladări nucleare &icirc;n conflictul cu Iranul",
+      "source_name": "Stirile ProTV",
+      "original_url": "https://stirileprotv.ro/stiri/international/un-consilier-al-lui-donald-trump-avertizeaza-ca-exista-riscul-unei-escaladari-nucleare-in-conflictul-cu-iranul.html?category_slug=stiri%2Finternational",
+      "geo_scope": "county",
+      "county_detected": "Alba",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 0.58,
+      "geo_signals": [
+        "county:Alba",
+        "variant:Alba"
+      ]
+    },
+    {
+      "title": "Conflictele militare afectează viața marină: mai multe specii de corali și țestoase, pe cale de dispariție",
+      "source_name": "Stiri pe surse",
+      "original_url": "https://www.stiripesurse.ro/conflictele-militare-afecteaza-viata-marina-mai-multe-specii-de-corali-si-testoase-pe-cale-de-disparitie_3868544",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Nvidia estimează comenzi de 1 trilion de dolari pentru noile cipuri AI",
+      "source_name": "Mediafax",
+      "original_url": "https://www.mediafax.ro/tehnologie/nvidia-estimeaza-comenzi-de-1-trilion-de-dolari-pentru-noile-cipuri-ai-23704308",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Trump își pierde interesul pentru negocierile privind războiul din Ucraina, concentrându-se pe Iran",
+      "source_name": "Adevarul",
+      "original_url": "https://adevarul.ro/stiri-externe/europa/trump-isi-pierde-interesul-pentru-negocierile-2515312.html",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "\"Risc semnificativ să pierdem banii din PNRR pentru Autostrada A7\". Experţii avertizează că...",
+      "source_name": "Antena 3",
+      "original_url": "https://www.antena3.ro/actualitate/risc-semnificativ-sa-pierdem-banii-din-pnrr-pentru-autostrada-a7-expertii-avertizeaza-ca-muncitorii-trebuie-sa-lucreze-non-stop-780938.html",
+      "geo_scope": "county",
+      "county_detected": "Neamt",
+      "region_detected": "Moldova",
+      "county_match_confidence": 0.42,
+      "geo_signals": [
+        "city:Neamt",
+        "variant:Neamt"
+      ]
+    },
+    {
+      "title": "Trump: „Putin se teme doar de SUA, nu de Europa” / ”Îl poți întreba pe Putin. Se teme de noi”",
+      "source_name": "G4Media",
+      "original_url": "https://www.g4media.ro/trump-putin-se-teme-doar-de-sua-nu-de-europa-il-poti-intreba-pe-putin-se-teme-de-noi.html",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Ucraina a dejucat o ofensivă strategică rusească plănuită pentru martie, anunță Volodimir Zelenski",
+      "source_name": "Digi24",
+      "original_url": "https://www.digi24.ro/stiri/externe/ucraina-a-dejucat-o-ofensiva-strategica-ruseasca-planuita-pentru-martie-anunta-volodimir-zelenski-3679839",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Război în Orientul Mijlociu, ziua 17. Israelul afirmă că are planuri pentru cel puțin încă trei săptămâni de război cu Iranul",
+      "source_name": "Digi24",
+      "original_url": "https://www.digi24.ro/stiri/externe/razboi-in-orientul-mijlociu-ziua-17-trump-spune-ca-washingtonul-poarta-discutii-cu-iranul-si-cere-ajutorul-aliatilor-nato-3677889",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Marea întrebare privind războiul cu Iranul: cum se va termina?",
+      "source_name": "Mediafax",
+      "original_url": "https://www.mediafax.ro/externe/marea-intrebare-privind-razboiul-cu-iranul-cum-se-va-termina-23704311",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Aeroportul din Berlin va fi &icirc;nchis miercuri, din cauza unei greve. Zeci de mii de pasageri afectați",
+      "source_name": "Stirile ProTV",
+      "original_url": "https://stirileprotv.ro/stiri/international/aeroportul-din-berlin-va-fi-inchis-miercuri-din-cauza-unei-greve-zeci-de-mii-de-pasageri-afectati.html?category_slug=stiri%2Finternational",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "BBC files motion asking US court to throw out Trump’s $10bn lawsuit",
+      "source_name": "Al Jazeera",
+      "original_url": "https://www.aljazeera.com/news/2026/3/16/bbc-files-motion-asking-us-court-to-throw-out-trumps-10bn-lawsuit?traffic_source=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Ce buget va avea Curtea Supremă a Liei Savonea &icirc;n 2026. Cheltuielile de personal cresc cu aproape 50%",
+      "source_name": "Stirile ProTV",
+      "original_url": "https://stirileprotv.ro/justitie/ce-buget-va-avea-curtea-suprema-a-liei-savonea-in-2026-cheltuielile-de-personal-cresc-cu-aproape-50.html?category_slug=justitie",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "How big of a problem is the Strait of Hormuz for Donald Trump?",
+      "source_name": "Al Jazeera",
+      "original_url": "https://www.aljazeera.com/video/inside-story/2026/3/16/how-big-of-a-problem-is-the-strait-of-hormuz-for-donald-trump?traffic_source=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "După ce companiile românești au acuzat că sunt lăsate pe dinafara SAFE, ministrul Apărării se spală pe mâini: 'Nu interacționez cu criteriile după care sunt selectate'",
+      "source_name": "Stiri pe surse",
+      "original_url": "https://www.stiripesurse.ro/companiile-romanesti-safe-ministrul-apararii_3868535",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Woman is steps away from lava as volcano erupts on Reunion Island",
+      "source_name": "BBC World",
+      "original_url": "https://www.bbc.com/news/videos/c23zj1e0lxmo?at_medium=RSS&at_campaign=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Prețul carburanților în România. Ministrul Economiei refuză să ia măsuri „din scurt”: Sunt decizii pentru luni sau ani de zile",
+      "source_name": "Capital",
+      "original_url": "https://www.capital.ro/pretul-carburantilor-in-romania-ministrul-economiei-refuza-sa-ia-masuri-din-scurt-sunt-decizii-pentru-luni-sau-ani-de-zile.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Resturi de rachete şi interceptori au căzut în locurile sfinte din Ierusalim - FOTO",
+      "source_name": "News.ro",
+      "original_url": "https://www.news.ro/externe/resturi-de-rachete-si-interceptori-au-cazut-in-locurile-sfinte-din-ierusalim-foto-1922403816082026032222380408",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "What you need to know about Iran today, with Matt Doran",
+      "source_name": "ABC News Australia",
+      "original_url": "https://www.abc.net.au/news/2026-03-17/iran-israel-war-daily-news-briefing-matt-doran/106459514",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Federal judge blocks RFK Jr’s overhaul of vaccine recommendations",
+      "source_name": "The Guardian",
+      "original_url": "https://www.theguardian.com/us-news/2026/mar/16/judge-blocks-rfk-jr-vaccine-policy-changes",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Grevă în Germania: aeroportul din Berlin, închis temporar. Sute de zboruri vor fi afectate. Cât timp va...",
+      "source_name": "Digi24",
+      "original_url": "https://www.digi24.ro/stiri/externe/ue/greva-in-germania-aeroportul-din-berlin-inchis-temporar-sute-de-zboruri-vor-fi-afectate-cat-timp-va-dura-interdictia-3679797",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "News live: Marles says US has not asked Australia to send ships to strait of Hormuz",
+      "source_name": "The Guardian",
+      "original_url": "https://www.theguardian.com/australia-news/live/2026/mar/17/bowen-rba-interest-rates-decision-cost-of-living-inflation-fuel-price-shortages-petrol-jim-chalmers-economy-war-iran-anthony-albanese-ntwnfb",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Alexandru Nazare nu susține micșorarea accizei la combustibili: „Nu garantează scăderea...",
+      "source_name": "Antena 3",
+      "original_url": "https://www.antena3.ro/politica/alexandru-nazare-nu-sustine-scaderea-accizei-la-combustibili-nu-garanteaza-scaderea-pretului-780936.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Parliament/Romania's budget for 2026, built on three pillars: responsibility, balance and development (FinMin Nazare)",
+      "source_name": "Stiri pe surse",
+      "original_url": "https://www.stiripesurse.ro/parliamentromanias-budget-for-2026-built-on-three-pillars-responsibility-balance-and-development-finmin-nazare_3868543",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Călin Georgescu și marele drum la Belgrad: drumul inițiatic al refuzului",
+      "source_name": "Puterea",
+      "original_url": "https://www.puterea.ro/calin-georgescu-si-marele-drum-la-belgrad-drumul-initiatic-al-refuzului/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Superliga - play-off: U întrerupe seria CFR-ului, câştigând derby-ul Clujului, scor 2-1",
+      "source_name": "News.ro",
+      "original_url": "https://www.news.ro/sport/superliga-play-off-u-intrerupe-seria-cfr-ului-castigand-derby-ul-clujului-scor-2-1-1922403416142026032222380413",
+      "geo_scope": "county",
+      "county_detected": "Cluj",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Cluj",
+        "seat:Cluj",
+        "city:Cluj",
+        "variant:Cluj"
+      ]
+    },
+    {
+      "title": "Middle East crisis live: Trump vents frustration with allies as European countries resist demand for help in strait of Hormuz",
+      "source_name": "The Guardian",
+      "original_url": "https://www.theguardian.com/world/live/2026/mar/16/iran-war-live-updates-news-oil-trump-hormuz-dubai-airport-israel-targets",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Universitatea Cluj - CFR Cluj, meci din play-off-ul din Superligă",
+      "source_name": "Libertatea",
+      "original_url": "https://www.libertatea.ro/sport/u-cluj-cfr-cluj-superliga-meci-play-off-16-martie-2026-5663810",
+      "geo_scope": "county",
+      "county_detected": "Cluj",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Cluj",
+        "seat:Cluj",
+        "city:Cluj",
+        "variant:Cluj"
+      ]
+    },
+    {
+      "title": "UPDATE. Vot în Parlament pe bugetele ministerelor. Lista ministerelor care au fost avizate în comisii",
+      "source_name": "Capital",
+      "original_url": "https://www.capital.ro/bugetul-ministerului-sanatatii-aprobat-de-comisiile-parlamentare-ministerul-de-externe-va-functiona-si-in-2026-cu-un-buget-insuficient.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Doliu în fotbal. A murit Petrovici, jucătorul din Timișoara căruia o lovitură liberă i-a decis soarta. Și-a pierdut un ochi",
+      "source_name": "DC News",
+      "original_url": "https://www.dcnews.ro/newsdoliu-in-fotbal-a-murit-petrovici-jucatorul-din-timisoara-caruia-o-lovitura-libera-i-a-decis-soarta-si-a-pierdut-un-ochi-1040653.html",
+      "geo_scope": "county",
+      "county_detected": "Timis",
+      "region_detected": "Banat",
+      "county_match_confidence": 0.75,
+      "geo_signals": [
+        "seat:Timisoara",
+        "city:Timis",
+        "variant:Timis"
+      ]
+    },
+    {
+      "title": "Iranul și SUA au fost în contact direct în ultimele zile. Înaltul oficial care i-a trimis mesaje emisarului",
+      "source_name": "HotNews",
+      "original_url": "https://hotnews.ro/iranul-si-sua-au-fost-in-contact-direct-in-ultimele-zile-inaltul-oficial-care-i-a-trimis-mesaje-emisarului-lui-trump-2195534",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Gigel Știrbu acuză Direcția Sanitar Veterinară că a scos trei firme dintr-o licitație pentru ”laptele și cornul”, oprindu-le activitatea / Deputatul PNL de Olt: ”Există un grup infracțional organizat care a pus stăpânire pe acest județ”",
+      "source_name": "G4Media",
+      "original_url": "https://www.g4media.ro/gigel-stirbu-acuza-directia-sanitar-veterinara-ca-a-scos-trei-firme-dintr-o-licitatie-pentru-laptele-si-cornul-oprindu-le-activitatea-deputatul-pnl-de-olt-exista-un-grup.html",
+      "geo_scope": "county",
+      "county_detected": "Olt",
+      "region_detected": "Oltenia",
+      "county_match_confidence": 0.58,
+      "geo_signals": [
+        "county:Olt",
+        "variant:Olt"
+      ]
+    },
+    {
+      "title": "Raport EY: Tarifele comerciale impuse de Trump reduc creşterea economică a zonei euro cu 0,5 puncte procentuale în 2026. Economia blocului comunitar s-ar putea majora cu doar 1,3% în acest an",
+      "source_name": "ZF.ro",
+      "original_url": "https://www.zf.ro/zf-24/raport-ey-tarifele-comerciale-impuse-de-trump-reduc-cresterea-23089977",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Hezbollah rocket hits a residential building in Israel’s Nahariya",
+      "source_name": "Al Jazeera",
+      "original_url": "https://www.aljazeera.com/video/newsfeed/2026/3/16/hezbollah-rocket-hits-a-residential-building-in-israels-nahariya?traffic_source=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Veste bună pentru românii cu credite. Scad ratele de la 1 aprilie. Care este formula câștigătoare pentru",
+      "source_name": "Economica.net",
+      "original_url": "https://www.economica.net/veste-buna-pentru-romanii-cu-credite-scad-ratele-de-la-1-aprilie-care-este-formula-castigatoare-pentru-credite-mai-ieftine-date-ircc-robor_923094.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Ministrul Oana Țoiu la întâlnirea CAE de la Bruxelles - „România susține dezescaladarea în Orientul Mijlociu și parteneriatul economic cu India“",
+      "source_name": "ziuaconstanta.ro",
+      "original_url": "https://www.ziuaconstanta.ro/stiri/actualitate/ministrul-oana-toiu-la-intalnirea-cae-de-la-bruxelles-romania-sustine-dezescaladarea-in-orientul-mijlociu-si-parteneriatul-economic-cu-india-931408.html",
+      "geo_scope": "county",
+      "county_detected": "Constanta",
+      "region_detected": "Dobrogea",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Constanta",
+        "seat:Constanta",
+        "city:Constanta",
+        "variant:Constanta",
+        "source_county:Constanta"
+      ]
+    },
+    {
+      "title": "„Forța 911” a SUA: Cum ar putea lua pușcașii marini controlul asupra Strâmtorii Ormuz",
+      "source_name": "Adevarul",
+      "original_url": "https://adevarul.ro/stiri-externe/in-lume/forta-911-a-sua-cum-ar-putea-lua-puscasii-2515669.html",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "În ciuda cererilor lui Trump, miniștrii de Externe din UE refuză să trimită forța navală europeană...",
+      "source_name": "Ziare.com",
+      "original_url": "https://ziare.com/razboi-israel-iran/secundele-care-salvat-dictator-mojtaba-khamenei-era-gradina-2000673",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Mexican illegal alien allegedly used Roblox currency to solicit explicit content from kids under 10",
+      "source_name": "Fox News",
+      "original_url": "https://www.foxnews.com/politics/mexican-illegal-immigrant-allegedly-used-roblox-currency-solicit-explicit-content-from-kids-under-10",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Cuba hit by total blackout as US fuel blockade bites",
+      "source_name": "CNA",
+      "original_url": "https://www.channelnewsasia.com/world/cuba-blackout-oil-trump-us-havana-electricity-5997246",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Ce notă a primit Macron de la Trump pentru implicarea militară a Franței în Strâmtoarea Ormuz",
+      "source_name": "Cotidianul",
+      "original_url": "https://www.cotidianul.ro/ce-nota-a-primit-macron-de-la-trump-pentru-implicarea-militara-a-frantei-in-stramtoarea-ormuz/",
+      "geo_scope": "county",
+      "county_detected": "Alba",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 0.46,
+      "geo_signals": [
+        "county:Alba",
+        "variant:Alba"
+      ]
+    },
+    {
+      "title": "Cine mai exportă mâncare din România? Producătorii de țigări și traderii de cereale au dominat anul trecut",
+      "source_name": "Economica.net",
+      "original_url": "https://www.economica.net/cine-mai-exporta-mancare-din-romania-producatorii-de-tigari-si-traderii-de-cereale-au-dominat-anul-trecut-topul-exportatorilor-americanii-de-la-chs-au-scos-bunge-din-clasament_922922.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Țara din Orientul Mijlociu spre care se zboară cel mai mult din România - Economica.net",
+      "source_name": "Economica.net",
+      "original_url": "https://www.economica.net/zboruri-romania-orientul-mijlociu_923097.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Justiție Constanța: Cristian Samara, la judecată cu Școala Gimnazială nr. 18 Jean Bart Constanța. Termen în iunie 2026 la Tribunalul Constanța",
+      "source_name": "ziuaconstanta.ro",
+      "original_url": "https://www.ziuaconstanta.ro/stiri/justitie/justitie-constanta-cristian-samara-la-judecata-cu-scoala-gimnaziala-nr-18-jean-bart-constanta-termen-in-iunie-2026-la-tribunalul-constanta-931407.html",
+      "geo_scope": "county",
+      "county_detected": "Constanta",
+      "region_detected": "Dobrogea",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Constanta",
+        "seat:Constanta",
+        "city:Constanta",
+        "variant:Constanta",
+        "source_county:Constanta"
+      ]
+    },
+    {
+      "title": "Reporter's Notebook: GOP weighs 'nuking' filibuster to pass Trump's SAVE Act",
+      "source_name": "Fox News",
+      "original_url": "https://www.foxnews.com/politics/reporters-notebook-gop-weighs-nuking-filibuster-pass-trumps-save-act",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Daily life for Cubans grows more dire as oil embargo continues",
+      "source_name": "NBC News",
+      "original_url": "https://www.nbcnews.com/world/cuba/cuba-daily-life-shortages-oil-embargo-us-relations-rcna263646",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Justiție Constanța: Amânare la Judecătoria Constanța în disputa juridică dintre societatea Pergole Aluminiu din Constanța și o firmă din Turcia",
+      "source_name": "ziuaconstanta.ro",
+      "original_url": "https://www.ziuaconstanta.ro/stiri/justitie/justitie-constanta-amanare-la-judecatoria-constanta-in-disputa-juridica-dintre-societatea-pergole-aluminiu-din-constanta-si-o-firma-din-turcia-931406.html",
+      "geo_scope": "county",
+      "county_detected": "Constanta",
+      "region_detected": "Dobrogea",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Constanta",
+        "seat:Constanta",
+        "city:Constanta",
+        "variant:Constanta",
+        "source_county:Constanta"
+      ]
+    },
+    {
+      "title": "Aeroportul din Berlin, blocat complet miercuri. Nu va opera niciun zbor. 57.000 de pasageri, afectați",
+      "source_name": "DC News",
+      "original_url": "https://www.dcnews.ro/newsaeroportul-din-berlin-blocat-complet-miercuri-nu-va-opera-niciun-zbor-57-000-de-pasageri-afectati-1040646.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Supreme Court to hear Trump challenge to protected status for Syrian, Haitian nationals in US",
+      "source_name": "Fox News",
+      "original_url": "https://www.foxnews.com/politics/supreme-court-hear-trump-challenge-protected-status-syrian-haitian-nationals-us",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Un șofer din Cluj a lovit și ucis o femeie care mergea pe trotuar, după ce a fost proiectat de o altă mașină",
+      "source_name": "Libertatea",
+      "original_url": "https://www.libertatea.ro/stiri/stiri-cluj-femeie-lovita-ucisa-mergand-trotuar-masina-proiectata-5663850",
+      "geo_scope": "county",
+      "county_detected": "Cluj",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Cluj",
+        "seat:Cluj",
+        "city:Cluj",
+        "variant:Cluj"
+      ]
+    },
+    {
+      "title": "Presiune pe constructorii Autostrăzii A0. Șeful CNAIR cere accelerarea lucrărilor pe tronsonul Joița-Corbeanca",
+      "source_name": "Puterea",
+      "original_url": "https://www.puterea.ro/presiune-pe-constructorii-autostrazii-a0-seful-cnair-cere-accelerarea-lucrarilor-pe-tronsonul-joita-corbeanca/",
+      "geo_scope": "county",
+      "county_detected": "Bucuresti",
+      "region_detected": "Bucuresti-Ilfov",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Bucuresti",
+        "seat:Bucuresti",
+        "city:Bucuresti",
+        "variant:Bucuresti"
+      ]
+    },
+    {
+      "title": "Ministrul Apărării, după amenințarea venită din Iran: „Nu există un risc suplimentar asociat neapărat",
+      "source_name": "HotNews",
+      "original_url": "https://hotnews.ro/ministrul-apararii-despre-amenintarea-venita-din-iran-nu-exista-un-risc-suplimentar-asociat-neaparat-romanilor-2195512",
+      "geo_scope": "county",
+      "county_detected": "Bucuresti",
+      "region_detected": "Bucuresti-Ilfov",
+      "county_match_confidence": 0.92,
+      "geo_signals": [
+        "county:Bucuresti",
+        "seat:Bucuresti",
+        "city:Bucuresti",
+        "variant:Bucuresti"
+      ]
+    },
+    {
+      "title": "ACTUALITATE",
+      "source_name": "Euronews Romania",
+      "original_url": "https://www.euronews.ro/topic/actualitate",
+      "geo_scope": "county",
+      "county_detected": "Constanta",
+      "region_detected": "Dobrogea",
+      "county_match_confidence": 0.92,
+      "geo_signals": [
+        "county:Constanta",
+        "seat:Constanta",
+        "city:Constanta",
+        "variant:Constanta"
+      ]
+    },
+    {
+      "title": "S-a stabilit cel mai ieftin supermarket din Franța: 90 de locații diferite au fost vizitate",
+      "source_name": "Libertatea",
+      "original_url": "https://www.libertatea.ro/stiri/a-fost-stabilit-cel-mai-ieftin-supermarket-franta-90-locatii-diferite-vizitate-5663808",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "4,5 milioane de euro pentru promovarea turistică a României pe piețele externe",
+      "source_name": "Observator News",
+      "original_url": "https://observatornews.ro/politic/45-milioane-de-euro-pentru-promovarea-turistica-a-romaniei-pe-pietele-externe-648955.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "La ce se referă, de fapt, Iranul, când amenință România că va răspunde \"politic și legal\"",
+      "source_name": "DC News",
+      "original_url": "https://www.dcnews.ro/politicala-ce-se-refera-de-fapt-iranul-cand-ameninta-romania-ca-va-raspunde-politic-si-legal-1040640.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Mărcile Peugeot, Citroen, Fiat, Opel și DS - amplă campanie de rechemare. Peste 50.000 de mașini cu motor BlueHDI de la Stellantis, rechemate în service",
+      "source_name": "Profit.ro",
+      "original_url": "https://www.profit.ro/povesti-cu-profit/auto-transporturi/marcile-peugeot-citroen-fiat-opel-si-ds-ampla-campanie-de-rechemare-peste-50-000-de-masini-cu-motor-bluehdi-de-la-stellantis-rechemate-in-service-22379672?utm_source=Rss&utm_medium=Referral&utm_campaign=Cross",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Trump spune că un fost președinte american i-a mărturisit că regretă că nu a lovit Iranul când era la Casa",
+      "source_name": "HotNews",
+      "original_url": "https://hotnews.ro/trump-spune-ca-un-fost-presedinte-american-i-a-marturisit-ca-regreta-ca-nu-a-lovit-iranul-cand-era-la-casa-alba-2195506",
+      "geo_scope": "county",
+      "county_detected": "Alba",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 0.58,
+      "geo_signals": [
+        "county:Alba",
+        "variant:Alba"
+      ]
+    },
+    {
+      "title": "A new drug could be the beginning of the end for sleeping sickness",
+      "source_name": "NPR",
+      "original_url": "https://www.npr.org/2026/03/16/g-s1-113246/sleeping-sickness-drug-treatment-tsetse-fly",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "UE caută soluții în plină criză a energiei. România, printre ţările care refuză revenirea la gazul",
+      "source_name": "Observator News",
+      "original_url": "https://observatornews.ro/extern/ue-cauta-solutii-in-plina-criza-a-energiei-romania-printre-tarile-care-refuza-revenirea-la-gazul-rusesc-648953.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Cuba hit by island wide blackout as energy crisis deepens",
+      "source_name": "NPR",
+      "original_url": "https://www.npr.org/2026/03/16/nx-s1-5749457/cuba-blackout-sanctions-oil",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Oraș medieval pierdut, redescoperit într-o pădure: monede, unelte și arme de acum 1.000 de ani",
+      "source_name": "Observator News",
+      "original_url": "https://observatornews.ro/inedit/oras-medieval-pierdut-redescoperit-intro-padure-monede-unelte-si-arme-de-acum-1000-de-ani-648954.html",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "War planning on Iran conflict includes off-ramps for Trump should he choose them",
+      "source_name": "NBC News",
+      "original_url": "https://www.nbcnews.com/politics/national-security/trump-presented-daily-options-end-war-iran-hasnt-taken-far-rcna263399",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Gazprom revine pe profit",
+      "source_name": "Profit.ro",
+      "original_url": "https://www.profit.ro/povesti-cu-profit/vecini/gazprom-revine-pe-profit-22380285?utm_source=Rss&utm_medium=Referral&utm_campaign=Cross",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Ministrul Apărării: Nu există un risc suplimentar asociat românilor. Armata americană ne-a transmis în scris că de pe teritoriul național nu se va pleca cu încărcătură ofensivă",
+      "source_name": "SpotMedia",
+      "original_url": "https://spotmedia.ro/stiri/eveniment/ministrul-apararii-nu-exista-un-risc-suplimentar-asociat-romanilor-armata-americana-ne-a-transmis-in-scris-ca-de-pe-teritoriul-national-nu-se-va-pleca-cu-incarcatura-ofensiva",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Primul oraș din România cu radare fixe e-Sigur. Șoferii vor primi amenzile prin poștă",
+      "source_name": "Puterea",
+      "original_url": "https://www.puterea.ro/primul-oras-din-romania-cu-radare-fixe-e-sigur-soferii-vor-primi-amenzile-prin-posta/",
+      "geo_scope": "county",
+      "county_detected": "Timis",
+      "region_detected": "Banat",
+      "county_match_confidence": 0.75,
+      "geo_signals": [
+        "seat:Timisoara",
+        "city:Timis",
+        "variant:Timis"
+      ]
+    },
+    {
+      "title": "Probleme la FCSB: „Accidentare foarte gravă” suferită de jucătorul campioanei",
+      "source_name": "SpotMedia",
+      "original_url": "https://spotmedia.ro/stiri/sport/probleme-la-fcsb-accidentare-foarte-grava-suferita-de-jucatorul-campioanei",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Cât de pregătită este România să facă față unui atac cu rachete balistice din partea Iranului....",
+      "source_name": "Ziare.com",
+      "original_url": "https://ziare.com/razboi-israel-iran/ministrul-apararii-demonteaza-scenariu-atac-iranian-lansat-basescu-2000667",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Meta semnează un acord de 27 miliarde dolari cu Nebius, companie desprinsă din gigantul rus de internet Yandex",
+      "source_name": "Profit.ro",
+      "original_url": "https://www.profit.ro/povesti-cu-profit/it-c/meta-semneaza-un-acord-de-27-miliarde-dolari-cu-nebius-companie-desprinsa-din-gigantul-rus-de-internet-yandex-22379928?utm_source=Rss&utm_medium=Referral&utm_campaign=Cross",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Horoscop zilnic: 17 martie",
+      "source_name": "SpotMedia",
+      "original_url": "https://spotmedia.ro/stiri/horoscop/horoscop-zilnic-17-martie-5",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Ministrul Apărării, despre amenințarea Iranului: Nu există un risc suplimentar la adresa românilor",
+      "source_name": "Cotidianul",
+      "original_url": "https://www.cotidianul.ro/ministrul-apararii-despre-amenintarea-iranului-nu-exista-un-risc-suplimentar-la-adresa-romanilor/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Care sunt domeniile ce au rămas sigure în economia actuală, marcată de concedieri: „Există sectoare...",
+      "source_name": "Ziare.com",
+      "original_url": "https://ziare.com/polonia/guvern-dreapta-majorare-salarii-salarii-model-romania-2000638",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Vaccine critics keep the pressure on, even as RFK Jr. shifts focus",
+      "source_name": "NPR",
+      "original_url": "https://www.npr.org/2026/03/16/nx-s1-5739183/maha-vaccine-safety-kennedy",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Hours-long fuel queues in Laos capital Vientiane",
+      "source_name": "CNA",
+      "original_url": "https://www.channelnewsasia.com/world/us-iran-israel-war-laos-vientiane-thailand-fuel-oil-costs-5997181",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Venezuela reports of detainees still being tortured are concerning for UN",
+      "source_name": "BBC World",
+      "original_url": "https://www.bbc.com/news/articles/c0e5v9n1qqwo?at_medium=RSS&at_campaign=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Havana blames U.S. energy blockade as Cuba suffers another country-wide blackout | CBC News",
+      "source_name": "CBC News",
+      "original_url": "https://www.cbc.ca/news/world/cuba-blackout-us-energy-blockade-9.7130815?cmp=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "EU shows 'no appetite' to expand naval mission in Mideast",
+      "source_name": "CBC News",
+      "original_url": "https://www.cbc.ca/player/play/9.7130830?cmp=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Coaliția Navală a lui Trump a eșuat: Aliații refuză implicarea în Strâmtoarea Ormuz, iar războiul cu Iran s-ar putea prelungi până… în toamnă",
+      "source_name": "tomisnews.ro",
+      "original_url": "https://tomisnews.ro/coalitia-navala-a-lui-trump-a-esuat-aliatii-refuza-implicarea-in-stramtoarea-ormuz-iar-razboiul-cu-iran-s-ar-putea-prelungi-pana-in-toamna/",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Iran supreme leader appoints former Guards chief as military adviser: media",
+      "source_name": "CNA",
+      "original_url": "https://www.channelnewsasia.com/world/iran-supreme-leader-khamenei-rezaei-military-adviser-5997091",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Susie Wiles, Trump's chief of staff, diagnosed with breast cancer but plans to keep working",
+      "source_name": "CBC News",
+      "original_url": "https://www.cbc.ca/news/world/white-house-susie-wiles-breast-cancer-9.7130738?cmp=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Primăria Constanța ar putea pierde finanțarea prin PNRR pentru lucrările de la Spitalul de Boli Infecțioase",
+      "source_name": "PressHub",
+      "original_url": "https://www.presshub.ro/primaria-constanta-ar-putea-pierde-finantarea-prin-pnrr-pentru-lucrarile-de-la-spitalul-de-boli-infectioase-403899/",
+      "geo_scope": "county",
+      "county_detected": "Constanta",
+      "region_detected": "Dobrogea",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Constanta",
+        "seat:Constanta",
+        "city:Constanta",
+        "variant:Constanta"
+      ]
+    },
+    {
+      "title": "Mentorul lui JD Vance conferențiază despre Anticrist la poarta Vaticanului",
+      "source_name": "Cotidianul",
+      "original_url": "https://www.cotidianul.ro/mentorul-lui-jd-vance-conferentiaza-despre-anticrist-la-poarta-vaticanului/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Aproape 11.000 de cetățeni europeni evacuați cu ajutorul Uniunii Europene din țările afectate de conflictul din Orientul Mijlociu",
+      "source_name": "PressHub",
+      "original_url": "https://www.presshub.ro/aproape-11-000-de-cetateni-europeni-evacuati-cu-ajutorul-uniunii-europene-din-tarile-afectate-de-conflictul-din-orientul-mijlociu-403894/",
+      "geo_scope": "county",
+      "county_detected": "Bucuresti",
+      "region_detected": "Bucuresti-Ilfov",
+      "county_match_confidence": 1.0,
+      "geo_signals": [
+        "county:Bucuresti",
+        "seat:Bucuresti",
+        "city:Bucuresti",
+        "variant:Bucuresti"
+      ]
+    },
+    {
+      "title": "Proteste violente în Cuba, după criza energetică impusă de Trump. Cetățenii ies în stradă din cauza penelor de curent și a lipsei combustibilului",
+      "source_name": "Economedia",
+      "original_url": "https://economedia.ro/proteste-violente-in-cuba-dupa-criza-energetica-impusa-de-trump-cetatenii-ies-in-strada-din-cauza-penelor-de-curent-si-a-lipsei-combustibilului.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "'My mother cried out one last time': Palestinian boy, 12, describes how Israeli forces killed his family in car",
+      "source_name": "BBC World",
+      "original_url": "https://www.bbc.com/news/articles/c70n2x7p22do?at_medium=RSS&at_campaign=rss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Zborurile civile, suspendate temporar pe aeroportul „Kogălniceanu”, fără explicații",
+      "source_name": "tomisnews.ro",
+      "original_url": "https://tomisnews.ro/zborurile-civile-suspendate-temporar-pe-aeroportul-kogalniceanu-fara-explicatii/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Autostrada Moldovei A7. Risc semnificativ ca România să piardă bani gratuiți din PNRR, avertizează Asociația Pro Infrastructură / „UMB trebuie să se autodepășească, dar un heirup va afecta inevitabil calitatea”",
+      "source_name": "Economedia",
+      "original_url": "https://economedia.ro/autostrada-moldovei-a7-risc-semnificativ-ca-romania-sa-piarda-bani-gratuiti-din-pnrr-avertizeaza-asociatia-pro-infrastructura-umb-trebuie-sa-se-autodepaseasca-dar-un-heirup-va-afecta-ine.html",
+      "geo_scope": "county",
+      "county_detected": "Neamt",
+      "region_detected": "Moldova",
+      "county_match_confidence": 0.42,
+      "geo_signals": [
+        "city:Neamt",
+        "variant:Neamt"
+      ]
+    },
+    {
+      "title": "Metroul Gara de Nord – Gara Progresu. A fost semnat contractul pentru supervizare, cel mai mare contract de consultanță din toate timpurile",
+      "source_name": "Economedia",
+      "original_url": "https://economedia.ro/metrou-gara-de-nord-gara-progresu-a-fost-semnat-contractul-pentru-supervizare.html",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Aproape 80% dintre arădeni sunt pentru interzicerea jocurilor de noroc, în sondajul făcut de municipalitate",
+      "source_name": "PressHub",
+      "original_url": "https://www.presshub.ro/aproape-80-dintre-aradeni-sunt-pentru-interzicerea-jocurilor-de-noroc-in-sondajul-facut-de-municipalitate-403891/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "US wants help to guard Strait of Hormuz, but EU is not keen",
+      "source_name": "DW World",
+      "original_url": "https://www.dw.com/en/us-wants-help-to-guard-strait-of-hormuz-but-eu-is-not-keen/a-76380348?maca=en-rss-en-world-4025-xml-mrss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Nicușor Dan, după discuțiile cu OMV Petrom: „Neptun Deep avansează conform graficului și va reduce dependența noastră de importuri”",
+      "source_name": "tomisnews.ro",
+      "original_url": "https://tomisnews.ro/nicusor-dan-dupa-discutiile-cu-omv-petrom-neptun-deep-avanseaza-conform-graficului-si-va-reduce-dependenta-noastra-de-importuri/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Court rejects move to indict Valencia leader over flood response",
+      "source_name": "DW World",
+      "original_url": "https://www.dw.com/en/court-rejects-move-to-indict-valencia-leader-over-flood-response/a-76384442?maca=en-rss-en-world-4025-xml-mrss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "China: 'Ethnic unity' law sparks fears of forced integration",
+      "source_name": "DW World",
+      "original_url": "https://www.dw.com/en/china-ethnic-unity-law-sparks-fears-of-forced-integration/a-76383259?maca=en-rss-en-world-4025-xml-mrss",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "'Not our war': U.S. allies balk at Trump's Strait of Hormuz demands",
+      "source_name": "NBC News",
+      "original_url": "https://www.nbcnews.com/world/iran/us-allies-respond-trump-strait-of-hormuz-demands-nato-iran-war-rcna263650",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Japan to work with U.S., others for safe Hormuz, Motegi tells Rubio 5 hours ago KYODO NEWS",
+      "source_name": "Kyodo News",
+      "original_url": "https://english.kyodonews.net/articles/-/72377",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "US faces another Vietnam if it puts boots on the ground, Iran's deputy FM tells Sky News",
+      "source_name": "Sky News",
+      "original_url": "https://news.sky.com/story/us-faces-another-vietnam-if-it-puts-boots-on-the-ground-irans-deputy-fm-tells-sky-news-13520555",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Dubai airport shutdown affects thousands of UK passengers",
+      "source_name": "Sky News",
+      "original_url": "https://news.sky.com/story/dubai-airport-shutdown-affects-thousands-of-uk-passengers-as-drone-strikes-fuel-tank-13520528",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Live updates: Israel-Hezbollah fighting drives over 1 million Lebanese from their homes",
+      "source_name": "Associated Press",
+      "original_url": "https://apnews.com/live/iran-war-israel-trump-03-16-2026",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Muzeul Național „George Enescu” contra lui Enescu: cum a dispărut Catalogul Enescu scris de Enescu",
+      "source_name": "Contributors",
+      "original_url": "https://www.contributors.ro/muzeul-national-george-enescu-contra-lui-enescu-cum-a-disparut-catalogul-enescu-scris-de-enescu/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Cu ochii larg închiși",
+      "source_name": "Contributors",
+      "original_url": "https://www.contributors.ro/cu-ochii-larg-inchisi/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Trump says US will 'do what we have to' over Cuba days after rare riot",
+      "source_name": "Sky News",
+      "original_url": "https://news.sky.com/story/donald-trump-says-us-will-do-what-we-have-to-over-cuba-days-after-rare-riot-13520436",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "Nu am învățat nimic din criza combustibilului din 2022. O să repetăm aceleași greșeli și în 2026",
+      "source_name": "Contributors",
+      "original_url": "https://www.contributors.ro/nu-am-invatat-nimic-din-criza-combustibilului-din-2022-o-sa-repetam-aceleasi-greseli-si-in-2026/",
+      "geo_scope": "international",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:international_signal"
+      ]
+    },
+    {
+      "title": "PODCAST. De ce mor reformele în România?",
+      "source_name": "Recorder",
+      "original_url": "https://recorder.ro/podcast-de-ce-mor-reformele-in-romania/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Trei luni mai târziu. Cum s-au repliat liderii sistemului după documentarul „Justiție capturată”",
+      "source_name": "Recorder",
+      "original_url": "https://recorder.ro/trei-luni-mai-tarziu-cum-s-au-repliat-liderii-sistemului-dupa-documentarul-justitie-capturata/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Ce ne enervează #51 – Pe noi nu ne afectează",
+      "source_name": "Recorder",
+      "original_url": "https://recorder.ro/ce-ne-enerveaza-51-pe-noi-nu-ne-afecteaza/",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "PSD îl forțează pe Bolojan să nu mai „jupoaie” populația și firmele. Grindeanu anunță măsuri de urgență de relansare economică",
+      "source_name": "Realitatea",
+      "original_url": "https://www.realitatea.net/stiri/politica/psd-il-forteaza-pe-bolojan-sa-nu-mai-jupoaie-populatie-si-firmele-grindeanu-anunta-masuri-de-urgenta-de-relansare-economica_696f69fe02dd8214eb074258",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": []
+    },
+    {
+      "title": "Guvernul pregătește reforma administrației publice. Ministrul Dezvoltării: „Acest pachet nu se îndreaptă împotriva contribuabilului de bună credință”",
+      "source_name": "Realitatea",
+      "original_url": "https://www.realitatea.net/stiri/actual/guvernul-pregateste-reforma-administratiei-publice-ministrul-dezvoltarii-acest-pachet-nu-se-indreapta-impotriva-contribuabilului-de-buna-credinta_696f69fa02dd8214eb074252",
+      "geo_scope": "national",
+      "county_detected": null,
+      "region_detected": null,
+      "county_match_confidence": null,
+      "geo_signals": [
+        "scope:national_signal"
+      ]
+    },
+    {
+      "title": "Generalul-șef al NATO: Problema Groenlandei este una politică - ne concentrăm să apărăm Alianța - VIDEO",
+      "source_name": "Realitatea",
+      "original_url": "https://www.realitatea.net/stiri/actual/generalulsef-al-nato-problema-groenlandei-este-una-politica-ne-concentram-sa-aparam-alianta_696f65ffb2b5677b847dbd62",
+      "geo_scope": "county",
+      "county_detected": "Sibiu",
+      "region_detected": "Transilvania",
+      "county_match_confidence": 0.92,
+      "geo_signals": [
+        "county:Sibiu",
+        "seat:Sibiu",
+        "city:Sibiu",
+        "variant:Sibiu"
+      ]
+    }
+  ],
+  "validation_summary": {
+    "story_count": 115,
+    "geo_tagged_county": 23,
+    "geo_tagged_regional": 0,
+    "geo_tagged_national": 43,
+    "geo_tagged_international": 49,
+    "stories_with_multiple_county_hits": 2
+  }
+}
