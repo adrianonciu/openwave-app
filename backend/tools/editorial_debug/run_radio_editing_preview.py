@@ -21,6 +21,7 @@ TEXT_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.txt"
 GENERALIST_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_mihai_bacau.txt"
 VICTOR_VASLUI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_victor_vaslui.txt"
 ANA_TIMISOARA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ana_timisoara.txt"
+ION_GALATI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ion_galati.txt"
 
 PREVIEW_FIXTURES = [
     {
@@ -381,6 +382,69 @@ ANA_TIMISOARA_LOCAL_FIXTURES = [
     },
 ]
 
+ION_GALATI_LOCAL_FIXTURES = [
+    {
+        "story_id": "galati_01",
+        "source_label": "viata-libera.ro",
+        "headline": "Spitalul Judetean Galati extinde liniile de garda pentru urgente",
+        "content_text": (
+            "Spitalul Judetean Galati extinde liniile de garda pentru urgente incepand de saptamana viitoare. "
+            "Directorul unitatii, Andreea Munteanu, a precizat ca pacientii cu suspiciune de AVC vor intra direct pe flux rapid. "
+            "Masura poate scurta timpii de asteptare pentru cazurile grave din oras si din judet. "
+            "Primele efecte sunt asteptate chiar din primele zile de program."
+        ),
+        "local_geo_origin": "galati_county",
+    },
+    {
+        "story_id": "galati_02",
+        "source_label": "obiectivgalati.ro",
+        "headline": "Primaria Galati muta traficul in zona Falezei pentru lucrari la carosabil",
+        "content_text": (
+            "Primaria Galati muta traficul in zona Falezei pentru lucrari la carosabil si la retelele subterane. "
+            "Primarul Ionut Pucheanu a anuntat ca soferii vor circula pe rute ocolitoare incepand de luni dimineata. "
+            "Restrictiile afecteaza traseele de autobuz si accesul spre doua parcari mari din oras. "
+            "Primele restrictii intra in vigoare de luni dimineata."
+        ),
+        "local_geo_origin": "galati_county",
+    },
+    {
+        "story_id": "galati_03",
+        "source_label": "stirigalati.ro",
+        "headline": "ISU Galati dubleaza controalele in caminele pentru varstnici",
+        "content_text": (
+            "ISU Galati dubleaza controalele in caminele pentru varstnici dupa doua alerte de incendiu. "
+            "Inspectorul sef, Mihai Enache, a declarat ca pompierii verifica instalatiile electrice si planurile de evacuare in tot judetul. "
+            "Masura inseamna verificari mai dese si amenzi rapide pentru administratorii care ignora regulile. "
+            "Primele rezultate vor fi centralizate pana la finalul saptamanii."
+        ),
+        "local_geo_origin": "galati_county",
+    },
+    {
+        "story_id": "moldova_03",
+        "source_label": "Ziarul de Iasi",
+        "headline": "Universitatile din Moldova extind bursele pentru studentii navetisti",
+        "content_text": (
+            "Universitatile din Moldova extind bursele pentru studentii navetisti din orasele mici ale regiunii. "
+            "Rectorii spun ca sprijinul nou ar trebui sa acopere transportul si o parte din cazare pentru primul semestru. "
+            "Masura poate reduce abandonul universitar in familiile cu venituri mici. "
+            "Primele criterii de selectie vor fi publicate luna viitoare."
+        ),
+        "local_geo_origin": "moldova_region",
+    },
+    {
+        "story_id": "moldova_04",
+        "source_label": "Agerpres",
+        "headline": "CFR muta mai multe trenuri regionale pe linii alternative in Moldova",
+        "content_text": (
+            "CFR muta mai multe trenuri regionale pe linii alternative in Moldova din cauza unor lucrari la infrastructura. "
+            "Compania spune ca navetistii din Galati, Braila si Vaslui vor vedea intarzieri si schimbari de peron in urmatoarele zile. "
+            "Modificarea afecteaza zilnic legaturile spre scoli, spitale si locuri de munca din regiune. "
+            "Programul provizoriu se aplica de marti dimineata."
+        ),
+        "local_geo_origin": "moldova_region",
+    },
+]
+
 
 def _note_value(notes: list[str], key: str, default: str) -> str:
     prefix = f"{key}="
@@ -421,7 +485,17 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     stories_with_personal_attribution = _note_value(edited.editing_debug_notes, "stories_with_personal_attribution", "False") == "True"
     stories_with_institution_only_attribution = _note_value(edited.editing_debug_notes, "stories_with_institution_only_attribution", "False") == "True"
     stories_with_media_attribution = _note_value(edited.editing_debug_notes, "stories_with_media_attribution", "False") == "True"
+    stories_with_person_name_attribution = _note_value(edited.editing_debug_notes, "stories_with_person_name_attribution", "False") == "True"
+    stories_with_person_role_and_name_attribution = _note_value(edited.editing_debug_notes, "stories_with_person_role_and_name_attribution", "False") == "True"
+    stories_with_institution_attribution = _note_value(edited.editing_debug_notes, "stories_with_institution_attribution", "False") == "True"
+    stories_with_media_source_attribution = _note_value(edited.editing_debug_notes, "stories_with_media_source_attribution", "False") == "True"
+    stories_missing_attributed_voice = _note_value(edited.editing_debug_notes, "stories_missing_attributed_voice", "False") == "True"
     attribution_type_used = _note_value(edited.editing_debug_notes, "attribution_type_used", "none")
+    attribution_level_used = _note_value(edited.editing_debug_notes, "attribution_level_used", "none")
+    attributed_name_used = _note_value(edited.editing_debug_notes, "attributed_name_used", "")
+    attributed_role_used = _note_value(edited.editing_debug_notes, "attributed_role_used", "")
+    attributed_institution_used = _note_value(edited.editing_debug_notes, "attributed_institution_used", "")
+    attributed_media_source_used = _note_value(edited.editing_debug_notes, "attributed_media_source_used", "")
     attribution_position_used = _note_value(edited.editing_debug_notes, "attribution_position_used", "none")
     has_named_person = _note_value(edited.editing_debug_notes, "has_named_person", "False") == "True"
     has_role_based_person = _note_value(edited.editing_debug_notes, "has_role_based_person", "False") == "True"
@@ -452,9 +526,19 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "promoted_person_attribution_sentence_count": promoted_person_attribution_sentence_count,
         "role_based_attribution_inserted_count": role_based_attribution_inserted_count,
         "stories_with_personal_attribution": stories_with_personal_attribution,
+        "stories_with_person_name_attribution": stories_with_person_name_attribution,
+        "stories_with_person_role_and_name_attribution": stories_with_person_role_and_name_attribution,
         "stories_with_institution_only_attribution": stories_with_institution_only_attribution,
+        "stories_with_institution_attribution": stories_with_institution_attribution,
         "stories_with_media_attribution": stories_with_media_attribution,
+        "stories_with_media_source_attribution": stories_with_media_source_attribution,
+        "stories_missing_attributed_voice": stories_missing_attributed_voice,
         "attribution_type_used": attribution_type_used,
+        "attribution_level_used": attribution_level_used,
+        "attributed_name_used": attributed_name_used,
+        "attributed_role_used": attributed_role_used,
+        "attributed_institution_used": attributed_institution_used,
+        "attributed_media_source_used": attributed_media_source_used,
         "attribution_position_used": attribution_position_used,
         "has_named_person": has_named_person,
         "has_role_based_person": has_role_based_person,
@@ -484,7 +568,7 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.7",
+        "OPENWAVE RADIO EDITING PREVIEW V1.8",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
@@ -495,6 +579,11 @@ def _render_preview_text(payload: dict[str, object]) -> str:
         f"Continuation lead rewrites: {summary['lead_continuation_rewrite_count']}",
         f"Lead opening counts: {json.dumps(summary['lead_opening_type_counts'], ensure_ascii=False)}",
         f"Stories with personal attribution: {summary['stories_with_personal_attribution']}",
+        f"Stories with person-name attribution: {summary['stories_with_person_name_attribution']}",
+        f"Stories with role+name attribution: {summary['stories_with_person_role_and_name_attribution']}",
+        f"Stories with institution attribution: {summary['stories_with_institution_attribution']}",
+        f"Stories with media-source attribution: {summary['stories_with_media_source_attribution']}",
+        f"Stories missing attributed voice: {summary['stories_missing_attributed_voice']}",
         f"Lead personal attribution count: {summary['lead_has_personal_attribution_count']}",
         f"Second-sentence personal attribution count: {summary['second_sentence_has_personal_attribution_count']}",
         f"Promoted person-attribution sentences: {summary['promoted_person_attribution_sentence_count']}",
@@ -527,7 +616,12 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Lead continuation rewrite: {item['lead_continuation_rewrite_applied']}",
                 f"Lead opening type: {item['lead_opening_type']}",
                 f"Attribution type used: {item['attribution_type_used']}",
+                f"Attribution level used: {item['attribution_level_used']}",
                 f"Attribution position used: {item['attribution_position_used']}",
+                f"Attributed name: {item['attributed_name_used'] or 'none'}",
+                f"Attributed role: {item['attributed_role_used'] or 'none'}",
+                f"Attributed institution: {item['attributed_institution_used'] or 'none'}",
+                f"Attributed media source: {item['attributed_media_source_used'] or 'none'}",
                 f"Lead personal attribution: {item['lead_has_personal_attribution']}",
                 f"Second sentence personal attribution: {item['second_sentence_has_personal_attribution']}",
                 f"Has named person: {item['has_named_person']}",
@@ -580,7 +674,7 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
 
 
 def _fixture_scope(story_id: str) -> str:
-    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_")):
+    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_", "galati_")):
         return "local"
     if story_id.startswith("national_"):
         return "national"
@@ -605,13 +699,13 @@ def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
         signals["direct_listener_impact_score"] += 2.6
         signals["emotional_proximity_score"] += 2.0
         signals["locality_proximity_score"] += 2.5
-    if item.get("local_geo_origin") in {"vaslui_county", "timis_county"}:
+    if item.get("local_geo_origin") in {"vaslui_county", "timis_county", "galati_county"}:
         signals["direct_listener_impact_score"] += 1.4
         signals["locality_proximity_score"] += 2.2
     if item.get("local_geo_origin") in {"moldova_region", "banat_region"}:
         signals["romania_relevance_score"] += 1.2
         signals["locality_proximity_score"] += 1.0
-    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "regiune")):
+    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "galati", "tecuci", "regiune")):
         signals["romania_relevance_score"] += 1.6
         signals["locality_proximity_score"] += 1.4
     if any(term in text for term in ("spital", "urgente", "incend", "isu", "siguranta", "cardiace")):
@@ -684,6 +778,14 @@ def _order_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> list[dict
     for index, item in enumerate(ordered, start=1):
         item["position"] = index
     return ordered
+
+
+def _collect_media_source_credits(stories: list[dict[str, object]]) -> list[str]:
+    return sorted({
+        str(item.get("source_label") or item.get("source") or "").strip()
+        for item in stories
+        if str(item.get("source_label") or item.get("source") or "").strip()
+    })
 
 
 def _render_victor_vaslui_bulletin(stories: list[dict[str, object]], geo_debug: dict[str, object]) -> str:
@@ -761,6 +863,60 @@ def _render_ana_timisoara_bulletin(stories: list[dict[str, object]], geo_debug: 
     return "\n".join(lines).strip() + "\n"
 
 
+def _render_ion_galati_bulletin(stories: list[dict[str, object]], geo_debug: dict[str, object]) -> str:
+    total_duration = sum(story["estimated_duration_seconds"] for story in stories)
+    lines = [
+        "OPENWAVE GENERALIST BULLETIN - ION / GALATI",
+        "",
+        f"Stories: {len(stories)}",
+        f"Estimated story-only duration: {total_duration} secunde",
+        "Editorial target mix: local 5, national 6, international 4.",
+        "Ordering rule: strongest listener impact first, with mixed local/national/international pacing.",
+        f"Resolved user county: {geo_debug['resolved_user_county']}",
+        f"Resolved user region: {geo_debug['resolved_user_region']}",
+        f"Local source registry used: {geo_debug['local_source_registry_used']}",
+        f"County-based routing active: {geo_debug['county_based_local_routing']}",
+        f"Local sources selected for county: {', '.join(geo_debug['local_sources_selected']) or 'none'}",
+        f"Local story count from Galati county: {geo_debug['local_story_count_from_galati_county']}",
+        f"Local story count from regional fallback: {geo_debug['local_story_count_from_regional_fallback']}",
+        f"Stories with person+role+name attribution: {geo_debug['stories_with_person_role_and_name_attribution']}",
+        f"Stories with institution attribution: {geo_debug['stories_with_institution_attribution']}",
+        f"Stories with media attribution: {geo_debug['stories_with_media_source_attribution']}",
+        f"Stories missing attributed voice: {geo_debug['stories_missing_attributed_voice']}",
+        f"Written source credits emitted: {geo_debug['written_source_credits_emitted']}",
+        f"Bulletin unique media source count: {geo_debug['bulletin_unique_media_source_count']}",
+        "",
+    ]
+    for item in stories:
+        lines.extend([
+            f"{item['position']}. {item['headline_original']}",
+            f"   Scope: {item['source_scope']}",
+            f"   Local origin: {item.get('local_geo_origin') or 'none'}",
+            f"   Radio priority: {item['radio_priority_score']}",
+            f"   Ordering signals: {json.dumps(item['ordering_signals'], ensure_ascii=False)}",
+            f"   Attribution level used: {item['attribution_level_used']}",
+            f"   Attribution type used: {item['attribution_type_used']}",
+            f"   Attribution position used: {item['attribution_position_used']}",
+            f"   Attributed name: {item['attributed_name_used'] or 'none'}",
+            f"   Attributed role: {item['attributed_role_used'] or 'none'}",
+            f"   Attributed institution: {item['attributed_institution_used'] or 'none'}",
+            f"   Attributed media source: {item['attributed_media_source_used'] or 'none'}",
+            f"   Lead/title overlap: {item['lead_title_overlap_score']}",
+            f"   Lead continuation rewrite applied: {item['lead_continuation_rewrite_applied']}",
+            item["radio_text"],
+            "",
+        ])
+    lines.extend([
+        "Outro:",
+        "Acesta a fost jurnalul generalist OpenWave pentru Ion din judetul Galati.",
+        "",
+        "Written source credits for player:",
+        *[f"- {source}" for source in geo_debug['written_source_credits']],
+        "",
+    ])
+    return "\n".join(lines).strip() + "\n"
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
@@ -806,6 +962,11 @@ def main() -> None:
         "lead_continuation_rewrite_count": sum(1 for item in preview_stories if item["lead_continuation_rewrite_applied"]),
         "lead_opening_type_counts": lead_opening_type_counts,
         "stories_with_personal_attribution": sum(1 for item in preview_stories if item["stories_with_personal_attribution"]),
+        "stories_with_person_name_attribution": sum(1 for item in preview_stories if item["stories_with_person_name_attribution"]),
+        "stories_with_person_role_and_name_attribution": sum(1 for item in preview_stories if item["stories_with_person_role_and_name_attribution"]),
+        "stories_with_institution_attribution": sum(1 for item in preview_stories if item["stories_with_institution_attribution"]),
+        "stories_with_media_source_attribution": sum(1 for item in preview_stories if item["stories_with_media_source_attribution"]),
+        "stories_missing_attributed_voice": sum(1 for item in preview_stories if item["stories_missing_attributed_voice"]),
         "lead_has_personal_attribution_count": sum(1 for item in preview_stories if item["lead_has_personal_attribution"]),
         "second_sentence_has_personal_attribution_count": sum(1 for item in preview_stories if item["second_sentence_has_personal_attribution"]),
         "promoted_person_attribution_sentence_count": sum(item["promoted_person_attribution_sentence_count"] for item in preview_stories),
@@ -901,6 +1062,39 @@ def main() -> None:
         },
     }
     ANA_TIMISOARA_OUTPUT_PATH.write_text(_render_ana_timisoara_bulletin(ana_timisoara_stories, ana_geo_debug), encoding="utf-8")
+
+
+    ion_personalization = UserPersonalization(
+        listener_profile=ListenerProfile(first_name="Ion", country="Romania", region="Galati"),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=35, national=40, international=25),
+        ),
+    )
+    ion_geo = resolve_listener_geography(city=None, region="Galati")
+    ion_local_resolution = SourceWatcherService().resolve_local_sources_for_personalization(ion_personalization)
+    ion_mix_fixtures = ION_GALATI_LOCAL_FIXTURES + [
+        fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
+    ]
+    ion_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(ion_mix_fixtures, start=1)]
+    ion_galati_stories = _order_victor_vaslui_bulletin(ion_base_stories)
+    ion_written_source_credits = _collect_media_source_credits(ion_mix_fixtures)
+    ion_geo_debug = {
+        "resolved_user_county": ion_geo.resolved_county,
+        "resolved_user_region": ion_geo.resolved_macro_region,
+        "local_source_registry_used": ion_local_resolution.local_source_registry_used,
+        "county_based_local_routing": True,
+        "local_sources_selected": [item.source_name for item in ion_local_resolution.resolved_sources],
+        "local_story_count_from_galati_county": sum(1 for item in ion_galati_stories if item.get("local_geo_origin") == "galati_county"),
+        "local_story_count_from_regional_fallback": sum(1 for item in ion_galati_stories if item.get("local_geo_origin") == "moldova_region"),
+        "stories_with_person_role_and_name_attribution": sum(1 for item in ion_galati_stories if item["stories_with_person_role_and_name_attribution"]),
+        "stories_with_institution_attribution": sum(1 for item in ion_galati_stories if item["stories_with_institution_attribution"]),
+        "stories_with_media_source_attribution": sum(1 for item in ion_galati_stories if item["stories_with_media_source_attribution"]),
+        "stories_missing_attributed_voice": sum(1 for item in ion_galati_stories if item["stories_missing_attributed_voice"]),
+        "bulletin_unique_media_source_count": len(ion_written_source_credits),
+        "written_source_credits_emitted": bool(ion_written_source_credits),
+        "written_source_credits": ion_written_source_credits,
+    }
+    ION_GALATI_OUTPUT_PATH.write_text(_render_ion_galati_bulletin(ion_galati_stories, ion_geo_debug), encoding="utf-8")
 
 
 if __name__ == "__main__":

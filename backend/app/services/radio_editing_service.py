@@ -145,7 +145,7 @@ ATTRIBUTION_PREFIX_PATTERN = re.compile(
     re.UNICODE,
 )
 ROLE_PREFIX_PATTERN = re.compile(
-    r"\b(?P<role>Premierul|Presedintele|Primarul|Ministrul|Procurorul|Judecatorul|Directorul)\s+(?P<name>[A-Z][a-z\u00C0-\u024F]+(?:\s+[A-Z][a-z\u00C0-\u024F]+){1,2})\b",
+    r"\b(?P<role>Premierul|Presedintele|Primarul|Ministrul|Procurorul|Judecatorul|Directorul(?:\s+[a-z\u00C0-\u024F]+){0,2}|Inspectorul(?:\s+[a-z\u00C0-\u024F]+){0,2}|Prefectul|Medicul(?:\s+[a-z\u00C0-\u024F]+){0,2})[,]?\s+(?P<name>[A-Z][a-z\u00C0-\u024F]+(?:\s+[A-Z][a-z\u00C0-\u024F]+){1,2})\b",
     re.UNICODE,
 )
 PERSON_STOPWORDS = {
@@ -182,7 +182,7 @@ LEAD_EVENT_NOMINALIZATIONS = {
 CONSEQUENCE_LEAD_STARTS = ("de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata", "de duminica", "primele restrictii", "primele efecte", "in cateva", "din aceasta", "de la inceputul")
 CONCRETE_ACTION_LEAD_STARTS = ("pompierii", "soferii", "pacientii", "inspectorii", "autoritatile", "echipele", "medicii", "elevii", "parintii", "companiile", "santierul")
 AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii", "calatorii")
-PERSONAL_ATTRIBUTION_VERBS = ("a declarat", "declara", "a spus", "spune", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "promite", "a avertizat", "avertizeaza", "a anuntat", "anunta", "a transmis", "transmite")
+PERSONAL_ATTRIBUTION_VERBS = ("a declarat", "declara", "a spus", "spune", "spun", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "promite", "a avertizat", "avertizeaza", "a anuntat", "anunta", "a transmis", "transmite", "transmit", "relateaza", "scrie")
 ROLE_BASED_PERSON_MARKERS = ("primarul", "directorul", "director", "inspectorul", "inspectorii", "prefectul", "medicul", "medicul sef", "medicul coordonator", "fermierii", "soferii", "autoritatile locale", "managerul", "ministrul", "premierul")
 PERSONAL_ATTRIBUTION_ENCOURAGED_TERMS = ("primarie", "spital", "isu", "trafic", "lucrari", "restrictii", "drum", "educatie", "scoala", "elev", "fermier", "seceta", "preturi", "servicii", "controverse", "controale", "urgente")
 ROLE_BASED_ATTRIBUTION_MAP = {
@@ -229,10 +229,20 @@ class RadioEditingService:
         debug_notes.append(f"promoted_person_attribution_sentence_count={polish_metrics['promoted_person_attribution_sentence_count']}")
         debug_notes.append(f"role_based_attribution_inserted_count={polish_metrics['role_based_attribution_inserted_count']}")
         debug_notes.append(f"stories_with_personal_attribution={polish_metrics['stories_with_personal_attribution']}")
+        debug_notes.append(f"stories_with_person_name_attribution={polish_metrics['stories_with_person_name_attribution']}")
+        debug_notes.append(f"stories_with_person_role_and_name_attribution={polish_metrics['stories_with_person_role_and_name_attribution']}")
         debug_notes.append(f"stories_with_institution_only_attribution={polish_metrics['stories_with_institution_only_attribution']}")
+        debug_notes.append(f"stories_with_institution_attribution={polish_metrics['stories_with_institution_attribution']}")
         debug_notes.append(f"stories_with_media_attribution={polish_metrics['stories_with_media_attribution']}")
+        debug_notes.append(f"stories_with_media_source_attribution={polish_metrics['stories_with_media_source_attribution']}")
+        debug_notes.append(f"stories_missing_attributed_voice={polish_metrics['stories_missing_attributed_voice']}")
         debug_notes.append(f"attribution_type_used={polish_metrics['attribution_type_used']}")
+        debug_notes.append(f"attribution_level_used={polish_metrics['attribution_level_used']}")
         debug_notes.append(f"attribution_position_used={polish_metrics['attribution_position_used']}")
+        debug_notes.append(f"attributed_name_used={polish_metrics['attributed_name_used']}")
+        debug_notes.append(f"attributed_role_used={polish_metrics['attributed_role_used']}")
+        debug_notes.append(f"attributed_institution_used={polish_metrics['attributed_institution_used']}")
+        debug_notes.append(f"attributed_media_source_used={polish_metrics['attributed_media_source_used']}")
         debug_notes.append(f"has_named_person={polish_metrics['has_named_person']}")
         debug_notes.append(f"has_role_based_person={polish_metrics['has_role_based_person']}")
         debug_notes.append(f"lead_has_quote_or_person={polish_metrics['lead_has_quote_or_person']}")
@@ -540,10 +550,12 @@ class RadioEditingService:
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
         polished, lead_rewrite_meta = self._rewrite_title_like_lead(payload, compression, polished)
         polished = self._promote_personal_attribution(payload, compression, polished)
+        polished = self._ensure_attributed_voice(payload, compression, polished)
         polished = self._reinforce_romania_impact(payload, compression, polished)
         polished = self._replace_repeated_person_names(payload, polished)
         polished = self._limit_attribution_slots(polished)
         polished = self._strengthen_closure(payload, compression, polished)
+        polished = self._ensure_attributed_voice(payload, compression, polished)
         polished = [
             self._finalize_sentence(self._trim_sentence(sentence, LEAD_MAX_WORDS if index == 0 else SENTENCE_SOFT_MAX_WORDS))
             for index, sentence in enumerate(polished)
@@ -552,6 +564,8 @@ class RadioEditingService:
         lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], polished[0] if polished else ""), 2)
         attribution_type_used = self._story_attribution_type(polished, payload)
         attribution_position_used = self._attribution_position_used(polished, payload)
+        attribution_details = self._attributed_voice_details(polished, payload)
+        attribution_level_used = attribution_details["attribution_level_used"]
         metrics = {
             "lead_title_overlap_score": lead_title_overlap_score,
             "lead_rewritten_to_reduce_title_repetition": lead_rewrite_meta["lead_rewritten_to_reduce_title_repetition"],
@@ -564,15 +578,25 @@ class RadioEditingService:
             "multiple_attributions": self._count_explicit_attributions(polished) > 1,
             "administrative_closure": bool(polished and self._is_administrative_sentence(polished[-1])),
             "simplified_operational_description_count": simplified_count,
-            "stories_with_personal_attribution": attribution_type_used in {"named_person", "role_based_person"},
+            "stories_with_personal_attribution": attribution_level_used == "person",
+            "stories_with_person_name_attribution": bool(attribution_details["attributed_name_used"]),
+            "stories_with_person_role_and_name_attribution": attribution_type_used == "named_person",
             "lead_has_personal_attribution": bool(polished and self._sentence_personal_attribution_type(polished[0], payload) in {"named_person", "role_based_person"}),
             "second_sentence_has_personal_attribution": len(polished) > 1 and self._sentence_personal_attribution_type(polished[1], payload) in {"named_person", "role_based_person"},
-            "promoted_person_attribution_sentence_count": 1 if attribution_position_used in {"lead", "sentence_2"} and attribution_type_used in {"named_person", "role_based_person"} else 0,
-            "role_based_attribution_inserted_count": 1 if any(self._sentence_personal_attribution_type(sentence, payload) == "role_based_person" for sentence in polished) else 0,
-            "stories_with_institution_only_attribution": attribution_type_used == "institution",
-            "stories_with_media_attribution": attribution_type_used == "media",
+            "promoted_person_attribution_sentence_count": 1 if attribution_position_used in {"lead", "sentence_2"} and attribution_level_used == "person" else 0,
+            "role_based_attribution_inserted_count": 1 if attribution_type_used == "role_based_person" else 0,
+            "stories_with_institution_only_attribution": attribution_level_used == "institution",
+            "stories_with_institution_attribution": attribution_level_used == "institution",
+            "stories_with_media_attribution": attribution_level_used == "media",
+            "stories_with_media_source_attribution": attribution_level_used == "media",
+            "stories_missing_attributed_voice": attribution_level_used == "none",
             "attribution_type_used": attribution_type_used,
+            "attribution_level_used": attribution_level_used,
             "attribution_position_used": attribution_position_used,
+            "attributed_name_used": attribution_details["attributed_name_used"],
+            "attributed_role_used": attribution_details["attributed_role_used"],
+            "attributed_institution_used": attribution_details["attributed_institution_used"],
+            "attributed_media_source_used": attribution_details["attributed_media_source_used"],
             "has_named_person": bool(payload.get("top_person")),
             "has_role_based_person": bool(payload.get("available_role_markers")),
             "lead_has_quote_or_person": bool(polished and self._sentence_personal_attribution_type(polished[0], payload) != "none"),
@@ -986,10 +1010,14 @@ class RadioEditingService:
         if not top_person or not sentences:
             return sentences
         role_alias = str(payload.get("top_person_role") or self._surname_reference(top_person)).strip()
+        seen_full_name = top_person in sentences[0]
         updated = [sentences[0]]
         for sentence in sentences[1:]:
             if top_person in sentence:
-                sentence = sentence.replace(top_person, role_alias, 1)
+                if seen_full_name:
+                    sentence = sentence.replace(top_person, role_alias, 1)
+                else:
+                    seen_full_name = True
             updated.append(self._finalize_sentence(sentence))
         return updated
 
@@ -1158,7 +1186,7 @@ class RadioEditingService:
             attribution_type = self._sentence_personal_attribution_type(candidate, payload)
             if attribution_type not in {"named_person", "role_based_person"}:
                 continue
-            score = 2.0 if attribution_type == "named_person" else 1.4
+            score = 2.2 if attribution_type == "named_person" else 1.5
             if self._sentence_has_impact(candidate) or self._sentence_has_next_step(candidate):
                 score += 0.4
             candidates.append((score, candidate))
@@ -1172,13 +1200,150 @@ class RadioEditingService:
         payload: dict[str, object],
         kept_entities: list[str],
     ) -> str:
-        rewritten = self._rewrite_for_radio(sentence, "reaction", kept_entities)
+        rewritten = self._ensure_role_and_name_attribution(self._rewrite_for_radio(sentence, "reaction", kept_entities), payload)
         if self._sentence_personal_attribution_type(rewritten, payload) in {"named_person", "role_based_person"}:
             return rewritten
         role_based = self._convert_institution_to_role_attribution(sentence, payload)
         if role_based:
-            return self._rewrite_for_radio(role_based, "reaction", kept_entities)
+            candidate = self._rewrite_for_radio(role_based, "reaction", kept_entities)
+            candidate = self._ensure_role_and_name_attribution(candidate, payload)
+            if self._sentence_personal_attribution_type(candidate, payload) in {"named_person", "role_based_person"}:
+                return candidate
         return ""
+
+    def _ensure_attributed_voice(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        if not sentences or self._story_attribution_type(sentences, payload) != "none":
+            return sentences
+        candidate = self._best_mandatory_attribution_sentence(payload, compression, sentences)
+        if not candidate:
+            return sentences
+        updated = list(sentences)
+        if candidate in updated:
+            return updated[:MAX_SENTENCE_COUNT]
+        if len(updated) >= MAX_SENTENCE_COUNT:
+            replace_index = 1 if len(updated) > 1 else 0
+            updated[replace_index] = candidate
+        else:
+            insert_at = 1 if updated else 0
+            updated.insert(insert_at, candidate)
+        return updated[:MAX_SENTENCE_COUNT]
+
+    def _best_mandatory_attribution_sentence(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> str:
+        existing = list(sentences)
+        candidates: list[tuple[float, str]] = []
+        sentence_pool = list(sentences) + [item.text for item in compression.dropped_sentences] + list(payload["source_text_sentences"])
+        seen: set[str] = set()
+        for sentence in sentence_pool:
+            if not sentence:
+                continue
+            named_candidate = self._candidate_named_role_sentence(sentence, payload, compression.kept_entities)
+            if named_candidate and named_candidate not in seen and not self._is_near_duplicate(named_candidate, existing[:2]):
+                seen.add(named_candidate)
+                candidates.append((3.0, named_candidate))
+            institution_candidate = self._candidate_institution_attribution_sentence(sentence, payload, compression.kept_entities)
+            if institution_candidate and institution_candidate not in seen and not self._is_near_duplicate(institution_candidate, existing[:2]):
+                seen.add(institution_candidate)
+                candidates.append((2.0, institution_candidate))
+            media_candidate = self._candidate_media_attribution_sentence(sentence, payload, compression.kept_entities)
+            if media_candidate and media_candidate not in seen and not self._is_near_duplicate(media_candidate, existing[:2]):
+                seen.add(media_candidate)
+                candidates.append((1.0, media_candidate))
+        if not candidates:
+            return ""
+        return max(candidates, key=lambda item: (item[0], -self._word_count(item[1])))[1]
+
+    def _candidate_named_role_sentence(
+        self,
+        sentence: str,
+        payload: dict[str, object],
+        kept_entities: list[str],
+    ) -> str:
+        candidate = self._ensure_role_and_name_attribution(self._rewrite_for_radio(sentence, "reaction", kept_entities), payload)
+        if self._sentence_personal_attribution_type(candidate, payload) == "named_person":
+            return candidate
+        return ""
+
+    def _candidate_institution_attribution_sentence(
+        self,
+        sentence: str,
+        payload: dict[str, object],
+        kept_entities: list[str],
+    ) -> str:
+        rewritten = self._rewrite_for_radio(sentence, "reaction", kept_entities)
+        if self._sentence_personal_attribution_type(rewritten, payload) == "institution":
+            return rewritten
+        institution = self._first_matching_institution(sentence, payload)
+        if not institution:
+            institutions = self._extract_institutions(payload["full_text"])
+            institution = institutions[0] if institutions else ""
+        if not institution:
+            return ""
+        candidate = self._build_attributed_clause_sentence(institution, "spune", rewritten or sentence)
+        if self._sentence_personal_attribution_type(candidate, payload) == "institution":
+            return candidate
+        return ""
+
+    def _candidate_media_attribution_sentence(
+        self,
+        sentence: str,
+        payload: dict[str, object],
+        kept_entities: list[str],
+    ) -> str:
+        source_label = str(payload.get("source_label") or "").strip()
+        if not source_label:
+            return ""
+        rewritten = self._rewrite_for_radio(sentence, "reaction", kept_entities)
+        if self._sentence_personal_attribution_type(rewritten, payload) == "media":
+            return rewritten
+        candidate = self._build_attributed_clause_sentence(source_label, "relateaza", rewritten or sentence)
+        if self._sentence_personal_attribution_type(candidate, payload) == "media":
+            return candidate
+        return ""
+
+    def _ensure_role_and_name_attribution(self, sentence: str, payload: dict[str, object]) -> str:
+        top_person = str(payload.get("top_person") or "").strip()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        if not sentence or not top_person or not top_person_role:
+            return sentence
+        lowered = sentence.lower()
+        if top_person.lower() not in lowered or top_person_role.lower() in lowered or not self._has_attribution_verb(sentence):
+            return sentence
+        return self._finalize_sentence(sentence.replace(top_person, f"{top_person_role} {top_person}", 1))
+
+    def _build_attributed_clause_sentence(self, actor: str, verb: str, base_sentence: str) -> str:
+        clause = self._clean_text(base_sentence).rstrip(".!? ")
+        if not clause:
+            return ""
+        clause = self._strip_leading_attribution_subject(clause, actor)
+        clause = self._lowercase_lead(clause)
+        if not clause:
+            return ""
+        candidate = self._finalize_sentence(f"{actor} {verb} ca {clause}")
+        return candidate
+
+    def _strip_leading_attribution_subject(self, sentence: str, actor: str) -> str:
+        cleaned = sentence.strip()
+        if actor and cleaned.lower().startswith(actor.lower()):
+            cleaned = cleaned[len(actor):].lstrip(" ,")
+            cleaned = re.sub(r"^(?:a\s+[A-Za-zÀ-ɏ-]+|[A-Za-zÀ-ɏ-]+(?:\s+ca)?)\s+", "", cleaned, count=1)
+        cleaned = re.sub(r"^(?:ca|faptul ca)\s+", "", cleaned, flags=re.IGNORECASE)
+        return cleaned.strip(" ,")
+
+    def _lowercase_lead(self, text: str) -> str:
+        stripped = text.strip()
+        if not stripped:
+            return ""
+        return stripped[0].lower() + stripped[1:]
 
     def _convert_institution_to_role_attribution(self, sentence: str, payload: dict[str, object]) -> str:
         cleaned = self._clean_text(sentence)
@@ -1208,25 +1373,57 @@ class RadioEditingService:
                 found.append(marker)
         return found
 
+    def _has_attribution_verb(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        return any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS)
+
+    def _has_voice_verb(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        markers = PERSONAL_ATTRIBUTION_VERBS + (
+            "a decis", "decide", "a impus", "impune", "a lansat", "lanseaza",
+            "a inceput", "incepe", "a deschis", "deschide", "a extins", "extinde",
+            "a aprobat", "aproba", "a respins", "respinge", "pregateste", "pregatesc",
+            "a mutat", "muta", "a trimis", "trimite", "verifica", "dubleaza", "a dublat"
+        )
+        return any(marker in lowered for marker in markers)
+
     def _has_named_personal_attribution_sentence(self, sentence: str, people: list[str]) -> bool:
         lowered = sentence.lower()
-        return bool(people) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS)
+        return bool(people) and any(person.lower() in lowered for person in people) and self._has_attribution_verb(sentence)
 
     def _has_role_based_personal_attribution_sentence(self, sentence: str) -> bool:
         lowered = sentence.lower()
-        return any(marker in lowered for marker in ROLE_BASED_PERSON_MARKERS) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS)
+        return any(marker in lowered for marker in ROLE_BASED_PERSON_MARKERS) and self._has_attribution_verb(sentence)
+
+    def _first_matching_role_marker(self, sentence: str, payload: dict[str, object]) -> str:
+        lowered = sentence.lower()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        if top_person_role and top_person_role.lower() in lowered:
+            return top_person_role
+        for marker in payload.get("available_role_markers") or []:
+            if marker in lowered:
+                return marker
+        return ""
+
+    def _first_matching_institution(self, sentence: str, payload: dict[str, object]) -> str:
+        lowered = sentence.lower()
+        for institution in self._extract_institutions(payload["full_text"]):
+            if institution.lower() in lowered:
+                return institution
+        return ""
 
     def _sentence_personal_attribution_type(self, sentence: str, payload: dict[str, object]) -> str:
         lowered = sentence.lower()
-        top_person = str(payload.get("top_person") or "").strip().lower()
-        source_label = str(payload.get("source_label") or "").strip().lower()
-        if top_person and top_person in lowered and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+        top_person = str(payload.get("top_person") or "").strip()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        source_label = str(payload.get("source_label") or "").strip()
+        if top_person and top_person_role and top_person.lower() in lowered and top_person_role.lower() in lowered and self._has_attribution_verb(sentence):
             return "named_person"
-        if any(marker in lowered for marker in ROLE_BASED_PERSON_MARKERS) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+        if self._first_matching_role_marker(sentence, payload) and self._has_attribution_verb(sentence):
             return "role_based_person"
-        if any(institution.lower() in lowered for institution in self._extract_institutions(payload["full_text"])) and any(verb in lowered for verb in PERSONAL_ATTRIBUTION_VERBS):
+        if self._first_matching_institution(sentence, payload) and self._has_voice_verb(sentence):
             return "institution"
-        if source_label and source_label in lowered:
+        if source_label and source_label.lower() in lowered and any(marker in lowered for marker in ("relateaza", "scrie", "transmite")):
             return "media"
         return "none"
 
@@ -1247,6 +1444,48 @@ class RadioEditingService:
                 return "sentence_2"
             return "later"
         return "none"
+
+    def _attributed_voice_details(self, sentences: list[str], payload: dict[str, object]) -> dict[str, str]:
+        details = {
+            "attribution_level_used": "none",
+            "attributed_name_used": "",
+            "attributed_role_used": "",
+            "attributed_institution_used": "",
+            "attributed_media_source_used": "",
+        }
+        top_person = str(payload.get("top_person") or "").strip()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        source_label = str(payload.get("source_label") or "").strip()
+        for sentence in sentences:
+            attribution_type = self._sentence_personal_attribution_type(sentence, payload)
+            if attribution_type == "none":
+                continue
+            if attribution_type == "named_person":
+                details.update({
+                    "attribution_level_used": "person",
+                    "attributed_name_used": top_person,
+                    "attributed_role_used": top_person_role,
+                })
+                return details
+            if attribution_type == "role_based_person":
+                details.update({
+                    "attribution_level_used": "person",
+                    "attributed_role_used": self._first_matching_role_marker(sentence, payload),
+                })
+                return details
+            if attribution_type == "institution":
+                details.update({
+                    "attribution_level_used": "institution",
+                    "attributed_institution_used": self._first_matching_institution(sentence, payload),
+                })
+                return details
+            if attribution_type == "media":
+                details.update({
+                    "attribution_level_used": "media",
+                    "attributed_media_source_used": source_label,
+                })
+                return details
+        return details
 
     def _extract_role_alias(self, text: str, person: str) -> str | None:
         if not person:

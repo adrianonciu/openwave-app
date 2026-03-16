@@ -106,6 +106,13 @@ class EditorialPipelineService:
         )
         self._persist_current_bulletin_clusters(sized_briefing.story_items)
 
+        media_source_credits = sorted({
+            label.strip()
+            for item in sized_briefing.story_items
+            for label in item.story.source_labels
+            if label and label.strip()
+        })
+
         intermediate_counts = EditorialPipelineIntermediateCounts(
             article_count=len(articles),
             cluster_count=len(story_clusters),
@@ -155,6 +162,7 @@ class EditorialPipelineService:
             local_source_registry_used=local_source_resolution.local_source_registry_used,
             local_sources_enabled=local_source_resolution.local_sources_enabled,
             local_sources_monitored=local_source_resolution.local_sources_enabled,
+            media_source_credits=media_source_credits,
             personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
             bulletin_shaping_explanation=bulletin_shaping_result.shaping_explanation,

@@ -42,6 +42,7 @@ class FinalEditorialBriefingPackage(BaseModel):
     local_source_registry_used: bool = False
     local_sources_enabled: bool = False
     local_sources_monitored: bool = False
+    media_source_credits: list[str] = Field(default_factory=list)
     personalization_explanation: str = "Pipeline used safe neutral personalization defaults."
     selection_explanation: str
     bulletin_shaping_explanation: str = "Bulletin shaping was not applied."

@@ -1,16 +1,21 @@
-OPENWAVE RADIO EDITING PREVIEW V1.7
+OPENWAVE RADIO EDITING PREVIEW V1.8
 
 Stories: 5
-Bulletin estimated duration: 158 secunde
-Average story words: 52.6
-Average story duration: 31.6 secunde
+Bulletin estimated duration: 159 secunde
+Average story words: 52.8
+Average story duration: 31.8 secunde
 Average lead/title overlap: 0.5
 Leads rewritten to reduce title repetition: 2
 Continuation lead rewrites: 1
 Lead opening counts: {"consequence": 0, "concrete_action": 1, "affected_audience": 0, "actor_action": 4}
 Stories with personal attribution: 2
+Stories with person-name attribution: 1
+Stories with role+name attribution: 1
+Stories with institution attribution: 3
+Stories with media-source attribution: 0
+Stories missing attributed voice: 0
 Lead personal attribution count: 1
-Second-sentence personal attribution count: 1
+Second-sentence personal attribution count: 2
 Promoted person-attribution sentences: 2
 Role-based attribution insertions: 1
 Stories with institution-only attribution: 3
@@ -37,7 +42,12 @@ Lead rewrite applied: False
 Lead continuation rewrite: False
 Lead opening type: actor_action
 Attribution type used: named_person
+Attribution level used: person
 Attribution position used: lead
+Attributed name: Ilie Bolojan
+Attributed role: Premierul
+Attributed institution: none
+Attributed media source: none
 Lead personal attribution: True
 Second sentence personal attribution: False
 Has named person: True
@@ -69,7 +79,12 @@ Lead rewrite applied: False
 Lead continuation rewrite: False
 Lead opening type: actor_action
 Attribution type used: institution
+Attribution level used: institution
 Attribution position used: sentence_2
+Attributed name: none
+Attributed role: none
+Attributed institution: CSM
+Attributed media source: none
 Lead personal attribution: False
 Second sentence personal attribution: False
 Has named person: False
@@ -92,7 +107,7 @@ Story 3: economy_01
 Band: standard
 Headline original: ANAF anunta controale extinse dupa o schema de frauda cu TVA.
 Original words: 86
-Final words: 60
+Final words: 61
 Sentence count: 4
 Lead words: 20
 Scope: national
@@ -101,12 +116,17 @@ Lead rewrite applied: False
 Lead continuation rewrite: False
 Lead opening type: actor_action
 Attribution type used: institution
+Attribution level used: institution
 Attribution position used: lead
+Attributed name: none
+Attributed role: none
+Attributed institution: ANAF
+Attributed media source: none
 Lead personal attribution: False
-Second sentence personal attribution: False
+Second sentence personal attribution: True
 Has named person: False
 Has role-based person: True
-Estimated duration: 36 secunde
+Estimated duration: 37 secunde
 Attribution: institution
 Romania impact included: False
 Strong closure: True
@@ -118,7 +138,7 @@ Main actor early: True
 Kept entities: ANAF
 Dropped entities: none
 Radio output:
-ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
+ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma. Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
 Story 4: international_impact_01
 Band: sparse
@@ -133,7 +153,12 @@ Lead rewrite applied: True
 Lead continuation rewrite: False
 Lead opening type: actor_action
 Attribution type used: institution
+Attribution level used: institution
 Attribution position used: lead
+Attributed name: none
+Attributed role: none
+Attributed institution: Casa Alba
+Attributed media source: none
 Lead personal attribution: False
 Second sentence personal attribution: False
 Has named person: False
@@ -165,7 +190,12 @@ Lead rewrite applied: True
 Lead continuation rewrite: True
 Lead opening type: concrete_action
 Attribution type used: role_based_person
+Attribution level used: person
 Attribution position used: sentence_2
+Attributed name: none
+Attributed role: soferii
+Attributed institution: none
+Attributed media source: none
 Lead personal attribution: False
 Second sentence personal attribution: True
 Has named person: False
@@ -187,14 +217,14 @@ Santierul include reabilitarea carosabilului, benzi dedicate transportului publi
 Validation summary:
 {
   "story_count": 5,
-  "total_estimated_bulletin_duration_seconds": 158,
-  "average_word_count": 52.6,
-  "average_estimated_duration_seconds": 31.6,
+  "total_estimated_bulletin_duration_seconds": 159,
+  "average_word_count": 52.8,
+  "average_estimated_duration_seconds": 31.8,
   "average_lead_title_overlap_score": 0.5,
   "min_word_count": 36,
-  "max_word_count": 60,
+  "max_word_count": 61,
   "min_estimated_duration_seconds": 22,
-  "max_estimated_duration_seconds": 36,
+  "max_estimated_duration_seconds": 37,
   "sparse_story_count": 3,
   "standard_story_count": 2,
   "major_story_count": 0,
@@ -216,8 +246,13 @@ Validation summary:
     "actor_action": 4
   },
   "stories_with_personal_attribution": 2,
+  "stories_with_person_name_attribution": 1,
+  "stories_with_person_role_and_name_attribution": 1,
+  "stories_with_institution_attribution": 3,
+  "stories_with_media_source_attribution": 0,
+  "stories_missing_attributed_voice": 0,
   "lead_has_personal_attribution_count": 1,
-  "second_sentence_has_personal_attribution_count": 1,
+  "second_sentence_has_personal_attribution_count": 2,
   "promoted_person_attribution_sentence_count": 2,
   "role_based_attribution_inserted_count": 1,
   "stories_with_institution_only_attribution": 3,
@@ -242,7 +277,7 @@ Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care
 
 Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Asta inseamna ca Ministerul Justitiei trebuie sa revina cu o noua justificare sau cu alt nume pentru functie. Ministerul poate reveni cu o noua propunere in zilele urmatoare.
 
-ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
+ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma. Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
 Casa Alba a anuntat trimiterea unor nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Washingtonul spune ca masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
 
