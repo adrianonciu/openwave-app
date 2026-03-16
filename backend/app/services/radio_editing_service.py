@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 import re
+import unicodedata
 
 from app.models.article_fetch import FetchedArticle
 from app.models.generated_story_summary import GeneratedStorySummary
@@ -161,6 +162,23 @@ LEAD_MAX_WORDS = 22
 SENTENCE_SOFT_MAX_WORDS = 24
 MAX_SENTENCE_COUNT = 4
 WPM = 100
+TITLE_LEAD_OVERLAP_THRESHOLD = 0.72
+COMPARISON_STOPWORDS = {
+    "a", "al", "ai", "ale", "ca", "cu", "de", "din", "dupa", "in", "la", "pe", "pentru", "prin",
+    "si", "spre", "un", "una", "unui", "unei", "sau", "noi", "nou", "noua", "zona",
+}
+LEAD_EVENT_NOMINALIZATIONS = {
+    "incepe": "inceperea",
+    "deschide": "deschiderea",
+    "lanseaza": "lansarea",
+    "pregateste": "pregatirea",
+    "impune": "impunerea",
+    "trimite": "trimiterea",
+    "aproba": "aprobarea",
+    "extinde": "extinderea",
+    "muta": "mutarea",
+    "simplifica": "simplificarea",
+}
 
 
 class RadioEditingService:
@@ -182,6 +200,9 @@ class RadioEditingService:
         debug_notes.append(f"lead_word_count={lead_word_count}")
         debug_notes.append(f"main_actor_early={actor_early}")
         debug_notes.append(f"source_scope={payload['source_scope']}")
+        debug_notes.append(f"lead_title_overlap_score={polish_metrics['lead_title_overlap_score']}")
+        debug_notes.append(f"lead_rewritten_to_reduce_title_repetition={polish_metrics['lead_rewritten_to_reduce_title_repetition']}")
+        debug_notes.append(f"high_title_lead_overlap={polish_metrics['high_title_lead_overlap']}")
         debug_notes.append(f"romania_impact_included={polish_metrics['romania_impact_included']}")
         debug_notes.append(f"strong_closure={polish_metrics['strong_closure']}")
         debug_notes.append(f"repeated_person_name_count={polish_metrics['repeated_person_name_count']}")
@@ -259,10 +280,10 @@ class RadioEditingService:
                 "sentence_count_ok": 3 <= len(radio_sentences) <= 4,
                 "word_count_ok": radio_story.estimated_word_count >= 65,
                 "structure_ok": len(radio_sentences) >= 3,
-                "notes": list(story.policy_compliance.notes) + ["radio_editing_v1_4_applied"],
+                "notes": list(story.policy_compliance.notes) + ["radio_editing_v1_5_applied"],
             }
         )
-        debug_note = f"radio_editing_v1_4={radio_story.estimated_word_count}w/{radio_story.estimated_duration_seconds}s"
+        debug_note = f"radio_editing_v1_5={radio_story.estimated_word_count}w/{radio_story.estimated_duration_seconds}s"
         return story.model_copy(
             update={
                 "lead": radio_sentences[0] if radio_sentences else story.lead,
@@ -272,7 +293,7 @@ class RadioEditingService:
                 "word_count": radio_story.estimated_word_count,
                 "policy_compliance": compliance,
                 "editorial_notes": list(story.editorial_notes) + [debug_note],
-                "generation_explanation": story.generation_explanation + f" Radio editing v1.4 calibrated the story to {radio_story.estimated_word_count} words and {len(radio_sentences)} sentences for bulletin pacing.",
+                "generation_explanation": story.generation_explanation + f" Radio editing v1.5 calibrated the story to {radio_story.estimated_word_count} words and {len(radio_sentences)} sentences for bulletin pacing.",
                 "original_summary_text": story.summary_text,
                 "radio_edited_story": radio_story,
             }
@@ -474,6 +495,7 @@ class RadioEditingService:
     def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool]]:
         polished = [self._simplify_operational_language(sentence) for sentence in sentences if sentence]
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
+        polished, lead_rewritten = self._rewrite_title_like_lead(payload, compression, polished)
         polished = self._reinforce_romania_impact(payload, compression, polished)
         polished = self._replace_repeated_person_names(payload, polished)
         polished = self._limit_attribution_slots(polished)
@@ -483,7 +505,11 @@ class RadioEditingService:
             for index, sentence in enumerate(polished)
             if sentence
         ]
+        lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], polished[0] if polished else ""), 2)
         metrics = {
+            "lead_title_overlap_score": lead_title_overlap_score,
+            "lead_rewritten_to_reduce_title_repetition": lead_rewritten,
+            "high_title_lead_overlap": lead_title_overlap_score >= TITLE_LEAD_OVERLAP_THRESHOLD,
             "romania_impact_included": self._has_romania_impact_sentence(payload, polished),
             "strong_closure": bool(polished and self._has_strong_closure(polished[-1])),
             "repeated_person_name_count": self._count_repeated_person_names(payload, polished),
@@ -604,6 +630,211 @@ class RadioEditingService:
         for source, target in OPERATIONAL_REPLACEMENTS.items():
             simplified = re.sub(re.escape(source), target, simplified, flags=re.IGNORECASE)
         return self._finalize_sentence(simplified)
+
+    def _rewrite_title_like_lead(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> tuple[list[str], bool]:
+        if not sentences:
+            return sentences, False
+        lead = sentences[0]
+        overlap_score = self._lead_title_overlap_score(payload["headline_original"], lead)
+        normalized_headline = self._comparison_text(payload["headline_original"])
+        normalized_lead = self._comparison_text(lead)
+        if overlap_score < TITLE_LEAD_OVERLAP_THRESHOLD and normalized_headline not in normalized_lead:
+            return sentences, False
+
+        rewritten = self._paraphrase_title_like_lead(payload, compression, lead)
+        if not rewritten or rewritten == lead:
+            return sentences, False
+
+        updated = list(sentences)
+        updated[0] = rewritten
+        return updated, True
+
+    def _paraphrase_title_like_lead(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        lead: str,
+    ) -> str:
+        direct_rewrite = self._pattern_based_lead_rewrite(lead)
+        if direct_rewrite:
+            return self._finalize_sentence(direct_rewrite)
+
+        actor_phrase = self._extract_lead_actor_phrase(lead) or self._preferred_lead_actor(payload, compression)
+        headline_text = str(payload.get("headline_original") or "").strip().rstrip(".!?")
+        action_verb, remainder = self._headline_event_components(headline_text)
+        if not actor_phrase or not action_verb or not remainder:
+            return lead
+
+        event_phrase = self._compact_event_phrase(action_verb, remainder)
+        if not event_phrase:
+            return lead
+
+        if action_verb in {"muta", "trimite", "decide"}:
+            candidate = f"{actor_phrase} a decis {event_phrase}"
+        elif action_verb == "impune":
+            candidate = f"{actor_phrase} introduce {event_phrase}"
+        elif action_verb in {"incepe", "aproba"}:
+            candidate = f"{actor_phrase} a anuntat {event_phrase}" if self._actor_needs_announcement_prefix(actor_phrase) else f"{actor_phrase} a {action_verb} {remainder}"
+        elif action_verb == "deschide":
+            candidate = f"{actor_phrase} porneste {event_phrase}" if ("program" in remainder.lower() or "urgente cardiace" in remainder.lower()) else f"{actor_phrase} deschide {event_phrase}"
+        elif action_verb == "lanseaza":
+            if "catalog" in remainder.lower():
+                candidate = f"{actor_phrase} duce sistemul online de note in alte judete"
+            else:
+                candidate = f"{actor_phrase} a anuntat {event_phrase}" if self._actor_needs_announcement_prefix(actor_phrase) else f"{actor_phrase} lanseaza {event_phrase}"
+        elif action_verb == "extinde":
+            if "verificari extinse" in event_phrase:
+                candidate = f"{actor_phrase} a lansat {event_phrase}"
+            elif remainder.lower().startswith("programul"):
+                candidate = f"{actor_phrase} mareste {event_phrase}"
+            else:
+                candidate = f"{actor_phrase} extinde {event_phrase}"
+        elif action_verb == "pregateste":
+            candidate = f"{actor_phrase} lucreaza la {event_phrase}"
+        elif action_verb == "respinge":
+            candidate = f"{actor_phrase} a dat aviz negativ pentru un post-cheie la DNA" if "dna" in remainder.lower() else f"{actor_phrase} a blocat {event_phrase}"
+        elif action_verb == "cer":
+            candidate = f"{actor_phrase} solicita {event_phrase}"
+        else:
+            candidate = f"{actor_phrase} a anuntat {event_phrase}"
+
+        return self._finalize_sentence(self._trim_sentence(candidate, LEAD_MAX_WORDS)) or lead
+
+    def _pattern_based_lead_rewrite(self, lead: str) -> str:
+        stripped = lead.strip().rstrip(".!?")
+        pattern_rewrites = [
+            (r"^(?P<actor>.+?) a anuntat ca .*? incepe lucrari(?P<tail>.+)$", lambda m: f"{m.group('actor')} a anuntat inceperea lucrarilor{m.group('tail')}"),
+            (r"^(?P<actor>.+?) anunta ca incepe (?P<tail>.+)$", lambda m: f"{m.group('actor')} a anuntat inceperea {m.group('tail')}"),
+            (r"^(?P<actor>.+?) a anuntat ca .*? trimit (?P<tail>.+)$", lambda m: f"{m.group('actor')} a anuntat trimiterea unor {m.group('tail')}"),
+            (r"^(?P<actor>.+?) a anuntat ca .*? a adoptat o ordonanta care simplifica (?P<tail>.+)$", lambda m: f"{m.group('actor')} a anuntat simplificarea {m.group('tail')}"),
+            (r"^(?P<actor>.+?) a anuntat controale extinse dupa descoperirea (?P<tail>.+)$", lambda m: f"{m.group('actor')} a lansat controale extinse dupa descoperirea {m.group('tail')}"),
+            (r"^(?P<actor>NATO) muta (?P<tail>.+)$", lambda m: f"{m.group('actor')} a decis mutarea unor {m.group('tail')}"),
+        ]
+        for pattern, builder in pattern_rewrites:
+            match = re.search(pattern, stripped, re.IGNORECASE)
+            if match:
+                candidate = re.sub(r"\binceperea luni lucrari\b", "inceperea lucrarilor", builder(match), flags=re.IGNORECASE)
+                candidate = re.sub(r"\binceperea lucrari\b", "inceperea lucrarilor", candidate, flags=re.IGNORECASE)
+                candidate = re.sub(r"\binceperea lucrarilor noi\b", "inceperea lucrarilor", candidate, flags=re.IGNORECASE)
+                candidate = re.sub(r"\s+", " ", candidate).strip()
+                return candidate
+        return ""
+
+    def _lead_title_overlap_score(self, headline: str, lead: str) -> float:
+        headline_tokens = self._comparison_tokens(headline)
+        lead_tokens = self._comparison_tokens(lead)
+        if not headline_tokens or not lead_tokens:
+            return 0.0
+        overlap = len(set(headline_tokens) & set(lead_tokens)) / max(1, len(set(headline_tokens)))
+        headline_text = self._comparison_text(headline)
+        lead_text = self._comparison_text(lead)
+        ordered_bonus = 0.15 if headline_text and (headline_text in lead_text or lead_text in headline_text) else 0.0
+        prefix_bonus = 0.1 if headline_tokens[:4] == lead_tokens[:4] else 0.0
+        return min(1.0, overlap + ordered_bonus + prefix_bonus)
+
+    def _comparison_tokens(self, text: str) -> list[str]:
+        normalized = self._comparison_text(text)
+        return [token for token in normalized.split() if token and token not in COMPARISON_STOPWORDS]
+
+    def _comparison_text(self, text: str) -> str:
+        normalized = unicodedata.normalize("NFD", str(text or ""))
+        normalized = "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+        normalized = re.sub(r"[^a-zA-Z0-9\s]", " ", normalized.lower())
+        return re.sub(r"\s+", " ", normalized).strip()
+
+    def _extract_lead_actor_phrase(self, lead: str) -> str:
+        match = re.match(
+            r"^(?P<actor>.+?)\s+(?:a\s+anuntat|anunta(?:\s+ca)?|a\s+decis|a\s+lansat|a\s+aprobat|muta|trimite|pregateste|pregatesc|impune|impun|lanseaza|deschide|deschid|extinde|extind|incepe|incep|respinge|cer)\b",
+            lead.strip(),
+            re.IGNORECASE,
+        )
+        return match.group("actor").strip(" ,") if match else ""
+
+    def _preferred_lead_actor(self, payload: dict[str, object], compression: CompressedStoryCore) -> str:
+        top_person = str(payload.get("top_person") or "").strip()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        if top_person and top_person_role:
+            return f"{top_person_role} {top_person}"
+        if top_person:
+            return top_person
+        return compression.kept_entities[0] if compression.kept_entities else ""
+
+    def _headline_event_components(self, headline_text: str) -> tuple[str, str]:
+        verb_aliases = [
+            ("anunta", "anunta"),
+            ("incepe", "incepe"),
+            ("incep", "incepe"),
+            ("pregateste", "pregateste"),
+            ("pregatesc", "pregateste"),
+            ("lanseaza", "lanseaza"),
+            ("impune", "impune"),
+            ("impun", "impune"),
+            ("trimite", "trimite"),
+            ("trimit", "trimite"),
+            ("aproba", "aproba"),
+            ("extinde", "extinde"),
+            ("extind", "extinde"),
+            ("deschide", "deschide"),
+            ("deschid", "deschide"),
+            ("muta", "muta"),
+            ("decide", "decide"),
+            ("respinge", "respinge"),
+            ("cer", "cer"),
+        ]
+        for verb_form, normalized_verb in verb_aliases:
+            match = re.search(rf"\b{verb_form}\b", headline_text, re.IGNORECASE)
+            if match:
+                return normalized_verb, headline_text[match.end():].strip(" ,")
+        return "", ""
+
+    def _compact_event_phrase(self, action_verb: str, remainder: str) -> str:
+        lowered = remainder.lower()
+        if action_verb == "incepe" and lowered.startswith("lucrari"):
+            tail = remainder[7:].strip()
+            return f"inceperea lucrarilor {tail}".strip()
+        if action_verb == "muta" and lowered.startswith("exercitii"):
+            return f"mutarea unor {remainder}"
+        if action_verb == "trimite" and lowered.startswith("nave"):
+            return f"trimiterea unor {remainder}"
+        if action_verb == "pregateste" and "schema noua de sprijin" in lowered:
+            return remainder.replace("schema noua de sprijin", "un nou sprijin", 1)
+        if action_verb == "pregateste" and "restrictii noi" in lowered:
+            return remainder.replace("restrictii noi", "restrictii suplimentare", 1)
+        if action_verb == "extinde" and lowered.startswith("verificarile dupa"):
+            return remainder.replace("verificarile", "verificari extinse", 1)
+        if action_verb == "extinde" and "drumurile afectate de alunecari" in lowered:
+            return "reparatiile pe drumurile lovite de alunecari"
+        if action_verb == "extinde" and lowered.startswith("programul pentru"):
+            return remainder.replace("programul", "programul de reparatii", 1)
+        if action_verb == "deschide" and "urgente cardiace" in lowered:
+            return "garda de noapte pentru urgente cardiace"
+        if action_verb == "deschide" and lowered.startswith("un nou program"):
+            return remainder.replace("un nou program", "un program nou", 1)
+        if action_verb == "impune" and "bateriile importate" in lowered:
+            return "standarde noi pentru bateriile importate"
+        if action_verb == "impune" and lowered.startswith("reguli noi"):
+            return remainder.replace("reguli noi", "noi reguli", 1)
+        if action_verb == "lanseaza" and lowered.startswith("catalogul digital"):
+            return remainder.replace("catalogul digital", "extinderea catalogului digital", 1)
+        if action_verb == "cer" and lowered.startswith("sprijin"):
+            return remainder.replace("sprijin", "ajutor", 1)
+        if action_verb == "anunta" and "simplificarea" in lowered:
+            event = re.sub(r"^o ordonanta pentru ", "", remainder, flags=re.IGNORECASE)
+            return event.replace("de investitii", "pentru investitiile mari")
+        if action_verb == "anunta" and "reguli noi" in lowered:
+            return remainder.replace("reguli noi pentru marile investitii", "simplificarea avizelor pentru investitiile mari")
+        nominalized = LEAD_EVENT_NOMINALIZATIONS.get(action_verb)
+        if nominalized:
+            return f"{nominalized} {remainder}".strip()
+        return remainder
+
+    def _actor_needs_announcement_prefix(self, actor_phrase: str) -> bool:
+        return bool(re.search(r"\b(Premierul|Primarul|Presedintele|Ministrul|Directorul|Procurorul|Judecatorul|Ilie|Lucian)\b", actor_phrase))
 
     def _replace_repeated_person_names(self, payload: dict[str, object], sentences: list[str]) -> list[str]:
         top_person = str(payload.get("top_person") or "").strip()

@@ -10,6 +10,8 @@ class BulletinShapingDecision(BaseModel):
     topic_bucket: str
     story_family_id: str | None = None
     decision_reason: str
+    radio_priority_score: float | None = None
+    ordering_signals: dict[str, float] = Field(default_factory=dict)
 
 
 class BulletinShapingResult(BaseModel):

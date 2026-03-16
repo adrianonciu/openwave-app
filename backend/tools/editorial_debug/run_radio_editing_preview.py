@@ -16,6 +16,7 @@ OUTPUT_DIR = BACKEND_ROOT / "debug_output"
 JSON_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.json"
 TEXT_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.txt"
 GENERALIST_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_mihai_bacau.txt"
+VICTOR_VASLUI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_victor_vaslui.txt"
 
 PREVIEW_FIXTURES = [
     {
@@ -277,6 +278,9 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     administrative_closure = _note_value(edited.editing_debug_notes, "administrative_closure", "False") == "True"
     simplified_operational_description_count = int(_note_value(edited.editing_debug_notes, "simplified_operational_description_count", "0"))
     source_scope = _note_value(edited.editing_debug_notes, "source_scope", "national")
+    lead_title_overlap_score = float(_note_value(edited.editing_debug_notes, "lead_title_overlap_score", "0"))
+    lead_rewritten_to_reduce_title_repetition = _note_value(edited.editing_debug_notes, "lead_rewritten_to_reduce_title_repetition", "False") == "True"
+    high_title_lead_overlap = _note_value(edited.editing_debug_notes, "high_title_lead_overlap", "False") == "True"
     romania_impact_included = _note_value(edited.editing_debug_notes, "romania_impact_included", "False") == "True"
     strong_closure = _note_value(edited.editing_debug_notes, "strong_closure", "False") == "True"
     sentence_lengths = _sentence_counts(edited.radio_text)
@@ -293,6 +297,9 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "sentence_count": len(edited.radio_sentences),
         "lead_word_count": lead_word_count,
         "source_scope": source_scope,
+        "lead_title_overlap_score": lead_title_overlap_score,
+        "lead_rewritten_to_reduce_title_repetition": lead_rewritten_to_reduce_title_repetition,
+        "high_title_lead_overlap": high_title_lead_overlap,
         "main_actor_early_in_lead": main_actor_early,
         "kept_entities": edited.kept_entities,
         "dropped_entities": edited.dropped_entities,
@@ -316,12 +323,15 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.4",
+        "OPENWAVE RADIO EDITING PREVIEW V1.5",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
         f"Average story words: {summary['average_word_count']}",
         f"Average story duration: {summary['average_estimated_duration_seconds']} secunde",
+        f"Average lead/title overlap: {summary['average_lead_title_overlap_score']}",
+        f"Leads rewritten to reduce title repetition: {summary['leads_rewritten_to_reduce_title_repetition']}",
+        f"Stories with high title/lead overlap: {summary['stories_with_high_title_lead_overlap']}",
         f"International stories with Romania impact: {summary['international_stories_with_romania_impact']}",
         f"Stories with strong closure: {summary['stories_with_strong_closure']}",
         f"Repeated person names: {summary['repeated_person_name_count']}",
@@ -342,6 +352,8 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Sentence count: {item['sentence_count']}",
                 f"Lead words: {item['lead_word_count']}",
                 f"Scope: {item['source_scope']}",
+                f"Lead/title overlap: {item['lead_title_overlap_score']}",
+                f"Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
                 f"Estimated duration: {item['estimated_duration_seconds']} secunde",
                 f"Attribution: {item['attribution_type']}",
                 f"Romania impact included: {item['romania_impact_included']}",
@@ -389,6 +401,132 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+def _fixture_scope(story_id: str) -> str:
+    if story_id.startswith("bacau_"):
+        return "local"
+    if story_id.startswith("national_"):
+        return "national"
+    return "international"
+
+
+def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
+    text = f"{item['headline_original']} {item['radio_text']}".lower()
+    scope = _fixture_scope(str(item['story_id']))
+    signals = {
+        "direct_listener_impact_score": 0.0,
+        "urgency_score": 0.0,
+        "emotional_proximity_score": 0.0,
+        "cost_of_living_score": 0.0,
+        "health_and_safety_score": 0.0,
+        "traffic_and_daily_life_score": 0.0,
+        "romania_relevance_score": 0.0,
+        "locality_proximity_score": 0.0,
+        "long_term_vs_immediate_penalty": 0.0,
+    }
+    if scope == "local":
+        signals["direct_listener_impact_score"] += 2.6
+        signals["emotional_proximity_score"] += 2.0
+        signals["locality_proximity_score"] += 2.5
+    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "regiune")):
+        signals["romania_relevance_score"] += 1.6
+        signals["locality_proximity_score"] += 1.4
+    if any(term in text for term in ("spital", "urgente", "incend", "isu", "siguranta", "cardiace")):
+        signals["health_and_safety_score"] += 3.4
+        signals["direct_listener_impact_score"] += 1.4
+    if any(term in text for term in ("preturi", "facturi", "energie", "alimente", "seceta", "buget", "frauda", "tva")):
+        signals["cost_of_living_score"] += 3.2
+        signals["direct_listener_impact_score"] += 1.2
+    if any(term in text for term in ("trafic", "pasaj", "lucrari", "drum", "transport", "benzi", "statii")):
+        signals["traffic_and_daily_life_score"] += 3.0
+        signals["direct_listener_impact_score"] += 1.1
+    if any(term in text for term in ("de luni", "saptamanii", "luna viitoare", "in aceasta luna", "in cateva zile", "intra in vigoare")):
+        signals["urgency_score"] += 2.6
+    if any(term in text for term in ("romania", "marea neagra", "europei", "europa", "lanturile de aprovizionare", "petrol", "nato")):
+        signals["romania_relevance_score"] += 2.4
+    if any(term in text for term in ("treptat", "de anul viitor", "cipuri", "exporturile", "schema")):
+        signals["long_term_vs_immediate_penalty"] += 1.4
+    return {key: round(value, 2) for key, value in signals.items()}
+
+
+def _victor_radio_priority(item: dict[str, object]) -> float:
+    signals = _victor_ordering_signals(item)
+    score = (
+        signals["direct_listener_impact_score"] * 1.7
+        + signals["urgency_score"] * 1.4
+        + signals["health_and_safety_score"] * 1.8
+        + signals["cost_of_living_score"] * 1.5
+        + signals["traffic_and_daily_life_score"] * 1.35
+        + signals["romania_relevance_score"] * 1.15
+        + signals["locality_proximity_score"] * 1.2
+        + signals["emotional_proximity_score"] * 0.9
+        - signals["long_term_vs_immediate_penalty"] * 1.2
+    )
+    return round(score, 2)
+
+
+def _order_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> list[dict[str, object]]:
+    remaining = [dict(item, source_scope=_fixture_scope(str(item["story_id"]))) for item in stories]
+    for item in remaining:
+        item["ordering_signals"] = _victor_ordering_signals(item)
+        item["radio_priority_score"] = _victor_radio_priority(item)
+    ordered: list[dict[str, object]] = []
+    while remaining:
+        def candidate_key(candidate: dict[str, object]) -> tuple[float, float, str]:
+            target_position = len(ordered) + 1
+            scope_run_penalty = 0.0
+            if len(ordered) >= 2 and ordered[-1]["source_scope"] == ordered[-2]["source_scope"] == candidate["source_scope"]:
+                scope_run_penalty = 12.0 if candidate["source_scope"] == "local" else 8.0
+            early_mix_penalty = 0.0
+            local_in_early_window = sum(1 for item in ordered[:5] if item["source_scope"] == "local")
+            if target_position <= 6 and candidate["source_scope"] == "local" and local_in_early_window >= 2:
+                early_mix_penalty = 14.0
+            if target_position <= 4 and ordered and ordered[-1]["source_scope"] == candidate["source_scope"] == "local":
+                early_mix_penalty = max(early_mix_penalty, 9.0)
+            if target_position <= 6 and len(ordered) >= 2 and ordered[-1]["source_scope"] == ordered[-2]["source_scope"] == "local" and candidate["source_scope"] == "local":
+                early_mix_penalty = max(early_mix_penalty, 18.0)
+            international_in_opening = sum(1 for item in ordered[:5] if item["source_scope"] == "international")
+            if target_position <= 6 and candidate["source_scope"] == "international" and international_in_opening >= 2:
+                early_mix_penalty = max(early_mix_penalty, 5.0)
+            topic_penalty = 0.0
+            if ordered:
+                previous_text = ordered[-1]["radio_text"].lower()
+                candidate_text = candidate["radio_text"].lower()
+                if any(term in previous_text and term in candidate_text for term in ("trafic", "energie", "buget", "nato", "spital", "educatie")):
+                    topic_penalty = 0.6
+            return (-candidate["radio_priority_score"] + scope_run_penalty + early_mix_penalty + topic_penalty, scope_run_penalty + early_mix_penalty, str(candidate["story_id"]))
+        next_item = min(remaining, key=candidate_key)
+        remaining.remove(next_item)
+        ordered.append(next_item)
+    for index, item in enumerate(ordered, start=1):
+        item["position"] = index
+    return ordered
+
+
+def _render_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> str:
+    total_duration = sum(story["estimated_duration_seconds"] for story in stories)
+    lines = [
+        "OPENWAVE GENERALIST BULLETIN - VICTOR / VASLUI",
+        "",
+        f"Stories: {len(stories)}",
+        f"Estimated story-only duration: {total_duration} secunde",
+        "Editorial target mix: local 5, national 6, international 4.",
+        "Ordering rule: strongest listener impact first, with mixed local/national/international pacing.",
+        "",
+    ]
+    for item in stories:
+        lines.extend([
+            f"{item['position']}. {item['headline_original']}",
+            f"   Scope: {item['source_scope']}",
+            f"   Radio priority: {item['radio_priority_score']}",
+            f"   Ordering signals: {json.dumps(item['ordering_signals'], ensure_ascii=False)}",
+            f"   Lead/title overlap: {item['lead_title_overlap_score']}",
+            f"   Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
+            item["radio_text"],
+            "",
+        ])
+    return "\n".join(lines).strip() + "\n"
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
@@ -407,6 +545,7 @@ def main() -> None:
         "total_estimated_bulletin_duration_seconds": sum(preview_duration_counts),
         "average_word_count": round(statistics.mean(preview_word_counts), 1),
         "average_estimated_duration_seconds": round(statistics.mean(preview_duration_counts), 1),
+        "average_lead_title_overlap_score": round(statistics.mean(item["lead_title_overlap_score"] for item in preview_stories), 2),
         "min_word_count": min(preview_word_counts),
         "max_word_count": max(preview_word_counts),
         "min_estimated_duration_seconds": min(preview_duration_counts),
@@ -423,6 +562,8 @@ def main() -> None:
         "stories_with_lead_over_22_words": sum(1 for item in preview_stories if item["lead_word_count"] > 22),
         "stories_where_main_actor_does_not_appear_early_in_lead": sum(1 for item in preview_stories if not item["main_actor_early_in_lead"]),
         "stories_where_person_entity_existed_but_was_not_preserved": sum(1 for item in preview_stories if item["person_not_preserved"]),
+        "leads_rewritten_to_reduce_title_repetition": sum(1 for item in preview_stories if item["lead_rewritten_to_reduce_title_repetition"]),
+        "stories_with_high_title_lead_overlap": sum(1 for item in preview_stories if item["high_title_lead_overlap"]),
         "international_stories_with_romania_impact": sum(
             1 for item in preview_stories if item["source_scope"] == "international" and item["romania_impact_included"]
         ),
@@ -448,6 +589,9 @@ def main() -> None:
 
     generalist_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(GENERALIST_BULLETIN_FIXTURES, start=1)]
     GENERALIST_OUTPUT_PATH.write_text(_render_generalist_bulletin(generalist_stories), encoding="utf-8")
+
+    victor_vaslui_stories = _order_victor_vaslui_bulletin(generalist_stories)
+    VICTOR_VASLUI_OUTPUT_PATH.write_text(_render_victor_vaslui_bulletin(victor_vaslui_stories), encoding="utf-8")
 
 
 if __name__ == "__main__":

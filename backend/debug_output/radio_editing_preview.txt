@@ -1,9 +1,12 @@
-OPENWAVE RADIO EDITING PREVIEW V1.4
+OPENWAVE RADIO EDITING PREVIEW V1.5
 
 Stories: 5
-Bulletin estimated duration: 172 secunde
-Average story words: 57.2
-Average story duration: 34.4 secunde
+Bulletin estimated duration: 173 secunde
+Average story words: 57.8
+Average story duration: 34.6 secunde
+Average lead/title overlap: 0.64
+Leads rewritten to reduce title repetition: 2
+Stories with high title/lead overlap: 0
 International stories with Romania impact: 1
 Stories with strong closure: 5
 Repeated person names: 0
@@ -20,6 +23,8 @@ Final words: 57
 Sentence count: 4
 Lead words: 20
 Scope: national
+Lead/title overlap: 0.62
+Lead rewrite applied: False
 Estimated duration: 34 secunde
 Attribution: person
 Romania impact included: False
@@ -42,6 +47,8 @@ Final words: 55
 Sentence count: 4
 Lead words: 16
 Scope: national
+Lead/title overlap: 0.67
+Lead rewrite applied: False
 Estimated duration: 33 secunde
 Attribution: institution
 Romania impact included: False
@@ -64,6 +71,8 @@ Final words: 62
 Sentence count: 4
 Lead words: 22
 Scope: national
+Lead/title overlap: 0.62
+Lead rewrite applied: False
 Estimated duration: 37 secunde
 Attribution: institution
 Romania impact included: False
@@ -82,10 +91,12 @@ Story 4: international_impact_01
 Band: sparse
 Headline original: Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz.
 Original words: 76
-Final words: 56
+Final words: 57
 Sentence count: 4
-Lead words: 19
+Lead words: 17
 Scope: international
+Lead/title overlap: 0.57
+Lead rewrite applied: True
 Estimated duration: 34 secunde
 Attribution: institution
 Romania impact included: True
@@ -98,17 +109,19 @@ Main actor early: True
 Kept entities: Casa Alba, Romania
 Dropped entities: Stramtoarea Ormuz, Ormuz
 Radio output:
-Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
+Casa Alba a anuntat trimiterea unor nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Washingtonul spune ca masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
 
 Story 5: local_01
 Band: sparse
 Headline original: Primaria Bacau incepe lucrari noi pe un coridor important de trafic.
 Original words: 79
-Final words: 56
+Final words: 58
 Sentence count: 4
-Lead words: 22
+Lead words: 20
 Scope: local
-Estimated duration: 34 secunde
+Lead/title overlap: 0.71
+Lead rewrite applied: True
+Estimated duration: 35 secunde
 Attribution: institution
 Romania impact included: False
 Strong closure: True
@@ -120,14 +133,15 @@ Main actor early: True
 Kept entities: Primaria
 Dropped entities: Compania de Transport Public, Transport Public
 Radio output:
-Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord a orasului. Soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
+Primaria Bacau a anuntat inceperea lucrarilor pe un coridor important de trafic dintre centru si zona de nord a orasului. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
 
 Validation summary:
 {
   "story_count": 5,
-  "total_estimated_bulletin_duration_seconds": 172,
-  "average_word_count": 57.2,
-  "average_estimated_duration_seconds": 34.4,
+  "total_estimated_bulletin_duration_seconds": 173,
+  "average_word_count": 57.8,
+  "average_estimated_duration_seconds": 34.6,
+  "average_lead_title_overlap_score": 0.64,
   "min_word_count": 55,
   "max_word_count": 62,
   "min_estimated_duration_seconds": 33,
@@ -144,6 +158,8 @@ Validation summary:
   "stories_with_lead_over_22_words": 0,
   "stories_where_main_actor_does_not_appear_early_in_lead": 0,
   "stories_where_person_entity_existed_but_was_not_preserved": 0,
+  "leads_rewritten_to_reduce_title_repetition": 2,
+  "stories_with_high_title_lead_overlap": 0,
   "international_stories_with_romania_impact": 1,
   "stories_with_strong_closure": 5,
   "repeated_person_name_count": 0,
@@ -165,6 +181,6 @@ Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procu
 
 ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
-Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
+Casa Alba a anuntat trimiterea unor nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Washingtonul spune ca masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
 
-Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord a orasului. Soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
+Primaria Bacau a anuntat inceperea lucrarilor pe un coridor important de trafic dintre centru si zona de nord a orasului. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
