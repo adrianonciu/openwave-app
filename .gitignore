@@ -10,3 +10,5 @@ backend/debug_output/
 backend/data/article_fetch_cache.json
 backend/data/live_source_feed_cache.json
 tests/real_samples/latest_*/
+backend/data/bulletin_continuity_state.json
+backend/data/story_family_state.json
