@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 import json
 from pathlib import Path
 
+from app.config.env import get_openwave_mode
 from app.models.article_fetch import FetchedArticle
 from app.models.user_personalization import UserPersonalization
 from app.models.final_editorial_briefing import (
@@ -20,6 +21,7 @@ from app.services.story_scoring_service import StoryScoringService
 from app.services.story_selection_service import StorySelectionService
 from app.services.story_summary_generator_service import StorySummaryGeneratorService
 from app.services.radio_editing_service import RadioEditingService
+from app.services.live_source_ingestion_service import LiveSourceIngestionService
 from app.services.source_watcher_service import SourceWatcherService
 
 CONTINUITY_STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "bulletin_continuity_state.json"
@@ -41,6 +43,18 @@ class EditorialPipelineService:
         self.briefing_assembly_service = BriefingAssemblyService()
         self.bulletin_sizing_service = BulletinSizingService()
         self.source_watcher_service = SourceWatcherService()
+        self.live_source_ingestion_service = LiveSourceIngestionService()
+
+    def ingest_articles_for_mode(
+        self,
+        personalization: UserPersonalization | None = None,
+        fixture_articles: list[FetchedArticle] | None = None,
+    ) -> list[FetchedArticle]:
+        mode = get_openwave_mode()
+        if mode == "live":
+            articles, _debug = self.live_source_ingestion_service.fetch_articles(personalization=personalization)
+            return articles
+        return list(fixture_articles or [])
 
     def run_editorial_pipeline(
         self,

@@ -33,6 +33,7 @@ class DetectedContentItem(BaseModel):
     title: str
     published_at: datetime
     source_name: str
+    summary: str | None = None
 
 
 class LatestContentItem(DetectedContentItem):

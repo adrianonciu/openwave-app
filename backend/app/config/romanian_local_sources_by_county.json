@@ -303,17 +303,24 @@
         {
           "source_name": "ziuaconstanta.ro",
           "source_url": "https://www.ziuaconstanta.ro",
-          "priority_rank": 1
+          "priority_rank": 1,
+          "rss_url": "https://www.ziuaconstanta.ro/rss/toate-stirile.html",
+          "parser_type": "rss",
+          "notes": "Uses site RSS for county-level live discovery."
         },
         {
           "source_name": "cugetliber.ro",
           "source_url": "https://cugetliber.ro",
-          "priority_rank": 2
+          "priority_rank": 2,
+          "notes": "Cloudflare challenge may block unauthenticated live fetching; fallback only when article discovery succeeds."
         },
         {
           "source_name": "tomisnews.ro",
           "source_url": "https://tomisnews.ro",
-          "priority_rank": 3
+          "priority_rank": 3,
+          "rss_url": "https://tomisnews.ro/feed/",
+          "parser_type": "rss",
+          "notes": "Uses WordPress feed for county-level live discovery."
         }
       ]
     },

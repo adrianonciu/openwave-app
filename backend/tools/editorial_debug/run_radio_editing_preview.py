@@ -9,7 +9,9 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
+from app.config.env import get_openwave_mode
 from app.models.user_personalization import EditorialPreferenceProfile, GeographyPreferenceMix, ListenerProfile, UserPersonalization
+from app.services.editorial_pipeline_service import EditorialPipelineService
 from app.services.radio_editing_service import RadioEditingService
 from app.services.romanian_geo_resolver import resolve_listener_geography
 from app.services.source_watcher_service import SourceWatcherService
@@ -25,6 +27,8 @@ ION_GALATI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ion_galati.txt
 MARIA_OLT_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_maria_olt.txt"
 GEORGE_COVASNA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_george_covasna.txt"
 NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_nicu_constanta.txt"
+LIVE_NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "live_generalist_bulletin_nicu_constanta.txt"
+LIVE_SOURCE_REGISTRY_AUDIT_PATH = OUTPUT_DIR / "live_source_registry_audit.json"
 
 PREVIEW_FIXTURES = [
     {
@@ -1341,7 +1345,190 @@ def _render_nicu_constanta_bulletin(stories: list[dict[str, object]], geo_debug:
     return "\n".join(lines).strip() + "\n"
 
 
+def _build_live_nicu_constanta_personalization() -> UserPersonalization:
+    return UserPersonalization(
+        listener_profile=ListenerProfile(first_name="Nicu", country="Romania", region="Constanta"),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=35, national=40, international=25),
+        ),
+    )
+
+
+def _cluster_local_origin_type(cluster, target_county: str) -> str:
+    county_key = (target_county or '').strip().lower()
+    local_regions = {str(member.source_region or '').strip().lower() for member in cluster.cluster.member_articles if member.is_local_source}
+    if county_key and county_key in local_regions:
+        return 'county'
+    if local_regions:
+        return 'fallback_region'
+    scopes = {member.source_scope for member in cluster.cluster.member_articles}
+    if 'international' in scopes:
+        return 'international'
+    return 'national'
+
+
+def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
+    lines = [
+        'OPENWAVE RADIO EDITING PREVIEW - LIVE MODE',
+        '',
+        f"Mode: {preview_payload['mode']}",
+        f"Resolved user county: {preview_payload['resolved_user_county']}",
+        f"Resolved user region: {preview_payload['resolved_user_region']}",
+        f"County-first local selection: {preview_payload['county_first_local_selection']}",
+        f"Fetched articles: {preview_payload['article_count']}",
+        f"Selected stories: {preview_payload['story_count']}",
+        f"Local stories from Constanta county: {preview_payload['local_story_count_from_constanta_county']}",
+        f"Local stories from regional fallback: {preview_payload['local_story_count_from_regional_fallback']}",
+        f"Media source credits emitted: {preview_payload['written_source_credits_emitted']}",
+        f"Registry audit path: {preview_payload['registry_audit_path']}",
+        '',
+        'Stories:',
+    ]
+    for item in preview_payload['stories']:
+        lines.extend([
+            f"{item['position']}. {item['headline']}",
+            f"   Scope: {item['scope']}",
+            f"   Local origin type: {item['local_origin_type']}",
+            f"   Sources: {', '.join(item['source_labels'])}",
+            f"   Original URLs: {', '.join(item['original_urls'])}",
+            f"   Radio text: {item['summary_text']}",
+            '',
+        ])
+    lines.extend([
+        'Written source credits:',
+        ', '.join(preview_payload['media_source_credits']) or 'none',
+        '',
+    ])
+    return '\n'.join(lines)
+
+
+def _render_live_generalist_bulletin(preview_payload: dict[str, object]) -> str:
+    lines = [
+        'OPENWAVE LIVE GENERALIST BULLETIN - NICU / CONSTANTA',
+        '',
+        f"Stories: {preview_payload['story_count']}",
+        f"Resolved user county: {preview_payload['resolved_user_county']}",
+        f"Resolved user region: {preview_payload['resolved_user_region']}",
+        f"County-first local selection: {preview_payload['county_first_local_selection']}",
+        f"Local story count from Constanta county: {preview_payload['local_story_count_from_constanta_county']}",
+        f"Local story count from regional fallback: {preview_payload['local_story_count_from_regional_fallback']}",
+        '',
+    ]
+    for item in preview_payload['stories']:
+        lines.extend([
+            f"{item['position']}. {item['headline']}",
+            f"   Scope: {item['scope']}",
+            f"   Local origin type: {item['local_origin_type']}",
+            f"   Sources: {', '.join(item['source_labels'])}",
+            f"   Original URLs: {', '.join(item['original_urls'])}",
+            item['summary_text'],
+            '',
+        ])
+    lines.extend([
+        'Written source credits after outro:',
+        ', '.join(preview_payload['media_source_credits']) or 'none',
+        '',
+    ])
+    return '\n'.join(lines)
+
+
+def _run_live_mode() -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    personalization = _build_live_nicu_constanta_personalization()
+    pipeline_service = EditorialPipelineService()
+    live_service = pipeline_service.live_source_ingestion_service
+    live_service.write_registry()
+    registry_audit = live_service.write_registry_audit(LIVE_SOURCE_REGISTRY_AUDIT_PATH, personalization=personalization)
+    articles, ingestion_debug = live_service.fetch_articles(personalization=personalization)
+
+    if not articles:
+        payload = {
+            'mode': 'live',
+            'resolved_user_county': 'Constanta',
+            'resolved_user_region': 'Dobrogea',
+            'county_first_local_selection': True,
+            'article_count': 0,
+            'story_count': 0,
+            'local_story_count_from_constanta_county': 0,
+            'local_story_count_from_regional_fallback': 0,
+            'stories': [],
+            'media_source_credits': [],
+            'written_source_credits_emitted': False,
+            'registry_audit_path': str(LIVE_SOURCE_REGISTRY_AUDIT_PATH),
+            'ingestion_debug': ingestion_debug,
+        }
+        JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding='utf-8')
+        LIVE_NICU_CONSTANTA_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding='utf-8')
+        return
+
+    story_clusters = pipeline_service.clustering_service.cluster_articles(articles)
+    scored_clusters = pipeline_service.scoring_service.score_clusters(story_clusters)
+    pipeline_service.story_family_service.attach_story_families(scored_clusters)
+    selection_result = pipeline_service.selection_service.select_stories(
+        scored_clusters,
+        max_stories=15,
+        editorial_preferences=personalization.editorial_preferences,
+        personalization=personalization,
+    )
+    profile_name = (
+        selection_result.selected_clusters[0].editorial_profile_used
+        if selection_result.selected_clusters and selection_result.selected_clusters[0].editorial_profile_used
+        else 'generalist'
+    )
+    shaping_result = pipeline_service.bulletin_shaping_service.shape_selected_clusters(
+        selection_result.selected_clusters,
+        profile_name=profile_name,
+    )
+    final_briefing = pipeline_service.run_editorial_pipeline(
+        articles=articles,
+        personalization=personalization,
+        max_stories=15,
+    )
+
+    target_county = str(personalization.listener_profile.region or 'Constanta')
+    cluster_by_id = {cluster.cluster.cluster_id: cluster for cluster in shaping_result.ordered_clusters}
+    story_rows = []
+    for position, item in enumerate(final_briefing.story_items, start=1):
+        cluster = cluster_by_id.get(item.story.cluster_id)
+        members = list(cluster.cluster.member_articles) if cluster is not None else []
+        story_rows.append({
+            'position': position,
+            'headline': item.story.headline,
+            'summary_text': item.story.summary_text,
+            'source_labels': item.story.source_labels,
+            'original_urls': sorted({member.url for member in members})[:3],
+            'scope': next((member.source_scope for member in members if member.source_scope), 'unknown'),
+            'local_origin_type': _cluster_local_origin_type(cluster, target_county) if cluster is not None else 'unknown',
+        })
+
+    payload = {
+        'mode': 'live',
+        'resolved_user_county': final_briefing.local_source_region_used or target_county,
+        'resolved_user_region': resolve_listener_geography(city=None, region=target_county).resolved_macro_region,
+        'county_first_local_selection': True,
+        'article_count': len(articles),
+        'story_count': len(story_rows),
+        'local_story_count_from_constanta_county': sum(1 for row in story_rows if row['local_origin_type'] == 'county'),
+        'local_story_count_from_regional_fallback': sum(1 for row in story_rows if row['local_origin_type'] == 'fallback_region'),
+        'stories': story_rows,
+        'media_source_credits': final_briefing.media_source_credits,
+        'written_source_credits_emitted': bool(final_briefing.media_source_credits),
+        'registry_audit_path': str(LIVE_SOURCE_REGISTRY_AUDIT_PATH),
+        'registry_audit_source_count': registry_audit['source_count'],
+        'ingestion_debug': ingestion_debug,
+    }
+    JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding='utf-8')
+    LIVE_NICU_CONSTANTA_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding='utf-8')
+
+
+
 def main() -> None:
+    if get_openwave_mode() == "live":
+        _run_live_mode()
+        return
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
     pronunciation_map = get_tts_pronunciation_map()

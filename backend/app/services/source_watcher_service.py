@@ -34,6 +34,18 @@ RFC3339_DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
 CHARSET_PATTERN = re.compile(r"charset=['\"]?([A-Za-z0-9._-]+)", re.IGNORECASE)
 MAX_LOCAL_SOURCES_PER_REGION = 3
 MALFORMED_RSS_NAMESPACE_TAG_PATTERN = re.compile(r"</?media:[^>]+>")
+RSS_LINK_PATTERN = re.compile(
+    r"""<link[^>]+type=["']application/(?:rss|atom)\+xml["'][^>]+href=["']([^"']+)["']|<link[^>]+href=["']([^"']+)["'][^>]+type=["']application/(?:rss|atom)\+xml["']""",
+    re.IGNORECASE,
+)
+COMMON_FEED_SUFFIXES = (
+    "/feed/",
+    "/feed",
+    "/rss",
+    "/rss.xml",
+    "/rss.aspx",
+    "/rss/toate-stirile.html",
+)
 
 
 class _PageParser(HTMLParser):
@@ -175,6 +187,7 @@ class _LooseAnchorParser(HTMLParser):
 class SourceWatcherService:
     def __init__(self) -> None:
         self.local_source_registry_service = LocalSourceRegistryService()
+        self._discovered_feed_urls: dict[str, str | None] = {}
 
     def load_source_configs(self) -> list[SourceConfig]:
         raw_data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
@@ -269,6 +282,14 @@ class SourceWatcherService:
                     return recent_from_rss
             except Exception as exc:
                 errors.append(f"rss: {exc}")
+
+        if source_config.parser_type in {"auto", "rss"}:
+            try:
+                recent_from_discovered_feed = self._get_recent_from_discovered_feed(source_config, limit=limit)
+                if recent_from_discovered_feed:
+                    return recent_from_discovered_feed
+            except Exception as exc:
+                errors.append(f"discovered_feed: {exc}")
 
         if source_config.parser_type in {"auto", "html_listing"}:
             try:
@@ -399,8 +420,25 @@ class SourceWatcherService:
     def _get_recent_from_rss(self, source_config: SourceConfig, limit: int = 3) -> list[LatestContentItem]:
         if not source_config.rss_url:
             return []
+        return self._get_recent_from_rss_url(source_config, source_config.rss_url, limit=limit)
 
-        root = self._parse_rss_root(source_config.rss_url)
+    def _get_recent_from_discovered_feed(
+        self,
+        source_config: SourceConfig,
+        limit: int = 3,
+    ) -> list[LatestContentItem]:
+        discovered_feed_url = self._discover_feed_url(source_config)
+        if not discovered_feed_url or discovered_feed_url == source_config.rss_url:
+            return []
+        return self._get_recent_from_rss_url(source_config, discovered_feed_url, limit=limit)
+
+    def _get_recent_from_rss_url(
+        self,
+        source_config: SourceConfig,
+        rss_url: str,
+        limit: int = 3,
+    ) -> list[LatestContentItem]:
+        root = self._parse_rss_root(rss_url)
         candidates: list[LatestContentItem] = []
         pending_page_resolution: list[tuple[str, str]] = []
 
@@ -415,6 +453,10 @@ class SourceWatcherService:
                     "published",
                     "updated",
                     "{http://purl.org/dc/elements/1.1/}date",
+                ),
+                summary_paths=(
+                    "description",
+                    "{http://purl.org/rss/1.0/modules/content/}encoded",
                 ),
             )
             if candidate is not None:
@@ -434,6 +476,10 @@ class SourceWatcherService:
                 published_paths=(
                     "{http://www.w3.org/2005/Atom}published",
                     "{http://www.w3.org/2005/Atom}updated",
+                ),
+                summary_paths=(
+                    "{http://www.w3.org/2005/Atom}summary",
+                    "{http://www.w3.org/2005/Atom}content",
                 ),
                 atom_link=True,
             )
@@ -461,6 +507,38 @@ class SourceWatcherService:
                 break
 
         return deduped
+
+    def _discover_feed_url(self, source_config: SourceConfig) -> str | None:
+        if source_config.source_id in self._discovered_feed_urls:
+            return self._discovered_feed_urls[source_config.source_id]
+
+        discovered_url: str | None = None
+        try:
+            homepage_html = self._fetch_text(source_config.source_url)
+            discovered_url = self._extract_alternate_feed_url(homepage_html, source_config.source_url)
+        except Exception:
+            discovered_url = None
+
+        if not discovered_url:
+            for suffix in COMMON_FEED_SUFFIXES:
+                candidate_url = urljoin(source_config.source_url.rstrip("/") + "/", suffix.lstrip("/"))
+                try:
+                    self._parse_rss_root(candidate_url)
+                except Exception:
+                    continue
+                discovered_url = candidate_url
+                break
+
+        self._discovered_feed_urls[source_config.source_id] = discovered_url
+        return discovered_url
+
+    def _extract_alternate_feed_url(self, html: str, base_url: str) -> str | None:
+        for match in RSS_LINK_PATTERN.finditer(html):
+            href = match.group(1) or match.group(2)
+            if not href:
+                continue
+            return urljoin(base_url, href.strip())
+        return None
 
     def _parse_rss_root(self, rss_url: str) -> ET.Element:
         raw_feed = self._fetch_bytes(rss_url).lstrip()
@@ -495,6 +573,7 @@ class SourceWatcherService:
                     published_at=published_at,
                     source_name=source_config.source_name,
                     source_type=source_config.source_type,
+                    summary=None,
                 )
             )
 
@@ -587,6 +666,7 @@ class SourceWatcherService:
             published_at=published_at,
             source_name=source_config.source_name,
             source_type=source_config.source_type,
+            summary=None,
         )
 
     def _build_item_from_xml_entry(
@@ -597,6 +677,7 @@ class SourceWatcherService:
         link_paths: tuple[str, ...],
         published_paths: tuple[str, ...],
         atom_link: bool = False,
+        summary_paths: tuple[str, ...] = (),
     ) -> LatestContentItem | None:
         title = self._first_text(entry, *title_paths)
         published_at = self._parse_datetime(self._first_text(entry, *published_paths))
@@ -614,12 +695,15 @@ class SourceWatcherService:
         if not title or not url or published_at is None:
             return None
 
+        summary = self._first_text(entry, *summary_paths) if summary_paths else ""
+
         return LatestContentItem(
             url=url.strip(),
             title=title.strip(),
             published_at=published_at,
             source_name=source_config.source_name,
             source_type=source_config.source_type,
+            summary=summary.strip() or None,
         )
 
     def _extract_json_ld_candidates(
@@ -677,6 +761,7 @@ class SourceWatcherService:
             published_at=published_at,
             source_name=source_config.source_name,
             source_type=source_config.source_type,
+            summary=None,
         )
 
     def _extract_json_ld_url(self, item: dict[str, Any], base_url: str) -> str:
