@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+from collections import deque
 import re
 import unicodedata
 
@@ -179,9 +180,20 @@ LEAD_EVENT_NOMINALIZATIONS = {
     "muta": "mutarea",
     "simplifica": "simplificarea",
 }
-CONSEQUENCE_LEAD_STARTS = ("asta inseamna", "de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata", "de duminica", "primele restrictii", "primele verificari", "primele efecte", "in cateva", "din aceasta", "de la inceputul")
-CONCRETE_ACTION_LEAD_STARTS = ("pompierii", "inspectorii", "echipele", "medicii", "autoritatile", "masura vizeaza", "masura aduce", "primele verificari")
-AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii", "calatorii", "administratorii")
+CONSEQUENCE_LEAD_STARTS = (
+    "asta inseamna", "asta poate", "de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata",
+    "de duminica", "primele restrictii", "primele verificari", "primele efecte", "in cateva", "din aceasta",
+    "de la inceputul", "pentru romania", "impactul este", "decizia mentine", "preturile", "programul",
+    "platforma", "masura va", "schimbarea poate",
+)
+CONCRETE_ACTION_LEAD_STARTS = (
+    "pompierii", "inspectorii", "echipele", "medicii", "autoritatile", "masura vizeaza", "masura aduce",
+    "primele verificari", "rectorii", "guvernul reduce", "orarul provizoriu", "programul actualizat",
+)
+AFFECTED_AUDIENCE_LEAD_STARTS = (
+    "soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii",
+    "locuitorii", "calatorii", "administratorii", "familiile", "gospodariile", "investitorii",
+)
 PERSONAL_ATTRIBUTION_VERBS = ("a declarat", "declara", "a spus", "spune", "spun", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "promite", "a avertizat", "avertizeaza", "a anuntat", "anunta", "a transmis", "transmite", "transmit", "relateaza", "scrie")
 ROLE_BASED_PERSON_MARKERS = ("primarul", "directorul", "director", "inspectorul", "inspectorii", "prefectul", "medicul", "medicul sef", "medicul coordonator", "fermierii", "soferii", "autoritatile locale", "managerul", "ministrul", "premierul")
 PERSONAL_ATTRIBUTION_ENCOURAGED_TERMS = ("primarie", "spital", "isu", "trafic", "lucrari", "restrictii", "drum", "educatie", "scoala", "elev", "fermier", "seceta", "preturi", "servicii", "controverse", "controale", "urgente")
@@ -209,8 +221,53 @@ TITLE_ACTION_FAMILY_MARKERS = {
     "start": ("incepe", "inceperea", "inceput", "deschide", "deschid", "porneste"),
 }
 
+REPEATED_TIME_MARKERS = (
+    "de luni",
+    "de marti",
+    "de miercuri",
+    "de joi",
+    "de vineri",
+    "de sambata",
+    "de duminica",
+    "saptamanii viitoare",
+    "luna viitoare",
+    "in cateva zile",
+    "in cateva saptamani",
+)
+
+CLOSING_PHRASE_BANK = {
+    "operational_timing": (
+        "Masura intra in vigoare chiar din aceasta saptamana.",
+        "Echipele intra pe teren in zilele urmatoare.",
+        "Programul actualizat se aplica chiar din primele zile.",
+    ),
+    "immediate_impact": (
+        "Locuitorii pot vedea schimbarea chiar din primele zile.",
+        "Decizia ar putea influenta preturile rapid.",
+        "Primele schimbari se pot simti chiar din aceasta perioada.",
+    ),
+    "institution_followup": (
+        "Autoritatile spun ca situatia va fi monitorizata zilnic.",
+        "Oficialii promit evaluari rapide ale masurii.",
+        "Institutiile implicate spun ca vor urmari efectele de la o zi la alta.",
+    ),
+    "policy_impact": (
+        "Decizia ar putea schimba regulile pentru companii si consumatori.",
+        "Masura poate redesena costurile pentru firme si familii.",
+        "Schimbarea poate avea efect direct asupra companiilor si consumatorilor.",
+    ),
+}
+
 
 class RadioEditingService:
+    def __init__(self) -> None:
+        self.reset_variation_state()
+
+    def reset_variation_state(self) -> None:
+        self._recent_lead_families: deque[str] = deque(maxlen=3)
+        self._recent_closing_families: deque[str] = deque(maxlen=3)
+        self._recent_closing_sentences: deque[str] = deque(maxlen=3)
+
     def build_radio_story(self, article_or_story: object) -> RadioEditedStory:
         payload = self._normalize_input(article_or_story)
         compression = self.compress_story_for_radio(article_or_story)
@@ -240,6 +297,12 @@ class RadioEditingService:
         debug_notes.append(f"title_main_action_family={polish_metrics['title_main_action_family']}")
         debug_notes.append(f"stories_with_lead_starting_with_institution={polish_metrics['stories_with_lead_starting_with_institution']}")
         debug_notes.append(f"stories_with_lead_starting_with_institution_and_title_like_action={polish_metrics['stories_with_lead_starting_with_institution_and_title_like_action']}")
+        debug_notes.append(f"lead_starter_family={polish_metrics['lead_starter_family']}")
+        debug_notes.append(f"closing_phrase_family={polish_metrics['closing_phrase_family']}")
+        debug_notes.append(f"duplicate_sentence_removed={polish_metrics['duplicate_sentence_removed']}")
+        debug_notes.append(f"stories_with_intra_story_repetition={polish_metrics['stories_with_intra_story_repetition']}")
+        debug_notes.append(f"stories_with_duplicate_sentence_removed={polish_metrics['stories_with_duplicate_sentence_removed']}")
+        debug_notes.append(f"stories_with_closing_variation_applied={polish_metrics['stories_with_closing_variation_applied']}")
         debug_notes.append(f"lead_has_personal_attribution={polish_metrics['lead_has_personal_attribution']}")
         debug_notes.append(f"second_sentence_has_personal_attribution={polish_metrics['second_sentence_has_personal_attribution']}")
         debug_notes.append(f"promoted_person_attribution_sentence_count={polish_metrics['promoted_person_attribution_sentence_count']}")
@@ -259,6 +322,9 @@ class RadioEditingService:
         debug_notes.append(f"attributed_role_used={polish_metrics['attributed_role_used']}")
         debug_notes.append(f"attributed_institution_used={polish_metrics['attributed_institution_used']}")
         debug_notes.append(f"attributed_media_source_used={polish_metrics['attributed_media_source_used']}")
+        debug_notes.append(f"person_attribution_used={polish_metrics['person_attribution_used']}")
+        debug_notes.append(f"person_name={polish_metrics['person_name']}")
+        debug_notes.append(f"person_role={polish_metrics['person_role']}")
         debug_notes.append(f"has_named_person={polish_metrics['has_named_person']}")
         debug_notes.append(f"has_role_based_person={polish_metrics['has_role_based_person']}")
         debug_notes.append(f"lead_has_quote_or_person={polish_metrics['lead_has_quote_or_person']}")
@@ -271,6 +337,11 @@ class RadioEditingService:
         debug_notes.append(f"simplified_operational_description_count={polish_metrics['simplified_operational_description_count']}")
         if not self._is_romanian_safe(radio_text):
             debug_notes.append("romanian_safety_warning=some_english_markers_remain")
+
+        self._register_story_variation(
+            polish_metrics["lead_starter_family"],
+            polish_metrics["closing_phrase_family"],
+        )
 
         return RadioEditedStory(
             story_id=payload["story_id"],
@@ -573,6 +644,9 @@ class RadioEditingService:
         polished = self._limit_attribution_slots(polished)
         polished = self._strengthen_closure(payload, compression, polished)
         polished = self._ensure_attributed_voice(payload, compression, polished)
+        polished = self._diversify_generic_lead(payload, compression, polished)
+        polished, repetition_meta = self._reduce_intra_story_repetition(payload, polished)
+        polished, closing_variation_applied = self._apply_closing_variation(payload, compression, polished)
         polished = [
             self._finalize_sentence(self._trim_sentence(sentence, LEAD_MAX_WORDS if index == 0 else SENTENCE_SOFT_MAX_WORDS))
             for index, sentence in enumerate(polished)
@@ -585,18 +659,26 @@ class RadioEditingService:
         attribution_details = self._attributed_voice_details(polished, payload)
         attribution_level_used = attribution_details["attribution_level_used"]
         lead_restatement_meta = self._lead_restatement_meta(payload, final_lead)
+        lead_starter_family = self._lead_opening_type(final_lead, payload)
+        closing_phrase_family = self._closing_phrase_family(polished[-1] if polished else "")
         metrics = {
             "lead_title_overlap_score": lead_title_overlap_score,
             "lead_rewritten_to_reduce_title_repetition": lead_rewrite_meta["lead_rewritten_to_reduce_title_repetition"],
             "lead_continuation_rewrite_applied": lead_rewrite_meta["lead_continuation_rewrite_applied"],
             "stories_rewritten_via_continuation_strategy": lead_rewrite_meta["lead_continuation_rewrite_applied"],
-            "lead_opening_type": self._lead_opening_type(final_lead, payload),
+            "lead_opening_type": lead_starter_family,
+            "lead_starter_family": lead_starter_family,
+            "closing_phrase_family": closing_phrase_family,
             "generated_lead_initial": self._clean_text(initial_lead),
             "generated_lead_final": self._clean_text(final_lead),
             "title_main_entity": lead_restatement_meta["title_main_entity"],
             "title_main_action_family": lead_restatement_meta["title_main_action_family"],
             "stories_with_lead_starting_with_institution": lead_restatement_meta["lead_starts_with_institution"],
             "stories_with_lead_starting_with_institution_and_title_like_action": lead_restatement_meta["lead_starts_with_title_entity_and_action"],
+            "duplicate_sentence_removed": repetition_meta["duplicate_sentence_removed"],
+            "stories_with_intra_story_repetition": repetition_meta["stories_with_intra_story_repetition"],
+            "stories_with_duplicate_sentence_removed": repetition_meta["duplicate_sentence_removed"],
+            "stories_with_closing_variation_applied": closing_variation_applied,
             "high_title_lead_overlap": lead_title_overlap_score >= TITLE_LEAD_OVERLAP_THRESHOLD,
             "romania_impact_included": self._has_romania_impact_sentence(payload, polished),
             "strong_closure": bool(polished and self._has_strong_closure(polished[-1])),
@@ -623,6 +705,9 @@ class RadioEditingService:
             "attributed_role_used": attribution_details["attributed_role_used"],
             "attributed_institution_used": attribution_details["attributed_institution_used"],
             "attributed_media_source_used": attribution_details["attributed_media_source_used"],
+            "person_attribution_used": attribution_level_used == "person",
+            "person_name": attribution_details["attributed_name_used"],
+            "person_role": attribution_details["attributed_role_used"],
             "has_named_person": bool(payload.get("top_person")),
             "has_role_based_person": bool(payload.get("available_role_markers")),
             "lead_has_quote_or_person": bool(polished and self._sentence_personal_attribution_type(polished[0], payload) != "none"),
@@ -681,6 +766,58 @@ class RadioEditingService:
         if rewritten and not self._is_near_duplicate(rewritten, existing):
             return rewritten
         return ""
+
+    def _diversify_generic_lead(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        if not sentences:
+            return sentences
+        lead = sentences[0]
+        normalized = self._comparison_text(lead)
+        if self._sentence_personal_attribution_type(lead, payload) == "named_person":
+            return sentences
+        if not normalized.startswith(("asta", "impactul", "primele efecte", "decizia", "masura")):
+            return sentences
+        rewritten = self._rewrite_generic_lead(payload, compression, lead)
+        if rewritten and rewritten != lead:
+            sentences[0] = rewritten
+        return sentences
+
+    def _rewrite_generic_lead(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        lead: str,
+    ) -> str:
+        lowered = payload["full_text"].lower()
+        if any(term in lowered for term in ("spital", "urgente", "pacienti", "flux rapid")):
+            return self._finalize_sentence("Pacientii cu urgente majore pot intra mai repede pe noul flux al spitalului.")
+        if any(term in lowered for term in ("trafic", "restrictii", "rute ocolitoare", "circulatia", "navetisti", "trenuri", "peron")):
+            if "tren" in lowered or "peron" in lowered:
+                return self._finalize_sentence("Navetistii vor avea un orar provizoriu si schimbari de peron in urmatoarele zile.")
+            return self._finalize_sentence("Soferii vor circula pe rute ocolitoare sau pe benzi restranse incepand din primele zile.")
+        if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
+            return self._finalize_sentence("Consumatorii ar putea vedea presiune mai mare pe facturi si pe preturile la energie.")
+        if any(term in lowered for term in ("investitii", "avize", "birocratia", "ordonanta")):
+            return self._finalize_sentence("Investitorii ar putea trece mai repede de avizele pentru proiectele mari.")
+        if any(term in lowered for term in ("dna", "csm", "presedintie", "parchete", "propunere")):
+            return self._finalize_sentence("Ministerul Justitiei ramane sub presiune sa vina cu o noua propunere pentru functie.")
+        if any(term in lowered for term in ("catalogul digital", "elevi", "parinti", "scoli")):
+            return self._finalize_sentence("Parintii si elevii pot verifica notele si absentele in acelasi sistem digital.")
+        if any(term in lowered for term in ("universitati", "studenti", "burse", "navetisti")):
+            return self._finalize_sentence("Studentii navetisti ar putea acoperi mai usor transportul si o parte din cazare.")
+        if any(term in lowered for term in ("fermierii", "seceta", "alimente", "agriculturii")):
+            return self._finalize_sentence("Fermierii cer sprijin rapid ca sa limiteze presiunea pe preturile la alimente.")
+        if any(term in lowered for term in ("nato", "marea neagra", "securitatea regionala")):
+            return self._finalize_sentence("Pentru Romania, miscarile din zona sporesc atentia asupra securitatii de la Marea Neagra.")
+        if any(term in lowered for term in ("ormuz", "rutele maritime", "transportului comercial")):
+            return self._finalize_sentence("Pentru Romania si Europa, tensiunea poate ridica rapid costurile la energie si transport.")
+        if any(term in lowered for term in ("cipuri", "export", "bateriile", "lanturile de aprovizionare")):
+            return self._finalize_sentence("Companiile pot vedea costuri mai mari si livrari mai lente pe lanturile de aprovizionare.")
+        return lead
 
     def _derive_support_sentence(self, payload: dict[str, object], compression: CompressedStoryCore, existing: list[str]) -> str:
         for role in ("impact", "detail", "reaction"):
@@ -844,7 +981,15 @@ class RadioEditingService:
         if self._sentence_has_next_step(sentence):
             score += 0.35
         if self._sentence_personal_attribution_type(sentence, payload) in {"named_person", "role_based_person"}:
-            score += 0.35
+            score += 0.75
+        if opening_type in self._recent_lead_families:
+            score -= 1.35
+        if opening_type == "action" and "action" in self._recent_lead_families:
+            score -= 0.45
+        if opening_type == "consequence" and self._comparison_text(sentence).startswith("asta"):
+            score -= 1.1
+        if self._comparison_text(sentence).startswith(("impactul", "decizia", "masura")):
+            score -= 0.35
         if restatement_meta["lead_starts_with_title_entity_and_action"]:
             score -= 4.0
         elif restatement_meta["lead_starts_with_institution"]:
@@ -859,17 +1004,29 @@ class RadioEditingService:
         normalized = self._comparison_text(sentence)
         if not normalized:
             return "action"
+        if payload and self._sentence_personal_attribution_type(sentence, payload) in {"named_person", "role_based_person"}:
+            return "person_role"
         if normalized.startswith(CONSEQUENCE_LEAD_STARTS):
             return "consequence"
         if normalized.startswith(AFFECTED_AUDIENCE_LEAD_STARTS):
             return "affected_audience"
         if normalized.startswith(CONCRETE_ACTION_LEAD_STARTS):
             return "action"
-        if payload and self._sentence_personal_attribution_type(sentence, payload) in {"named_person", "role_based_person"}:
-            return "person_role"
         if payload and self._lead_restatement_meta(payload, sentence)["lead_starts_with_institution"]:
             return "institution_action"
         return "action"
+
+    def _closing_phrase_family(self, sentence: str) -> str:
+        lowered = self._comparison_text(sentence)
+        if not lowered:
+            return "operational_timing"
+        if any(marker in lowered for marker in ("intra in vigoare", "se aplica", "de luni", "de marti", "luna viitoare", "zilele urmatoare")):
+            return "operational_timing"
+        if any(marker in lowered for marker in ("monitorizata", "monitorizat", "evaluari", "oficialii", "autoritatile", "va fi confirmat")):
+            return "institution_followup"
+        if any(marker in lowered for marker in ("companii", "consumatori", "regulile", "costurile", "preturile")):
+            return "policy_impact"
+        return "immediate_impact"
 
     def _lead_restatement_meta(self, payload: dict[str, object], lead: str) -> dict[str, object]:
         title_main_entity = self._title_main_entity(payload)
@@ -1198,6 +1355,103 @@ class RadioEditingService:
         ):
             return rewritten_fallback
         return ""
+
+    def _apply_closing_variation(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> tuple[list[str], bool]:
+        if not sentences:
+            return sentences, False
+        current_family = self._closing_phrase_family(sentences[-1])
+        if list(self._recent_closing_families).count(current_family) == 0 and not self._starts_with_primele_formula(sentences[-1]):
+            return sentences, False
+        replacement = self._best_closure_candidate(payload, compression, sentences[:-1], current_closure=sentences[-1])
+        if (
+            replacement
+            and self._closing_phrase_family(replacement) != current_family
+            and not self._is_near_duplicate(replacement, sentences[:-1])
+            and replacement not in self._recent_closing_sentences
+        ):
+            sentences[-1] = replacement
+            return sentences, True
+        varied = self._closure_bank_sentence(payload, current_family, sentences[-1])
+        if varied and varied != sentences[-1]:
+            sentences[-1] = varied
+            return sentences, True
+        return sentences, False
+
+    def _closure_bank_sentence(self, payload: dict[str, object], current_family: str, current_closure: str) -> str:
+        preferred_family = self._preferred_closure_family(payload)
+        for candidate in self._contextual_closure_candidates(payload, preferred_family):
+            if candidate != current_closure and candidate not in self._recent_closing_sentences:
+                return candidate
+        family_order = [preferred_family] + [family for family in CLOSING_PHRASE_BANK if family != preferred_family]
+        for family in family_order:
+            if family == current_family and not self._starts_with_primele_formula(current_closure):
+                continue
+            if family in self._recent_closing_families:
+                continue
+            for candidate in CLOSING_PHRASE_BANK[family]:
+                if candidate != current_closure and candidate not in self._recent_closing_sentences:
+                    return candidate
+        return ""
+
+    def _contextual_closure_candidates(self, payload: dict[str, object], preferred_family: str) -> list[str]:
+        lowered = payload["full_text"].lower()
+        candidates: list[str] = []
+        if any(term in lowered for term in ("lucrari", "trafic", "restrictii", "circulatia", "rute ocolitoare", "trenuri", "peron")):
+            candidates.extend([
+                "Programul actualizat se aplica de la inceputul saptamanii.",
+                "Soferii si navetistii vor simti schimbarea chiar din primele zile.",
+                "Rutele provizorii raman valabile pana la finalul lucrarilor.",
+            ])
+        if any(term in lowered for term in ("spital", "urgente", "pacienti", "flux rapid", "medici")):
+            candidates.extend([
+                "Pacientii pot intra pe noul flux chiar din aceasta saptamana.",
+                "Programul extins va fi evaluat dupa primele zile de functionare.",
+            ])
+        if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
+            candidates.extend([
+                "Consumatorii ar putea vedea primele schimbari direct pe factura.",
+                "Preturile pot reactiona rapid daca presiunea ramane ridicata.",
+            ])
+        if any(term in lowered for term in ("dna", "csm", "presedintie", "ministerul justitiei", "propunere")):
+            candidates.extend([
+                "Ministerul trebuie acum sa decida daca revine cu o alta propunere.",
+                "Urmatorul pas depinde de o noua decizie a Ministerului Justitiei.",
+            ])
+        if any(term in lowered for term in ("elevi", "parinti", "scoli", "catalogul digital", "universitati", "studenti")):
+            candidates.extend([
+                "Parintii si elevii vor vedea schimbarea chiar din urmatoarele saptamani.",
+                "Calendarul complet ajunge in unitati in zilele urmatoare.",
+            ])
+        if any(term in lowered for term in ("fermierii", "seceta", "agriculturii", "alimente")):
+            candidates.extend([
+                "Preturile pot reactiona rapid daca seceta continua si in urmatoarele saptamani.",
+                "Fermierii asteapta decizia inaintea urmatoarelor lucrari de camp.",
+            ])
+        if any(term in lowered for term in ("nato", "marea neagra", "ormuz", "rutele maritime", "export", "cipuri", "bateriile")):
+            candidates.extend([
+                "Primele efecte se pot vedea rapid in costurile de transport si energie.",
+                "Autoritatile urmaresc zilnic evolutia situatiei in regiune.",
+            ])
+        bank_candidates = list(CLOSING_PHRASE_BANK.get(preferred_family, ()))
+        return [candidate for candidate in candidates + bank_candidates if candidate]
+
+    def _preferred_closure_family(self, payload: dict[str, object]) -> str:
+        lowered = payload["full_text"].lower()
+        if any(term in lowered for term in ("de luni", "program", "restrictii", "lucrari", "se aplica", "intra in vigoare")):
+            return "operational_timing"
+        if any(term in lowered for term in ("preturi", "costuri", "companii", "consumatori", "energie")):
+            return "policy_impact"
+        if any(term in lowered for term in ("monitorizat", "autoritati", "evaluari", "oficialii", "confirmat")):
+            return "institution_followup"
+        return "immediate_impact"
+
+    def _starts_with_primele_formula(self, sentence: str) -> bool:
+        return self._comparison_text(sentence).startswith(("primele efecte", "primele rezultate", "primele restrictii"))
 
     def _reinforce_romania_impact(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> list[str]:
         if not self._is_international_story(payload) or self._has_romania_impact_sentence(payload, sentences):
@@ -1545,6 +1799,77 @@ class RadioEditingService:
         if source_label and source_label.lower() in lowered and any(marker in lowered for marker in ("relateaza", "scrie", "transmite")):
             return "media"
         return "none"
+
+    def _reduce_intra_story_repetition(
+        self,
+        payload: dict[str, object],
+        sentences: list[str],
+    ) -> tuple[list[str], dict[str, bool]]:
+        updated: list[str] = []
+        duplicate_removed = False
+        repetition_found = False
+        for sentence in sentences:
+            candidate = sentence
+            if any(self._sentence_similarity(candidate, existing) > 0.7 for existing in updated):
+                duplicate_removed = True
+                repetition_found = True
+                continue
+            for existing in updated:
+                if self._shares_time_marker(existing, candidate):
+                    repetition_found = True
+                    candidate = self._strip_repeated_time_marker(candidate)
+                if self._shares_impact_signature(existing, candidate) and self._sentence_similarity(candidate, existing) > 0.52:
+                    repetition_found = True
+                    candidate = self._strip_repeated_impact_prefix(candidate)
+            candidate = self._finalize_sentence(candidate)
+            if not candidate:
+                duplicate_removed = True
+                continue
+            if any(self._sentence_similarity(candidate, existing) > 0.7 for existing in updated):
+                duplicate_removed = True
+                repetition_found = True
+                continue
+            updated.append(candidate)
+        return updated[:MAX_SENTENCE_COUNT], {
+            "duplicate_sentence_removed": duplicate_removed,
+            "stories_with_intra_story_repetition": repetition_found,
+        }
+
+    def _sentence_similarity(self, first: str, second: str) -> float:
+        first_tokens = set(self._comparison_tokens(first))
+        second_tokens = set(self._comparison_tokens(second))
+        if not first_tokens or not second_tokens:
+            return 0.0
+        return len(first_tokens & second_tokens) / max(1, len(first_tokens | second_tokens))
+
+    def _shares_time_marker(self, first: str, second: str) -> bool:
+        lowered_first = first.lower()
+        lowered_second = second.lower()
+        return any(marker in lowered_first and marker in lowered_second for marker in REPEATED_TIME_MARKERS)
+
+    def _shares_impact_signature(self, first: str, second: str) -> bool:
+        tracked = {"energie", "preturi", "trafic", "costuri", "navetistii", "studentii", "efect", "impact"}
+        first_tokens = {token for token in self._comparison_tokens(first) if token in tracked}
+        second_tokens = {token for token in self._comparison_tokens(second) if token in tracked}
+        return bool(first_tokens & second_tokens)
+
+    def _strip_repeated_time_marker(self, sentence: str) -> str:
+        trimmed = sentence
+        for marker in REPEATED_TIME_MARKERS:
+            trimmed = re.sub(rf"(?:,\s*)?{re.escape(marker)}", "", trimmed, flags=re.IGNORECASE)
+        trimmed = re.sub(r"\s{2,}", " ", trimmed).strip(" ,")
+        return trimmed
+
+    def _strip_repeated_impact_prefix(self, sentence: str) -> str:
+        return re.sub(r"^(Asta poate|Asta inseamna|Masura poate)\s+", "", sentence, flags=re.IGNORECASE).strip()
+
+    def _register_story_variation(self, lead_family: str, closing_family: str, closing_sentence: str = "") -> None:
+        if lead_family:
+            self._recent_lead_families.append(lead_family)
+        if closing_family:
+            self._recent_closing_families.append(closing_family)
+        if closing_sentence:
+            self._recent_closing_sentences.append(closing_sentence)
 
     def _story_attribution_type(self, sentences: list[str], payload: dict[str, object]) -> str:
         for sentence in sentences:

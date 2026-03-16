@@ -85,6 +85,7 @@ class EditorialPipelineService:
             profile_name=profile_name,
         )
         self.summary_generator_service.reset_variation_state()
+        self.radio_editing_service.reset_variation_state()
         generated_summaries = [
             self.radio_editing_service.apply_to_generated_story_summary(
                 self.summary_generator_service.generate_story_summary(

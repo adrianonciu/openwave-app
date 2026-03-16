@@ -23,6 +23,7 @@ VICTOR_VASLUI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_victor_vasl
 ANA_TIMISOARA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ana_timisoara.txt"
 ION_GALATI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ion_galati.txt"
 MARIA_OLT_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_maria_olt.txt"
+GEORGE_COVASNA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_george_covasna.txt"
 
 PREVIEW_FIXTURES = [
     {
@@ -447,6 +448,70 @@ MARIA_OLT_LOCAL_FIXTURES = [
 ]
 
 
+GEORGE_COVASNA_LOCAL_FIXTURES = [
+    {
+        "story_id": "covasna_01",
+        "source_label": "covasnamedia.ro",
+        "headline": "Spitalul Judetean Sfantu Gheorghe extinde programul pentru urgente",
+        "content_text": (
+            "Spitalul Judetean Sfantu Gheorghe extinde programul pentru urgente incepand de saptamana viitoare. "
+            "Managerul unitatii, Emese Farkas, a precizat ca pacientii cu risc major intra direct pe flux rapid. "
+            "Masura poate reduce timpul de asteptare pentru cazurile grave din tot judetul Covasna. "
+            "Primele efecte sunt asteptate chiar din primele zile de program."
+        ),
+        "local_geo_origin": "covasna_county",
+    },
+    {
+        "story_id": "covasna_02",
+        "source_label": "observatorulcovei.ro",
+        "headline": "Primaria Sfantu Gheorghe muta circulatia in zona centrala pentru lucrari",
+        "content_text": (
+            "Primaria Sfantu Gheorghe muta circulatia in zona centrala pentru lucrari la carosabil si retele. "
+            "Primarul Arpad Antal a declarat ca soferii vor circula pe rute ocolitoare de luni dimineata. "
+            "Restrictiile afecteaza accesul spre doua scoli si spre autogara. "
+            "Primele restrictii intra in vigoare de luni dimineata."
+        ),
+        "local_geo_origin": "covasna_county",
+    },
+    {
+        "story_id": "covasna_03",
+        "source_label": "stiricovasna.ro",
+        "headline": "ISU Covasna dubleaza controalele in centrele sociale",
+        "content_text": (
+            "ISU Covasna dubleaza controalele in centrele sociale dupa mai multe alerte. "
+            "Inspectorii verifica instalatiile electrice si planurile de evacuare chiar de astazi. "
+            "Administratorii care ignora regulile risca amenzi si suspendarea activitatii. "
+            "Primele rezultate vor fi centralizate pana la finalul saptamanii."
+        ),
+        "local_geo_origin": "covasna_county",
+    },
+    {
+        "story_id": "transilvania_01",
+        "source_label": "Agerpres",
+        "headline": "Universitatile din Transilvania extind bursele pentru studentii navetisti",
+        "content_text": (
+            "Universitatile din Transilvania extind bursele pentru studentii navetisti din orasele mici. "
+            "Rectorii spun ca sprijinul nou poate acoperi transportul si o parte din cazare. "
+            "Masura poate reduce abandonul universitar in familiile cu venituri mici. "
+            "Primele criterii vor fi publicate luna viitoare."
+        ),
+        "local_geo_origin": "transilvania_region",
+    },
+    {
+        "story_id": "transilvania_02",
+        "source_label": "Biz Brasov",
+        "headline": "CFR muta trenuri regionale pe linii alternative in sud-estul Transilvaniei",
+        "content_text": (
+            "CFR muta trenuri regionale pe linii alternative in sud-estul Transilvaniei din cauza unor lucrari. "
+            "Navetistii din Covasna si Brasov vor vedea intarzieri si schimbari de peron in urmatoarele zile. "
+            "Programul provizoriu afecteaza zilnic legaturile spre scoli, spitale si locuri de munca din zona. "
+            "Orarul provizoriu se aplica de marti dimineata."
+        ),
+        "local_geo_origin": "transilvania_region",
+    },
+]
+
+
 ION_GALATI_LOCAL_FIXTURES = [
     {
         "story_id": "galati_01",
@@ -550,6 +615,12 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     stories_with_lead_starting_with_institution = _note_value(edited.editing_debug_notes, "stories_with_lead_starting_with_institution", "False") == "True"
     stories_with_lead_starting_with_institution_and_title_like_action = _note_value(edited.editing_debug_notes, "stories_with_lead_starting_with_institution_and_title_like_action", "False") == "True"
     stories_rewritten_via_continuation_strategy = _note_value(edited.editing_debug_notes, "stories_rewritten_via_continuation_strategy", "False") == "True"
+    lead_starter_family = _note_value(edited.editing_debug_notes, "lead_starter_family", lead_opening_type)
+    closing_phrase_family = _note_value(edited.editing_debug_notes, "closing_phrase_family", "operational_timing")
+    duplicate_sentence_removed = _note_value(edited.editing_debug_notes, "duplicate_sentence_removed", "False") == "True"
+    stories_with_intra_story_repetition = _note_value(edited.editing_debug_notes, "stories_with_intra_story_repetition", "False") == "True"
+    stories_with_duplicate_sentence_removed = _note_value(edited.editing_debug_notes, "stories_with_duplicate_sentence_removed", "False") == "True"
+    stories_with_closing_variation_applied = _note_value(edited.editing_debug_notes, "stories_with_closing_variation_applied", "False") == "True"
     lead_has_personal_attribution = _note_value(edited.editing_debug_notes, "lead_has_personal_attribution", "False") == "True"
     second_sentence_has_personal_attribution = _note_value(edited.editing_debug_notes, "second_sentence_has_personal_attribution", "False") == "True"
     promoted_person_attribution_sentence_count = int(_note_value(edited.editing_debug_notes, "promoted_person_attribution_sentence_count", "0"))
@@ -568,6 +639,9 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     attributed_role_used = _note_value(edited.editing_debug_notes, "attributed_role_used", "")
     attributed_institution_used = _note_value(edited.editing_debug_notes, "attributed_institution_used", "")
     attributed_media_source_used = _note_value(edited.editing_debug_notes, "attributed_media_source_used", "")
+    person_attribution_used = _note_value(edited.editing_debug_notes, "person_attribution_used", "False") == "True"
+    person_name = _note_value(edited.editing_debug_notes, "person_name", "")
+    person_role = _note_value(edited.editing_debug_notes, "person_role", "")
     attribution_position_used = _note_value(edited.editing_debug_notes, "attribution_position_used", "none")
     has_named_person = _note_value(edited.editing_debug_notes, "has_named_person", "False") == "True"
     has_role_based_person = _note_value(edited.editing_debug_notes, "has_role_based_person", "False") == "True"
@@ -593,6 +667,12 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "lead_rewritten_to_reduce_title_repetition": lead_rewritten_to_reduce_title_repetition,
         "lead_continuation_rewrite_applied": lead_continuation_rewrite_applied,
         "lead_opening_type": lead_opening_type,
+        "lead_starter_family": lead_starter_family,
+        "closing_phrase_family": closing_phrase_family,
+        "duplicate_sentence_removed": duplicate_sentence_removed,
+        "stories_with_intra_story_repetition": stories_with_intra_story_repetition,
+        "stories_with_duplicate_sentence_removed": stories_with_duplicate_sentence_removed,
+        "stories_with_closing_variation_applied": stories_with_closing_variation_applied,
         "original_headline": fixture["headline"],
         "generated_lead_initial": generated_lead_initial,
         "generated_lead_final": generated_lead_final,
@@ -619,6 +699,9 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "attributed_role_used": attributed_role_used,
         "attributed_institution_used": attributed_institution_used,
         "attributed_media_source_used": attributed_media_source_used,
+        "person_attribution_used": person_attribution_used,
+        "person_name": person_name,
+        "person_role": person_role,
         "attribution_position_used": attribution_position_used,
         "has_named_person": has_named_person,
         "has_role_based_person": has_role_based_person,
@@ -648,7 +731,7 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.9",
+        "OPENWAVE RADIO EDITING PREVIEW V1.10",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
@@ -668,6 +751,9 @@ def _render_preview_text(payload: dict[str, object]) -> str:
         f"Stories with role+name attribution: {summary['stories_with_person_role_and_name_attribution']}",
         f"Stories with institution attribution: {summary['stories_with_institution_attribution']}",
         f"Stories with media-source attribution: {summary['stories_with_media_source_attribution']}",
+        f"Stories with intra-story repetition: {summary['stories_with_intra_story_repetition']}",
+        f"Stories with duplicate sentence removed: {summary['stories_with_duplicate_sentence_removed']}",
+        f"Stories with closing variation applied: {summary['stories_with_closing_variation_applied']}",
         f"Stories missing attributed voice: {summary['stories_missing_attributed_voice']}",
         f"Lead personal attribution count: {summary['lead_has_personal_attribution_count']}",
         f"Second-sentence personal attribution count: {summary['second_sentence_has_personal_attribution_count']}",
@@ -702,6 +788,9 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Lead/title overlap: {item['lead_title_overlap_score']}",
                 f"Title main entity: {item['title_main_entity'] or 'none'}",
                 f"Title main action family: {item['title_main_action_family'] or 'none'}",
+                f"Lead starter family: {item['lead_starter_family']}",
+                f"Closing phrase family: {item['closing_phrase_family']}",
+                f"Duplicate sentence removed: {item['duplicate_sentence_removed']}",
                 f"Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
                 f"Lead continuation rewrite: {item['lead_continuation_rewrite_applied']}",
                 f"Lead opening type: {item['lead_opening_type']}",
@@ -764,7 +853,7 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
 
 
 def _fixture_scope(story_id: str) -> str:
-    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_", "galati_", "olt_", "oltenia_")):
+    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_", "galati_", "olt_", "oltenia_", "covasna_", "transilvania_")):
         return "local"
     if story_id.startswith("national_"):
         return "national"
@@ -789,13 +878,13 @@ def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
         signals["direct_listener_impact_score"] += 2.6
         signals["emotional_proximity_score"] += 2.0
         signals["locality_proximity_score"] += 2.5
-    if item.get("local_geo_origin") in {"vaslui_county", "timis_county", "galati_county", "olt_county"}:
+    if item.get("local_geo_origin") in {"vaslui_county", "timis_county", "galati_county", "olt_county", "covasna_county"}:
         signals["direct_listener_impact_score"] += 1.4
         signals["locality_proximity_score"] += 2.2
-    if item.get("local_geo_origin") in {"moldova_region", "banat_region", "oltenia_region"}:
+    if item.get("local_geo_origin") in {"moldova_region", "banat_region", "oltenia_region", "transilvania_region"}:
         signals["romania_relevance_score"] += 1.2
         signals["locality_proximity_score"] += 1.0
-    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "galati", "tecuci", "olt", "slatina", "oltenia", "regiune")):
+    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "galati", "tecuci", "olt", "slatina", "oltenia", "covasna", "sfantu gheorghe", "transilvania", "regiune")):
         signals["romania_relevance_score"] += 1.6
         signals["locality_proximity_score"] += 1.4
     if any(term in text for term in ("spital", "urgente", "incend", "isu", "siguranta", "cardiace")):
@@ -1054,11 +1143,59 @@ def _render_maria_olt_bulletin(stories: list[dict[str, object]], geo_debug: dict
     return "\n".join(lines).strip() + "\n"
 
 
+def _render_george_covasna_bulletin(stories: list[dict[str, object]], geo_debug: dict[str, object]) -> str:
+    total_duration = sum(story["estimated_duration_seconds"] for story in stories)
+    lines = [
+        "OPENWAVE GENERALIST BULLETIN - GEORGE / COVASNA",
+        "",
+        f"Stories: {len(stories)}",
+        f"Estimated story-only duration: {total_duration} secunde",
+        "Editorial target mix: local 5, national 6, international 4.",
+        "Ordering rule: strongest listener impact first, with county-first local routing.",
+        f"Resolved user county: {geo_debug['resolved_user_county']}",
+        f"Resolved user region: {geo_debug['resolved_user_region']}",
+        f"County-first local selection: {geo_debug['county_first_local_selection']}",
+        f"Local source registry used: {geo_debug['local_source_registry_used']}",
+        f"Local sources selected for county: {', '.join(geo_debug['local_sources_selected']) or 'none'}",
+        f"Local story count from Covasna county: {geo_debug['local_story_count_from_covasna_county']}",
+        f"Local story count from regional fallback: {geo_debug['local_story_count_from_transilvania_region']}",
+        f"Lead starter family distribution: {json.dumps(geo_debug['lead_starter_family_distribution'], ensure_ascii=False)}",
+        f"Stories with duplicate sentence removed: {geo_debug['stories_with_duplicate_sentence_removed']}",
+        f"Stories with closing variation applied: {geo_debug['stories_with_closing_variation_applied']}",
+        "",
+    ]
+    for item in stories:
+        lines.extend([
+            f"{item['position']}. {item['headline_original']}",
+            f"   Scope: {item['source_scope']}",
+            f"   Local origin: {item.get('local_geo_origin') or 'none'}",
+            f"   Lead starter family: {item['lead_starter_family']}",
+            f"   Closing phrase family: {item['closing_phrase_family']}",
+            f"   Duplicate sentence removed: {item['duplicate_sentence_removed']}",
+            f"   Person attribution used: {item['person_attribution_used']}",
+            f"   Person: {item['person_role'] or 'none'} / {item['person_name'] or 'none'}",
+            f"   Initial lead: {item['generated_lead_initial']}",
+            f"   Final lead: {item['generated_lead_final']}",
+            item['radio_text'],
+            "",
+        ])
+    lines.extend([
+        "Outro:",
+        "Acesta a fost jurnalul generalist OpenWave pentru George din judetul Covasna.",
+        "",
+        "Written source credits for player:",
+        *[f"- {source}" for source in geo_debug['written_source_credits']],
+        "",
+    ])
+    return "\n".join(lines).strip() + "\n"
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
     pronunciation_map = get_tts_pronunciation_map()
 
+    service.reset_variation_state()
     preview_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(PREVIEW_FIXTURES, start=1)]
     preview_word_counts = [item["radio_word_count"] for item in preview_stories]
     preview_duration_counts = [item["estimated_duration_seconds"] for item in preview_stories]
@@ -1104,11 +1241,15 @@ def main() -> None:
         "leads_rewritten_to_reduce_title_repetition": sum(1 for item in preview_stories if item["lead_rewritten_to_reduce_title_repetition"]),
         "lead_continuation_rewrite_count": sum(1 for item in preview_stories if item["lead_continuation_rewrite_applied"]),
         "lead_opening_type_counts": lead_opening_type_counts,
+        "lead_starter_family_distribution": lead_opening_type_counts,
         "stories_with_personal_attribution": sum(1 for item in preview_stories if item["stories_with_personal_attribution"]),
         "stories_with_person_name_attribution": sum(1 for item in preview_stories if item["stories_with_person_name_attribution"]),
         "stories_with_person_role_and_name_attribution": sum(1 for item in preview_stories if item["stories_with_person_role_and_name_attribution"]),
         "stories_with_institution_attribution": sum(1 for item in preview_stories if item["stories_with_institution_attribution"]),
         "stories_with_media_source_attribution": sum(1 for item in preview_stories if item["stories_with_media_source_attribution"]),
+        "stories_with_intra_story_repetition": sum(1 for item in preview_stories if item["stories_with_intra_story_repetition"]),
+        "stories_with_duplicate_sentence_removed": sum(1 for item in preview_stories if item["stories_with_duplicate_sentence_removed"]),
+        "stories_with_closing_variation_applied": sum(1 for item in preview_stories if item["stories_with_closing_variation_applied"]),
         "stories_missing_attributed_voice": sum(1 for item in preview_stories if item["stories_missing_attributed_voice"]),
         "lead_has_personal_attribution_count": sum(1 for item in preview_stories if item["lead_has_personal_attribution"]),
         "second_sentence_has_personal_attribution_count": sum(1 for item in preview_stories if item["second_sentence_has_personal_attribution"]),
@@ -1140,6 +1281,7 @@ def main() -> None:
     JSON_OUTPUT_PATH.write_text(json.dumps(preview_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     TEXT_OUTPUT_PATH.write_text(_render_preview_text(preview_payload), encoding="utf-8")
 
+    service.reset_variation_state()
     generalist_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(GENERALIST_BULLETIN_FIXTURES, start=1)]
     GENERALIST_OUTPUT_PATH.write_text(_render_generalist_bulletin(generalist_stories), encoding="utf-8")
 
@@ -1154,6 +1296,7 @@ def main() -> None:
     victor_mix_fixtures = VICTOR_VASLUI_LOCAL_FIXTURES + [
         fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
     ]
+    service.reset_variation_state()
     victor_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(victor_mix_fixtures, start=1)]
     victor_vaslui_stories = _order_victor_vaslui_bulletin(victor_base_stories)
     victor_geo_debug = {
@@ -1186,6 +1329,7 @@ def main() -> None:
     ana_mix_fixtures = ANA_TIMISOARA_LOCAL_FIXTURES + [
         fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
     ]
+    service.reset_variation_state()
     ana_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(ana_mix_fixtures, start=1)]
     ana_timisoara_stories = _order_victor_vaslui_bulletin(ana_base_stories)
     ana_geo_debug = {
@@ -1220,6 +1364,7 @@ def main() -> None:
     ion_mix_fixtures = ION_GALATI_LOCAL_FIXTURES + [
         fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
     ]
+    service.reset_variation_state()
     ion_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(ion_mix_fixtures, start=1)]
     ion_galati_stories = _order_victor_vaslui_bulletin(ion_base_stories)
     ion_written_source_credits = _collect_media_source_credits(ion_mix_fixtures)
@@ -1253,6 +1398,7 @@ def main() -> None:
     maria_mix_fixtures = MARIA_OLT_LOCAL_FIXTURES + [
         fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
     ]
+    service.reset_variation_state()
     maria_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(maria_mix_fixtures, start=1)]
     maria_olt_stories = _order_victor_vaslui_bulletin(maria_base_stories)
     maria_written_source_credits = _collect_media_source_credits(maria_mix_fixtures)
@@ -1270,6 +1416,40 @@ def main() -> None:
         "written_source_credits": maria_written_source_credits,
     }
     MARIA_OLT_OUTPUT_PATH.write_text(_render_maria_olt_bulletin(maria_olt_stories, maria_geo_debug), encoding="utf-8")
+
+
+    george_personalization = UserPersonalization(
+        listener_profile=ListenerProfile(first_name="George", country="Romania", region="Covasna"),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=35, national=40, international=25),
+        ),
+    )
+    george_geo = resolve_listener_geography(city=None, region="Covasna")
+    george_local_resolution = SourceWatcherService().resolve_local_sources_for_personalization(george_personalization)
+    george_mix_fixtures = GEORGE_COVASNA_LOCAL_FIXTURES + [
+        fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
+    ]
+    service.reset_variation_state()
+    george_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(george_mix_fixtures, start=1)]
+    george_covasna_stories = _order_victor_vaslui_bulletin(george_base_stories)
+    george_written_source_credits = _collect_media_source_credits(george_mix_fixtures)
+    george_geo_debug = {
+        "resolved_user_county": george_geo.resolved_county,
+        "resolved_user_region": george_geo.resolved_macro_region,
+        "county_first_local_selection": True,
+        "local_source_registry_used": george_local_resolution.local_source_registry_used,
+        "local_sources_selected": [item.source_name for item in george_local_resolution.resolved_sources],
+        "local_story_count_from_covasna_county": sum(1 for item in george_covasna_stories if item.get("local_geo_origin") == "covasna_county"),
+        "local_story_count_from_transilvania_region": sum(1 for item in george_covasna_stories if item.get("local_geo_origin") == "transilvania_region"),
+        "lead_starter_family_distribution": {
+            family: sum(1 for item in george_covasna_stories if item["lead_starter_family"] == family)
+            for family in ("consequence", "action", "affected_audience", "person_role", "institution_action")
+        },
+        "stories_with_duplicate_sentence_removed": sum(1 for item in george_covasna_stories if item["duplicate_sentence_removed"]),
+        "stories_with_closing_variation_applied": sum(1 for item in george_covasna_stories if item["stories_with_closing_variation_applied"]),
+        "written_source_credits": george_written_source_credits,
+    }
+    GEORGE_COVASNA_OUTPUT_PATH.write_text(_render_george_covasna_bulletin(george_covasna_stories, george_geo_debug), encoding="utf-8")
 
 
 if __name__ == "__main__":
