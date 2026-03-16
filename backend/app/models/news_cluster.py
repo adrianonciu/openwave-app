@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.models.article_fetch import FetchedArticle
+from app.models.radio_story_draft import RadioStoryDraft
 
 
 class NewsClusteringArticle(BaseModel):
@@ -31,6 +32,13 @@ class NewsClusteringArticle(BaseModel):
     region_detected: str | None = None
     county_match_confidence: float | None = None
     geo_signals: list[str] = Field(default_factory=list)
+    radio_story_draft: RadioStoryDraft | None = None
+    summarization_method: str | None = None
+    summarization_actor_detected: bool | None = None
+    summarization_quote_detected: bool | None = None
+    summarization_impact_detected: bool | None = None
+    summarization_fallback_used: bool = False
+    summarization_skip_reason: str | None = None
 
     @classmethod
     def from_fetched_article(cls, article: FetchedArticle) -> "NewsClusteringArticle":
@@ -60,6 +68,13 @@ class NewsClusteringArticle(BaseModel):
             region_detected=article.region_detected,
             county_match_confidence=article.county_match_confidence,
             geo_signals=article.geo_signals,
+            radio_story_draft=article.radio_story_draft,
+            summarization_method=article.summarization_method,
+            summarization_actor_detected=article.summarization_actor_detected,
+            summarization_quote_detected=article.summarization_quote_detected,
+            summarization_impact_detected=article.summarization_impact_detected,
+            summarization_fallback_used=article.summarization_fallback_used,
+            summarization_skip_reason=article.summarization_skip_reason,
         )
 
 
@@ -102,6 +117,9 @@ class StoryCluster(BaseModel):
     cluster_size: int = Field(default=1, ge=1)
     created_at: datetime
     latest_published_at: datetime
+    representative_radio_story_draft: RadioStoryDraft | None = None
+    representative_source_name: str | None = None
+    representative_original_url: str | None = None
 
 
 class ClusterDecision(BaseModel):

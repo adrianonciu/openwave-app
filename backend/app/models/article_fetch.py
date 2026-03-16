@@ -3,6 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from app.models.radio_story_draft import RadioStoryDraft
 from app.models.source_watcher import DetectedContentItem, LatestContentItem
 
 
@@ -39,6 +40,13 @@ class FetchedArticle(BaseModel):
     region_detected: str | None = None
     county_match_confidence: float | None = None
     geo_signals: list[str] = []
+    radio_story_draft: RadioStoryDraft | None = None
+    summarization_method: str | None = None
+    summarization_actor_detected: bool | None = None
+    summarization_quote_detected: bool | None = None
+    summarization_impact_detected: bool | None = None
+    summarization_fallback_used: bool = False
+    summarization_skip_reason: str | None = None
 
 
 class ArticleFetchResult(BaseModel):

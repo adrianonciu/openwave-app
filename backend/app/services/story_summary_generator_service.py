@@ -10,6 +10,7 @@ from app.models.generated_story_summary import (
     SummaryComplianceReport,
 )
 from app.models.news_cluster import StoryCluster
+from app.models.radio_story_draft import RadioStoryDraft
 from app.models.story_score import ScoredStoryCluster
 from app.services.story_summary_policy_service import StorySummaryPolicyService
 
@@ -115,6 +116,95 @@ class StorySummaryGeneratorService:
     def reset_variation_state(self) -> None:
         self.recent_attribution_variants = []
 
+
+    def _generated_summary_from_draft(
+        self,
+        cluster: StoryCluster,
+        draft: RadioStoryDraft,
+        source_basis: str,
+        score_total: float | None,
+        generated_at: datetime,
+        previous_bulletin_clusters: list[str | dict[str, object]] | None,
+    ) -> GeneratedStorySummary:
+        (
+            story_continuity_type,
+            continuity_detected,
+            continuity_explanation,
+        ) = self._detect_story_continuity(
+            cluster=cluster,
+            score_total=score_total,
+            previous_bulletin_clusters=previous_bulletin_clusters,
+        )
+        sentences = [self.normalize_for_radio(self._normalize_story_text(sentence)) for sentence in draft.summary_sentences if sentence.strip()][:4]
+        summary_text = ' '.join(sentences).strip()
+        sentence_count = len(sentences)
+        word_count = self._word_count(summary_text)
+        story_type = 'major' if sentence_count >= 4 or word_count >= self.policy.target_word_count_min else 'short'
+        lead = sentences[0] if sentences else self.normalize_for_radio(self._normalize_story_text(draft.title))
+        body = ' '.join(sentences[1:]).strip()
+        attribution_type = 'official_statement' if draft.actor_detected else 'source_attribution'
+        quote_line = draft.attributed_quote
+        compliance = self._build_compliance_report(
+            summary_text=summary_text,
+            sentence_count=sentence_count,
+            word_count=word_count,
+            expanded_summary_used=story_type == 'major',
+        )
+        headline = self.normalize_for_radio(self._normalize_story_text(draft.title))
+        notes = [
+            f"summarization_method={draft.summarization_method}",
+            f"actor_detected={draft.actor_detected}",
+            f"quote_detected={draft.quote_detected}",
+            f"impact_detected={draft.impact_detected}",
+        ]
+        if draft.main_actor_name:
+            notes.append(f"draft_actor_name={draft.main_actor_name}")
+        if draft.main_actor_role:
+            notes.append(f"draft_actor_role={draft.main_actor_role}")
+        if draft.skip_reason:
+            notes.append(f"draft_skip_reason={draft.skip_reason}")
+        explanation = (
+            f"Summary for cluster '{cluster.representative_title}' was generated from full article text using {draft.summarization_method}. "
+            f"Actor detected={draft.actor_detected}, quote detected={draft.quote_detected}, impact detected={draft.impact_detected}."
+        )
+        return GeneratedStorySummary(
+            cluster_id=cluster.cluster_id,
+            story_id=cluster.cluster_id,
+            story_type=story_type,
+            headline=headline,
+            lead=lead,
+            body=body,
+            source_attribution='',
+            quotes=[quote_line] if quote_line else [],
+            editorial_notes=notes,
+            short_headline=headline,
+            lead_type='impact' if draft.impact_detected else 'event',
+            story_continuity_type=story_continuity_type,
+            continuity_detected=continuity_detected,
+            continuity_explanation=continuity_explanation,
+            summary_text=summary_text,
+            sentence_count=sentence_count,
+            word_count=word_count,
+            topic_label=self._infer_topic(cluster),
+            source_labels=sorted({member.source for member in cluster.member_articles}),
+            attribution_type=attribution_type,
+            attribution_variant='llm_draft',
+            summary_variation_used=False,
+            quote_line=quote_line,
+            memorable_quote_used=bool(quote_line),
+            essential_numbers_kept=False,
+            nonessential_numbers_removed=False,
+            expanded_summary_used=story_type == 'major',
+            casualty_line_included=False,
+            context_line_included=sentence_count >= 3,
+            representative_title=cluster.representative_title,
+            score_total=score_total,
+            policy_compliance=compliance,
+            generation_explanation=explanation,
+            generated_at=generated_at,
+            source_basis=source_basis,
+        )
+
     def generate_story_summary(
         self,
         cluster: StoryCluster | ScoredStoryCluster,
@@ -122,6 +212,15 @@ class StorySummaryGeneratorService:
     ) -> GeneratedStorySummary:
         normalized_cluster, source_basis, score_total = self._normalize_cluster(cluster)
         generated_at = datetime.now(UTC)
+        if normalized_cluster.representative_radio_story_draft is not None:
+            return self._generated_summary_from_draft(
+                cluster=normalized_cluster,
+                draft=normalized_cluster.representative_radio_story_draft,
+                source_basis=source_basis,
+                score_total=score_total,
+                generated_at=generated_at,
+                previous_bulletin_clusters=previous_bulletin_clusters,
+            )
         topic = self._infer_topic(normalized_cluster)
         (
             story_continuity_type,

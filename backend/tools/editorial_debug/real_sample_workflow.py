@@ -22,6 +22,15 @@ DEFAULT_SAMPLE_COUNTY = "Constanta"
 DEFAULT_SAMPLE_USER = "Nicu"
 
 
+def _story_note_value(story, key: str, default: str = "") -> str:
+    value = _note_value(getattr(story, "editorial_notes", []), key, default)
+    if value:
+        return value
+    radio_story = getattr(story, "radio_edited_story", None)
+    notes = getattr(radio_story, "editing_debug_notes", []) if radio_story is not None else []
+    return _note_value(notes, key, default)
+
+
 def _note_value(notes: list[str], key: str, default: str = "") -> str:
     prefix = f"{key}="
     for note in notes:
@@ -204,6 +213,10 @@ def build_preview_payload_from_articles(
             "direct_impact_audience": _note_value(notes, "direct_impact_audience", ""),
             "skip_reason_if_any": _note_value(notes, "skip_reason_if_any", ""),
             "lead_continuation_rewrite_applied": _note_value(notes, "lead_continuation_rewrite_applied", "False") == "True",
+            "summarization_method": _story_note_value(item.story, "summarization_method", getattr(primary_member, 'summarization_method', '') or ''),
+            "actor_detected": _story_note_value(item.story, "actor_detected", str(bool(getattr(primary_member, 'summarization_actor_detected', False)))),
+            "quote_detected": _story_note_value(item.story, "quote_detected", str(bool(getattr(primary_member, 'summarization_quote_detected', False)))),
+            "impact_detected": _story_note_value(item.story, "impact_detected", str(bool(getattr(primary_member, 'summarization_impact_detected', False)))),
         })
 
     geo_preview_payload = geo_service.build_preview_payload(geo_articles)
@@ -234,6 +247,10 @@ def build_preview_payload_from_articles(
         "geo_tagged_international": geo_summary["geo_tagged_international"],
         "stories_with_multiple_county_hits": geo_summary["stories_with_multiple_county_hits"],
         "stories": story_rows,
+        "stories_generated_by_llm": final_briefing.editorial_gate_debug.get("stories_generated_by_llm", 0),
+        "stories_skipped_no_actor": final_briefing.editorial_gate_debug.get("stories_skipped_no_actor", 0),
+        "stories_failed_llm_parse": final_briefing.editorial_gate_debug.get("stories_failed_llm_parse", 0),
+        "stories_using_fallback_rules": final_briefing.editorial_gate_debug.get("stories_using_fallback_rules", 0),
         "stories_skipped_missing_named_person": final_briefing.editorial_gate_debug.get("stories_skipped_missing_named_person", 0),
         "stories_skipped_missing_attributed_quote": final_briefing.editorial_gate_debug.get("stories_skipped_missing_attributed_quote", 0),
         "stories_skipped_missing_direct_impact": final_briefing.editorial_gate_debug.get("stories_skipped_missing_direct_impact", 0),

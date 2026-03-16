@@ -854,3 +854,5 @@ Geo tagging note:
 
 Real-sample debug note:
 - Normal debug and editorial regression are now done exclusively with `tests/real_samples/` data loaded from disk. Hardcoded fixtures remain only as a minimal fallback path when no saved real sample is available.
+
+- v1.13: Added `article_to_radio_story_service` so real articles can produce structured radio drafts before editorial formatting. Debug preview now reports LLM-vs-fallback summarization metrics.

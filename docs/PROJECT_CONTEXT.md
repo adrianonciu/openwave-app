@@ -124,3 +124,5 @@ Repository hygiene note:
 Current backend infrastructure also includes a deterministic geo-tagging layer that classifies live-ingested stories as county, regional, national, or international before editorial selection.
 
 Current backend infrastructure also supports a real-sample debug workflow: live runs can save fully traceable article sets and preview artifacts under `tests/real_samples/`, while normal debug replay can reload those saved real stories from disk without network access.
+
+- v1.13 adds an article-to-radio-story summarization layer before clustering/scoring output reaches final radio editing. It prefers an LLM draft from full cleaned article text and falls back to the legacy rule-based story generator when the provider is unavailable.

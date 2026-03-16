@@ -11,6 +11,7 @@ from app.models.final_editorial_briefing import (
     EditorialPipelineIntermediateCounts,
     FinalEditorialBriefingPackage,
 )
+from app.services.article_to_radio_story_service import ArticleToRadioStoryService
 from app.services.briefing_assembly_service import BriefingAssemblyService
 from app.services.bulletin_shaping_service import BulletinShapingService
 from app.services.bulletin_sizing_service import BulletinSizingService
@@ -44,6 +45,7 @@ class EditorialPipelineService:
         self.bulletin_sizing_service = BulletinSizingService()
         self.source_watcher_service = SourceWatcherService()
         self.live_source_ingestion_service = LiveSourceIngestionService()
+        self.article_to_radio_story_service = ArticleToRadioStoryService()
 
     def ingest_articles_for_mode(
         self,
@@ -80,7 +82,8 @@ class EditorialPipelineService:
             resolved_personalization
         )
         continuity_records = self._load_previous_bulletin_clusters(previous_bulletin_clusters)
-        story_clusters = self.clustering_service.cluster_articles(articles)
+        summarized_articles, summarization_debug = self.article_to_radio_story_service.summarize_articles(articles)
+        story_clusters = self.clustering_service.cluster_articles(summarized_articles)
         scored_clusters = self.scoring_service.score_clusters(story_clusters)
         self.story_family_service.attach_story_families(scored_clusters)
         selection_result = self.selection_service.select_stories(
@@ -169,13 +172,14 @@ class EditorialPipelineService:
 
         editorial_gate_debug = {
             **editorial_gate_counts,
+            **summarization_debug,
             "final_bulletin_story_count_after_editorial_gate": len(generated_summaries),
             "editorial_gate_target_story_count": editorial_gate_target,
             "skipped_candidates": skipped_candidates,
         }
 
         intermediate_counts = EditorialPipelineIntermediateCounts(
-            article_count=len(articles),
+            article_count=len(summarized_articles),
             cluster_count=len(story_clusters),
             scored_cluster_count=len(scored_clusters),
             selected_story_count=len(selection_result.selected_clusters),

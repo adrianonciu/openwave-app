@@ -500,6 +500,13 @@ class NewsClusteringService:
                 region_detected=item.article.region_detected,
                 county_match_confidence=item.article.county_match_confidence,
                 geo_signals=item.article.geo_signals,
+                radio_story_draft=item.article.radio_story_draft,
+                summarization_method=item.article.summarization_method,
+                summarization_actor_detected=item.article.summarization_actor_detected,
+                summarization_quote_detected=item.article.summarization_quote_detected,
+                summarization_impact_detected=item.article.summarization_impact_detected,
+                summarization_fallback_used=item.article.summarization_fallback_used,
+                summarization_skip_reason=item.article.summarization_skip_reason,
             )
             for item in sorted_members
         ]
@@ -524,6 +531,9 @@ class NewsClusteringService:
             cluster_size=len(member_articles),
             created_at=created_at,
             latest_published_at=latest_published_at,
+            representative_radio_story_draft=representative.article.radio_story_draft,
+            representative_source_name=representative.article.source,
+            representative_original_url=representative.article.url,
         )
 
     def _choose_representative(self, cluster_signals: list[_ArticleSignals]) -> _ArticleSignals:

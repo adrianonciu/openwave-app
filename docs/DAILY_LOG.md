@@ -2018,3 +2018,5 @@ Important note:
 
 - replaced the normal fixture-first debug workflow with an exclusively real-sample-based workflow backed by saved live article sets under tests/real_samples
 - added a sample loader, real-sample generation script, and offline debug replay path for editorial regression on saved live data
+
+- Implemented v1.13 article summarization hook before radio editing. Current environment replay showed fallback mode because the configured OpenAI API key was invalid, so the legacy generator remained active as failsafe.

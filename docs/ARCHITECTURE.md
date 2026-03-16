@@ -1729,3 +1729,5 @@ Live ingestion now passes normalized stories through a deterministic geo-tagging
 ## Real Sample Debug Workflow
 
 The editorial debug path now supports two separate data-entry modes without forking the main pipeline: live mode fetches real stories from configured sources, while debug mode can replay previously saved real article sets from `tests/real_samples/`. Synthetic fixtures remain only as a fallback path for minimal regression coverage when no saved sample is available.
+
+- Editorial pipeline now includes `article_to_radio_story_service` between cleaned article input and downstream story generation. The summarizer emits `RadioStoryDraft` objects for representative articles when LLM output is available.
