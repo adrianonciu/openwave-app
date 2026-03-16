@@ -92,7 +92,14 @@ class ClusterMemberArticle(BaseModel):
 class StoryCluster(BaseModel):
     cluster_id: str
     representative_title: str
+    representative_summary: str | None = None
     member_articles: list[ClusterMemberArticle]
+    source_names: list[str] = Field(default_factory=list)
+    original_urls: list[str] = Field(default_factory=list)
+    geo_scope: Literal["county", "regional", "national", "international"] | None = None
+    county_detected: str | None = None
+    region_detected: str | None = None
+    cluster_size: int = Field(default=1, ge=1)
     created_at: datetime
     latest_published_at: datetime
 

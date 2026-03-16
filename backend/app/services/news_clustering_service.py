@@ -474,6 +474,7 @@ class NewsClusteringService:
 
     def _build_cluster(self, cluster_signals: list[_ArticleSignals]) -> StoryCluster:
         representative = self._choose_representative(cluster_signals)
+        sorted_members = sorted(cluster_signals, key=lambda value: value.article.published_at)
         member_articles = [
             ClusterMemberArticle(
                 url=item.article.url,
@@ -500,25 +501,38 @@ class NewsClusteringService:
                 county_match_confidence=item.article.county_match_confidence,
                 geo_signals=item.article.geo_signals,
             )
-            for item in sorted(cluster_signals, key=lambda value: value.article.published_at)
+            for item in sorted_members
         ]
         created_at = min(item.article.published_at for item in cluster_signals)
         latest_published_at = max(item.article.published_at for item in cluster_signals)
         cluster_id = self._build_cluster_id(member_articles)
+        source_names = sorted({member.source for member in member_articles})
+        original_urls = sorted({member.url for member in member_articles})
+        cluster_geo_scope = self._dominant_geo_scope(member_articles)
+        county_detected = self._dominant_value([member.county_detected for member in member_articles if member.county_detected])
+        region_detected = self._dominant_value([member.region_detected for member in member_articles if member.region_detected])
         return StoryCluster(
             cluster_id=cluster_id,
             representative_title=representative.article.title,
+            representative_summary=self._representative_summary(representative.article.content_text),
             member_articles=member_articles,
+            source_names=source_names,
+            original_urls=original_urls,
+            geo_scope=cluster_geo_scope,
+            county_detected=county_detected,
+            region_detected=region_detected,
+            cluster_size=len(member_articles),
             created_at=created_at,
             latest_published_at=latest_published_at,
         )
 
     def _choose_representative(self, cluster_signals: list[_ArticleSignals]) -> _ArticleSignals:
-        def rank_key(item: _ArticleSignals) -> tuple[float, float, str]:
+        def rank_key(item: _ArticleSignals) -> tuple[float, float, float, str]:
+            priority_score = float(item.article.editorial_priority)
             timestamp_score = item.article.published_at.timestamp()
-            title_quality = -self._title_quality_score(item.article.title)
+            summary_length_score = -self._summary_quality_score(item.article.content_text)
             source_key = item.article.source.lower()
-            return (timestamp_score, title_quality, source_key)
+            return (priority_score, timestamp_score, summary_length_score, source_key)
 
         return min(cluster_signals, key=rank_key)
 
@@ -876,6 +890,53 @@ class NewsClusteringService:
             + entity_weight
             - min(decision.hours_apart / max(self.recency_window_hours, 1), 1.0) * 0.1
         )
+
+    def _summary_quality_score(self, content_text: str) -> float:
+        normalized = self._normalize_text(content_text)
+        token_count = len(TOKEN_PATTERN.findall(normalized))
+        return min(max(token_count, 0), 120)
+
+    def _representative_summary(self, content_text: str) -> str | None:
+        text = " ".join((content_text or "").split())
+        if not text:
+            return None
+        return text[:280].strip()
+
+    def _dominant_geo_scope(self, members: list[ClusterMemberArticle]) -> str | None:
+        scopes = [member.geo_scope for member in members if member.geo_scope]
+        return self._dominant_value(scopes)
+
+    def _dominant_value(self, values: list[str]) -> str | None:
+        if not values:
+            return None
+        counter = Counter(values)
+        return sorted(counter.items(), key=lambda item: (-item[1], item[0]))[0][0]
+
+    def build_debug_preview(self, clusters: list[StoryCluster]) -> dict[str, object]:
+        cluster_sizes = [cluster.cluster_size for cluster in clusters]
+        return {
+            "cluster_count": len(clusters),
+            "average_cluster_size": round(sum(cluster_sizes) / max(len(cluster_sizes), 1), 2),
+            "largest_cluster_size": max(cluster_sizes) if cluster_sizes else 0,
+            "duplicate_articles_collapsed": sum(max(cluster.cluster_size - 1, 0) for cluster in clusters),
+            "clusters_with_multiple_sources": sum(1 for cluster in clusters if len(cluster.source_names) > 1),
+            "clusters": [
+                {
+                    "cluster_id": cluster.cluster_id,
+                    "cluster_size": cluster.cluster_size,
+                    "representative_title": cluster.representative_title,
+                    "representative_summary": cluster.representative_summary,
+                    "source_names": cluster.source_names,
+                    "original_urls": cluster.original_urls,
+                    "geo_scope": cluster.geo_scope,
+                    "county_detected": cluster.county_detected,
+                    "region_detected": cluster.region_detected,
+                    "earliest_published_at": cluster.created_at.isoformat(),
+                    "latest_published_at": cluster.latest_published_at.isoformat(),
+                }
+                for cluster in clusters
+            ],
+        }
 
     def _title_quality_score(self, title: str) -> float:
         tokens = list(self._tokenize(title))

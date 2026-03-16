@@ -39,6 +39,7 @@ NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_nicu_const
 LIVE_NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "live_generalist_bulletin_nicu_constanta.txt"
 LIVE_SOURCE_REGISTRY_AUDIT_PATH = OUTPUT_DIR / "live_source_registry_audit.json"
 GEO_TAGGING_PREVIEW_PATH = OUTPUT_DIR / "geo_tagging_preview.json"
+NEWS_CLUSTERING_PREVIEW_PATH = OUTPUT_DIR / "news_clustering_preview.json"
 REAL_SAMPLE_BULLETIN_OUTPUT_PATH = OUTPUT_DIR / "sample_real_debug_bulletin.txt"
 
 PREVIEW_FIXTURES = [
@@ -1397,8 +1398,14 @@ def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
         f"Media source credits emitted: {preview_payload['written_source_credits_emitted']}",
         f"Registry audit path: {preview_payload['registry_audit_path']}",
         f"Geo tagging preview path: {preview_payload['geo_tagging_preview_path']}",
+        f"News clustering preview path: {preview_payload.get('news_clustering_preview_path')}",
         f"Geo tagged county/regional/national/international: {preview_payload['geo_tagged_county']}/{preview_payload['geo_tagged_regional']}/{preview_payload['geo_tagged_national']}/{preview_payload['geo_tagged_international']}",
         f"Stories with multiple county hits: {preview_payload['stories_with_multiple_county_hits']}",
+        f"Cluster count: {preview_payload.get('cluster_count', 0)}",
+        f"Average cluster size: {preview_payload.get('average_cluster_size', 0.0)}",
+        f"Largest cluster size: {preview_payload.get('largest_cluster_size', 0)}",
+        f"Duplicate articles collapsed: {preview_payload.get('duplicate_articles_collapsed', 0)}",
+        f"Clusters with multiple sources: {preview_payload.get('clusters_with_multiple_sources', 0)}",
         '',
         'Stories:',
     ]
@@ -1465,17 +1472,19 @@ def _run_live_mode(user: str = "Nicu", county: str = "Constanta", save_sample_di
     live_service.write_registry()
     registry_audit = live_service.write_registry_audit(LIVE_SOURCE_REGISTRY_AUDIT_PATH, personalization=personalization)
     articles, ingestion_debug = live_service.fetch_articles(personalization=personalization)
-    payload, geo_preview_payload = build_preview_payload_from_articles(
+    payload, geo_preview_payload, clustering_preview = build_preview_payload_from_articles(
         articles=articles,
         personalization=personalization,
         mode_label="live",
         geo_tagging_preview_path=GEO_TAGGING_PREVIEW_PATH,
+        news_clustering_preview_path=NEWS_CLUSTERING_PREVIEW_PATH,
         registry_audit_path=LIVE_SOURCE_REGISTRY_AUDIT_PATH,
         registry_audit=registry_audit,
         ingestion_debug=ingestion_debug,
         sample_origin="live_fetch",
     )
     GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    NEWS_CLUSTERING_PREVIEW_PATH.write_text(json.dumps(clustering_preview, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     preview_text = _render_live_preview_text(payload)
     bulletin_text = _render_live_generalist_bulletin(payload)
@@ -1501,11 +1510,12 @@ def _run_saved_sample_mode(sample_dir: Path) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     loaded_sample = load_real_sample(sample_dir)
     registry_audit = _load_registry_audit(Path(sample_dir))
-    payload, geo_preview_payload = build_preview_payload_from_articles(
+    payload, geo_preview_payload, clustering_preview = build_preview_payload_from_articles(
         articles=loaded_sample["articles"],
         personalization=loaded_sample["personalization"],
         mode_label="debug",
         geo_tagging_preview_path=GEO_TAGGING_PREVIEW_PATH,
+        news_clustering_preview_path=NEWS_CLUSTERING_PREVIEW_PATH,
         registry_audit_path=Path(sample_dir) / "source_registry_audit.json",
         registry_audit=registry_audit,
         ingestion_debug={
@@ -1516,6 +1526,7 @@ def _run_saved_sample_mode(sample_dir: Path) -> None:
         sample_origin=f"real_sample:{Path(sample_dir).name}",
     )
     GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    NEWS_CLUSTERING_PREVIEW_PATH.write_text(json.dumps(clustering_preview, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding="utf-8")
     REAL_SAMPLE_BULLETIN_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding="utf-8")
