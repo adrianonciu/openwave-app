@@ -159,6 +159,7 @@ class BulletinShapingService:
 
         early_scope_penalty = 0.0
         scope_run_penalty = 0.0
+        opening_hook_bonus = 0.0
         if profile_name == "generalist":
             target_position = len(ordered) + 1
             if target_position <= 3 and candidate_scope == "international":
@@ -168,6 +169,15 @@ class BulletinShapingService:
             recent_scopes = [self._dominant_scope(item) for item in ordered[-2:]] if len(ordered) >= 2 else [self._dominant_scope(previous)]
             if recent_scopes and all(scope == candidate_scope for scope in recent_scopes):
                 scope_run_penalty = 1.2 if candidate_scope == "local" else 0.9
+            if target_position <= 3:
+                covered_tags = set().union(*(self._opening_hook_tags(item) for item in ordered[: target_position - 1])) if ordered else set()
+                candidate_tags = self._opening_hook_tags(candidate)
+                focus_tags = {"health", "money", "traffic", "safety"}
+                if len(covered_tags & focus_tags) < 2:
+                    if candidate_tags & (focus_tags - covered_tags):
+                        opening_hook_bonus = -1.6
+                    else:
+                        opening_hook_bonus = 1.6
 
         radio_priority = self._radio_priority_score(candidate, profile_name)
         editorial_strength = candidate.score_total or 0.0
@@ -206,10 +216,25 @@ class BulletinShapingService:
             recent_topic_penalty,
             early_scope_penalty,
             scope_run_penalty,
+            opening_hook_bonus,
             -round(radio_priority, 3),
             -round(editorial_strength, 3),
             candidate.cluster.cluster_id,
         )
+
+    def _opening_hook_tags(self, cluster: ScoredStoryCluster) -> set[str]:
+        title = (cluster.cluster.representative_title or "").lower()
+        hits = set(getattr(cluster, "romania_impact_evidence_hits", []) or [])
+        tags: set[str] = set()
+        if any(term in title for term in ("spital", "urgente", "sanat", "avc")) or hits & {"spital", "urgente", "sanatate"}:
+            tags.add("health")
+        if any(term in title for term in ("preturi", "facturi", "energie", "alimente", "tva", "buget")) or hits & {"preturi", "facturi", "energie", "buget", "tva", "alimente"}:
+            tags.add("money")
+        if any(term in title for term in ("trafic", "drum", "pasaj", "transport", "lucrari", "tren")) or hits & {"trafic", "drum", "transport"}:
+            tags.add("traffic")
+        if any(term in title for term in ("isu", "incend", "siguranta", "controale", "nato", "securitate")) or hits & {"incend", "isu", "siguranta", "securitate"}:
+            tags.add("safety")
+        return tags
 
     def _lead_reason(self, cluster: ScoredStoryCluster, profile_name: str) -> str:
         reasons: list[str] = [f"score_total={cluster.score_total or 0.0:.2f}", f"radio_priority={self._radio_priority_score(cluster, profile_name):.2f}"]

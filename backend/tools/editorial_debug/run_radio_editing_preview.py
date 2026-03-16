@@ -24,6 +24,7 @@ ANA_TIMISOARA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ana_timisoa
 ION_GALATI_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_ion_galati.txt"
 MARIA_OLT_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_maria_olt.txt"
 GEORGE_COVASNA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_george_covasna.txt"
+NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_nicu_constanta.txt"
 
 PREVIEW_FIXTURES = [
     {
@@ -512,6 +513,69 @@ GEORGE_COVASNA_LOCAL_FIXTURES = [
 ]
 
 
+NICU_CONSTANTA_LOCAL_FIXTURES = [
+    {
+        "story_id": "constanta_01",
+        "source_label": "ziuaconstanta.ro",
+        "local_geo_origin": "constanta_county",
+        "headline": "ISU Constanta dubleaza controalele in cluburile de pe litoral",
+        "content_text": (
+            "ISU Constanta a dublat controalele in cluburile si terasele de pe litoral dupa mai multe nereguli descoperite la final de saptamana. "
+            "Pompierii verifica instalatiile electrice, iesirile de urgenta si capacitatea de evacuare in statiunile aglomerate. "
+            "Turistii si angajatii risca evacuari rapide si amenzi pentru operatorii care ignora regulile. "
+            "Primele rezultate vor fi anuntate pana la finalul saptamanii."
+        ),
+    },
+    {
+        "story_id": "constanta_02",
+        "source_label": "cugetliber.ro",
+        "local_geo_origin": "constanta_county",
+        "headline": "Spitalul Judetean Constanta deschide flux rapid pentru urgente neurologice",
+        "content_text": (
+            "Spitalul Judetean Constanta a deschis un flux rapid pentru urgente neurologice si suspiciuni de AVC. "
+            "Pacientii intra direct la evaluare imagistica si la triaj specializat, fara opriri inutile intre sectii. "
+            "Managerul spitalului spune ca noul circuit scurteaza minutele critice pentru cazurile grave. "
+            "Programul complet functioneaza chiar din aceasta saptamana."
+        ),
+    },
+    {
+        "story_id": "constanta_03",
+        "source_label": "tomisnews.ro",
+        "local_geo_origin": "constanta_county",
+        "headline": "Primaria Constanta muta traficul din zona Garii pentru lucrari la carosabil",
+        "content_text": (
+            "Primaria Constanta muta traficul din zona Garii pentru lucrari la carosabil si retele subterane. "
+            "Soferii vor circula pe benzi restranse, iar autobuzele vor opri temporar in statii mutate cu cateva zeci de metri. "
+            "Primarul spune ca santierul trebuie sa ramana deschis toata noaptea pentru a scurta durata lucrarilor. "
+            "Primele restrictii intra in vigoare de luni dimineata."
+        ),
+    },
+    {
+        "story_id": "constanta_04",
+        "source_label": "ziuaconstanta.ro",
+        "local_geo_origin": "constanta_county",
+        "headline": "RAJA pregateste opriri de apa in mai multe cartiere din Constanta",
+        "content_text": (
+            "RAJA pregateste opriri de apa in mai multe cartiere din Constanta pentru inlocuirea unor vane principale. "
+            "Locuitorii din zona centrala si din cartierele cu blocuri vechi vor avea program redus pentru consumul casnic. "
+            "Compania spune ca echipele vor lucra pe tronsoanele cu cele mai multe avarii repetate. "
+            "Programul actualizat va fi publicat in zilele urmatoare."
+        ),
+    },
+    {
+        "story_id": "constanta_05",
+        "source_label": "cugetliber.ro",
+        "local_geo_origin": "constanta_county",
+        "headline": "Operatorii din turism cer controale mai dure pe plajele aglomerate din judet",
+        "content_text": (
+            "Operatorii din turism cer controale mai dure pe plajele aglomerate din judetul Constanta dupa valul de reclamatii din weekend. "
+            "Turistii spun ca accesul, curatenia si siguranta se deterioreaza rapid in zonele cele mai aglomerate. "
+            "Patronatele avertizeaza ca sezonul poate pierde clienti daca problemele raman nerezolvate. "
+            "Primele verificari suplimentare sunt asteptate in zilele urmatoare."
+        ),
+    },
+]
+
 ION_GALATI_LOCAL_FIXTURES = [
     {
         "story_id": "galati_01",
@@ -642,6 +706,12 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     person_attribution_used = _note_value(edited.editing_debug_notes, "person_attribution_used", "False") == "True"
     person_name = _note_value(edited.editing_debug_notes, "person_name", "")
     person_role = _note_value(edited.editing_debug_notes, "person_role", "")
+    stories_with_person_anchor = _note_value(edited.editing_debug_notes, "stories_with_person_anchor", "False") == "True"
+    stories_with_role_anchor = _note_value(edited.editing_debug_notes, "stories_with_role_anchor", "False") == "True"
+    stories_with_voice_of_people_anchor = _note_value(edited.editing_debug_notes, "stories_with_voice_of_people_anchor", "False") == "True"
+    human_anchor_type = _note_value(edited.editing_debug_notes, "human_anchor_type", "none")
+    human_density_score = float(_note_value(edited.editing_debug_notes, "human_density_score", "0"))
+    radio_human_layer_applied = _note_value(edited.editing_debug_notes, "radio_human_layer_applied", "False") == "True"
     attribution_position_used = _note_value(edited.editing_debug_notes, "attribution_position_used", "none")
     has_named_person = _note_value(edited.editing_debug_notes, "has_named_person", "False") == "True"
     has_role_based_person = _note_value(edited.editing_debug_notes, "has_role_based_person", "False") == "True"
@@ -702,6 +772,12 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "person_attribution_used": person_attribution_used,
         "person_name": person_name,
         "person_role": person_role,
+        "stories_with_person_anchor": stories_with_person_anchor,
+        "stories_with_role_anchor": stories_with_role_anchor,
+        "stories_with_voice_of_people_anchor": stories_with_voice_of_people_anchor,
+        "human_anchor_type": human_anchor_type,
+        "human_density_score": human_density_score,
+        "radio_human_layer_applied": radio_human_layer_applied,
         "attribution_position_used": attribution_position_used,
         "has_named_person": has_named_person,
         "has_role_based_person": has_role_based_person,
@@ -725,13 +801,14 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "administrative_closure": administrative_closure,
         "simplified_operational_description_count": simplified_operational_description_count,
         "person_not_preserved": bool(input_people and not any(person in edited.kept_entities for person in input_people[:1])),
+        "local_origin_type": "county" if str(fixture.get("local_geo_origin") or "").endswith("_county") else "fallback_region" if str(fixture.get("local_geo_origin") or "").endswith("_region") else source_scope,
     }
 
 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.10",
+        "OPENWAVE RADIO EDITING PREVIEW V1.11",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
@@ -746,6 +823,11 @@ def _render_preview_text(payload: dict[str, object]) -> str:
         f"Leads rewritten to reduce title repetition: {summary['leads_rewritten_to_reduce_title_repetition']}",
         f"Continuation lead rewrites: {summary['lead_continuation_rewrite_count']}",
         f"Lead opening counts: {json.dumps(summary['lead_opening_type_counts'], ensure_ascii=False)}",
+        f"Human density score: {summary['human_density_score']}",
+        f"Stories with person anchor: {summary['stories_with_person_anchor']}",
+        f"Stories with role anchor: {summary['stories_with_role_anchor']}",
+        f"Stories with voice-of-people anchor: {summary['stories_with_voice_of_people_anchor']}",
+        f"Closing family distribution: {json.dumps(summary['closing_family_distribution'], ensure_ascii=False)}",
         f"Stories with personal attribution: {summary['stories_with_personal_attribution']}",
         f"Stories with person-name attribution: {summary['stories_with_person_name_attribution']}",
         f"Stories with role+name attribution: {summary['stories_with_person_role_and_name_attribution']}",
@@ -790,6 +872,9 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Title main action family: {item['title_main_action_family'] or 'none'}",
                 f"Lead starter family: {item['lead_starter_family']}",
                 f"Closing phrase family: {item['closing_phrase_family']}",
+                f"Human anchor type: {item['human_anchor_type']}",
+                f"Human layer applied: {item['radio_human_layer_applied']}",
+                f"Local origin type: {item['local_origin_type']}",
                 f"Duplicate sentence removed: {item['duplicate_sentence_removed']}",
                 f"Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
                 f"Lead continuation rewrite: {item['lead_continuation_rewrite_applied']}",
@@ -853,7 +938,7 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
 
 
 def _fixture_scope(story_id: str) -> str:
-    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_", "galati_", "olt_", "oltenia_", "covasna_", "transilvania_")):
+    if story_id.startswith(("bacau_", "vaslui_", "moldova_", "timis_", "banat_", "galati_", "olt_", "oltenia_", "covasna_", "transilvania_", "constanta_", "dobrogea_")):
         return "local"
     if story_id.startswith("national_"):
         return "national"
@@ -878,16 +963,16 @@ def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
         signals["direct_listener_impact_score"] += 2.6
         signals["emotional_proximity_score"] += 2.0
         signals["locality_proximity_score"] += 2.5
-    if item.get("local_geo_origin") in {"vaslui_county", "timis_county", "galati_county", "olt_county", "covasna_county"}:
+    if item.get("local_geo_origin") in {"vaslui_county", "timis_county", "galati_county", "olt_county", "covasna_county", "constanta_county"}:
         signals["direct_listener_impact_score"] += 1.4
         signals["locality_proximity_score"] += 2.2
-    if item.get("local_geo_origin") in {"moldova_region", "banat_region", "oltenia_region", "transilvania_region"}:
+    if item.get("local_geo_origin") in {"moldova_region", "banat_region", "oltenia_region", "transilvania_region", "dobrogea_region"}:
         signals["romania_relevance_score"] += 1.2
         signals["locality_proximity_score"] += 1.0
-    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "galati", "tecuci", "olt", "slatina", "oltenia", "covasna", "sfantu gheorghe", "transilvania", "regiune")):
+    if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "timisoara", "timis", "banat", "galati", "tecuci", "olt", "slatina", "oltenia", "covasna", "sfantu gheorghe", "transilvania", "constanta", "mangalia", "mamaia", "litoral", "dobrogea", "regiune")):
         signals["romania_relevance_score"] += 1.6
         signals["locality_proximity_score"] += 1.4
-    if any(term in text for term in ("spital", "urgente", "incend", "isu", "siguranta", "cardiace")):
+    if any(term in text for term in ("spital", "urgente", "incend", "isu", "siguranta", "cardiace", "avc")):
         signals["health_and_safety_score"] += 3.4
         signals["direct_listener_impact_score"] += 1.4
     if any(term in text for term in ("preturi", "facturi", "energie", "alimente", "seceta", "buget", "frauda", "tva")):
@@ -904,6 +989,19 @@ def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
         signals["long_term_vs_immediate_penalty"] += 1.4
     return {key: round(value, 2) for key, value in signals.items()}
 
+
+def _story_hook_tags(item: dict[str, object]) -> set[str]:
+    text = f"{item['headline_original']} {item['radio_text']}".lower()
+    tags: set[str] = set()
+    if any(term in text for term in ("spital", "urgente", "pacienti", "avc")):
+        tags.add("health")
+    if any(term in text for term in ("preturi", "facturi", "energie", "alimente", "buget", "tva", "benzina")):
+        tags.add("money")
+    if any(term in text for term in ("trafic", "gara", "tren", "restrictii", "drum", "apa", "transport", "lucrari")):
+        tags.add("traffic")
+    if any(term in text for term in ("isu", "incend", "siguranta", "controale", "evacuare", "nato", "securitate")):
+        tags.add("safety")
+    return tags
 
 def _victor_radio_priority(item: dict[str, object]) -> float:
     signals = _victor_ordering_signals(item)
@@ -931,6 +1029,7 @@ def _order_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> list[dict
         def candidate_key(candidate: dict[str, object]) -> tuple[float, float, str]:
             target_position = len(ordered) + 1
             scope_run_penalty = 0.0
+            hook_penalty = 0.0
             if len(ordered) >= 2 and ordered[-1]["source_scope"] == ordered[-2]["source_scope"] == candidate["source_scope"]:
                 scope_run_penalty = 12.0 if candidate["source_scope"] == "local" else 8.0
             early_mix_penalty = 0.0
@@ -950,7 +1049,16 @@ def _order_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> list[dict
                 candidate_text = candidate["radio_text"].lower()
                 if any(term in previous_text and term in candidate_text for term in ("trafic", "energie", "buget", "nato", "spital", "educatie")):
                     topic_penalty = 0.6
-            return (-candidate["radio_priority_score"] + scope_run_penalty + early_mix_penalty + topic_penalty, scope_run_penalty + early_mix_penalty, str(candidate["story_id"]))
+            if target_position <= 3:
+                covered_tags = set().union(*(_story_hook_tags(item) for item in ordered[: target_position - 1])) if ordered else set()
+                candidate_tags = _story_hook_tags(candidate)
+                focus_tags = {"health", "money", "traffic", "safety"}
+                if len(covered_tags & focus_tags) < 2:
+                    if candidate_tags & (focus_tags - covered_tags):
+                        hook_penalty = -4.0
+                    else:
+                        hook_penalty = 3.5
+            return (-candidate["radio_priority_score"] + scope_run_penalty + early_mix_penalty + topic_penalty + hook_penalty, scope_run_penalty + early_mix_penalty + hook_penalty, str(candidate["story_id"]))
         next_item = min(remaining, key=candidate_key)
         remaining.remove(next_item)
         ordered.append(next_item)
@@ -1190,6 +1298,49 @@ def _render_george_covasna_bulletin(stories: list[dict[str, object]], geo_debug:
     return "\n".join(lines).strip() + "\n"
 
 
+def _render_nicu_constanta_bulletin(stories: list[dict[str, object]], geo_debug: dict[str, object]) -> str:
+    total_duration = sum(story["estimated_duration_seconds"] for story in stories)
+    lines = [
+        "OPENWAVE GENERALIST BULLETIN - NICU / CONSTANTA",
+        "",
+        f"Stories: {len(stories)}",
+        f"Estimated story-only duration: {total_duration} secunde",
+        "Editorial target mix: local 5, national 6, international 4.",
+        "Ordering rule: strongest listener impact first, with county-only local selection unless fallback is required.",
+        f"Resolved user county: {geo_debug['resolved_user_county']}",
+        f"Resolved user region: {geo_debug['resolved_user_region']}",
+        f"County-first local selection: {geo_debug['county_first_local_selection']}",
+        f"Local source registry used: {geo_debug['local_source_registry_used']}",
+        f"Local sources selected for county: {', '.join(geo_debug['local_sources_selected']) or 'none'}",
+        f"Local story count from Constanta county: {geo_debug['local_story_count_from_constanta_county']}",
+        f"Local story count from regional fallback: {geo_debug['local_story_count_from_regional_fallback']}",
+        f"Human density score: {geo_debug['human_density_score']}",
+        f"Stories with person anchor: {geo_debug['stories_with_person_anchor']}",
+        f"Stories with role anchor: {geo_debug['stories_with_role_anchor']}",
+        f"Stories with voice-of-people anchor: {geo_debug['stories_with_voice_of_people_anchor']}",
+        f"Closing family distribution: {json.dumps(geo_debug['closing_family_distribution'], ensure_ascii=False)}",
+        "",
+    ]
+    for item in stories:
+        lines.extend([
+            f"{item['position']}. {item['headline_original']}",
+            f"   Scope: {item['source_scope']}",
+            f"   Local origin: {item.get('local_geo_origin') or 'none'}",
+            f"   Local origin type: {item['local_origin_type']}",
+            f"   Lead starter family: {item['lead_starter_family']}",
+            f"   Closing phrase family: {item['closing_phrase_family']}",
+            f"   Human anchor type: {item['human_anchor_type']}",
+            f"   Person attribution used: {item['person_attribution_used']}",
+            f"   Person: {item['person_role'] or 'none'} / {item['person_name'] or 'none'}",
+            f"   Duplicate sentence removed: {item['duplicate_sentence_removed']}",
+            f"   Initial lead: {item['generated_lead_initial']}",
+            f"   Final lead: {item['generated_lead_final']}",
+            item['radio_text'],
+            "",
+        ])
+    return "\n".join(lines).strip() + "\n"
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
@@ -1242,6 +1393,11 @@ def main() -> None:
         "lead_continuation_rewrite_count": sum(1 for item in preview_stories if item["lead_continuation_rewrite_applied"]),
         "lead_opening_type_counts": lead_opening_type_counts,
         "lead_starter_family_distribution": lead_opening_type_counts,
+        "human_density_score": round(sum(item["human_density_score"] for item in preview_stories) / max(1, len(preview_stories)), 2),
+        "stories_with_person_anchor": sum(1 for item in preview_stories if item["stories_with_person_anchor"]),
+        "stories_with_role_anchor": sum(1 for item in preview_stories if item["stories_with_role_anchor"]),
+        "stories_with_voice_of_people_anchor": sum(1 for item in preview_stories if item["stories_with_voice_of_people_anchor"]),
+        "closing_family_distribution": {family: sum(1 for item in preview_stories if item["closing_phrase_family"] == family) for family in ("operational_timing", "immediate_impact", "institution_followup", "policy_impact", "warning")},
         "stories_with_personal_attribution": sum(1 for item in preview_stories if item["stories_with_personal_attribution"]),
         "stories_with_person_name_attribution": sum(1 for item in preview_stories if item["stories_with_person_name_attribution"]),
         "stories_with_person_role_and_name_attribution": sum(1 for item in preview_stories if item["stories_with_person_role_and_name_attribution"]),
@@ -1450,6 +1606,36 @@ def main() -> None:
         "written_source_credits": george_written_source_credits,
     }
     GEORGE_COVASNA_OUTPUT_PATH.write_text(_render_george_covasna_bulletin(george_covasna_stories, george_geo_debug), encoding="utf-8")
+
+    nicu_personalization = UserPersonalization(
+        listener_profile=ListenerProfile(first_name="Nicu", country="Romania", region="Constanta"),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=35, national=40, international=25),
+        ),
+    )
+    nicu_geo = resolve_listener_geography(city=None, region="Constanta")
+    nicu_local_resolution = SourceWatcherService().resolve_local_sources_for_personalization(nicu_personalization)
+    nicu_mix_fixtures = NICU_CONSTANTA_LOCAL_FIXTURES + [
+        fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
+    ]
+    service.reset_variation_state()
+    nicu_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(nicu_mix_fixtures, start=1)]
+    nicu_constanta_stories = _order_victor_vaslui_bulletin(nicu_base_stories)
+    nicu_geo_debug = {
+        "resolved_user_county": nicu_geo.resolved_county,
+        "resolved_user_region": nicu_geo.resolved_macro_region,
+        "county_first_local_selection": True,
+        "local_source_registry_used": nicu_local_resolution.local_source_registry_used,
+        "local_sources_selected": [item.source_name for item in nicu_local_resolution.resolved_sources],
+        "local_story_count_from_constanta_county": sum(1 for item in nicu_constanta_stories if item.get("local_geo_origin") == "constanta_county"),
+        "local_story_count_from_regional_fallback": sum(1 for item in nicu_constanta_stories if item.get("local_geo_origin") == "dobrogea_region"),
+        "human_density_score": round(sum(item["human_density_score"] for item in nicu_constanta_stories) / max(1, len(nicu_constanta_stories)), 2),
+        "stories_with_person_anchor": sum(1 for item in nicu_constanta_stories if item["stories_with_person_anchor"]),
+        "stories_with_role_anchor": sum(1 for item in nicu_constanta_stories if item["stories_with_role_anchor"]),
+        "stories_with_voice_of_people_anchor": sum(1 for item in nicu_constanta_stories if item["stories_with_voice_of_people_anchor"]),
+        "closing_family_distribution": {family: sum(1 for item in nicu_constanta_stories if item["closing_phrase_family"] == family) for family in ("operational_timing", "immediate_impact", "institution_followup", "policy_impact", "warning")},
+    }
+    NICU_CONSTANTA_OUTPUT_PATH.write_text(_render_nicu_constanta_bulletin(nicu_constanta_stories, nicu_geo_debug), encoding="utf-8")
 
 
 if __name__ == "__main__":

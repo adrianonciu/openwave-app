@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from collections import deque
 import re
@@ -195,7 +195,7 @@ AFFECTED_AUDIENCE_LEAD_STARTS = (
     "locuitorii", "calatorii", "administratorii", "familiile", "gospodariile", "investitorii",
 )
 PERSONAL_ATTRIBUTION_VERBS = ("a declarat", "declara", "a spus", "spune", "spun", "a precizat", "precizeaza", "a explicat", "explica", "a promis", "promite", "a avertizat", "avertizeaza", "a anuntat", "anunta", "a transmis", "transmite", "transmit", "relateaza", "scrie")
-ROLE_BASED_PERSON_MARKERS = ("primarul", "directorul", "director", "inspectorul", "inspectorii", "prefectul", "medicul", "medicul sef", "medicul coordonator", "fermierii", "soferii", "autoritatile locale", "managerul", "ministrul", "premierul")
+ROLE_BASED_PERSON_MARKERS = ("primarul", "directorul", "director", "inspectorul", "inspectorii", "prefectul", "medicul", "medicul sef", "medicul coordonator", "fermierii", "soferii", "autoritatile locale", "managerul", "ministrul", "premierul", "specialistii", "patronatele", "operatorii din turism", "un oficial al ministerului", "directorul companiei de apa", "seful pompierilor", "pompierii", "consumatorii", "turistii", "analistii militari", "specialistii din industrie")
 PERSONAL_ATTRIBUTION_ENCOURAGED_TERMS = ("primarie", "spital", "isu", "trafic", "lucrari", "restrictii", "drum", "educatie", "scoala", "elev", "fermier", "seceta", "preturi", "servicii", "controverse", "controale", "urgente")
 ROLE_BASED_ATTRIBUTION_MAP = {
     "primaria": "Primarul",
@@ -242,20 +242,49 @@ CLOSING_PHRASE_BANK = {
         "Programul actualizat se aplica chiar din primele zile.",
     ),
     "immediate_impact": (
-        "Locuitorii pot vedea schimbarea chiar din primele zile.",
-        "Decizia ar putea influenta preturile rapid.",
-        "Primele schimbari se pot simti chiar din aceasta perioada.",
+        "Impactul se poate vedea rapid in buzunarele oamenilor.",
+        "Locuitorii pot simti schimbarea chiar din primele zile.",
+        "Primele schimbari se pot vedea chiar din aceasta perioada.",
     ),
     "institution_followup": (
-        "Autoritatile spun ca situatia va fi monitorizata zilnic.",
-        "Oficialii promit evaluari rapide ale masurii.",
-        "Institutiile implicate spun ca vor urmari efectele de la o zi la alta.",
+        "Autoritatile spun ca vor urmari evolutia in zilele urmatoare.",
+        "Oficialii promit verificari rapide ale masurii.",
+        "Institutiile implicate spun ca vor monitoriza efectele de la o zi la alta.",
     ),
     "policy_impact": (
-        "Decizia ar putea schimba regulile pentru companii si consumatori.",
+        "Decizia poate schimba rapid regulile pentru companii si consumatori.",
         "Masura poate redesena costurile pentru firme si familii.",
         "Schimbarea poate avea efect direct asupra companiilor si consumatorilor.",
     ),
+    "warning": (
+        "Specialistii avertizeaza ca situatia s-ar putea agrava daca presiunea continua.",
+        "Expertii spun ca intarzierile pot creste daca masura nu este respectata.",
+        "Riscul ramane ridicat daca autoritatile nu intervin rapid.",
+    ),
+}
+
+VOICE_OF_PEOPLE_MARKERS = (
+    "soferii", "familiile", "pacientii", "navetistii", "fermierii", "consumatorii",
+    "parintii", "elevii", "turistii", "locuitorii", "calatorii", "studentii", "patronatele", "operatorii din turism"
+)
+HUMAN_ACTION_VERBS = (
+    "verifica", "controleaza", "monitorizeaza", "urmaresc", "pregatesc", "pregateste",
+    "intra", "intervin", "circula", "simt", "resimt", "se confrunta", "cer", "asteapta",
+    "pot vedea", "vor vedea", "vor simti", "risca", "primesc", "anunta"
+)
+SEMANTIC_DUPLICATE_STOPWORDS = {
+    "asta", "poate", "inseamna", "masura", "oamenilor", "chiar", "primele", "urmatoarele",
+    "zile", "saptamani", "judet", "judetului", "spune", "spun", "a", "ca", "vor", "va",
+    "pot", "putea", "poata", "este", "sunt", "din", "pe", "la", "si", "cu", "in", "se",
+    "rapid", "direct", "acum", "mai", "nou", "noi"
+}
+HUMAN_WEAK_TO_STRONG_REPLACEMENTS = {
+    "poate duce": "risca sa duca",
+    "poate schimba": "ameninta sa schimbe",
+    "va avea": "va provoca",
+    "poate influenta": "poate lovi",
+    "tensiunea poate duce la preturi mai mari": "tensiunea risca sa aduca preturi mai mari",
+    "impact economic": "facturi mai mari",
 }
 
 
@@ -300,6 +329,13 @@ class RadioEditingService:
         debug_notes.append(f"lead_starter_family={polish_metrics['lead_starter_family']}")
         debug_notes.append(f"closing_phrase_family={polish_metrics['closing_phrase_family']}")
         debug_notes.append(f"duplicate_sentence_removed={polish_metrics['duplicate_sentence_removed']}")
+        debug_notes.append(f"stories_with_duplicate_removed={polish_metrics['stories_with_duplicate_removed']}")
+        debug_notes.append(f"stories_with_person_anchor={polish_metrics['stories_with_person_anchor']}")
+        debug_notes.append(f"stories_with_role_anchor={polish_metrics['stories_with_role_anchor']}")
+        debug_notes.append(f"stories_with_voice_of_people_anchor={polish_metrics['stories_with_voice_of_people_anchor']}")
+        debug_notes.append(f"human_anchor_type={polish_metrics['human_anchor_type']}")
+        debug_notes.append(f"human_density_score={polish_metrics['human_density_score']}")
+        debug_notes.append(f"radio_human_layer_applied={polish_metrics['radio_human_layer_applied']}")
         debug_notes.append(f"stories_with_intra_story_repetition={polish_metrics['stories_with_intra_story_repetition']}")
         debug_notes.append(f"stories_with_duplicate_sentence_removed={polish_metrics['stories_with_duplicate_sentence_removed']}")
         debug_notes.append(f"stories_with_closing_variation_applied={polish_metrics['stories_with_closing_variation_applied']}")
@@ -341,6 +377,7 @@ class RadioEditingService:
         self._register_story_variation(
             polish_metrics["lead_starter_family"],
             polish_metrics["closing_phrase_family"],
+            radio_sentences[-1] if radio_sentences else "",
         )
 
         return RadioEditedStory(
@@ -632,7 +669,7 @@ class RadioEditingService:
         final_sentences = [self._finalize_sentence(sentence) for sentence in SENTENCE_SPLIT_PATTERN.split(final_text) if sentence.strip()]
         return final_sentences[:MAX_SENTENCE_COUNT]
 
-    def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool | str]]:
+    def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool | str | float]]:
         polished = [self._simplify_operational_language(sentence) for sentence in sentences if sentence]
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
         initial_lead = polished[0] if polished else ""
@@ -640,6 +677,7 @@ class RadioEditingService:
         polished = self._promote_personal_attribution(payload, compression, polished)
         polished = self._ensure_attributed_voice(payload, compression, polished)
         polished = self._reinforce_romania_impact(payload, compression, polished)
+        polished, human_meta = self._human_radio_layer(payload, compression, polished)
         polished = self._replace_repeated_person_names(payload, polished)
         polished = self._limit_attribution_slots(polished)
         polished = self._strengthen_closure(payload, compression, polished)
@@ -650,6 +688,7 @@ class RadioEditingService:
         polished, late_repetition_meta = self._reduce_intra_story_repetition(payload, polished)
         repetition_meta["duplicate_sentence_removed"] = repetition_meta["duplicate_sentence_removed"] or late_repetition_meta["duplicate_sentence_removed"]
         repetition_meta["stories_with_intra_story_repetition"] = repetition_meta["stories_with_intra_story_repetition"] or late_repetition_meta["stories_with_intra_story_repetition"]
+        polished = self._trim_human_story_shape(polished)
         polished = [
             self._finalize_sentence(self._trim_sentence(sentence, LEAD_MAX_WORDS if index == 0 else SENTENCE_SOFT_MAX_WORDS))
             for index, sentence in enumerate(polished)
@@ -665,6 +704,7 @@ class RadioEditingService:
         lead_restatement_meta = self._lead_restatement_meta(payload, final_lead)
         lead_starter_family = self._lead_opening_type(final_lead, payload)
         closing_phrase_family = self._closing_phrase_family(polished[-1] if polished else "")
+        human_anchor_type = self._story_human_anchor_type(polished, payload)
         metrics = {
             "lead_title_overlap_score": lead_title_overlap_score,
             "lead_rewritten_to_reduce_title_repetition": lead_rewrite_meta["lead_rewritten_to_reduce_title_repetition"],
@@ -682,6 +722,7 @@ class RadioEditingService:
             "duplicate_sentence_removed": repetition_meta["duplicate_sentence_removed"],
             "stories_with_intra_story_repetition": repetition_meta["stories_with_intra_story_repetition"],
             "stories_with_duplicate_sentence_removed": repetition_meta["duplicate_sentence_removed"],
+            "stories_with_duplicate_removed": repetition_meta["duplicate_sentence_removed"],
             "stories_with_closing_variation_applied": closing_variation_applied,
             "high_title_lead_overlap": lead_title_overlap_score >= TITLE_LEAD_OVERLAP_THRESHOLD,
             "romania_impact_included": self._has_romania_impact_sentence(payload, polished),
@@ -715,6 +756,12 @@ class RadioEditingService:
             "has_named_person": bool(payload.get("top_person")),
             "has_role_based_person": bool(payload.get("available_role_markers")),
             "lead_has_quote_or_person": bool(polished and self._sentence_personal_attribution_type(polished[0], payload) != "none"),
+            "stories_with_person_anchor": human_anchor_type == "person",
+            "stories_with_role_anchor": human_anchor_type == "role",
+            "stories_with_voice_of_people_anchor": human_anchor_type == "voice_of_people",
+            "human_anchor_type": human_anchor_type,
+            "human_density_score": 1.0 if human_anchor_type != "none" else 0.0,
+            "radio_human_layer_applied": human_meta["radio_human_layer_applied"],
         }
         return polished[:MAX_SENTENCE_COUNT], metrics
 
@@ -824,6 +871,216 @@ class RadioEditingService:
         if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
             return self._finalize_sentence("Consumatorii ar putea vedea presiune mai mare pe facturi si pe preturile la energie.")
         return lead
+
+
+
+    def _human_radio_layer(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> tuple[list[str], dict[str, bool]]:
+        updated = list(sentences)
+        updated = self._rewrite_listener_impact_lead(payload, compression, updated)
+        updated = self._ensure_human_anchor(payload, compression, updated)
+        updated = [self._emotionally_polish_sentence(payload, sentence) for sentence in updated if sentence]
+        return updated[:MAX_SENTENCE_COUNT], {"radio_human_layer_applied": updated != sentences}
+
+    def _rewrite_listener_impact_lead(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        if not sentences:
+            return sentences
+        lead = sentences[0]
+        if self._lead_opening_type(lead, payload) in {"affected_audience", "person_role"}:
+            return sentences
+        if self._sentence_personal_attribution_type(lead, payload) == "named_person":
+            return sentences
+        rewritten = self._listener_impact_lead(payload, compression, lead)
+        if rewritten and rewritten != lead:
+            sentences[0] = rewritten
+        return sentences
+
+    def _listener_impact_lead(self, payload: dict[str, object], compression: CompressedStoryCore, lead: str) -> str:
+        lowered = payload["full_text"].lower()
+        is_local_story = str(payload.get("source_scope") or "") == "local"
+        county_group = "Locuitorii din judet" if is_local_story else "Oamenii"
+        if any(term in lowered for term in ("ormuz", "petrol", "benzina", "transport maritim")):
+            return self._finalize_sentence("Soferii ar putea plati mai mult pentru carburanti in urmatoarele saptamani.")
+        if any(term in lowered for term in ("isu", "club", "cluburile", "evacuare", "pompier", "litoral", "statiuni")):
+            return self._finalize_sentence("Inspectorii verifica iesirile de urgenta si instalatiile electrice in statiunile aglomerate.")
+        if any(term in lowered for term in ("cfr", "tren", "peron", "navetistii")):
+            return self._finalize_sentence("Navetistii vor avea intarzieri si schimbari de traseu chiar din primele zile.")
+        if any(term in lowered for term in ("spital", "urgente", "pacienti", "flux rapid")):
+            return self._finalize_sentence("Pacientii cu urgente pot ajunge mai repede la evaluare chiar din aceasta saptamana.")
+        if any(term in lowered for term in ("trafic", "circulatia", "pasaj", "lucrari", "drum", "carosabil")):
+            return self._finalize_sentence("Soferii din judet vor simti restrictiile chiar din primele zile." if is_local_story else "Soferii vor simti restrictiile chiar din primele zile.")
+        if any(term in lowered for term in ("tva", "frauda", "anaf", "buget", "rambursari")):
+            return self._finalize_sentence("Firmele verificate risca blocaje rapide daca inspectorii gasesc nereguli noi.")
+        if any(term in lowered for term in ("cipuri", "baterii", "lanturile de aprovizionare", "export")):
+            return self._finalize_sentence("Companiile si consumatorii risca preturi mai mari si livrari mai lente.")
+        if (
+            any(term in lowered for term in ("energie", "gaze", "curent", "consumatori", "gospodariile"))
+            or ("facturi" in lowered and any(term in lowered for term in ("energie", "curent", "incalzire", "electric")))
+        ):
+            return self._finalize_sentence("Familiile cu venituri mici pot vedea schimbari la facturi chiar din sezonul rece.")
+        if any(term in lowered for term in ("seceta", "fermierii", "alimente", "agriculturii")):
+            return self._finalize_sentence("Familiile risca preturi mai mari la alimente daca seceta continua.")
+        if any(term in lowered for term in ("catalogul digital", "elevi", "parinti", "scoli")):
+            return self._finalize_sentence("Parintii si elevii pot vedea mai usor situatia scolara in acelasi sistem.")
+        if any(term in lowered for term in ("burse", "studenti", "universitati", "cazare")):
+            return self._finalize_sentence("Studentii navetisti pot primi sprijin mai rapid pentru transport si cazare.")
+        if any(term in lowered for term in ("investitii", "avize", "ordonanta", "autorizatii")):
+            return self._finalize_sentence("Firmele ar putea pierde mai putin timp cu avizele pentru proiectele mari.")
+        if any(term in lowered for term in ("nato", "marea neagra", "securitatea regionala")):
+            return self._finalize_sentence("Locuitorii de pe litoral pot vedea masuri de securitate mai vizibile in perioada urmatoare.")
+        if any(term in lowered for term in ("csm", "dna", "justitiei", "procuror")):
+            return self._finalize_sentence("Ministerul Justitiei ramane sub presiune sa vina cu o noua propunere pentru functie.")
+        if any(term in lowered for term in ("schema", "ajutor", "sprijin tintit")):
+            return self._finalize_sentence(f"{county_group} pot vedea schimbari concrete chiar din urmatoarele saptamani.")
+        return lead
+
+    def _ensure_human_anchor(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        if not sentences or self._story_human_anchor_type(sentences, payload) != "none":
+            return sentences
+        candidate = self._best_personal_attribution_sentence(payload, compression, sentences)
+        if not candidate:
+            candidate = self._generic_human_anchor_sentence(payload, compression, sentences)
+        if not candidate:
+            return sentences
+        updated = list(sentences)
+        if candidate in updated:
+            return updated[:MAX_SENTENCE_COUNT]
+        insert_at = 1 if updated else 0
+        if len(updated) >= MAX_SENTENCE_COUNT:
+            updated[insert_at] = candidate
+        else:
+            updated.insert(insert_at, candidate)
+        return updated[:MAX_SENTENCE_COUNT]
+
+    def _generic_human_anchor_sentence(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> str:
+        actor = self._generic_human_actor(payload)
+        if not actor:
+            return ""
+        sentence_pool = list(sentences[1:]) + [item.text for item in compression.dropped_sentences] + list(payload["source_text_sentences"])
+        for sentence in sentence_pool:
+            rewritten = self._rewrite_for_radio(sentence, "reaction", compression.kept_entities)
+            clause = self._strip_leading_attribution_subject(self._clean_text(rewritten or sentence), actor)
+            clause = self._strip_repeated_impact_prefix(clause)
+            if not clause or self._comparison_text(clause) == self._comparison_text(sentences[0]):
+                continue
+            candidate = self._build_attributed_clause_sentence(actor, self._preferred_human_anchor_verb(actor, payload), clause)
+            if candidate and not self._is_near_duplicate(candidate, sentences[:2]):
+                return candidate
+        return ""
+
+    def _generic_human_actor(self, payload: dict[str, object]) -> str:
+        lowered = payload["full_text"].lower()
+        if "primaria" in lowered:
+            return "Primarul local"
+        if "spital" in lowered:
+            return "Managerul spitalului"
+        if "isu" in lowered or "pompier" in lowered or "incend" in lowered:
+            return "Seful pompierilor"
+        if "fermier" in lowered or "seceta" in lowered:
+            return "Fermierii din zona"
+        if any(term in lowered for term in ("trafic", "lucrari", "restrictii", "drum", "pasaj")):
+            return "Soferii din judet"
+        if any(term in lowered for term in ("tren", "cfr", "peron", "navetist")):
+            return "Navetistii din judet"
+        if any(term in lowered for term in ("elev", "parinti", "catalogul digital", "scoli")):
+            return "Parintii si elevii"
+        if any(term in lowered for term in ("energie", "facturi", "consumatori")):
+            return "Consumatorii"
+        if any(term in lowered for term in ("raja", "apa", "avarii")):
+            return "Directorul companiei de apa"
+        if any(term in lowered for term in ("turism", "plaje", "turisti", "sezon")):
+            return "Operatorii din turism"
+        if any(term in lowered for term in ("nato", "marea neagra", "securitatea regionala")):
+            return "Analistii militari"
+        if any(term in lowered for term in ("cipuri", "baterii", "export", "aprovizionare")):
+            return "Specialistii din industrie"
+        if "minister" in lowered:
+            return "Un oficial al ministerului"
+        if any(term in lowered for term in ("ormuz", "transport maritim", "petrol")):
+            return "Specialistii"
+        return ""
+
+    def _preferred_human_anchor_verb(self, actor: str, payload: dict[str, object]) -> str:
+        lowered = payload["full_text"].lower()
+        if any(term in lowered for term in ("risc", "scumpiri", "incend", "criza", "seceta", "pericol", "urgente")):
+            return "avertizeaza"
+        return "spune" if actor.lower().startswith(("un oficial", "primarul", "managerul", "directorul", "seful")) else "spun"
+
+    def _emotionally_polish_sentence(self, payload: dict[str, object], sentence: str) -> str:
+        updated = sentence
+        for source, target in HUMAN_WEAK_TO_STRONG_REPLACEMENTS.items():
+            updated = re.sub(re.escape(source), target, updated, flags=re.IGNORECASE)
+        lowered = payload["full_text"].lower()
+        if any(term in lowered for term in ("ormuz", "petrol", "energie")):
+            updated = re.sub(r"preturi mai mari la petrol si energie", "benzina mai scumpa si facturi mai mari", updated, flags=re.IGNORECASE)
+        if any(term in lowered for term in ("seceta", "alimente")):
+            updated = re.sub(r"preturile la alimente", "preturi mai mari la alimente", updated, flags=re.IGNORECASE)
+        return self._finalize_sentence(updated)
+
+    def _story_human_anchor_type(self, sentences: list[str], payload: dict[str, object]) -> str:
+        for sentence in sentences:
+            anchor_type = self._sentence_human_anchor_type(sentence, payload)
+            if anchor_type != "none":
+                return anchor_type
+        return "none"
+
+    def _sentence_human_anchor_type(self, sentence: str, payload: dict[str, object]) -> str:
+        attribution_type = self._sentence_personal_attribution_type(sentence, payload)
+        lowered = sentence.lower()
+        if attribution_type == "named_person":
+            return "person"
+        if attribution_type == "role_based_person":
+            role_marker = self._first_matching_role_marker(sentence, payload).lower()
+            if role_marker and role_marker in VOICE_OF_PEOPLE_MARKERS:
+                return "voice_of_people"
+            if any(marker in lowered for marker in VOICE_OF_PEOPLE_MARKERS):
+                return "voice_of_people"
+            return "role"
+        if any(marker in lowered for marker in VOICE_OF_PEOPLE_MARKERS) and (self._has_attribution_verb(sentence) or any(verb in lowered for verb in HUMAN_ACTION_VERBS)):
+            return "voice_of_people"
+        if any(marker in lowered for marker in ROLE_BASED_PERSON_MARKERS) and (self._has_attribution_verb(sentence) or any(verb in lowered for verb in HUMAN_ACTION_VERBS)):
+            return "role"
+        return "none"
+
+    def _trim_human_story_shape(self, sentences: list[str]) -> list[str]:
+        trimmed = list(sentences[:MAX_SENTENCE_COUNT])
+        while len(trimmed) > 3 and self._word_count(" ".join(trimmed)) > 75:
+            removable = list(range(1, max(2, len(trimmed) - 1)))
+            remove_index = min(removable, key=lambda index: self._sentence_editorial_strength(trimmed[index]))
+            trimmed.pop(remove_index)
+        return trimmed[:MAX_SENTENCE_COUNT]
+
+    def _sentence_editorial_strength(self, sentence: str) -> float:
+        score = 0.0
+        lowered = sentence.lower()
+        if self._has_strong_closure(sentence):
+            score += 2.4
+        if self._sentence_has_impact(sentence):
+            score += 2.0
+        if self._has_attribution_verb(sentence):
+            score += 1.4
+        if any(term in lowered for term in ("romania", "judet", "constanta", "litoral")):
+            score += 0.8
+        return score
 
     def _derive_support_sentence(self, payload: dict[str, object], compression: CompressedStoryCore, existing: list[str]) -> str:
         for role in ("impact", "detail", "reaction"):
@@ -1026,11 +1283,13 @@ class RadioEditingService:
         lowered = self._comparison_text(sentence)
         if not lowered:
             return "operational_timing"
+        if any(marker in lowered for marker in ("avertizeaza", "riscul", "s-ar putea agrava", "ramane ridicat")):
+            return "warning"
         if any(marker in lowered for marker in ("intra in vigoare", "se aplica", "de luni", "de marti", "luna viitoare", "zilele urmatoare")):
             return "operational_timing"
-        if any(marker in lowered for marker in ("monitorizata", "monitorizat", "evaluari", "oficialii", "autoritatile", "va fi confirmat")):
+        if any(marker in lowered for marker in ("monitorizata", "monitorizat", "evaluari", "oficialii", "autoritatile", "va fi confirmat", "vor urmari")):
             return "institution_followup"
-        if any(marker in lowered for marker in ("companii", "consumatori", "regulile", "costurile", "preturile")):
+        if any(marker in lowered for marker in ("companii", "consumatori", "regulile", "costurile", "preturile", "buzunarele")):
             return "policy_impact"
         return "immediate_impact"
 
@@ -1457,9 +1716,11 @@ class RadioEditingService:
 
     def _preferred_closure_family(self, payload: dict[str, object]) -> str:
         lowered = payload["full_text"].lower()
+        if any(term in lowered for term in ("incend", "risc", "scumpiri", "seceta", "urgente", "presiune")):
+            return "warning"
         if any(term in lowered for term in ("de luni", "program", "restrictii", "lucrari", "se aplica", "intra in vigoare")):
             return "operational_timing"
-        if any(term in lowered for term in ("preturi", "costuri", "companii", "consumatori", "energie")):
+        if any(term in lowered for term in ("preturi", "costuri", "companii", "consumatori", "energie", "facturi")):
             return "policy_impact"
         if any(term in lowered for term in ("monitorizat", "autoritati", "evaluari", "oficialii", "confirmat")):
             return "institution_followup"
@@ -1524,15 +1785,15 @@ class RadioEditingService:
     def _derive_closure_fallback(self, payload: dict[str, object]) -> str:
         lowered = payload["full_text"].lower()
         if any(keyword in lowered for keyword in ("isu", "incend", "controale")):
-            return "Primele rezultate sunt asteptate pana la finalul saptamanii."
+            return "Specialistii avertizeaza ca riscul ramane ridicat daca verificarile intarzie."
         if any(keyword in lowered for keyword in ("dna", "csm", "numire", "parchete", "procuror-sef")):
             return "Ministerul poate reveni cu o noua propunere in zilele urmatoare."
         if any(keyword in lowered for keyword in ("investig", "diicot", "procuror")):
             return "Cazul este investigat, iar urmatoarele decizii sunt asteptate in cateva zile."
         if any(keyword in lowered for keyword in ("lucrari", "restrictii", "trafic", "santier")):
-            return "Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare."
+            return "Soferii vor simti schimbarea chiar din primele zile de aplicare."
         if any(keyword in lowered for keyword in ("energie", "petrol", "preturi", "facturi")):
-            return "Primele efecte sunt asteptate in cateva saptamani."
+            return "Impactul se poate vedea rapid in buzunarele oamenilor."
         if any(keyword in lowered for keyword in ("ordonanta", "reguli", "schema")):
             return "Masura intra in vigoare luna viitoare."
         return ""
@@ -1723,7 +1984,7 @@ class RadioEditingService:
         cleaned = sentence.strip()
         if actor and cleaned.lower().startswith(actor.lower()):
             cleaned = cleaned[len(actor):].lstrip(" ,")
-            cleaned = re.sub(r"^(?:a\s+[A-Za-zÀ-ɏ-]+|[A-Za-zÀ-ɏ-]+(?:\s+ca)?)\s+", "", cleaned, count=1)
+            cleaned = re.sub(r"^(?:a\s+[A-Za-z-?-]+|[A-Za-z-?-]+(?:\s+ca)?)\s+", "", cleaned, count=1)
         cleaned = re.sub(r"^(?:ca|faptul ca)\s+", "", cleaned, flags=re.IGNORECASE)
         return cleaned.strip(" ,")
 
@@ -1809,6 +2070,8 @@ class RadioEditingService:
             return "named_person"
         if self._first_matching_role_marker(sentence, payload) and self._has_attribution_verb(sentence):
             return "role_based_person"
+        if any(marker in lowered for marker in VOICE_OF_PEOPLE_MARKERS) and self._has_attribution_verb(sentence):
+            return "role_based_person"
         if self._first_matching_institution(sentence, payload) and self._has_voice_verb(sentence):
             return "institution"
         if source_label and source_label.lower() in lowered and any(marker in lowered for marker in ("relateaza", "scrie", "transmite")):
@@ -1825,7 +2088,7 @@ class RadioEditingService:
         repetition_found = False
         for sentence in sentences:
             candidate = sentence
-            if any(self._sentence_similarity(candidate, existing) > 0.7 for existing in updated):
+            if any(self._sentences_repeat_same_idea(candidate, existing) for existing in updated):
                 duplicate_removed = True
                 repetition_found = True
                 continue
@@ -1833,14 +2096,18 @@ class RadioEditingService:
                 if self._shares_time_marker(existing, candidate):
                     repetition_found = True
                     candidate = self._strip_repeated_time_marker(candidate)
-                if self._shares_impact_signature(existing, candidate) and self._sentence_similarity(candidate, existing) > 0.52:
+                if self._shares_impact_signature(existing, candidate) and self._sentence_similarity(candidate, existing) > 0.42:
                     repetition_found = True
                     candidate = self._strip_repeated_impact_prefix(candidate)
+                if self._sentences_repeat_same_idea(candidate, existing):
+                    repetition_found = True
+                    candidate = ""
+                    break
             candidate = self._finalize_sentence(candidate)
             if not candidate:
                 duplicate_removed = True
                 continue
-            if any(self._sentence_similarity(candidate, existing) > 0.7 for existing in updated):
+            if any(self._sentences_repeat_same_idea(candidate, existing) for existing in updated):
                 duplicate_removed = True
                 repetition_found = True
                 continue
@@ -1874,7 +2141,7 @@ class RadioEditingService:
         return any(marker in lowered_first and marker in lowered_second for marker in REPEATED_TIME_MARKERS)
 
     def _shares_impact_signature(self, first: str, second: str) -> bool:
-        tracked = {"energie", "preturi", "trafic", "costuri", "navetistii", "studentii", "efect", "impact"}
+        tracked = {"energie", "preturi", "trafic", "costuri", "navetistii", "studentii", "efect", "impact", "facturi", "scumpiri", "benzina", "rezultate", "schimbari", "alimente"}
         first_tokens = {token for token in self._comparison_tokens(first) if token in tracked}
         second_tokens = {token for token in self._comparison_tokens(second) if token in tracked}
         return bool(first_tokens & second_tokens)
@@ -1887,7 +2154,28 @@ class RadioEditingService:
         return trimmed
 
     def _strip_repeated_impact_prefix(self, sentence: str) -> str:
-        return re.sub(r"^(Asta poate|Asta inseamna|Masura poate)\s+", "", sentence, flags=re.IGNORECASE).strip()
+        return re.sub(r"^(Asta poate|Asta inseamna|Masura poate|Impactul se poate vedea|Primele efecte se vad)\s+", "", sentence, flags=re.IGNORECASE).strip()
+
+    def _semantic_signature(self, sentence: str) -> set[str]:
+        cleaned = self._comparison_text(self._strip_repeated_impact_prefix(sentence))
+        cleaned = re.sub(r"^[a-z\s]{0,60}\b(spune|spun|a spus|avertizeaza|a avertizat|transmite|a transmis|precizeaza|a precizat|anunta|a anuntat)\s+ca\s+", "", cleaned)
+        return {
+            token for token in self._comparison_tokens(cleaned)
+            if token not in SEMANTIC_DUPLICATE_STOPWORDS and len(token) > 2
+        }
+
+    def _sentences_repeat_same_idea(self, first: str, second: str) -> bool:
+        if self._sentence_similarity(first, second) > 0.65:
+            return True
+        first_signature = self._semantic_signature(first)
+        second_signature = self._semantic_signature(second)
+        if not first_signature or not second_signature:
+            return False
+        overlap = len(first_signature & second_signature)
+        if overlap >= 4:
+            return True
+        smaller = min(len(first_signature), len(second_signature))
+        return smaller >= 3 and overlap >= smaller
 
     def _register_story_variation(self, lead_family: str, closing_family: str, closing_sentence: str = "") -> None:
         if lead_family:
