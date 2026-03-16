@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from app.config.presenter import get_presenter_config
+from app.services.tts_pronunciation_helper import apply_tts_pronunciation_hints
 from app.services.tts.editorial_entity_formatter import (
     apply_romanian_editorial_lexicon,
     apply_romanian_editorial_lexicon_to_text,
@@ -88,6 +89,7 @@ class TtsService:
 
         cleaned_text = normalize_romanian_numbers_for_tts(cleaned_text)
         cleaned_text = apply_romanian_editorial_lexicon_to_text(cleaned_text)
+        cleaned_text = apply_tts_pronunciation_hints(cleaned_text)
         cleaned_text = normalize_for_romanian_tts(cleaned_text)
 
         presenter = get_presenter_config(presenter_name)
@@ -309,6 +311,7 @@ class TtsService:
                 continue
 
             cleaned_text = normalize_romanian_numbers_for_tts(cleaned_text)
+            cleaned_text = apply_tts_pronunciation_hints(cleaned_text)
             cleaned_text = normalize_for_romanian_tts(cleaned_text)
             prepared_segments.append(
                 {

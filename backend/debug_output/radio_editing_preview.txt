@@ -1,23 +1,29 @@
-OPENWAVE RADIO EDITING PREVIEW V1.3
+OPENWAVE RADIO EDITING PREVIEW V1.4
 
 Stories: 5
-Bulletin estimated duration: 190 secunde
-Average story words: 63.6
-Average story duration: 38 secunde
+Bulletin estimated duration: 172 secunde
+Average story words: 57.2
+Average story duration: 34.4 secunde
+International stories with Romania impact: 1
+Stories with strong closure: 5
 Repeated person names: 0
 Stories with administrative closure: 0
 Stories with multiple attributions: 0
-Operational simplifications applied: 3
+Operational simplifications applied: 4
+TTS pronunciation entries: 3
 
 Story 1: national_policy_01
 Band: standard
 Headline original: Ilie Bolojan anunta o ordonanta pentru simplificarea avizelor de investitii.
 Original words: 83
-Final words: 60
+Final words: 57
 Sentence count: 4
 Lead words: 20
-Estimated duration: 36 secunde
+Scope: national
+Estimated duration: 34 secunde
 Attribution: person
+Romania impact included: False
+Strong closure: True
 Repeated person names: 0
 Administrative closure: False
 Multiple attributions: False
@@ -26,17 +32,20 @@ Main actor early: True
 Kept entities: Ilie Bolojan, Guvernul Romaniei
 Dropped entities: Premierul Ilie Bolojan, Guvernul, Ministerul Finantelor, Ministerul
 Radio output:
-Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari de investitii. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Ministerul Finantelor estimeaza costuri administrative mai mici pentru companii.
+Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari de investitii. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
 
 Story 2: justice_01
 Band: sparse
 Headline original: CSM da aviz negativ pentru un procuror-sef adjunct propus la DNA.
 Original words: 64
-Final words: 54
+Final words: 55
 Sentence count: 4
 Lead words: 16
-Estimated duration: 32 secunde
+Scope: national
+Estimated duration: 33 secunde
 Attribution: institution
+Romania impact included: False
+Strong closure: True
 Repeated person names: 0
 Administrative closure: False
 Multiple attributions: False
@@ -45,17 +54,20 @@ Main actor early: True
 Kept entities: Consiliul Superior al Magistraturii
 Dropped entities: CSM, DNA, Ministerul Justitiei, Ministerul, Presedintie
 Radio output:
-Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Asta inseamna ca Ministerul Justitiei trebuie sa revina cu o noua justificare sau cu alt nume pentru functie. Decizia mentine presiunea publica asupra numirilor din marile parchete.
+Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Asta inseamna ca Ministerul Justitiei trebuie sa revina cu o noua justificare sau cu alt nume pentru functie. Ministerul poate reveni cu o noua propunere in zilele urmatoare.
 
 Story 3: economy_01
 Band: standard
 Headline original: ANAF anunta controale extinse dupa o schema de frauda cu TVA.
 Original words: 86
-Final words: 74
+Final words: 62
 Sentence count: 4
 Lead words: 22
-Estimated duration: 44 secunde
+Scope: national
+Estimated duration: 37 secunde
 Attribution: institution
+Romania impact included: False
+Strong closure: True
 Repeated person names: 0
 Administrative closure: False
 Multiple attributions: False
@@ -64,17 +76,20 @@ Main actor early: True
 Kept entities: ANAF
 Dropped entities: none
 Radio output:
-ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii.
+ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
 Story 4: international_impact_01
 Band: sparse
 Headline original: Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz.
 Original words: 76
-Final words: 67
+Final words: 56
 Sentence count: 4
 Lead words: 19
-Estimated duration: 40 secunde
+Scope: international
+Estimated duration: 34 secunde
 Attribution: institution
+Romania impact included: True
+Strong closure: True
 Repeated person names: 0
 Administrative closure: False
 Multiple attributions: False
@@ -83,42 +98,45 @@ Main actor early: True
 Kept entities: Casa Alba, Romania
 Dropped entities: Stramtoarea Ormuz, Ormuz
 Radio output:
-Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Traderii urmaresc deja riscul unui nou soc pe piata petrolului si al unor costuri mai mari la transport.
+Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
 
 Story 5: local_01
 Band: sparse
 Headline original: Primaria Bacau incepe lucrari noi pe un coridor important de trafic.
 Original words: 79
-Final words: 63
+Final words: 56
 Sentence count: 4
 Lead words: 22
-Estimated duration: 38 secunde
+Scope: local
+Estimated duration: 34 secunde
 Attribution: institution
+Romania impact included: False
+Strong closure: True
 Repeated person names: 0
 Administrative closure: False
 Multiple attributions: False
-Operational simplifications: 0
+Operational simplifications: 1
 Main actor early: True
 Kept entities: Primaria
 Dropped entities: Compania de Transport Public, Transport Public
 Radio output:
-Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord a orasului. Soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Compania de Transport Public pregateste rute ocolitoare si timpi de asteptare mai mari la orele de varf.
+Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord a orasului. Soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
 
 Validation summary:
 {
   "story_count": 5,
-  "total_estimated_bulletin_duration_seconds": 190,
-  "average_word_count": 63.6,
-  "average_estimated_duration_seconds": 38,
-  "min_word_count": 54,
-  "max_word_count": 74,
-  "min_estimated_duration_seconds": 32,
-  "max_estimated_duration_seconds": 44,
+  "total_estimated_bulletin_duration_seconds": 172,
+  "average_word_count": 57.2,
+  "average_estimated_duration_seconds": 34.4,
+  "min_word_count": 55,
+  "max_word_count": 62,
+  "min_estimated_duration_seconds": 33,
+  "max_estimated_duration_seconds": 37,
   "sparse_story_count": 3,
   "standard_story_count": 2,
   "major_story_count": 0,
-  "stories_under_65_words": 3,
-  "stories_in_65_to_82_band": 2,
+  "stories_under_65_words": 5,
+  "stories_in_65_to_82_band": 0,
   "stories_in_85_to_105_band": 0,
   "stories_over_105_words": 0,
   "stories_with_sentences_over_24_words": 0,
@@ -126,10 +144,13 @@ Validation summary:
   "stories_with_lead_over_22_words": 0,
   "stories_where_main_actor_does_not_appear_early_in_lead": 0,
   "stories_where_person_entity_existed_but_was_not_preserved": 0,
+  "international_stories_with_romania_impact": 1,
+  "stories_with_strong_closure": 5,
   "repeated_person_name_count": 0,
   "stories_with_administrative_closure": 0,
   "stories_with_multiple_attributions": 0,
-  "simplified_operational_description_count": 3,
+  "simplified_operational_description_count": 4,
+  "tts_pronunciation_entry_count": 3,
   "explicit_attribution_counts": {
     "person": 1,
     "institution": 4,
@@ -138,12 +159,12 @@ Validation summary:
 }
 
 Sample preview bulletin:
-Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari de investitii. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Ministerul Finantelor estimeaza costuri administrative mai mici pentru companii.
+Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari de investitii. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
 
-Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Asta inseamna ca Ministerul Justitiei trebuie sa revina cu o noua justificare sau cu alt nume pentru functie. Decizia mentine presiunea publica asupra numirilor din marile parchete.
+Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Asta inseamna ca Ministerul Justitiei trebuie sa revina cu o noua justificare sau cu alt nume pentru functie. Ministerul poate reveni cu o noua propunere in zilele urmatoare.
 
-ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii.
+ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
-Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Traderii urmaresc deja riscul unui nou soc pe piata petrolului si al unor costuri mai mari la transport.
+Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
 
-Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord a orasului. Soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Compania de Transport Public pregateste rute ocolitoare si timpi de asteptare mai mari la orele de varf.
+Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord a orasului. Soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.

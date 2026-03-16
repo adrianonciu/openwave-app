@@ -10,6 +10,7 @@ if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
 from app.services.radio_editing_service import RadioEditingService
+from app.services.tts_pronunciation_helper import get_tts_pronunciation_map
 
 OUTPUT_DIR = BACKEND_ROOT / "debug_output"
 JSON_OUTPUT_PATH = OUTPUT_DIR / "radio_editing_preview.json"
@@ -275,6 +276,9 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     multiple_attributions = _note_value(edited.editing_debug_notes, "multiple_attributions", "False") == "True"
     administrative_closure = _note_value(edited.editing_debug_notes, "administrative_closure", "False") == "True"
     simplified_operational_description_count = int(_note_value(edited.editing_debug_notes, "simplified_operational_description_count", "0"))
+    source_scope = _note_value(edited.editing_debug_notes, "source_scope", "national")
+    romania_impact_included = _note_value(edited.editing_debug_notes, "romania_impact_included", "False") == "True"
+    strong_closure = _note_value(edited.editing_debug_notes, "strong_closure", "False") == "True"
     sentence_lengths = _sentence_counts(edited.radio_text)
     input_people = service._extract_persons(f"{fixture['headline']} {fixture['content_text']}")
     return {
@@ -288,6 +292,7 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "estimated_duration_seconds": edited.estimated_duration_seconds,
         "sentence_count": len(edited.radio_sentences),
         "lead_word_count": lead_word_count,
+        "source_scope": source_scope,
         "main_actor_early_in_lead": main_actor_early,
         "kept_entities": edited.kept_entities,
         "dropped_entities": edited.dropped_entities,
@@ -298,6 +303,8 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "radio_text": edited.radio_text,
         "attribution_type": attribution_type,
         "sentence_lengths": sentence_lengths,
+        "romania_impact_included": romania_impact_included,
+        "strong_closure": strong_closure,
         "repeated_person_name_count": repeated_person_name_count,
         "multiple_attributions": multiple_attributions,
         "administrative_closure": administrative_closure,
@@ -309,16 +316,19 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.3",
+        "OPENWAVE RADIO EDITING PREVIEW V1.4",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
         f"Average story words: {summary['average_word_count']}",
         f"Average story duration: {summary['average_estimated_duration_seconds']} secunde",
+        f"International stories with Romania impact: {summary['international_stories_with_romania_impact']}",
+        f"Stories with strong closure: {summary['stories_with_strong_closure']}",
         f"Repeated person names: {summary['repeated_person_name_count']}",
         f"Stories with administrative closure: {summary['stories_with_administrative_closure']}",
         f"Stories with multiple attributions: {summary['stories_with_multiple_attributions']}",
         f"Operational simplifications applied: {summary['simplified_operational_description_count']}",
+        f"TTS pronunciation entries: {summary['tts_pronunciation_entry_count']}",
         "",
     ]
     for item in payload["stories"]:
@@ -331,8 +341,11 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Final words: {item['radio_word_count']}",
                 f"Sentence count: {item['sentence_count']}",
                 f"Lead words: {item['lead_word_count']}",
+                f"Scope: {item['source_scope']}",
                 f"Estimated duration: {item['estimated_duration_seconds']} secunde",
                 f"Attribution: {item['attribution_type']}",
+                f"Romania impact included: {item['romania_impact_included']}",
+                f"Strong closure: {item['strong_closure']}",
                 f"Repeated person names: {item['repeated_person_name_count']}",
                 f"Administrative closure: {item['administrative_closure']}",
                 f"Multiple attributions: {item['multiple_attributions']}",
@@ -379,6 +392,7 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     service = RadioEditingService()
+    pronunciation_map = get_tts_pronunciation_map()
 
     preview_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(PREVIEW_FIXTURES, start=1)]
     preview_word_counts = [item["radio_word_count"] for item in preview_stories]
@@ -409,10 +423,15 @@ def main() -> None:
         "stories_with_lead_over_22_words": sum(1 for item in preview_stories if item["lead_word_count"] > 22),
         "stories_where_main_actor_does_not_appear_early_in_lead": sum(1 for item in preview_stories if not item["main_actor_early_in_lead"]),
         "stories_where_person_entity_existed_but_was_not_preserved": sum(1 for item in preview_stories if item["person_not_preserved"]),
+        "international_stories_with_romania_impact": sum(
+            1 for item in preview_stories if item["source_scope"] == "international" and item["romania_impact_included"]
+        ),
+        "stories_with_strong_closure": sum(1 for item in preview_stories if item["strong_closure"]),
         "repeated_person_name_count": sum(item["repeated_person_name_count"] for item in preview_stories),
         "stories_with_administrative_closure": sum(1 for item in preview_stories if item["administrative_closure"]),
         "stories_with_multiple_attributions": sum(1 for item in preview_stories if item["multiple_attributions"]),
         "simplified_operational_description_count": sum(item["simplified_operational_description_count"] for item in preview_stories),
+        "tts_pronunciation_entry_count": len(pronunciation_map),
         "explicit_attribution_counts": explicit_attribution_counts,
     }
 
@@ -420,6 +439,7 @@ def main() -> None:
         "story_count": len(preview_stories),
         "stories": preview_stories,
         "validation_summary": validation_summary,
+        "tts_pronunciation_map": pronunciation_map,
         "bulletin_radio_text": "\n\n".join(item["radio_text"] for item in preview_stories),
         "bulletin_estimated_duration_seconds": sum(preview_duration_counts),
     }

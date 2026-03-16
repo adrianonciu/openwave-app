@@ -64,6 +64,8 @@ LOCATION_PATTERNS = [
     "Europa",
 ]
 MEDIA_MARKERS = ["Agerpres", "Reuters", "AP", "BBC", "Digi24", "HotNews", "Mediafax", "Monitorul de Cluj"]
+INTERNATIONAL_SOURCE_LABELS = {"Reuters", "AP", "BBC", "Financial Times", "Bloomberg", "The Guardian", "Politico Europe"}
+LOCAL_SOURCE_LABEL_MARKERS = {"Bacau", "Cluj", "Iasi", "Suceava", "Monitorul", "Ziarul de", "Bacau.net", "Desteptarea"}
 ACTION_VERBS = {
     "anunta", "adopta", "aproba", "cere", "decide", "trimite", "incepe", "blocheaza",
     "confirma", "spune", "transmite", "estimeaza", "respinge", "reduce", "introduce",
@@ -81,7 +83,8 @@ IMPACT_KEYWORDS = {
 }
 NEXT_STEP_KEYWORDS = {
     "de luna viitoare", "primele efecte", "urmatorul pas", "vor fi prezentate", "intra in vigoare",
-    "mai departe", "orele de varf", "costuri", "urmeaza", "programate",
+    "mai departe", "urmeaza", "programate", "de luni", "de marti",
+    "in cateva zile", "in cateva saptamani", "de anul viitor", "luna aceasta", "saptamanii viitoare",
 }
 CONTRAST_MARKERS = {"opozitia", "critici", "respinge", "contestata"}
 TRIM_MARKERS = [", in timp ce", ", iar", ", insa", ", dar", ", dupa", ", care", " pe fondul", " intr-un moment in care"]
@@ -115,6 +118,26 @@ ADMINISTRATIVE_MARKERS = {
     "emit aprobari",
     "emit avize",
 }
+STRONG_CLOSURE_KEYWORDS = {
+    "intra in vigoare",
+    "primele efecte",
+    "primele rezultate",
+    "se aplica",
+    "va fi confirmat",
+    "vor fi confirmate",
+    "este investigat",
+    "este anchetat",
+    "urmeaza",
+    "de luni",
+    "luna viitoare",
+    "in cateva zile",
+    "in cateva saptamani",
+    "de anul viitor",
+    "in aceasta luna",
+    "saptamanii viitoare",
+    "zilele urmatoare",
+    "finalul saptamanii",
+}
 ATTRIBUTION_PREFIX_PATTERN = re.compile(
     r"^(?P<actor>(?:[A-Z][\w-]+(?:\s+[A-Z][\w-]+){0,4}|CSM|ANAF|DNA|ONU|NATO))\s+"
     r"(?P<verb>a spus|spune|a transmis|transmite|a anuntat|anunta|a confirmat|confirma|relateaza)\s+ca\s+",
@@ -126,7 +149,7 @@ ROLE_PREFIX_PATTERN = re.compile(
 )
 PERSON_STOPWORDS = {
     "Romania", "Guvernul", "Ministerul", "Primaria", "Casa", "Palatul", "Stramtoarea", "Compania", "Transport",
-    "Consiliul", "Statele", "Europa", "Washington", "Presedintie", "Presedintia",
+    "Consiliul", "Statele", "Europa", "Washington", "Presedintie", "Presedintia", "Marii", "Marea",
 }
 SPARSE_MIN_WORDS = 65
 SPARSE_MAX_WORDS = 82
@@ -158,6 +181,9 @@ class RadioEditingService:
         debug_notes.append(f"attribution_slot={attribution_slot}")
         debug_notes.append(f"lead_word_count={lead_word_count}")
         debug_notes.append(f"main_actor_early={actor_early}")
+        debug_notes.append(f"source_scope={payload['source_scope']}")
+        debug_notes.append(f"romania_impact_included={polish_metrics['romania_impact_included']}")
+        debug_notes.append(f"strong_closure={polish_metrics['strong_closure']}")
         debug_notes.append(f"repeated_person_name_count={polish_metrics['repeated_person_name_count']}")
         debug_notes.append(f"multiple_attributions={polish_metrics['multiple_attributions']}")
         debug_notes.append(f"administrative_closure={polish_metrics['administrative_closure']}")
@@ -233,10 +259,10 @@ class RadioEditingService:
                 "sentence_count_ok": 3 <= len(radio_sentences) <= 4,
                 "word_count_ok": radio_story.estimated_word_count >= 65,
                 "structure_ok": len(radio_sentences) >= 3,
-                "notes": list(story.policy_compliance.notes) + ["radio_editing_v1_3_applied"],
+                "notes": list(story.policy_compliance.notes) + ["radio_editing_v1_4_applied"],
             }
         )
-        debug_note = f"radio_editing_v1_3={radio_story.estimated_word_count}w/{radio_story.estimated_duration_seconds}s"
+        debug_note = f"radio_editing_v1_4={radio_story.estimated_word_count}w/{radio_story.estimated_duration_seconds}s"
         return story.model_copy(
             update={
                 "lead": radio_sentences[0] if radio_sentences else story.lead,
@@ -246,7 +272,7 @@ class RadioEditingService:
                 "word_count": radio_story.estimated_word_count,
                 "policy_compliance": compliance,
                 "editorial_notes": list(story.editorial_notes) + [debug_note],
-                "generation_explanation": story.generation_explanation + f" Radio editing v1.3 calibrated the story to {radio_story.estimated_word_count} words and {len(radio_sentences)} sentences for bulletin pacing.",
+                "generation_explanation": story.generation_explanation + f" Radio editing v1.4 calibrated the story to {radio_story.estimated_word_count} words and {len(radio_sentences)} sentences for bulletin pacing.",
                 "original_summary_text": story.summary_text,
                 "radio_edited_story": radio_story,
             }
@@ -292,6 +318,7 @@ class RadioEditingService:
             "source_text_sentences": source_sentences,
             "source_word_count": self._word_count(source_text),
             "source_label": str(source_label).strip() if source_label else None,
+            "source_scope": self._infer_story_scope(article_or_story, str(source_label).strip() if source_label else None, full_text),
             "top_person": top_person,
             "top_person_role": self._extract_role_alias(full_text, top_person) if top_person else None,
         }
@@ -447,6 +474,7 @@ class RadioEditingService:
     def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool]]:
         polished = [self._simplify_operational_language(sentence) for sentence in sentences if sentence]
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
+        polished = self._reinforce_romania_impact(payload, compression, polished)
         polished = self._replace_repeated_person_names(payload, polished)
         polished = self._limit_attribution_slots(polished)
         polished = self._strengthen_closure(payload, compression, polished)
@@ -456,6 +484,8 @@ class RadioEditingService:
             if sentence
         ]
         metrics = {
+            "romania_impact_included": self._has_romania_impact_sentence(payload, polished),
+            "strong_closure": bool(polished and self._has_strong_closure(polished[-1])),
             "repeated_person_name_count": self._count_repeated_person_names(payload, polished),
             "multiple_attributions": self._count_explicit_attributions(polished) > 1,
             "administrative_closure": bool(polished and self._is_administrative_sentence(polished[-1])),
@@ -484,6 +514,12 @@ class RadioEditingService:
         return ""
 
     def _derive_impact_sentence(self, payload: dict[str, object], kept_entities: list[str], existing: list[str]) -> str:
+        if self._has_romania_impact_sentence(payload, existing):
+            return ""
+        romania_impact = self._derive_romania_impact_sentence(payload, kept_entities, existing)
+        if romania_impact:
+            return romania_impact
+
         for sentence in payload["source_text_sentences"]:
             if not (self._sentence_has_impact(sentence) or self._sentence_has_next_step(sentence)):
                 continue
@@ -533,7 +569,7 @@ class RadioEditingService:
         if self._word_count(" ".join(existing)) < target_min:
             return True
         lowered = sentence.lower()
-        return self._sentence_has_next_step(sentence) or any(keyword in lowered for keyword in IMPACT_KEYWORDS)
+        return self._has_strong_closure(sentence) or self._sentence_has_next_step(sentence) or any(keyword in lowered for keyword in IMPACT_KEYWORDS)
 
     def _extend_last_sentence(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> str:
         if not sentences:
@@ -594,20 +630,119 @@ class RadioEditingService:
         return updated
 
     def _strengthen_closure(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> list[str]:
-        if not sentences or not self._is_administrative_sentence(sentences[-1]):
+        if not sentences:
             return sentences
-        replacement = self._best_closure_candidate(payload, compression, sentences[:-1])
+        if self._has_strong_closure(sentences[-1]) and not self._is_administrative_sentence(sentences[-1]):
+            return sentences
+        strong_index = next((index for index, sentence in enumerate(sentences[:-1]) if self._has_strong_closure(sentence)), None)
+        if strong_index is not None:
+            strong_sentence = sentences.pop(strong_index)
+            sentences.append(strong_sentence)
+            if self._has_strong_closure(sentences[-1]) and not self._is_administrative_sentence(sentences[-1]):
+                return sentences
+        replacement = self._best_closure_candidate(payload, compression, sentences[:-1], current_closure=sentences[-1])
         if replacement:
             sentences[-1] = replacement
         return sentences
 
-    def _best_closure_candidate(self, payload: dict[str, object], compression: CompressedStoryCore, existing: list[str]) -> str:
+    def _best_closure_candidate(self, payload: dict[str, object], compression: CompressedStoryCore, existing: list[str], current_closure: str = "") -> str:
         for role in ("impact", "reaction", "detail"):
             candidates = [item for item in compression.dropped_sentences if item.role == role]
             for candidate in sorted(candidates, key=lambda item: item.score, reverse=True):
                 rewritten = self._rewrite_for_radio(candidate.text, role, compression.kept_entities)
-                if rewritten and not self._is_near_duplicate(rewritten, existing) and not self._is_administrative_sentence(rewritten):
+                if (
+                    rewritten
+                    and not self._is_near_duplicate(rewritten, existing)
+                    and not self._is_administrative_sentence(rewritten)
+                    and self._has_strong_closure(rewritten)
+                ):
                     return rewritten
+        for sentence in payload["source_text_sentences"]:
+            rewritten = self._rewrite_for_radio(sentence, "reaction", compression.kept_entities)
+            if (
+                rewritten
+                and not self._is_near_duplicate(rewritten, existing)
+                and not self._is_administrative_sentence(rewritten)
+                and self._has_strong_closure(rewritten)
+            ):
+                return rewritten
+        fallback = self._derive_closure_fallback(payload)
+        rewritten_fallback = self._rewrite_for_radio(fallback, "reaction", compression.kept_entities)
+        if (
+            rewritten_fallback
+            and rewritten_fallback != current_closure
+            and not self._is_near_duplicate(rewritten_fallback, existing)
+        ):
+            return rewritten_fallback
+        return ""
+
+    def _reinforce_romania_impact(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> list[str]:
+        if not self._is_international_story(payload) or self._has_romania_impact_sentence(payload, sentences):
+            return sentences
+        romania_impact = self._derive_romania_impact_sentence(payload, compression.kept_entities, sentences)
+        if not romania_impact:
+            return sentences
+        impact_index = next(
+            (
+                index
+                for index, sentence in enumerate(sentences[1:], start=1)
+                if self._sentence_has_impact(sentence) or "romania" in sentence.lower() or "europa" in sentence.lower()
+            ),
+            None,
+        )
+        if impact_index is not None:
+            sentences[impact_index] = romania_impact
+            return sentences
+        if len(sentences) < MAX_SENTENCE_COUNT:
+            sentences.insert(min(2, len(sentences)), romania_impact)
+            return sentences
+        if len(sentences) >= 3:
+            sentences[2] = romania_impact
+        return sentences
+
+    def _derive_romania_impact_sentence(self, payload: dict[str, object], kept_entities: list[str], existing: list[str]) -> str:
+        if not self._is_international_story(payload):
+            return ""
+        for sentence in payload["source_text_sentences"]:
+            lowered = sentence.lower()
+            if "romania" not in lowered and "europa" not in lowered:
+                continue
+            if not self._looks_like_romania_impact_sentence(sentence):
+                continue
+            rewritten = self._rewrite_for_radio(sentence, "impact", kept_entities)
+            if rewritten and not self._is_near_duplicate(rewritten, existing):
+                return rewritten
+
+        lowered = payload["full_text"].lower()
+        fallback = ""
+        if any(keyword in lowered for keyword in ("ormuz", "petrol", "energie", "gaze", "transport maritim")):
+            fallback = "Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie."
+        elif any(keyword in lowered for keyword in ("nato", "marea neagra", "flancul estic", "exercitii", "securitate")):
+            fallback = "Pentru Romania, miza tine de securitatea regionala si de transportul din zona Marii Negre."
+        elif any(keyword in lowered for keyword in ("cipuri", "export", "lanturile", "aprovizionare", "baterii", "auto", "electronice")):
+            fallback = "Pentru Romania, efectul se poate vedea in costuri mai mari si intarzieri pe lanturile de aprovizionare."
+        elif any(keyword in lowered for keyword in ("tarife", "comert", "import", "exporturi", "trade")):
+            fallback = "Pentru Romania si restul Europei, presiunea se poate vedea in comert si in costurile de import."
+
+        rewritten = self._rewrite_for_radio(fallback, "impact", kept_entities)
+        if rewritten and not self._is_near_duplicate(rewritten, existing):
+            return rewritten
+        return ""
+
+    def _derive_closure_fallback(self, payload: dict[str, object]) -> str:
+        lowered = payload["full_text"].lower()
+        if any(keyword in lowered for keyword in ("isu", "incend", "controale")):
+            return "Primele rezultate sunt asteptate pana la finalul saptamanii."
+        if any(keyword in lowered for keyword in ("dna", "csm", "numire", "parchete", "procuror-sef")):
+            return "Ministerul poate reveni cu o noua propunere in zilele urmatoare."
+        if any(keyword in lowered for keyword in ("investig", "diicot", "procuror")):
+            return "Cazul este investigat, iar urmatoarele decizii sunt asteptate in cateva zile."
+        if any(keyword in lowered for keyword in ("lucrari", "restrictii", "trafic", "santier")):
+            return "Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare."
+        if any(keyword in lowered for keyword in ("energie", "petrol", "preturi", "facturi")):
+            return "Primele efecte sunt asteptate in cateva saptamani."
+        if any(keyword in lowered for keyword in ("ordonanta", "reguli", "schema")):
+            return "Masura intra in vigoare luna viitoare."
         return ""
 
     def _extract_role_alias(self, text: str, person: str) -> str | None:
@@ -644,6 +779,57 @@ class RadioEditingService:
     def _is_administrative_sentence(self, sentence: str) -> bool:
         lowered = sentence.lower()
         return any(marker in lowered for marker in ADMINISTRATIVE_MARKERS)
+
+    def _has_strong_closure(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        return any(marker in lowered for marker in STRONG_CLOSURE_KEYWORDS) or self._sentence_has_next_step(sentence)
+
+    def _is_international_story(self, payload: dict[str, object]) -> bool:
+        return str(payload.get("source_scope") or "").strip().lower() == "international"
+
+    def _looks_like_romania_impact_sentence(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        return (
+            ("romania" in lowered or "europa" in lowered)
+            and any(
+                keyword in lowered
+                for keyword in (
+                    "preturi",
+                    "energie",
+                    "costuri",
+                    "securitate",
+                    "lant",
+                    "aprovizionare",
+                    "comert",
+                    "transport",
+                    "efect",
+                    "impact",
+                )
+            )
+        )
+
+    def _has_romania_impact_sentence(self, payload: dict[str, object], sentences: list[str]) -> bool:
+        if not self._is_international_story(payload):
+            return False
+        return any(self._looks_like_romania_impact_sentence(sentence) for sentence in sentences)
+
+    def _infer_story_scope(self, article_or_story: object, source_label: str | None, full_text: str) -> str:
+        if isinstance(article_or_story, FetchedArticle) and article_or_story.source_scope:
+            return article_or_story.source_scope
+        source_scope = None
+        if isinstance(article_or_story, dict):
+            source_scope = article_or_story.get("source_scope")
+        if source_scope in {"local", "national", "international"}:
+            return str(source_scope)
+        if source_label:
+            if source_label in INTERNATIONAL_SOURCE_LABELS:
+                return "international"
+            if any(marker.lower() in source_label.lower() for marker in LOCAL_SOURCE_LABEL_MARKERS):
+                return "local"
+        lowered = full_text.lower()
+        if any(keyword in lowered for keyword in ("statele unite", "washington", "iran", "ormuz", "nato", "uniunea europeana", "marea neagra")):
+            return "international"
+        return "national"
 
     def _prune_entities(self, people: list[str], institutions: list[str], locations: list[str]) -> list[str]:
         kept: list[str] = []
