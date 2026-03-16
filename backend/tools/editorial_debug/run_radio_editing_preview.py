@@ -37,6 +37,7 @@ MARIA_OLT_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_maria_olt.txt"
 GEORGE_COVASNA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_george_covasna.txt"
 NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_nicu_constanta.txt"
 LIVE_NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "live_generalist_bulletin_nicu_constanta.txt"
+LIVE_NICU_CONSTANTA_V12_OUTPUT_PATH = OUTPUT_DIR / "live_generalist_bulletin_nicu_constanta_v12.txt"
 LIVE_SOURCE_REGISTRY_AUDIT_PATH = OUTPUT_DIR / "live_source_registry_audit.json"
 GEO_TAGGING_PREVIEW_PATH = OUTPUT_DIR / "geo_tagging_preview.json"
 NEWS_CLUSTERING_PREVIEW_PATH = OUTPUT_DIR / "news_clustering_preview.json"
@@ -1406,6 +1407,14 @@ def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
         f"Largest cluster size: {preview_payload.get('largest_cluster_size', 0)}",
         f"Duplicate articles collapsed: {preview_payload.get('duplicate_articles_collapsed', 0)}",
         f"Clusters with multiple sources: {preview_payload.get('clusters_with_multiple_sources', 0)}",
+        f"Stories skipped missing named person: {preview_payload.get('stories_skipped_missing_named_person', 0)}",
+        f"Stories skipped missing attributed quote: {preview_payload.get('stories_skipped_missing_attributed_quote', 0)}",
+        f"Stories skipped missing direct impact: {preview_payload.get('stories_skipped_missing_direct_impact', 0)}",
+        f"Stories skipped generic closure: {preview_payload.get('stories_skipped_generic_closure', 0)}",
+        f"Stories with level 1 person attribution: {preview_payload.get('stories_with_level_1_person_attribution', 0)}",
+        f"Stories with level 2 role/institution attribution: {preview_payload.get('stories_with_level_2_role_institution_attribution', 0)}",
+        f"Stories with level 3 media fallback attribution: {preview_payload.get('stories_with_level_3_media_fallback_attribution', 0)}",
+        f"Final bulletin story count after editorial gate: {preview_payload.get('final_bulletin_story_count_after_editorial_gate', preview_payload['story_count'])}",
         '',
         'Stories:',
     ]
@@ -1416,9 +1425,19 @@ def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
             f"   Local origin type: {item['local_origin_type']}",
             f"   Sources: {', '.join(item['source_labels'])}",
             f"   Original URLs: {', '.join(item['original_urls'])}",
+            f"   Attribution level: {item.get('attribution_level_used', 'none')}",
+            f"   Attributed person: {item.get('attributed_person_role', '')} {item.get('attributed_person_name', '')}".strip(),
+            f"   Attributed institution: {item.get('attributed_institution', '') or 'none'}",
+            f"   Attributed media source: {item.get('attributed_media_source', '') or 'none'}",
+            f"   Direct impact audience: {item.get('direct_impact_audience', '') or 'none'}",
             f"   Radio text: {item['summary_text']}",
             '',
         ])
+    if preview_payload.get('skipped_story_candidates'):
+        lines.extend(['Skipped candidates:'])
+        for candidate in preview_payload['skipped_story_candidates']:
+            lines.append(f"- {candidate.get('story_headline') or candidate.get('representative_title')}: {candidate.get('skip_reason_if_any')}")
+        lines.append('')
     lines.extend([
         'Written source credits:',
         ', '.join(preview_payload['media_source_credits']) or 'none',
@@ -1490,6 +1509,7 @@ def _run_live_mode(user: str = "Nicu", county: str = "Constanta", save_sample_di
     bulletin_text = _render_live_generalist_bulletin(payload)
     TEXT_OUTPUT_PATH.write_text(preview_text, encoding="utf-8")
     LIVE_NICU_CONSTANTA_OUTPUT_PATH.write_text(bulletin_text, encoding="utf-8")
+    LIVE_NICU_CONSTANTA_V12_OUTPUT_PATH.write_text(bulletin_text, encoding="utf-8")
 
     output_dir = Path(save_sample_dir) if save_sample_dir else None
     if output_dir is not None:
@@ -1529,7 +1549,9 @@ def _run_saved_sample_mode(sample_dir: Path) -> None:
     NEWS_CLUSTERING_PREVIEW_PATH.write_text(json.dumps(clustering_preview, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     JSON_OUTPUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     TEXT_OUTPUT_PATH.write_text(_render_live_preview_text(payload), encoding="utf-8")
-    REAL_SAMPLE_BULLETIN_OUTPUT_PATH.write_text(_render_live_generalist_bulletin(payload), encoding="utf-8")
+    bulletin_text = _render_live_generalist_bulletin(payload)
+    REAL_SAMPLE_BULLETIN_OUTPUT_PATH.write_text(bulletin_text, encoding="utf-8")
+    LIVE_NICU_CONSTANTA_V12_OUTPUT_PATH.write_text(bulletin_text, encoding="utf-8")
 
 
 def _parse_args() -> argparse.Namespace:

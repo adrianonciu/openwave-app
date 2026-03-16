@@ -22,6 +22,14 @@ DEFAULT_SAMPLE_COUNTY = "Constanta"
 DEFAULT_SAMPLE_USER = "Nicu"
 
 
+def _note_value(notes: list[str], key: str, default: str = "") -> str:
+    prefix = f"{key}="
+    for note in notes:
+        if note.startswith(prefix):
+            return note.split("=", 1)[1]
+    return default
+
+
 def build_personalization(user: str, county: str) -> UserPersonalization:
     return UserPersonalization(
         listener_profile=ListenerProfile(first_name=user, country="Romania", region=county),
@@ -169,7 +177,7 @@ def build_preview_payload_from_articles(
         max_stories=15,
     )
 
-    cluster_by_id = {cluster.cluster.cluster_id: cluster for cluster in shaping_result.ordered_clusters}
+    cluster_by_id = {cluster.cluster.cluster_id: cluster for cluster in scored_clusters}
     story_rows: list[dict[str, Any]] = []
     for position, item in enumerate(final_briefing.story_items, start=1):
         cluster = cluster_by_id.get(item.story.cluster_id)
@@ -177,6 +185,7 @@ def build_preview_payload_from_articles(
         primary_member = members[0] if members else None
         original_urls = sorted({member.url for member in members})[:5]
         source_labels = item.story.source_labels
+        notes = item.story.radio_edited_story.editing_debug_notes if item.story.radio_edited_story is not None else []
         story_rows.append({
             "position": position,
             "headline": item.story.headline,
@@ -187,6 +196,14 @@ def build_preview_payload_from_articles(
             "original_urls": original_urls,
             "scope": next((member.source_scope for member in members if member.source_scope), "unknown"),
             "local_origin_type": _cluster_local_origin_type(cluster, target_county) if cluster is not None else "unknown",
+            "attribution_level_used": _note_value(notes, "attribution_level_used", "none"),
+            "attributed_person_name": _note_value(notes, "attributed_name_used", ""),
+            "attributed_person_role": _note_value(notes, "attributed_role_used", ""),
+            "attributed_institution": _note_value(notes, "attributed_institution_used", ""),
+            "attributed_media_source": _note_value(notes, "attributed_media_source_used", ""),
+            "direct_impact_audience": _note_value(notes, "direct_impact_audience", ""),
+            "skip_reason_if_any": _note_value(notes, "skip_reason_if_any", ""),
+            "lead_continuation_rewrite_applied": _note_value(notes, "lead_continuation_rewrite_applied", "False") == "True",
         })
 
     geo_preview_payload = geo_service.build_preview_payload(geo_articles)
@@ -217,6 +234,15 @@ def build_preview_payload_from_articles(
         "geo_tagged_international": geo_summary["geo_tagged_international"],
         "stories_with_multiple_county_hits": geo_summary["stories_with_multiple_county_hits"],
         "stories": story_rows,
+        "stories_skipped_missing_named_person": final_briefing.editorial_gate_debug.get("stories_skipped_missing_named_person", 0),
+        "stories_skipped_missing_attributed_quote": final_briefing.editorial_gate_debug.get("stories_skipped_missing_attributed_quote", 0),
+        "stories_skipped_missing_direct_impact": final_briefing.editorial_gate_debug.get("stories_skipped_missing_direct_impact", 0),
+        "stories_skipped_generic_closure": final_briefing.editorial_gate_debug.get("stories_skipped_generic_closure", 0),
+        "stories_with_level_1_person_attribution": final_briefing.editorial_gate_debug.get("stories_with_level_1_person_attribution", 0),
+        "stories_with_level_2_role_institution_attribution": final_briefing.editorial_gate_debug.get("stories_with_level_2_role_institution_attribution", 0),
+        "stories_with_level_3_media_fallback_attribution": final_briefing.editorial_gate_debug.get("stories_with_level_3_media_fallback_attribution", 0),
+        "final_bulletin_story_count_after_editorial_gate": final_briefing.editorial_gate_debug.get("final_bulletin_story_count_after_editorial_gate", len(story_rows)),
+        "skipped_story_candidates": final_briefing.editorial_gate_debug.get("skipped_candidates", []),
         "media_source_credits": final_briefing.media_source_credits,
         "written_source_credits_emitted": bool(final_briefing.media_source_credits),
         "registry_audit_path": str(registry_audit_path) if registry_audit_path else None,

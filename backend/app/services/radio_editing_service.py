@@ -287,6 +287,28 @@ HUMAN_WEAK_TO_STRONG_REPLACEMENTS = {
     "impact economic": "facturi mai mari",
 }
 
+GENERIC_FILLER_CLOSURE_MARKERS = (
+    "urmeaza clarificari", "subiectul cere reactii", "ramane de vazut", "urmeaza reactii",
+    "detalii noi", "pe aceasta tema", "clarificari oficiale"
+)
+DIRECT_IMPACT_AUDIENCE_MARKERS = VOICE_OF_PEOPLE_MARKERS + (
+    "firmele", "companiile", "pensionarii", "afacerile", "soferii din constanta", "locuitorii din constanta",
+    "pasagerii", "calatorii", "locuitorii de pe litoral", "soferii si familiile", "romania", "europa", "oamenii"
+)
+DIRECT_IMPACT_EFFECT_MARKERS = (
+    "vor plati", "vor astepta", "vor circula", "vor avea", "risca", "pot vedea", "vor vedea",
+    "pot primi", "primesc", "pierde", "pierde acces", "amenzi", "controale", "facturi", "preturi",
+    "intarzieri", "restrictii", "mai scump", "mai mari", "livrari mai lente", "blocaje", "cozi",
+    "timp de asteptare", "tarife", "costuri", "benzina", "motorina", "scumpiri", "anulari", "dependenta",
+    "incertitudine", "verificari suplimentare", "controale suplimentare"
+)
+EDITORIAL_GATE_SKIP_REASONS = {
+    "missing_named_person",
+    "missing_attributed_quote",
+    "missing_direct_impact",
+    "generic_closure",
+}
+
 
 class RadioEditingService:
     def __init__(self) -> None:
@@ -371,6 +393,18 @@ class RadioEditingService:
         debug_notes.append(f"multiple_attributions={polish_metrics['multiple_attributions']}")
         debug_notes.append(f"administrative_closure={polish_metrics['administrative_closure']}")
         debug_notes.append(f"simplified_operational_description_count={polish_metrics['simplified_operational_description_count']}")
+        gate_meta = self._evaluate_editorial_gate(payload, radio_sentences, polish_metrics)
+        debug_notes.append(f"direct_impact_audience={gate_meta['direct_impact_audience']}")
+        debug_notes.append(f"editorial_gate_eligible={gate_meta['editorial_gate_eligible']}")
+        debug_notes.append(f"skip_reason_if_any={gate_meta['skip_reason_if_any']}")
+        debug_notes.append(f"human_headline={gate_meta['human_headline']}")
+        debug_notes.append(f"stories_skipped_missing_named_person={gate_meta['stories_skipped_missing_named_person']}")
+        debug_notes.append(f"stories_skipped_missing_attributed_quote={gate_meta['stories_skipped_missing_attributed_quote']}")
+        debug_notes.append(f"stories_skipped_missing_direct_impact={gate_meta['stories_skipped_missing_direct_impact']}")
+        debug_notes.append(f"stories_skipped_generic_closure={gate_meta['stories_skipped_generic_closure']}")
+        debug_notes.append(f"stories_with_level_1_person_attribution={gate_meta['stories_with_level_1_person_attribution']}")
+        debug_notes.append(f"stories_with_level_2_role_institution_attribution={gate_meta['stories_with_level_2_role_institution_attribution']}")
+        debug_notes.append(f"stories_with_level_3_media_fallback_attribution={gate_meta['stories_with_level_3_media_fallback_attribution']}")
         if not self._is_romanian_safe(radio_text):
             debug_notes.append("romanian_safety_warning=some_english_markers_remain")
 
@@ -439,21 +473,28 @@ class RadioEditingService:
             debug_notes=debug_notes,
         )
 
-    def apply_to_generated_story_summary(self, story: GeneratedStorySummary) -> GeneratedStorySummary:
+    def apply_to_generated_story_summary(self, story: GeneratedStorySummary) -> tuple[GeneratedStorySummary | None, dict[str, object]]:
         radio_story = self.build_radio_story(story)
+        gate_meta = self._editorial_gate_meta_from_notes(radio_story.editing_debug_notes)
+        if not gate_meta["editorial_gate_eligible"]:
+            return None, gate_meta
+
         radio_sentences = [sentence for sentence in SENTENCE_SPLIT_PATTERN.split(radio_story.radio_text) if sentence.strip()]
         compliance = story.policy_compliance.model_copy(
             update={
                 "estimated_duration_seconds": radio_story.estimated_duration_seconds,
                 "sentence_count_ok": 3 <= len(radio_sentences) <= 4,
-                "word_count_ok": radio_story.estimated_word_count >= 65,
+                "word_count_ok": 65 <= radio_story.estimated_word_count <= 95,
                 "structure_ok": len(radio_sentences) >= 3,
-                "notes": list(story.policy_compliance.notes) + ["radio_editing_v1_5_applied"],
+                "notes": list(story.policy_compliance.notes) + ["radio_editing_v1_12_applied", "editorial_gate_passed"],
             }
         )
-        debug_note = f"radio_editing_v1_5={radio_story.estimated_word_count}w/{radio_story.estimated_duration_seconds}s"
-        return story.model_copy(
+        debug_note = f"radio_editing_v1_12={radio_story.estimated_word_count}w/{radio_story.estimated_duration_seconds}s"
+        human_headline = str(gate_meta.get("human_headline") or story.headline).strip() or story.headline
+        updated_story = story.model_copy(
             update={
+                "headline": human_headline,
+                "short_headline": human_headline,
                 "lead": radio_sentences[0] if radio_sentences else story.lead,
                 "body": " ".join(radio_sentences[1:]).strip(),
                 "summary_text": radio_story.radio_text,
@@ -461,11 +502,13 @@ class RadioEditingService:
                 "word_count": radio_story.estimated_word_count,
                 "policy_compliance": compliance,
                 "editorial_notes": list(story.editorial_notes) + [debug_note],
-                "generation_explanation": story.generation_explanation + f" Radio editing v1.5 calibrated the story to {radio_story.estimated_word_count} words and {len(radio_sentences)} sentences for bulletin pacing.",
+                "generation_explanation": story.generation_explanation + f" Radio editing v1.12 enforced a human-attributed radio structure at {radio_story.estimated_word_count} words and {len(radio_sentences)} sentences.",
                 "original_summary_text": story.summary_text,
                 "radio_edited_story": radio_story,
             }
         )
+        gate_meta["story_headline"] = human_headline
+        return updated_story, gate_meta
 
     def _normalize_input(self, article_or_story: object) -> dict[str, object]:
         source_label = None
@@ -695,6 +738,11 @@ class RadioEditingService:
             if sentence
         ]
         polished = self._dedupe_story_sentences(polished)
+        polished = self._ensure_named_person_lead(payload, compression, polished)
+        polished = self._ensure_direct_audience_impact_sentence(payload, compression, polished)
+        polished = self._ensure_attributed_voice(payload, compression, polished)
+        polished = [self._finalize_sentence(sentence) for sentence in polished if sentence]
+        polished = self._dedupe_story_sentences(polished)
         final_lead = polished[0] if polished else ""
         lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], final_lead), 2)
         attribution_type_used = self._story_attribution_type(polished, payload)
@@ -762,6 +810,9 @@ class RadioEditingService:
             "human_anchor_type": human_anchor_type,
             "human_density_score": 1.0 if human_anchor_type != "none" else 0.0,
             "radio_human_layer_applied": human_meta["radio_human_layer_applied"],
+            "direct_impact_audience": self._direct_impact_audience(polished[1] if len(polished) > 1 else (polished[0] if polished else "")),
+            "has_direct_impact_sentence": self._has_direct_audience_impact_sentence(polished),
+            "generic_filler_closure": bool(polished and self._has_generic_filler_closure(polished[-1])),
         }
         return polished[:MAX_SENTENCE_COUNT], metrics
 
@@ -871,6 +922,210 @@ class RadioEditingService:
         if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
             return self._finalize_sentence("Consumatorii ar putea vedea presiune mai mare pe facturi si pe preturile la energie.")
         return lead
+
+
+    def _ensure_named_person_lead(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        top_person = str(payload.get("top_person") or "").strip()
+        top_person_role = str(payload.get("top_person_role") or "").strip()
+        if not sentences or not top_person or not top_person_role:
+            return sentences
+        lead = self._ensure_role_and_name_attribution(sentences[0], payload)
+        if self._sentence_personal_attribution_type(lead, payload) == "named_person":
+            sentences[0] = lead
+            return sentences
+        candidate = self._best_personal_attribution_sentence(payload, compression, sentences)
+        if not candidate or self._sentence_personal_attribution_type(candidate, payload) != "named_person":
+            return sentences
+        updated = [sentence for sentence in sentences if self._comparison_text(sentence) != self._comparison_text(candidate)]
+        updated.insert(0, self._ensure_role_and_name_attribution(candidate, payload))
+        return updated[:MAX_SENTENCE_COUNT]
+
+    def _ensure_direct_audience_impact_sentence(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> list[str]:
+        if not sentences:
+            return sentences
+        if len(sentences) > 1 and self._direct_impact_audience(sentences[1]):
+            return sentences
+        candidate = self._build_direct_audience_impact_sentence(payload, compression, sentences)
+        if not candidate:
+            return sentences
+        updated = list(sentences)
+        if len(updated) == 1:
+            updated.append(candidate)
+        elif not self._direct_impact_audience(updated[1]):
+            if not self._is_near_duplicate(candidate, [updated[0]]):
+                updated[1] = candidate
+        elif candidate not in updated and len(updated) < MAX_SENTENCE_COUNT:
+            updated.insert(1, candidate)
+        return updated[:MAX_SENTENCE_COUNT]
+
+    def _build_direct_audience_impact_sentence(
+        self,
+        payload: dict[str, object],
+        compression: CompressedStoryCore,
+        sentences: list[str],
+    ) -> str:
+        for sentence in list(sentences[1:]) + [item.text for item in compression.dropped_sentences] + list(payload["source_text_sentences"]):
+            rewritten = self._rewrite_for_radio(sentence, "impact", compression.kept_entities)
+            if rewritten and self._direct_impact_audience(rewritten):
+                return rewritten
+        lowered = payload["full_text"].lower()
+        if any(term in lowered for term in ("spital", "urgente", "pacienti", "ambulanta")):
+            return self._finalize_sentence("Pacientii pot astepta mai putin la evaluare daca noul flux ramane functional.")
+        if any(term in lowered for term in ("trafic", "lucrari", "restrictii", "carosabil", "pasaj")):
+            return self._finalize_sentence("Soferii din judet vor circula mai greu si risca intarzieri la orele de varf.")
+        if any(term in lowered for term in ("tren", "cfr", "peron", "navetist")):
+            return self._finalize_sentence("Navetistii risca intarzieri si schimbari de peron chiar din primele zile.")
+        if any(term in lowered for term in ("energie", "petrol", "benzina", "ormuz", "curent")):
+            return self._finalize_sentence("Soferii si familiile risca facturi mai mari daca preturile la energie continua sa urce.")
+        if any(term in lowered for term in ("anaf", "tva", "frauda", "rambursari", "firme")):
+            return self._finalize_sentence("Firmele verificate risca blocaje, amenzi si controale mai dure in perioada urmatoare.")
+        if any(term in lowered for term in ("elev", "parinti", "catalogul digital", "scoli")):
+            return self._finalize_sentence("Parintii si elevii pot vedea mai repede absentele si notele in acelasi sistem.")
+        if any(term in lowered for term in ("fermier", "seceta", "alimente", "agricultur")):
+            return self._finalize_sentence("Fermierii si familiile risca preturi mai mari la alimente daca seceta se adanceste.")
+        if any(term in lowered for term in ("turism", "litoral", "statiuni", "hotel")):
+            return self._finalize_sentence("Turistii si operatorii din turism risca restrictii si costuri mai mari in plin sezon.")
+        if any(term in lowered for term in ("investitii", "avize", "companii", "autorizatii")):
+            return self._finalize_sentence("Companiile pot pierde mai putin timp cu avizele, dar investitorii asteapta aplicarea rapida a regulilor.")
+        if any(term in lowered for term in ("aeroport", "zborurile", "kogalniceanu", "pasager")):
+            return self._finalize_sentence("Pasagerii si turistii risca intarzieri, rerutari sau anulari daca restrictiile raman active.")
+        if any(term in lowered for term in ("judecatoria", "tribunal", "justitie", "disputa juridica", "scoala")):
+            return self._finalize_sentence("Locuitorii si firmele implicate risca amanari si costuri mai mari pana la o decizie clara.")
+        if any(term in lowered for term in ("autostrada", "a7", "pnrr", "drum expres")):
+            return self._finalize_sentence("Soferii si firmele de transport risca intarzieri mai mari daca proiectul pierde finantarea.")
+        if any(term in lowered for term in ("neptun deep", "importuri", "omv petrom", "gaze din marea neagra")):
+            return self._finalize_sentence("Familiile si companiile pot depinde mai putin de importuri daca proiectul ramane in grafic.")
+        if any(term in lowered for term in ("apararii", "litoral", "iran", "securitate")):
+            return self._finalize_sentence("Locuitorii de pe litoral si turistii pot vedea controale suplimentare daca tensiunea regionala creste.")
+        return ""
+
+    def _direct_impact_audience(self, sentence: str) -> str:
+        lowered = sentence.lower()
+        for audience in DIRECT_IMPACT_AUDIENCE_MARKERS:
+            if audience in lowered and any(marker in lowered for marker in DIRECT_IMPACT_EFFECT_MARKERS):
+                return audience
+        return ""
+
+    def _has_direct_audience_impact_sentence(self, sentences: list[str]) -> bool:
+        return any(self._direct_impact_audience(sentence) or self._looks_like_practical_consequence(sentence) for sentence in sentences)
+
+    def _looks_like_practical_consequence(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        practical_targets = (
+            "romania", "europa", "judet", "litoral", "pasagerii", "calatorii", "companiile", "firmele",
+            "consumatorii", "turistii", "soferii", "navetistii", "familiile", "locuitorii"
+        )
+        return any(marker in lowered for marker in DIRECT_IMPACT_EFFECT_MARKERS) and any(target in lowered for target in practical_targets)
+
+    def _has_generic_filler_closure(self, sentence: str) -> bool:
+        lowered = sentence.lower()
+        return any(marker in lowered for marker in GENERIC_FILLER_CLOSURE_MARKERS)
+
+    def _build_human_headline(self, payload: dict[str, object], attribution_details: dict[str, str]) -> str:
+        essence = self._headline_essence(payload["headline_original"], payload, attribution_details)
+        if attribution_details.get("attribution_level_used") == "person":
+            role = attribution_details.get("attributed_role_used") or str(payload.get("top_person_role") or "").strip()
+            name = attribution_details.get("attributed_name_used") or str(payload.get("top_person") or "").strip()
+            actor = " ".join(part for part in (role, name) if part).strip()
+        elif attribution_details.get("attribution_level_used") == "institution":
+            actor = attribution_details.get("attributed_institution_used") or "Institutia"
+        else:
+            actor = attribution_details.get("attributed_media_source_used") or str(payload.get("source_label") or "Sursa")
+        headline = " ".join(part for part in (actor, essence) if part).strip()
+        tokens = headline.split()
+        if len(tokens) > 10:
+            headline = " ".join(tokens[:10])
+        return headline.strip(" ,:-")
+
+    def _headline_essence(self, headline: str, payload: dict[str, object], attribution_details: dict[str, str]) -> str:
+        cleaned = self._clean_text(headline).strip(" .")
+        removal_candidates = [
+            str(payload.get("top_person") or "").strip(),
+            str(payload.get("top_person_role") or "").strip(),
+            attribution_details.get("attributed_institution_used") or "",
+            attribution_details.get("attributed_media_source_used") or "",
+        ] + self._extract_institutions(payload["full_text"])
+        for candidate in removal_candidates:
+            if candidate:
+                cleaned = re.sub(rf"\b{re.escape(candidate)}\b", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s+", " ", cleaned).strip(" ,:-")
+        tokens = cleaned.split()
+        if len(tokens) > 6:
+            cleaned = " ".join(tokens[:6])
+        return cleaned or "anunta masura"
+
+    def _evaluate_editorial_gate(
+        self,
+        payload: dict[str, object],
+        sentences: list[str],
+        polish_metrics: dict[str, int | bool | str | float],
+    ) -> dict[str, object]:
+        attribution_details = self._attributed_voice_details(sentences, payload)
+        attribution_type_used = str(polish_metrics.get("attribution_type_used") or self._story_attribution_type(sentences, payload))
+        attribution_level_used = str(polish_metrics.get("attribution_level_used") or attribution_details["attribution_level_used"])
+        named_person_available = bool(payload.get("top_person") and payload.get("top_person_role"))
+        direct_impact_audience = str(polish_metrics.get("direct_impact_audience") or self._direct_impact_audience(sentences[1] if len(sentences) > 1 else (sentences[0] if sentences else "")))
+        has_direct_impact = bool(direct_impact_audience) or self._has_direct_audience_impact_sentence(sentences)
+        has_attributed_statement = attribution_level_used != "none" or any(self._sentence_personal_attribution_type(sentence, payload) != "none" for sentence in sentences)
+        generic_closure = bool(sentences and self._has_generic_filler_closure(sentences[-1]))
+        skip_reason = ""
+        if named_person_available and attribution_type_used != "named_person":
+            skip_reason = "missing_named_person"
+        elif not has_attributed_statement or attribution_level_used == "none":
+            skip_reason = "missing_attributed_quote"
+        elif not has_direct_impact:
+            skip_reason = "missing_direct_impact"
+        elif generic_closure:
+            skip_reason = "generic_closure"
+        human_headline = self._build_human_headline(payload, attribution_details)
+        return {
+            "editorial_gate_eligible": skip_reason == "",
+            "skip_reason_if_any": skip_reason,
+            "direct_impact_audience": direct_impact_audience or (self._direct_impact_audience(sentences[0]) if sentences else ""),
+            "human_headline": human_headline,
+            "stories_skipped_missing_named_person": 1 if skip_reason == "missing_named_person" else 0,
+            "stories_skipped_missing_attributed_quote": 1 if skip_reason == "missing_attributed_quote" else 0,
+            "stories_skipped_missing_direct_impact": 1 if skip_reason == "missing_direct_impact" else 0,
+            "stories_skipped_generic_closure": 1 if skip_reason == "generic_closure" else 0,
+            "stories_with_level_1_person_attribution": 1 if attribution_type_used == "named_person" else 0,
+            "stories_with_level_2_role_institution_attribution": 1 if attribution_level_used == "institution" or attribution_type_used == "role_based_person" else 0,
+            "stories_with_level_3_media_fallback_attribution": 1 if attribution_level_used == "media" else 0,
+            "attribution_level_used": attribution_level_used,
+            "attributed_person_name": attribution_details["attributed_name_used"],
+            "attributed_person_role": attribution_details["attributed_role_used"],
+            "attributed_institution": attribution_details["attributed_institution_used"],
+            "attributed_media_source": attribution_details["attributed_media_source_used"],
+        }
+
+    def _editorial_gate_meta_from_notes(self, notes: list[str]) -> dict[str, object]:
+        return {
+            "editorial_gate_eligible": self._debug_value(notes, "editorial_gate_eligible", "False") == "True",
+            "skip_reason_if_any": self._debug_value(notes, "skip_reason_if_any", ""),
+            "direct_impact_audience": self._debug_value(notes, "direct_impact_audience", ""),
+            "human_headline": self._debug_value(notes, "human_headline", ""),
+            "stories_skipped_missing_named_person": int(self._debug_value(notes, "stories_skipped_missing_named_person", "0")),
+            "stories_skipped_missing_attributed_quote": int(self._debug_value(notes, "stories_skipped_missing_attributed_quote", "0")),
+            "stories_skipped_missing_direct_impact": int(self._debug_value(notes, "stories_skipped_missing_direct_impact", "0")),
+            "stories_skipped_generic_closure": int(self._debug_value(notes, "stories_skipped_generic_closure", "0")),
+            "stories_with_level_1_person_attribution": int(self._debug_value(notes, "stories_with_level_1_person_attribution", "0")),
+            "stories_with_level_2_role_institution_attribution": int(self._debug_value(notes, "stories_with_level_2_role_institution_attribution", "0")),
+            "stories_with_level_3_media_fallback_attribution": int(self._debug_value(notes, "stories_with_level_3_media_fallback_attribution", "0")),
+            "attribution_level_used": self._debug_value(notes, "attribution_level_used", "none"),
+            "attributed_person_name": self._debug_value(notes, "attributed_name_used", ""),
+            "attributed_person_role": self._debug_value(notes, "attributed_role_used", ""),
+            "attributed_institution": self._debug_value(notes, "attributed_institution_used", ""),
+            "attributed_media_source": self._debug_value(notes, "attributed_media_source_used", ""),
+        }
 
 
 

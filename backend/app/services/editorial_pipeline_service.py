@@ -94,21 +94,60 @@ class EditorialPipelineService:
             if selection_result.selected_clusters and selection_result.selected_clusters[0].editorial_profile_used
             else "general"
         )
+        editorial_gate_target = max_stories or len(selection_result.selected_clusters) or 15
+        candidate_clusters = self._build_editorial_gate_candidate_pool(
+            selection_result=selection_result,
+            scored_clusters=scored_clusters,
+            max_stories=editorial_gate_target,
+        )
         bulletin_shaping_result = self.bulletin_shaping_service.shape_selected_clusters(
-            selection_result.selected_clusters,
+            candidate_clusters,
             profile_name=profile_name,
         )
         self.summary_generator_service.reset_variation_state()
         self.radio_editing_service.reset_variation_state()
-        generated_summaries = [
-            self.radio_editing_service.apply_to_generated_story_summary(
-                self.summary_generator_service.generate_story_summary(
-                    cluster,
-                    previous_bulletin_clusters=continuity_records,
-                )
+        generated_summaries = []
+        skipped_candidates: list[dict[str, object]] = []
+        editorial_gate_counts = {
+            "stories_skipped_missing_named_person": 0,
+            "stories_skipped_missing_attributed_quote": 0,
+            "stories_skipped_missing_direct_impact": 0,
+            "stories_skipped_generic_closure": 0,
+            "stories_with_level_1_person_attribution": 0,
+            "stories_with_level_2_role_institution_attribution": 0,
+            "stories_with_level_3_media_fallback_attribution": 0,
+        }
+        for cluster in bulletin_shaping_result.ordered_clusters:
+            generated_story = self.summary_generator_service.generate_story_summary(
+                cluster,
+                previous_bulletin_clusters=continuity_records,
             )
-            for cluster in bulletin_shaping_result.ordered_clusters
-        ]
+            edited_story, gate_meta = self.radio_editing_service.apply_to_generated_story_summary(generated_story)
+            for key in editorial_gate_counts:
+                editorial_gate_counts[key] += int(gate_meta.get(key, 0) or 0)
+            if edited_story is None:
+                skipped_candidates.append({
+                    "cluster_id": generated_story.cluster_id,
+                    "representative_title": generated_story.representative_title or generated_story.headline,
+                    "story_headline": gate_meta.get("story_headline") or gate_meta.get("human_headline") or generated_story.headline,
+                    "skip_reason_if_any": gate_meta.get("skip_reason_if_any"),
+                    "source_labels": generated_story.source_labels,
+                    "score_total": generated_story.score_total,
+                })
+                continue
+            if self._is_duplicate_generated_story(edited_story, generated_summaries):
+                skipped_candidates.append({
+                    "cluster_id": generated_story.cluster_id,
+                    "representative_title": generated_story.representative_title or generated_story.headline,
+                    "story_headline": gate_meta.get("story_headline") or gate_meta.get("human_headline") or generated_story.headline,
+                    "skip_reason_if_any": "duplicate_after_editorial_gate",
+                    "source_labels": generated_story.source_labels,
+                    "score_total": generated_story.score_total,
+                })
+                continue
+            generated_summaries.append(edited_story)
+            if len(generated_summaries) >= editorial_gate_target:
+                break
         briefing_draft = self.briefing_assembly_service.assemble_briefing(
             generated_summaries,
             personalization=resolved_personalization,
@@ -127,6 +166,13 @@ class EditorialPipelineService:
             for label in item.story.source_labels
             if label and label.strip()
         })
+
+        editorial_gate_debug = {
+            **editorial_gate_counts,
+            "final_bulletin_story_count_after_editorial_gate": len(generated_summaries),
+            "editorial_gate_target_story_count": editorial_gate_target,
+            "skipped_candidates": skipped_candidates,
+        }
 
         intermediate_counts = EditorialPipelineIntermediateCounts(
             article_count=len(articles),
@@ -178,6 +224,7 @@ class EditorialPipelineService:
             local_sources_enabled=local_source_resolution.local_sources_enabled,
             local_sources_monitored=local_source_resolution.local_sources_enabled,
             media_source_credits=media_source_credits,
+            editorial_gate_debug=editorial_gate_debug,
             personalization_explanation=personalization_explanation,
             selection_explanation=selection_result.selection_explanation,
             bulletin_shaping_explanation=bulletin_shaping_result.shaping_explanation,
@@ -188,6 +235,69 @@ class EditorialPipelineService:
             pipeline_explanation=pipeline_explanation,
             created_at=created_at,
         )
+
+    def _build_editorial_gate_candidate_pool(
+        self,
+        selection_result,
+        scored_clusters: list,
+        max_stories: int,
+    ) -> list:
+        decision_reason_by_cluster_id = {decision.cluster_id: decision.reason for decision in selection_result.decisions}
+        hard_reject_reasons = {
+            "below_minimum_score_threshold",
+            "missing_local_geographic_signal",
+            "single_source_cluster_without_local_relevance",
+            "low_value_headline_cluster",
+            "english_heavy_headline_cluster",
+            "low_priority_source_cluster",
+            "low_editorial_fit_cluster",
+            "non_hard_news_national_cluster",
+            "placeholder_headline_cluster",
+        }
+        preferred_alternate_reasons = {
+            "selection_limit_reached",
+            "rejected_by_editorial_preferences_soft_target",
+            "rejected_by_source_diversity_soft_cap",
+            "rejected_by_topic_diversity_soft_cap",
+        }
+        selected_ids = {cluster.cluster.cluster_id for cluster in selection_result.selected_clusters}
+        preferred_alternates = []
+        fallback_alternates = []
+        for cluster in scored_clusters:
+            cluster_id = cluster.cluster.cluster_id
+            if cluster_id in selected_ids:
+                continue
+            reason = decision_reason_by_cluster_id.get(cluster_id, "")
+            if reason in hard_reject_reasons:
+                continue
+            if reason in preferred_alternate_reasons:
+                preferred_alternates.append(cluster)
+            else:
+                fallback_alternates.append(cluster)
+        candidate_pool = list(selection_result.selected_clusters) + preferred_alternates + fallback_alternates
+        limit = max(max_stories * 3, max_stories + 8)
+        return candidate_pool[:limit]
+
+
+    def _is_duplicate_generated_story(self, candidate, accepted: list) -> bool:
+        candidate_signature = self._story_signature(candidate)
+        if not candidate_signature:
+            return False
+        for existing in accepted:
+            existing_signature = self._story_signature(existing)
+            if not existing_signature:
+                continue
+            overlap = len(candidate_signature & existing_signature) / max(1, len(candidate_signature | existing_signature))
+            if overlap >= 0.72:
+                return True
+        return False
+
+    def _story_signature(self, story) -> set[str]:
+        text = f"{story.headline} {story.summary_text}".lower()
+        tokens = {token for token in text.replace('/', ' ').replace('-', ' ').split() if len(token) > 3}
+        stopwords = {"care", "pentru", "dupa", "sunt", "este", "spune", "spun", "potrivit", "relateaza", "constanta", "romania"}
+        strip_chars = ".,:;!?()[]\"'"
+        return {token.strip(strip_chars) for token in tokens if token.strip(strip_chars) and token.strip(strip_chars) not in stopwords}
 
     def _load_previous_bulletin_clusters(
         self,
