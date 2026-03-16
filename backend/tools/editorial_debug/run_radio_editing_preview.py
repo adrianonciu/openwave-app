@@ -9,7 +9,10 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
+from app.models.user_personalization import EditorialPreferenceProfile, GeographyPreferenceMix, ListenerProfile, UserPersonalization
 from app.services.radio_editing_service import RadioEditingService
+from app.services.romanian_geo_resolver import resolve_listener_geography
+from app.services.source_watcher_service import SourceWatcherService
 from app.services.tts_pronunciation_helper import get_tts_pronunciation_map
 
 OUTPUT_DIR = BACKEND_ROOT / "debug_output"
@@ -250,6 +253,70 @@ GENERALIST_BULLETIN_FIXTURES = [
 ]
 
 
+VICTOR_VASLUI_LOCAL_FIXTURES = [
+    {
+        "story_id": "vaslui_01",
+        "source_label": "vnews.ro",
+        "local_geo_origin": "vaslui_county",
+        "headline": "ISU Vaslui intensifica verificarile la sobe dupa incendiile din weekend",
+        "content_text": (
+            "ISU Vaslui a intensificat verificarile la sobe dupa mai multe incendii produse in weekend. "
+            "Pompierii verifica instalatiile de incalzire si cosurile de fum in comunele cu cele mai multe alerte. "
+            "Asta inseamna controale mai dese si amenzi pentru gospodariile care ignora regulile de siguranta. "
+            "Primele rezultate vor fi raportate pana la sfarsitul saptamanii."
+        ),
+    },
+    {
+        "story_id": "vaslui_02",
+        "source_label": "stirivasluiene.ro",
+        "local_geo_origin": "vaslui_county",
+        "headline": "Primaria Vaslui muta traficul pe bulevardul Stefan cel Mare pentru lucrari",
+        "content_text": (
+            "Primaria Vaslui anunta lucrari pe bulevardul Stefan cel Mare pentru refacerea carosabilului si a gurilor de scurgere. "
+            "Soferii vor circula pe o singura banda la orele de varf pe tronsonul din centru. "
+            "Autobuzele vor opri temporar in statii mutate cu cateva zeci de metri. "
+            "Restrictiile intra in vigoare de luni dimineata."
+        ),
+    },
+    {
+        "story_id": "vaslui_03",
+        "source_label": "cotidianulvaslui.ro",
+        "local_geo_origin": "vaslui_county",
+        "headline": "Spitalul Judetean Vaslui deschide garda de seara pentru urgente pediatrice",
+        "content_text": (
+            "Spitalul Judetean Vaslui a deschis o garda de seara pentru urgente pediatrice. "
+            "Pacientii au acum o linie separata pentru evaluare rapida dupa ora 18. "
+            "Unitatea a adus un medic suplimentar si asistenti pentru intervalul cu cele mai multe prezentari. "
+            "Programul functioneaza de la inceputul acestei saptamani."
+        ),
+    },
+    {
+        "story_id": "moldova_01",
+        "source_label": "Ziarul de Iasi",
+        "local_geo_origin": "moldova_region",
+        "headline": "Universitatile din Moldova pregatesc burse comune pentru studentii din regiune",
+        "content_text": (
+            "Universitatile din Moldova pregatesc un program comun de burse pentru studentii cu venituri mici. "
+            "Studentii din Vaslui, Iasi si Suceava ar putea primi sprijin pentru cazare si transport din primul semestru. "
+            "Rectorii spun ca schema vizeaza mai ales judetele cu abandon universitar ridicat. "
+            "Primele criterii de selectie vor fi publicate luna viitoare."
+        ),
+    },
+    {
+        "story_id": "moldova_02",
+        "source_label": "Ziarul de Iasi",
+        "local_geo_origin": "moldova_region",
+        "headline": "Drumarii pregatesc reparatii rapide pe DN24 intre Vaslui si Iasi",
+        "content_text": (
+            "Drumarii pregatesc reparatii rapide pe DN24 intre Vaslui si Iasi dupa degradarile aparute la final de iarna. "
+            "Soferii vor vedea limitari de viteza si echipe in teren pe tronsoanele cele mai circulate. "
+            "Lucrarile vizeaza zonele cu gropi si acostamente rupte folosite zilnic de navetisti. "
+            "Primele echipe intra pe traseu la inceputul saptamanii viitoare."
+        ),
+    },
+]
+
+
 def _note_value(notes: list[str], key: str, default: str) -> str:
     prefix = f"{key}="
     for note in notes:
@@ -280,6 +347,8 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
     source_scope = _note_value(edited.editing_debug_notes, "source_scope", "national")
     lead_title_overlap_score = float(_note_value(edited.editing_debug_notes, "lead_title_overlap_score", "0"))
     lead_rewritten_to_reduce_title_repetition = _note_value(edited.editing_debug_notes, "lead_rewritten_to_reduce_title_repetition", "False") == "True"
+    lead_continuation_rewrite_applied = _note_value(edited.editing_debug_notes, "lead_continuation_rewrite_applied", "False") == "True"
+    lead_opening_type = _note_value(edited.editing_debug_notes, "lead_opening_type", "actor_action")
     high_title_lead_overlap = _note_value(edited.editing_debug_notes, "high_title_lead_overlap", "False") == "True"
     romania_impact_included = _note_value(edited.editing_debug_notes, "romania_impact_included", "False") == "True"
     strong_closure = _note_value(edited.editing_debug_notes, "strong_closure", "False") == "True"
@@ -299,7 +368,10 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
         "source_scope": source_scope,
         "lead_title_overlap_score": lead_title_overlap_score,
         "lead_rewritten_to_reduce_title_repetition": lead_rewritten_to_reduce_title_repetition,
+        "lead_continuation_rewrite_applied": lead_continuation_rewrite_applied,
+        "lead_opening_type": lead_opening_type,
         "high_title_lead_overlap": high_title_lead_overlap,
+        "local_geo_origin": fixture.get("local_geo_origin"),
         "main_actor_early_in_lead": main_actor_early,
         "kept_entities": edited.kept_entities,
         "dropped_entities": edited.dropped_entities,
@@ -323,7 +395,7 @@ def _build_story_payload(service: RadioEditingService, fixture: dict[str, str], 
 def _render_preview_text(payload: dict[str, object]) -> str:
     summary = payload["validation_summary"]
     lines = [
-        "OPENWAVE RADIO EDITING PREVIEW V1.5",
+        "OPENWAVE RADIO EDITING PREVIEW V1.6",
         "",
         f"Stories: {payload['story_count']}",
         f"Bulletin estimated duration: {payload['bulletin_estimated_duration_seconds']} secunde",
@@ -331,6 +403,8 @@ def _render_preview_text(payload: dict[str, object]) -> str:
         f"Average story duration: {summary['average_estimated_duration_seconds']} secunde",
         f"Average lead/title overlap: {summary['average_lead_title_overlap_score']}",
         f"Leads rewritten to reduce title repetition: {summary['leads_rewritten_to_reduce_title_repetition']}",
+        f"Continuation lead rewrites: {summary['lead_continuation_rewrite_count']}",
+        f"Lead opening counts: {json.dumps(summary['lead_opening_type_counts'], ensure_ascii=False)}",
         f"Stories with high title/lead overlap: {summary['stories_with_high_title_lead_overlap']}",
         f"International stories with Romania impact: {summary['international_stories_with_romania_impact']}",
         f"Stories with strong closure: {summary['stories_with_strong_closure']}",
@@ -354,6 +428,8 @@ def _render_preview_text(payload: dict[str, object]) -> str:
                 f"Scope: {item['source_scope']}",
                 f"Lead/title overlap: {item['lead_title_overlap_score']}",
                 f"Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
+                f"Lead continuation rewrite: {item['lead_continuation_rewrite_applied']}",
+                f"Lead opening type: {item['lead_opening_type']}",
                 f"Estimated duration: {item['estimated_duration_seconds']} secunde",
                 f"Attribution: {item['attribution_type']}",
                 f"Romania impact included: {item['romania_impact_included']}",
@@ -402,7 +478,7 @@ def _render_generalist_bulletin(stories: list[dict[str, object]]) -> str:
 
 
 def _fixture_scope(story_id: str) -> str:
-    if story_id.startswith("bacau_"):
+    if story_id.startswith(("bacau_", "vaslui_", "moldova_")):
         return "local"
     if story_id.startswith("national_"):
         return "national"
@@ -427,6 +503,12 @@ def _victor_ordering_signals(item: dict[str, object]) -> dict[str, float]:
         signals["direct_listener_impact_score"] += 2.6
         signals["emotional_proximity_score"] += 2.0
         signals["locality_proximity_score"] += 2.5
+    if item.get("local_geo_origin") == "vaslui_county":
+        signals["direct_listener_impact_score"] += 1.4
+        signals["locality_proximity_score"] += 2.2
+    if item.get("local_geo_origin") == "moldova_region":
+        signals["romania_relevance_score"] += 1.2
+        signals["locality_proximity_score"] += 1.0
     if any(term in text for term in ("vaslui", "bacau", "iasi", "suceava", "moldova", "regiune")):
         signals["romania_relevance_score"] += 1.6
         signals["locality_proximity_score"] += 1.4
@@ -502,7 +584,7 @@ def _order_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> list[dict
     return ordered
 
 
-def _render_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> str:
+def _render_victor_vaslui_bulletin(stories: list[dict[str, object]], geo_debug: dict[str, object]) -> str:
     total_duration = sum(story["estimated_duration_seconds"] for story in stories)
     lines = [
         "OPENWAVE GENERALIST BULLETIN - VICTOR / VASLUI",
@@ -511,16 +593,28 @@ def _render_victor_vaslui_bulletin(stories: list[dict[str, object]]) -> str:
         f"Estimated story-only duration: {total_duration} secunde",
         "Editorial target mix: local 5, national 6, international 4.",
         "Ordering rule: strongest listener impact first, with mixed local/national/international pacing.",
+        f"Resolved user city: {geo_debug['resolved_user_city']}",
+        f"Resolved user county: {geo_debug['resolved_user_county']}",
+        f"Resolved user region: {geo_debug['resolved_user_region']}",
+        f"Local source registry used: {geo_debug['local_source_registry_used']}",
+        f"Local sources selected for county: {', '.join(geo_debug['local_sources_selected']) or 'none'}",
+        f"Local story count from Vaslui: {geo_debug['local_story_count_from_vaslui']}",
+        f"Local story count from Moldova region: {geo_debug['local_story_count_from_moldova_region']}",
+        f"Lead continuation rewrites: {geo_debug['lead_continuation_rewrite_count']}",
+        f"Lead opening counts: {json.dumps(geo_debug['lead_opening_type_counts'], ensure_ascii=False)}",
         "",
     ]
     for item in stories:
         lines.extend([
             f"{item['position']}. {item['headline_original']}",
             f"   Scope: {item['source_scope']}",
+            f"   Local origin: {item.get('local_geo_origin') or 'none'}",
             f"   Radio priority: {item['radio_priority_score']}",
             f"   Ordering signals: {json.dumps(item['ordering_signals'], ensure_ascii=False)}",
             f"   Lead/title overlap: {item['lead_title_overlap_score']}",
             f"   Lead rewrite applied: {item['lead_rewritten_to_reduce_title_repetition']}",
+            f"   Lead continuation rewrite applied: {item['lead_continuation_rewrite_applied']}",
+            f"   Lead opening type: {item['lead_opening_type']}",
             item["radio_text"],
             "",
         ])
@@ -540,6 +634,12 @@ def main() -> None:
         if item["attribution_type"] in explicit_attribution_counts:
             explicit_attribution_counts[item["attribution_type"]] += 1
 
+    lead_opening_type_counts = {
+        "consequence": sum(1 for item in preview_stories if item["lead_opening_type"] == "consequence"),
+        "concrete_action": sum(1 for item in preview_stories if item["lead_opening_type"] == "concrete_action"),
+        "affected_audience": sum(1 for item in preview_stories if item["lead_opening_type"] == "affected_audience"),
+        "actor_action": sum(1 for item in preview_stories if item["lead_opening_type"] == "actor_action"),
+    }
     validation_summary = {
         "story_count": len(preview_stories),
         "total_estimated_bulletin_duration_seconds": sum(preview_duration_counts),
@@ -559,10 +659,12 @@ def main() -> None:
         "stories_over_105_words": sum(1 for count in preview_word_counts if count > 105),
         "stories_with_sentences_over_24_words": sum(1 for item in preview_stories if any(length > 24 for length in item["sentence_lengths"])),
         "stories_with_sentence_over_25_words": sum(1 for item in preview_stories if any(length > 25 for length in item["sentence_lengths"])),
-        "stories_with_lead_over_22_words": sum(1 for item in preview_stories if item["lead_word_count"] > 22),
+        "stories_with_lead_over_20_words": sum(1 for item in preview_stories if item["lead_word_count"] > 20),
         "stories_where_main_actor_does_not_appear_early_in_lead": sum(1 for item in preview_stories if not item["main_actor_early_in_lead"]),
         "stories_where_person_entity_existed_but_was_not_preserved": sum(1 for item in preview_stories if item["person_not_preserved"]),
         "leads_rewritten_to_reduce_title_repetition": sum(1 for item in preview_stories if item["lead_rewritten_to_reduce_title_repetition"]),
+        "lead_continuation_rewrite_count": sum(1 for item in preview_stories if item["lead_continuation_rewrite_applied"]),
+        "lead_opening_type_counts": lead_opening_type_counts,
         "stories_with_high_title_lead_overlap": sum(1 for item in preview_stories if item["high_title_lead_overlap"]),
         "international_stories_with_romania_impact": sum(
             1 for item in preview_stories if item["source_scope"] == "international" and item["romania_impact_included"]
@@ -590,8 +692,36 @@ def main() -> None:
     generalist_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(GENERALIST_BULLETIN_FIXTURES, start=1)]
     GENERALIST_OUTPUT_PATH.write_text(_render_generalist_bulletin(generalist_stories), encoding="utf-8")
 
-    victor_vaslui_stories = _order_victor_vaslui_bulletin(generalist_stories)
-    VICTOR_VASLUI_OUTPUT_PATH.write_text(_render_victor_vaslui_bulletin(victor_vaslui_stories), encoding="utf-8")
+    victor_personalization = UserPersonalization(
+        listener_profile=ListenerProfile(first_name="Victor", country="Romania", city="Vaslui"),
+        editorial_preferences=EditorialPreferenceProfile(
+            geography=GeographyPreferenceMix(local=35, national=40, international=25),
+        ),
+    )
+    resolved_geo = resolve_listener_geography(city="Vaslui", region=None)
+    local_resolution = SourceWatcherService().resolve_local_sources_for_personalization(victor_personalization)
+    victor_mix_fixtures = VICTOR_VASLUI_LOCAL_FIXTURES + [
+        fixture for fixture in GENERALIST_BULLETIN_FIXTURES if fixture["story_id"].startswith(("national_", "international_"))
+    ]
+    victor_base_stories = [_build_story_payload(service, fixture, index) for index, fixture in enumerate(victor_mix_fixtures, start=1)]
+    victor_vaslui_stories = _order_victor_vaslui_bulletin(victor_base_stories)
+    victor_geo_debug = {
+        "resolved_user_city": resolved_geo.resolved_city,
+        "resolved_user_county": resolved_geo.resolved_county,
+        "resolved_user_region": resolved_geo.resolved_macro_region,
+        "local_source_registry_used": local_resolution.local_source_registry_used,
+        "local_sources_selected": [item.source_name for item in local_resolution.resolved_sources],
+        "local_story_count_from_vaslui": sum(1 for item in victor_vaslui_stories if item.get("local_geo_origin") == "vaslui_county"),
+        "local_story_count_from_moldova_region": sum(1 for item in victor_vaslui_stories if item.get("local_geo_origin") == "moldova_region"),
+        "lead_continuation_rewrite_count": sum(1 for item in victor_vaslui_stories if item["lead_continuation_rewrite_applied"]),
+        "lead_opening_type_counts": {
+            "consequence": sum(1 for item in victor_vaslui_stories if item["lead_opening_type"] == "consequence"),
+            "concrete_action": sum(1 for item in victor_vaslui_stories if item["lead_opening_type"] == "concrete_action"),
+            "affected_audience": sum(1 for item in victor_vaslui_stories if item["lead_opening_type"] == "affected_audience"),
+            "actor_action": sum(1 for item in victor_vaslui_stories if item["lead_opening_type"] == "actor_action"),
+        },
+    }
+    VICTOR_VASLUI_OUTPUT_PATH.write_text(_render_victor_vaslui_bulletin(victor_vaslui_stories, victor_geo_debug), encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -158,11 +158,11 @@ STANDARD_MIN_WORDS = 85
 STANDARD_MAX_WORDS = 105
 MAJOR_MIN_WORDS = 105
 MAJOR_MAX_WORDS = 125
-LEAD_MAX_WORDS = 22
+LEAD_MAX_WORDS = 20
 SENTENCE_SOFT_MAX_WORDS = 24
 MAX_SENTENCE_COUNT = 4
 WPM = 100
-TITLE_LEAD_OVERLAP_THRESHOLD = 0.72
+TITLE_LEAD_OVERLAP_THRESHOLD = 0.66
 COMPARISON_STOPWORDS = {
     "a", "al", "ai", "ale", "ca", "cu", "de", "din", "dupa", "in", "la", "pe", "pentru", "prin",
     "si", "spre", "un", "una", "unui", "unei", "sau", "noi", "nou", "noua", "zona",
@@ -179,6 +179,9 @@ LEAD_EVENT_NOMINALIZATIONS = {
     "muta": "mutarea",
     "simplifica": "simplificarea",
 }
+CONSEQUENCE_LEAD_STARTS = ("de luni", "de marti", "de miercuri", "de joi", "de vineri", "de sambata", "de duminica", "primele restrictii", "primele efecte", "in cateva", "din aceasta", "de la inceputul")
+CONCRETE_ACTION_LEAD_STARTS = ("pompierii", "soferii", "pacientii", "inspectorii", "autoritatile", "echipele", "medicii", "elevii", "parintii", "companiile", "santierul")
+AFFECTED_AUDIENCE_LEAD_STARTS = ("soferii", "pacientii", "elevii", "parintii", "fermierii", "consumatorii", "navetistii", "studentii", "locuitorii")
 
 
 class RadioEditingService:
@@ -202,6 +205,8 @@ class RadioEditingService:
         debug_notes.append(f"source_scope={payload['source_scope']}")
         debug_notes.append(f"lead_title_overlap_score={polish_metrics['lead_title_overlap_score']}")
         debug_notes.append(f"lead_rewritten_to_reduce_title_repetition={polish_metrics['lead_rewritten_to_reduce_title_repetition']}")
+        debug_notes.append(f"lead_continuation_rewrite_applied={polish_metrics['lead_continuation_rewrite_applied']}")
+        debug_notes.append(f"lead_opening_type={polish_metrics['lead_opening_type']}")
         debug_notes.append(f"high_title_lead_overlap={polish_metrics['high_title_lead_overlap']}")
         debug_notes.append(f"romania_impact_included={polish_metrics['romania_impact_included']}")
         debug_notes.append(f"strong_closure={polish_metrics['strong_closure']}")
@@ -492,10 +497,10 @@ class RadioEditingService:
         final_sentences = [self._finalize_sentence(sentence) for sentence in SENTENCE_SPLIT_PATTERN.split(final_text) if sentence.strip()]
         return final_sentences[:MAX_SENTENCE_COUNT]
 
-    def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool]]:
+    def _polish_radio_sentences(self, payload: dict[str, object], compression: CompressedStoryCore, sentences: list[str]) -> tuple[list[str], dict[str, int | bool | str]]:
         polished = [self._simplify_operational_language(sentence) for sentence in sentences if sentence]
         simplified_count = sum(1 for original, updated in zip(sentences, polished) if original != updated)
-        polished, lead_rewritten = self._rewrite_title_like_lead(payload, compression, polished)
+        polished, lead_rewrite_meta = self._rewrite_title_like_lead(payload, compression, polished)
         polished = self._reinforce_romania_impact(payload, compression, polished)
         polished = self._replace_repeated_person_names(payload, polished)
         polished = self._limit_attribution_slots(polished)
@@ -508,7 +513,9 @@ class RadioEditingService:
         lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], polished[0] if polished else ""), 2)
         metrics = {
             "lead_title_overlap_score": lead_title_overlap_score,
-            "lead_rewritten_to_reduce_title_repetition": lead_rewritten,
+            "lead_rewritten_to_reduce_title_repetition": lead_rewrite_meta["lead_rewritten_to_reduce_title_repetition"],
+            "lead_continuation_rewrite_applied": lead_rewrite_meta["lead_continuation_rewrite_applied"],
+            "lead_opening_type": self._lead_opening_type(polished[0] if polished else ""),
             "high_title_lead_overlap": lead_title_overlap_score >= TITLE_LEAD_OVERLAP_THRESHOLD,
             "romania_impact_included": self._has_romania_impact_sentence(payload, polished),
             "strong_closure": bool(polished and self._has_strong_closure(polished[-1])),
@@ -636,23 +643,108 @@ class RadioEditingService:
         payload: dict[str, object],
         compression: CompressedStoryCore,
         sentences: list[str],
-    ) -> tuple[list[str], bool]:
+    ) -> tuple[list[str], dict[str, bool]]:
         if not sentences:
-            return sentences, False
+            return sentences, {
+                "lead_rewritten_to_reduce_title_repetition": False,
+                "lead_continuation_rewrite_applied": False,
+            }
         lead = sentences[0]
         overlap_score = self._lead_title_overlap_score(payload["headline_original"], lead)
         normalized_headline = self._comparison_text(payload["headline_original"])
         normalized_lead = self._comparison_text(lead)
         if overlap_score < TITLE_LEAD_OVERLAP_THRESHOLD and normalized_headline not in normalized_lead:
-            return sentences, False
+            return sentences, {
+                "lead_rewritten_to_reduce_title_repetition": False,
+                "lead_continuation_rewrite_applied": False,
+            }
+
+        continuation = self._continuation_style_lead(payload, sentences)
+        if continuation:
+            updated = [continuation["lead"]]
+            for index, sentence in enumerate(sentences[1:], start=1):
+                if index == continuation["source_index"]:
+                    continue
+                updated.append(sentence)
+            return updated[:MAX_SENTENCE_COUNT], {
+                "lead_rewritten_to_reduce_title_repetition": True,
+                "lead_continuation_rewrite_applied": True,
+            }
 
         rewritten = self._paraphrase_title_like_lead(payload, compression, lead)
         if not rewritten or rewritten == lead:
-            return sentences, False
+            return sentences, {
+                "lead_rewritten_to_reduce_title_repetition": False,
+                "lead_continuation_rewrite_applied": False,
+            }
 
         updated = list(sentences)
         updated[0] = rewritten
-        return updated, True
+        return updated, {
+            "lead_rewritten_to_reduce_title_repetition": True,
+            "lead_continuation_rewrite_applied": False,
+        }
+
+    def _continuation_style_lead(
+        self,
+        payload: dict[str, object],
+        sentences: list[str],
+    ) -> dict[str, object] | None:
+        headline_overlap = self._lead_title_overlap_score(payload["headline_original"], sentences[0] if sentences else "")
+        candidates: list[tuple[float, int, str, bool]] = []
+        seen_candidates: set[str] = set()
+        for index, sentence in enumerate(sentences[1:], start=1):
+            candidate = self._finalize_sentence(self._trim_sentence(sentence, LEAD_MAX_WORDS))
+            if not candidate or candidate in seen_candidates:
+                continue
+            seen_candidates.add(candidate)
+            score = self._continuation_lead_score(payload["headline_original"], candidate, index)
+            if score > 0:
+                candidates.append((score, index, candidate, True))
+        for index, sentence in enumerate(payload["source_text_sentences"][1:], start=len(sentences) + 1):
+            candidate = self._finalize_sentence(self._trim_sentence(self._rewrite_for_radio(sentence, "detail", compression.kept_entities) if False else sentence, LEAD_MAX_WORDS))
+            if not candidate or candidate in seen_candidates:
+                continue
+            seen_candidates.add(candidate)
+            score = self._continuation_lead_score(payload["headline_original"], candidate, index)
+            if score > 0:
+                candidates.append((score, index, candidate, False))
+        if not candidates:
+            return None
+        best_score, best_index, best_candidate, existing_sentence = max(candidates, key=lambda item: (item[0], -item[1]))
+        if best_score < 1.5:
+            return None
+        if self._lead_title_overlap_score(payload["headline_original"], best_candidate) >= headline_overlap:
+            return None
+        return {"lead": best_candidate, "source_index": best_index if existing_sentence else -1}
+
+    def _continuation_lead_score(self, headline: str, sentence: str, source_index: int) -> float:
+        opening_type = self._lead_opening_type(sentence)
+        overlap_penalty = self._lead_title_overlap_score(headline, sentence)
+        base_scores = {
+            "consequence": 2.6,
+            "concrete_action": 2.2,
+            "affected_audience": 2.0,
+            "actor_action": 0.6,
+        }
+        base_score = base_scores.get(opening_type, 0.0)
+        if not base_score:
+            return 0.0
+        return round(base_score - overlap_penalty + max(0.0, 0.4 - (source_index * 0.08)), 2)
+
+    def _lead_opening_type(self, sentence: str) -> str:
+        normalized = self._comparison_text(sentence)
+        if not normalized:
+            return "actor_action"
+        if normalized.startswith("primele rezultate"):
+            return "actor_action"
+        if normalized.startswith(CONSEQUENCE_LEAD_STARTS):
+            return "consequence"
+        if normalized.startswith(AFFECTED_AUDIENCE_LEAD_STARTS):
+            return "affected_audience"
+        if normalized.startswith(CONCRETE_ACTION_LEAD_STARTS):
+            return "concrete_action"
+        return "actor_action"
 
     def _paraphrase_title_like_lead(
         self,
@@ -865,7 +957,7 @@ class RadioEditingService:
             return sentences
         if self._has_strong_closure(sentences[-1]) and not self._is_administrative_sentence(sentences[-1]):
             return sentences
-        strong_index = next((index for index, sentence in enumerate(sentences[:-1]) if self._has_strong_closure(sentence)), None)
+        strong_index = next((index for index, sentence in enumerate(sentences[1:-1], start=1) if self._has_strong_closure(sentence)), None)
         if strong_index is not None:
             strong_sentence = sentences.pop(strong_index)
             sentences.append(strong_sentence)

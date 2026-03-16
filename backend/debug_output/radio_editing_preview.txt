@@ -1,12 +1,14 @@
-OPENWAVE RADIO EDITING PREVIEW V1.5
+OPENWAVE RADIO EDITING PREVIEW V1.6
 
 Stories: 5
-Bulletin estimated duration: 173 secunde
-Average story words: 57.8
-Average story duration: 34.6 secunde
-Average lead/title overlap: 0.64
+Bulletin estimated duration: 158 secunde
+Average story words: 52.6
+Average story duration: 31.6 secunde
+Average lead/title overlap: 0.5
 Leads rewritten to reduce title repetition: 2
-Stories with high title/lead overlap: 0
+Continuation lead rewrites: 1
+Lead opening counts: {"consequence": 0, "concrete_action": 1, "affected_audience": 0, "actor_action": 4}
+Stories with high title/lead overlap: 1
 International stories with Romania impact: 1
 Stories with strong closure: 5
 Repeated person names: 0
@@ -19,13 +21,15 @@ Story 1: national_policy_01
 Band: standard
 Headline original: Ilie Bolojan anunta o ordonanta pentru simplificarea avizelor de investitii.
 Original words: 83
-Final words: 57
+Final words: 55
 Sentence count: 4
-Lead words: 20
+Lead words: 18
 Scope: national
-Lead/title overlap: 0.62
+Lead/title overlap: 0.5
 Lead rewrite applied: False
-Estimated duration: 34 secunde
+Lead continuation rewrite: False
+Lead opening type: actor_action
+Estimated duration: 33 secunde
 Attribution: person
 Romania impact included: False
 Strong closure: True
@@ -37,7 +41,7 @@ Main actor early: True
 Kept entities: Ilie Bolojan, Guvernul Romaniei
 Dropped entities: Premierul Ilie Bolojan, Guvernul, Ministerul Finantelor, Ministerul
 Radio output:
-Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari de investitii. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
+Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
 
 Story 2: justice_01
 Band: sparse
@@ -49,6 +53,8 @@ Lead words: 16
 Scope: national
 Lead/title overlap: 0.67
 Lead rewrite applied: False
+Lead continuation rewrite: False
+Lead opening type: actor_action
 Estimated duration: 33 secunde
 Attribution: institution
 Romania impact included: False
@@ -67,13 +73,15 @@ Story 3: economy_01
 Band: standard
 Headline original: ANAF anunta controale extinse dupa o schema de frauda cu TVA.
 Original words: 86
-Final words: 62
+Final words: 60
 Sentence count: 4
-Lead words: 22
+Lead words: 20
 Scope: national
 Lead/title overlap: 0.62
 Lead rewrite applied: False
-Estimated duration: 37 secunde
+Lead continuation rewrite: False
+Lead opening type: actor_action
+Estimated duration: 36 secunde
 Attribution: institution
 Romania impact included: False
 Strong closure: True
@@ -85,7 +93,7 @@ Main actor early: True
 Kept entities: ANAF
 Dropped entities: none
 Radio output:
-ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
+ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
 Story 4: international_impact_01
 Band: sparse
@@ -97,6 +105,8 @@ Lead words: 17
 Scope: international
 Lead/title overlap: 0.57
 Lead rewrite applied: True
+Lead continuation rewrite: False
+Lead opening type: actor_action
 Estimated duration: 34 secunde
 Attribution: institution
 Romania impact included: True
@@ -115,13 +125,15 @@ Story 5: local_01
 Band: sparse
 Headline original: Primaria Bacau incepe lucrari noi pe un coridor important de trafic.
 Original words: 79
-Final words: 58
-Sentence count: 4
-Lead words: 20
+Final words: 36
+Sentence count: 3
+Lead words: 12
 Scope: local
-Lead/title overlap: 0.71
+Lead/title overlap: 0.14
 Lead rewrite applied: True
-Estimated duration: 35 secunde
+Lead continuation rewrite: True
+Lead opening type: concrete_action
+Estimated duration: 22 secunde
 Attribution: institution
 Romania impact included: False
 Strong closure: True
@@ -129,23 +141,23 @@ Repeated person names: 0
 Administrative closure: False
 Multiple attributions: False
 Operational simplifications: 1
-Main actor early: True
+Main actor early: False
 Kept entities: Primaria
 Dropped entities: Compania de Transport Public, Transport Public
 Radio output:
-Primaria Bacau a anuntat inceperea lucrarilor pe un coridor important de trafic dintre centru si zona de nord a orasului. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
+Santierul include reabilitarea carosabilului, benzi dedicate transportului public si schimbari de trafic. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
 
 Validation summary:
 {
   "story_count": 5,
-  "total_estimated_bulletin_duration_seconds": 173,
-  "average_word_count": 57.8,
-  "average_estimated_duration_seconds": 34.6,
-  "average_lead_title_overlap_score": 0.64,
-  "min_word_count": 55,
-  "max_word_count": 62,
-  "min_estimated_duration_seconds": 33,
-  "max_estimated_duration_seconds": 37,
+  "total_estimated_bulletin_duration_seconds": 158,
+  "average_word_count": 52.6,
+  "average_estimated_duration_seconds": 31.6,
+  "average_lead_title_overlap_score": 0.5,
+  "min_word_count": 36,
+  "max_word_count": 60,
+  "min_estimated_duration_seconds": 22,
+  "max_estimated_duration_seconds": 36,
   "sparse_story_count": 3,
   "standard_story_count": 2,
   "major_story_count": 0,
@@ -155,11 +167,18 @@ Validation summary:
   "stories_over_105_words": 0,
   "stories_with_sentences_over_24_words": 0,
   "stories_with_sentence_over_25_words": 0,
-  "stories_with_lead_over_22_words": 0,
-  "stories_where_main_actor_does_not_appear_early_in_lead": 0,
+  "stories_with_lead_over_20_words": 0,
+  "stories_where_main_actor_does_not_appear_early_in_lead": 1,
   "stories_where_person_entity_existed_but_was_not_preserved": 0,
   "leads_rewritten_to_reduce_title_repetition": 2,
-  "stories_with_high_title_lead_overlap": 0,
+  "lead_continuation_rewrite_count": 1,
+  "lead_opening_type_counts": {
+    "consequence": 0,
+    "concrete_action": 1,
+    "affected_audience": 0,
+    "actor_action": 4
+  },
+  "stories_with_high_title_lead_overlap": 1,
   "international_stories_with_romania_impact": 1,
   "stories_with_strong_closure": 5,
   "repeated_person_name_count": 0,
@@ -175,12 +194,12 @@ Validation summary:
 }
 
 Sample preview bulletin:
-Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari de investitii. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
+Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari. Actul reduce numarul de avize, scurteaza termenele de raspuns si introduce o platforma comuna pentru avize. Masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
 
 Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Asta inseamna ca Ministerul Justitiei trebuie sa revina cu o noua justificare sau cu alt nume pentru functie. Ministerul poate reveni cu o noua propunere in zilele urmatoare.
 
-ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma si facturi. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
+ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma. ANAF a transmis ca a blocat deja o parte din rambursarile suspecte si lucreaza cu procurorii pentru recuperarea banilor. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Primele rezultate sunt asteptate pana la finalul saptamanii.
 
 Casa Alba a anuntat trimiterea unor nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial. Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Washingtonul spune ca masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Primele efecte sunt asteptate in cateva saptamani.
 
-Primaria Bacau a anuntat inceperea lucrarilor pe un coridor important de trafic dintre centru si zona de nord a orasului. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Impactul este direct pentru mii de navetisti si studenti care trec zilnic prin zona. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.
+Santierul include reabilitarea carosabilului, benzi dedicate transportului public si schimbari de trafic. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Primele efecte sunt asteptate chiar de la inceputul saptamanii viitoare.

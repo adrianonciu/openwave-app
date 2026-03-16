@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 import re
 
+from app.services.romanian_geo_resolver import regional_aliases, resolve_listener_geography
+
 ROMANIAN_EVENT_PERSISTENCE_PATH = Path(__file__).resolve().parents[2] / "data" / "romanian_event_persistence_state.json"
 ROMANIAN_PERSISTENCE_HINTS = {
     "romanian_fiscal_policy_2026",
@@ -580,7 +582,7 @@ class StorySelectionService:
             return False
         if editorial_preferences.geography.local <= 0:
             return False
-        return personalization.local_editorial_anchor_scope() == "region"
+        return self._resolved_regional_anchor(personalization) is not None
 
     def _regional_preference_summary(
         self,
@@ -596,10 +598,10 @@ class StorySelectionService:
             return None
         if self._infer_regional_relevance(cluster, personalization) != "region_match":
             return None
-        region = personalization.local_editorial_anchor()
-        if not region:
+        resolved_anchor = self._resolved_regional_anchor(personalization)
+        if resolved_anchor is None:
             return None
-        return f"Cluster favored because it matched user's region: {region}."
+        return f"Cluster favored because it matched user's local geography: {resolved_anchor.resolved_county}."
 
     def _decrement_mix_counters(
         self,
@@ -667,15 +669,19 @@ class StorySelectionService:
         cluster: ScoredStoryCluster,
         personalization: UserPersonalization | None,
     ) -> str:
-        if personalization is None or personalization.local_editorial_anchor_scope() != "region":
+        resolved_anchor = self._resolved_regional_anchor(personalization)
+        if resolved_anchor is None:
             return "unknown"
-        if any(member.is_local_source for member in cluster.cluster.member_articles):
+        target_county = self._normalize_text(resolved_anchor.resolved_county or "")
+        source_regions = {
+            self._normalize_text(str(member.source_region or ""))
+            for member in cluster.cluster.member_articles
+            if member.is_local_source and member.source_region
+        }
+        if target_county and target_county in source_regions:
             return "region_match"
-        anchor = personalization.local_editorial_anchor()
-        if not anchor:
-            return "unknown"
         text = self._cluster_text(cluster)
-        for alias in self._regional_aliases(anchor):
+        for alias in self._regional_aliases(resolved_anchor.resolved_county, resolved_anchor.resolved_macro_region):
             if alias in text:
                 return "region_match"
         geography_label = self._infer_geography(cluster)
@@ -685,16 +691,17 @@ class StorySelectionService:
             return "international"
         return "unknown"
 
-    def _regional_aliases(self, region: str) -> set[str]:
-        normalized = self._normalize_text(region)
-        aliases = {normalized}
-        stripped = normalized
-        for token in ["county", "judetul", "judet", "region", "regiunea"]:
-            stripped = stripped.replace(token, " ")
-        stripped = " ".join(stripped.split())
-        if stripped:
-            aliases.add(stripped)
-        return {alias for alias in aliases if alias}
+    def _regional_aliases(self, county: str | None, macro_region: str | None = None) -> set[str]:
+        return {self._normalize_text(alias) for alias in regional_aliases(county, macro_region)}
+
+    def _resolved_regional_anchor(self, personalization: UserPersonalization | None):
+        if personalization is None:
+            return None
+        resolved = resolve_listener_geography(
+            city=personalization.listener_profile.city,
+            region=personalization.listener_profile.region,
+        )
+        return resolved if resolved.resolved_county else None
 
     def _source_labels(self, cluster: ScoredStoryCluster) -> list[str]:
         return sorted({member.source for member in cluster.cluster.member_articles})

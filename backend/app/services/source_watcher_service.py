@@ -23,6 +23,7 @@ from app.models.source_watcher import (
     SourceWatcherState,
 )
 from app.services.local_source_registry_service import LocalSourceRegistryService
+from app.services.romanian_geo_resolver import resolve_listener_geography
 from app.models.user_personalization import UserPersonalization
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -215,14 +216,14 @@ class SourceWatcherService:
             return LocalSourceResolutionResult(
                 explanation="County local sources were not activated because local preference is 0.",
             )
-        if personalization.local_editorial_anchor_scope() != "region":
-            return LocalSourceResolutionResult(
-                explanation="County local sources were not activated because the listener profile does not provide a county or region anchor.",
-            )
-        region = personalization.local_editorial_anchor()
+        resolved_geography = resolve_listener_geography(
+            city=personalization.listener_profile.city,
+            region=personalization.listener_profile.region,
+        )
+        region = resolved_geography.resolved_county
         if not region:
             return LocalSourceResolutionResult(
-                explanation="County local sources were not activated because the listener region is missing.",
+                explanation="County local sources were not activated because the listener city or region could not be resolved to a supported county.",
             )
 
         resolved_sources = self.get_local_source_configs_for_region(region)
@@ -236,13 +237,18 @@ class SourceWatcherService:
                 explanation=f"County local sources were not activated because the registry has no entries for region '{region}'.",
             )
 
+        resolution_note = (
+            f"resolved from city '{resolved_geography.input_city}' to county '{region}'"
+            if resolved_geography.input_city and not (personalization.listener_profile.region or "").strip()
+            else f"resolved directly for county '{region}'"
+        )
         return LocalSourceResolutionResult(
             region_used=region,
             resolved_sources=resolved_sources,
             source_count=len(resolved_sources),
             local_source_registry_used=True,
             local_sources_enabled=True,
-            explanation=f"County local sources were activated for region '{region}' with {len(resolved_sources)} watcher-usable source config(s).",
+            explanation=f"County local sources were activated for {resolution_note} with {len(resolved_sources)} watcher-usable source config(s).",
         )
 
     def get_latest_content(self, source_config: SourceConfig) -> LatestContentItem:
