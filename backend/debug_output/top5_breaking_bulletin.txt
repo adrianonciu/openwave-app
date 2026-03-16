@@ -1,142 +1,250 @@
-TOP 5 LOCAL
+TOP 5 NATIONAL
 
-Editorial profile used: local
-Profile config name: local
+Editorial profile used: national_ro
+Profile config name: national_ro
 Shared core path used: True
 
+BULLETIN SHAPING
+
+Lead story chosen: cluster-f25f97c0a646
+Shaping explanation: Bulletin shaping used profile 'national_ro' across 3 selected stories. Lead story chosen: 'Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei' (lead_story_selected: score_total=67.40, domestic_purity=1.00, family_run_count=22, lifecycle_boost=0.40, romanian_source_count=1, national_bucket=domestic_hard_news). Applied deterministic family separation, topic diversity ordering, and confidence-aware tie-breaking across 2 later placements.
+
+Position 1: Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei
+  topic_bucket: economy
+  family: domestic_politics
+  reason: lead_story_selected: score_total=67.40, domestic_purity=1.00, family_run_count=22, lifecycle_boost=0.40, romanian_source_count=1, national_bucket=domestic_hard_news
+
+Position 2: Premierul Ilie Bolojan dupa ce Guvernul a adoptat o ordonanta care simplifica procedurile pentru avizarea investitiilor Vom sprijini astfel economia se va reduce birocratia si vor scadea costurile de conformare
+  topic_bucket: general
+  family: decision_major_policy
+  reason: family_separation_applied; topic_diversity_applied
+
+Position 3: Israeli soldiers fire on family car in occupied West Bank killing 4
+  topic_bucket: general
+  family: domestic_politics
+  reason: family_separation_applied; topic_repeat_unavoidable
+
 1.
-Headline: Accident rutier in Iasi Au fost implicate doua autoturisme
-Normalized headline: accident rutier in iasi au fost implicate doua autoturisme
-Sources: BZI.ro
+Headline: Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei
+Normalized headline: italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei
+Sources: G4Media.ro
 Unique sources: 1
 Event family: none
 Regional bucket: none
-Domestic purity: 0.0
-Romania impact hits: none
+Domestic purity: 1.0
+Romania impact hits: energie
+Romanian source count: 1
+Romanian multi-source bonus: 0.0
 External penalty: 0.0
 Title-only domestic boost: 0.0
-Rank reason: non-national cluster: Romanian domestic balancing not applied
+Rank reason: credible Romanian domestic evidence improved national ranking
+Recovery score: 0.0
+Recovered domestic: False
+Persistence boost: 1.6
+Balance adjustment: none
+Editorial profile used: national_ro
+Shared core path used: True
+Attached story family: domestic_politics
+Family attach reason: shared event hints
+Family first seen: 2026-03-15T11:18:27.158472+00:00
+Family last seen: 2026-03-15T13:45:43.281959+00:00
+Family run count: 22
+Family age hours: 2.45
+Lifecycle boost: 0.4
+Geographic signal detected: none
+Local relevance boost: 0.0
+Local domain signal hits: none
+Local county tag: none
+Entered via: lifecycle_support
+Freshness: 30.0
+Score: 67.4
+
+2.
+Headline: Premierul Ilie Bolojan dupa ce Guvernul a adoptat o ordonanta care simplifica procedurile pentru avizarea investitiilor Vom sprijini astfel economia se va reduce birocratia si vor scadea costurile de conformare
+Normalized headline: premierul ilie bolojan dupa ce guvernul a adoptat o ordonanta care simplifica procedurile pentru avizarea investitiilor vom sprijini astfel economia se va reduce birocratia si vor scadea costurile de conformare
+Sources: News.ro
+Unique sources: 1
+Event family: none
+Regional bucket: none
+Domestic purity: 0.39
+Romania impact hits: guvern, guvernul, premierul
+Romanian source count: 1
+Romanian multi-source bonus: 0.0
+External penalty: 0.0
+Title-only domestic boost: 0.0
+Rank reason: Romanian balance stayed neutral
+Recovery score: 0.0
+Recovered domestic: False
+Persistence boost: 1.6
+Balance adjustment: Selected under story-family diversity cap replacing 'ANAF s-a prins Cum se fura TVA cu capu gol ca la pomana Schema anului'
+Editorial profile used: national_ro
+Shared core path used: True
+Attached story family: decision_major_policy
+Family attach reason: shared event hints
+Family first seen: 2026-03-15T11:18:27.158472+00:00
+Family last seen: 2026-03-15T13:45:43.281959+00:00
+Family run count: 4
+Family age hours: 2.45
+Lifecycle boost: 0.3
+Geographic signal detected: none
+Local relevance boost: 0.0
+Local domain signal hits: none
+Local county tag: none
+Entered via: lifecycle_support
+Freshness: 30.0
+Score: 59.32
+
+3.
+Headline: Israeli soldiers fire on family car in occupied West Bank killing 4
+Normalized headline: israeli soldiers fire on family car in occupied west bank killing 4
+Sources: AP, Antena 3, DW, Digi24, HotNews.ro, Japan Wire by Kyodo News, Libertatea, Mediafax, NBC News, NPR, ZF.ro
+Unique sources: 11
+Event family: military_movement, regional_conflict
+Regional bucket: gulf_escalation
+Domestic purity: 0.542
+Romania impact hits: none
+Romanian source count: 6
+Romanian multi-source bonus: 0.1
+External penalty: 0.0
+Title-only domestic boost: 0.0
+Rank reason: credible Romanian domestic evidence improved national ranking; Romanian multi-source confirmation bonus +0.10
+Recovery score: 0.0
+Recovered domestic: False
+Persistence boost: 1.6
+Balance adjustment: none
+Editorial profile used: national_ro
+Shared core path used: True
+Attached story family: domestic_politics
+Family attach reason: shared event hints
+Family first seen: 2026-03-15T11:18:27.158472+00:00
+Family last seen: 2026-03-15T13:45:43.281959+00:00
+Family run count: 22
+Family age hours: 2.45
+Lifecycle boost: 0.4
+Geographic signal detected: none
+Local relevance boost: 0.0
+Local domain signal hits: none
+Local county tag: none
+Entered via: lifecycle_support
+Freshness: 30.0
+Score: 102.6
+
+4.
+Headline: ANAF s-a prins Cum se fura TVA cu capu gol ca la pomana Schema anului
+Normalized headline: anaf s-a prins cum se fura tva cu capu gol ca la pomana schema anului
+Sources: Cotidianul
+Unique sources: 1
+Event family: none
+Regional bucket: none
+Domestic purity: 1.0
+Romania impact hits: anaf, tva
+Romanian source count: 1
+Romanian multi-source bonus: 0.0
+External penalty: 0.0
+Title-only domestic boost: 1.5
+Rank reason: credible Romanian domestic evidence improved national ranking; title-only domestic candidate added survivability
 Recovery score: 0.0
 Recovered domestic: False
 Persistence boost: 0.0
 Balance adjustment: none
-Editorial profile used: local
+Editorial profile used: national_ro
 Shared core path used: True
-Attached story family: accident_autoturisme_doua
-Family attach reason: shared topic keywords
-Family first seen: 2026-03-15T12:25:48.458992+00:00
-Family last seen: 2026-03-15T12:29:07.632561+00:00
-Family run count: 2
-Family age hours: 0.06
-Lifecycle boost: 0.2
-Geographic signal detected: iasi
-Local relevance boost: 0.3
-Local domain signal hits: accident
-Local county tag: iasi
+Attached story family: domestic_politics
+Family attach reason: shared event hints
+Family first seen: 2026-03-15T11:18:27.158472+00:00
+Family last seen: 2026-03-15T13:45:43.281959+00:00
+Family run count: 22
+Family age hours: 2.45
+Lifecycle boost: 0.4
+Geographic signal detected: none
+Local relevance boost: 0.0
+Local domain signal hits: none
+Local county tag: none
 Entered via: lifecycle_support
 Freshness: 30.0
-Score: 55.5
+Score: 62.9
+
+5.
+Headline: De ce s-a suparat Volodimir Zelenski pe prietenii din UE Acest lucru se numeste santaj
+Normalized headline: de ce s-a suparat volodimir zelenski pe prietenii din ue acest lucru se numeste santaj
+Sources: Stirileprotv.ro
+Unique sources: 1
+Event family: none
+Regional bucket: black_sea_security
+Domestic purity: 0.18
+Romania impact hits: none
+Romanian source count: 1
+Romanian multi-source bonus: 0.0
+External penalty: 0.38
+Title-only domestic boost: 0.0
+Rank reason: weak Romania-specific impact evidence for external-leaning cluster
+Recovery score: 0.0
+Recovered domestic: False
+Persistence boost: 0.8
+Balance adjustment: none
+Editorial profile used: national_ro
+Shared core path used: True
+Attached story family: domestic_politics
+Family attach reason: shared event hints
+Family first seen: 2026-03-15T11:18:27.158472+00:00
+Family last seen: 2026-03-15T13:45:43.281959+00:00
+Family run count: 22
+Family age hours: 2.45
+Lifecycle boost: 0.4
+Geographic signal detected: none
+Local relevance boost: 0.0
+Local domain signal hits: none
+Local county tag: none
+Entered via: lifecycle_support
+Freshness: 30.0
+Score: 55.3
 
 STORY FAMILIES DETECTED
 
 family_id: domestic_politics
-stories: 5
-sources: Adevărul, Cotidianul RO, Digi24, HotNews.ro, Stirileprotv.ro, ZF.ro, Ziare.com
-event_hints: romanian_budget_fiscal, romanian_domestic_politics, romanian_economic_policy, romanian_major_policy_decision, romanian_regional_security
+stories: 4
+sources: AP, Antena 3, Cotidianul, DW, Digi24, G4Media.ro, HotNews.ro, Japan Wire by Kyodo News, Libertatea, Mediafax, NBC News, NPR, Stirileprotv.ro, ZF.ro
+event_hints: fiscal_policy_ro, government_coalition, public_safety_local_admin, romanian_budget_fiscal, romanian_domestic_politics, romanian_economic_policy, romanian_energy_security, romanian_eu_funds_loss, romanian_eu_relations, romanian_fiscal_policy_2026, romanian_major_policy_decision, romanian_pnrr_funds, romanian_regional_security
 first_seen: 2026-03-15T11:18:27.158472+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 9
-age_hours: 1.18
+last_seen: 2026-03-15T13:45:43.281959+00:00
+run_count: 22
+age_hours: 2.45
 
-family_id: 2026_anti-drone_atac
-stories: 1
-sources: Japan Wire by Kyodo News, NBC News, NPR, The Guardian
-event_hints: none
-first_seen: 2026-03-15T12:25:48.458992+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 2
-age_hours: 0.06
-
-family_id: accident_autoturisme_doua
-stories: 1
-sources: BZI.ro
-event_hints: none
-first_seen: 2026-03-15T12:25:48.458992+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 2
-age_hours: 0.06
-
-family_id: acord_anunta_despre
-stories: 1
-sources: Antena 3
-event_hints: none
+family_id: decision_major_policy
+stories: 3
+sources: Adevărul, News.ro, Ziare.com
+event_hints: romanian_domestic_politics, romanian_major_policy_decision, romanian_regional_security
 first_seen: 2026-03-15T11:18:27.158472+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
+last_seen: 2026-03-15T13:45:43.281959+00:00
 run_count: 4
-age_hours: 1.18
+age_hours: 2.45
 
-family_id: asociatia_barnova_buzoianu
+family_id: carpet_clobber'_features
 stories: 1
-sources: Ziarul de Iaşi - liderul presei ieşene
+sources: The Guardian
 event_hints: none
-first_seen: 2026-03-15T12:25:48.458992+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 2
-age_hours: 0.06
-
-family_id: bobi_country_fled
-stories: 1
-sources: DW
-event_hints: none
-first_seen: 2026-03-15T11:27:50.728640+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 9
-age_hours: 1.02
-
-family_id: britanie_diana_fotografie
-stories: 1
-sources: Libertatea
-event_hints: none
-first_seen: 2026-03-15T12:23:32.148586+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
+first_seen: 2026-03-15T13:41:43.100682+00:00
+last_seen: 2026-03-15T13:45:43.281959+00:00
 run_count: 3
-age_hours: 0.09
-
-family_id: celebrului_comedie_lansat
-stories: 1
-sources: G4Media.ro
-event_hints: none
-first_seen: 2026-03-15T12:23:32.148586+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 3
-age_hours: 0.09
+age_hours: 0.07
 
 family_id: conditie_fcsb_inainte
 stories: 1
 sources: spotmedia.ro
 event_hints: none
 first_seen: 2026-03-15T11:56:20.938758+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 5
-age_hours: 0.55
+last_seen: 2026-03-15T13:45:43.281959+00:00
+run_count: 18
+age_hours: 1.82
 
-family_id: cuvinte_silabe
+family_id: crackdown_fleets_global
 stories: 1
-sources: Ieseanul
+sources: CBC
 event_hints: none
-first_seen: 2026-03-15T12:25:48.458992+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 2
-age_hours: 0.06
-
-family_id: infrastructure_issue
-stories: 1
-sources: News.ro
-event_hints: romanian_infrastructure_issue
-first_seen: 2026-03-15T11:43:01.531525+00:00
-last_seen: 2026-03-15T12:29:07.632561+00:00
-run_count: 7
-age_hours: 0.77
+first_seen: 2026-03-15T11:18:27.158472+00:00
+last_seen: 2026-03-15T13:45:43.281959+00:00
+run_count: 19
+age_hours: 2.45
 
 JUSTICE BOOSTED STORIES
 
@@ -144,4 +252,4 @@ none
 
 NEAR_MISS_DOMESTIC_CANDIDATES
 
-Domestic coverage today: 0 hard-news / 0 recovered / 0 near-miss -> balance: WEAK
+Domestic coverage today: 2 hard-news / 0 recovered / 0 near-miss -> balance: THIN

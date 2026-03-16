@@ -1,0 +1,608 @@
+{
+  "national_cluster_count": 11,
+  "multi_source_clusters": 0,
+  "national_preference_bucket_distribution": {
+    "domestic_hard_news": 1,
+    "off_target": 10
+  },
+  "clusters": [
+    {
+      "cluster_id": "cluster-ce9f87b39795",
+      "headline": "Cati bani pot ajunge in vistieria statului din taxarea sectorului bancar' Statul se asteapta sa incaseze circa 8 mld lei in 2026 din impozitarea castigurilor bancilor si ale BNR mai putin decat in 2025 De ce'",
+      "source_list": [
+        "ZF.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Aproape",
+        "Cati",
+        "Incasarile",
+        "Ministerul Finantelor",
+        "Peste",
+        "Ramane",
+        "Statul"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "domestic_hard_news",
+      "national_preference_reason": "domestic_hard_news: Romanian public-interest evidence passed rebalance threshold (domestic_score_total=16, positive_score=16, negative_score=5, romanian_entity_hits_count=2, public_interest_hits_count=3, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "institution:bnr",
+        "institution:ministerul",
+        "public_impact:buget",
+        "public_impact:impozit",
+        "public_impact:impozite"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "personal_finance:bani",
+        "soft_feature:de ce"
+      ],
+      "domestic_score_total": 16,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 3,
+      "negative_signal_count": 2,
+      "candidate_event_family_hints": [
+        "romanian_budget_fiscal"
+      ],
+      "institutional_signal_hits": [
+        "bnr",
+        "ministerul"
+      ],
+      "romania_impact_evidence_hits": [
+        "bnr"
+      ],
+      "domestic_purity_score": 0.93,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_budget_fiscal"
+      ],
+      "domestic_vs_external_rank_reason": "credible Romanian domestic evidence improved national ranking",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": null,
+      "failed_threshold_name": null,
+      "threshold_required_value": null,
+      "candidate_current_value": null,
+      "classifier_decision_reason": "domestic_hard_news: Romanian public-interest evidence passed rebalance threshold (domestic_score_total=16, positive_score=16, negative_score=5, romanian_entity_hits_count=2, public_interest_hits_count=3, headline_gate_passed=True)",
+      "final_score": 81.94
+    },
+    {
+      "cluster_id": "cluster-911a7ce876c5",
+      "headline": "CSM reia luni votul in cazul procurorilor Marius Voineag si Alex Florenta unde s-a inregistrat balotaj Candidatul pentru sefia DNA Viorel Cerbu va sustine interviul",
+      "source_list": [
+        "G4Media"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Alex Florenta",
+        "Candidatul",
+        "Marius Voineag",
+        "Viorel Cerbu"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=9, positive_score=7, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "institution:dna",
+        "institution:procurorilor"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 9,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_justice"
+      ],
+      "institutional_signal_hits": [
+        "dna",
+        "procurorilor"
+      ],
+      "romania_impact_evidence_hits": [
+        "csm",
+        "dna",
+        "procurorilor"
+      ],
+      "domestic_purity_score": 0.4,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 1.5,
+      "cluster_event_family_hints": [
+        "romanian_justice"
+      ],
+      "domestic_vs_external_rank_reason": "title-only domestic candidate added survivability",
+      "recovery_score": 99.26,
+      "recovered_domestic_candidate": true,
+      "persistence_boost_applied": 1.6,
+      "top5_balance_adjustment_reason": "Recovered as Romanian near-miss domestic candidate (recovery_score=99.26, leading_domestic_score=81.94)",
+      "recovery_rejection_reason": null,
+      "failed_threshold_name": null,
+      "threshold_required_value": null,
+      "candidate_current_value": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=9, positive_score=7, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "final_score": 73.1
+    },
+    {
+      "cluster_id": "cluster-6dd0526fd68c",
+      "headline": "Alegeri locale cu miza mare au loc duminica in Franta Intrebarea-cheie la care vom avea raspunsul in curand",
+      "source_list": [
+        "HotNews.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Adunarea Nationala",
+        "Alegatorii",
+        "Alegeri",
+        "Franta Intrebarea",
+        "Frantei Votarea",
+        "Jordan Bardella",
+        "Rassemblement National",
+        "Reuters Aflandu",
+        "Rezultatele"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=2, positive_score=2, negative_score=1, romanian_entity_hits_count=0, public_interest_hits_count=1, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "public_impact:alegeri"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "generic_corporate:reuters"
+      ],
+      "domestic_score_total": 2,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 1,
+      "negative_signal_count": 1,
+      "candidate_event_family_hints": [],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.00 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.0,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=2, positive_score=2, negative_score=1, romanian_entity_hits_count=0, public_interest_hits_count=1, headline_gate_passed=False)",
+      "final_score": 63.9
+    },
+    {
+      "cluster_id": "cluster-1c63b4c16494",
+      "headline": "Elvetia a refuzat survolarea teritoriului sau de catre avioane militare americane invocand neutralitatea sa",
+      "source_list": [
+        "Stirileprotv.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Autoritatile",
+        "Avertisment",
+        "Cererea Statelor",
+        "Elvetia",
+        "Elvetia Legea",
+        "Exceptii",
+        "Iran",
+        "Legea",
+        "Solicitarea"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=3, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "institution:guvernul"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 3,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 1,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_domestic_politics",
+        "romanian_major_policy_decision"
+      ],
+      "institutional_signal_hits": [
+        "guvernul"
+      ],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.115,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_domestic_politics",
+        "romanian_major_policy_decision"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 2.4,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.12 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.12,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=3, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 63.46
+    },
+    {
+      "cluster_id": "cluster-ec3130373f43",
+      "headline": "Orase construite special pentru a deveni capitale De ce unele tari au recurs la aceasta solutie",
+      "source_list": [
+        "Antena 3"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Brasilia",
+        "Braziliei",
+        "Ciudad",
+        "Desi",
+        "Euronews Brasilia",
+        "Guineea Ecuatoriala",
+        "Imperiul Roman",
+        "Multe",
+        "Orase",
+        "Orasul"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=4, positive_score=4, negative_score=2, romanian_entity_hits_count=0, public_interest_hits_count=2, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "public_impact:infrastructura",
+        "public_impact:spitale"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "soft_feature:de ce"
+      ],
+      "domestic_score_total": 4,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 2,
+      "negative_signal_count": 1,
+      "candidate_event_family_hints": [
+        "romanian_infrastructure_issue"
+      ],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.047,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_infrastructure_issue"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.05 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.05,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=4, positive_score=4, negative_score=2, romanian_entity_hits_count=0, public_interest_hits_count=2, headline_gate_passed=True)",
+      "final_score": 61.92
+    },
+    {
+      "cluster_id": "cluster-470fe4550608",
+      "headline": "Incepe judecata in dosarul Atacul cu macete din Braila cinci batausi acuzati de tentativa de omor",
+      "source_list": [
+        "Libertatea"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Acolo",
+        "Atacul",
+        "Braila",
+        "Braila Iulian Sandu",
+        "Braila Procurorii",
+        "Cinci",
+        "Conform",
+        "Imediat Mario Grama",
+        "Inarmati",
+        "Incepe"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=3, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "institution:procurorii"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 3,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 1,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [],
+      "institutional_signal_hits": [
+        "procurorii"
+      ],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.00 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.0,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=3, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 61.54
+    },
+    {
+      "cluster_id": "cluster-f818197eeedd",
+      "headline": "E frustrant Meciul asta nu s-a decis pe teren Jucatorii lui Dinamo ies la atac dupa meciul cu",
+      "source_list": [
+        "Ziare.com"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Balint El",
+        "Chiar",
+        "Consider",
+        "Csiksereda",
+        "Dinamo",
+        "Jucatorii",
+        "Meciul",
+        "Otelul Galati Este",
+        "Otelul Galati Eu",
+        "Raman"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=2, positive_score=2, negative_score=1, romanian_entity_hits_count=0, public_interest_hits_count=1, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "public_impact:energie"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "off_target:meci"
+      ],
+      "domestic_score_total": 2,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 1,
+      "negative_signal_count": 1,
+      "candidate_event_family_hints": [
+        "romanian_eu_funds_loss",
+        "romanian_energy_security"
+      ],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.023,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_energy_security",
+        "romanian_eu_funds_loss"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.8,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.02 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.02,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=2, positive_score=2, negative_score=1, romanian_entity_hits_count=0, public_interest_hits_count=1, headline_gate_passed=False)",
+      "final_score": 57.44
+    },
+    {
+      "cluster_id": "cluster-9e612f1be4cd",
+      "headline": "Trump nu e pregatit sa incheie razboiul cu Iranul SUA ar putea lovi din nou Insula Kharg doar de dragul distractiei",
+      "source_list": [
+        "spotmedia.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Donald Trump",
+        "Insula Kharg",
+        "Insula Kharg Poate",
+        "Iranul",
+        "Iranului",
+        "Iranului Trump",
+        "Kharg",
+        "Presedintele",
+        "Stramtorii Ormuz In",
+        "The Guardian"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=0, positive_score=0, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 0,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.00 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.0,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=0, positive_score=0, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 56.34
+    },
+    {
+      "cluster_id": "cluster-3ad832660fc7",
+      "headline": "Prahova Incendiu puternic la o biserica monument istoric 150 de persoane s-au autoevacuat Restrictii de trafic pe DN1 pe sensul Bucuresti Ploiesti din cauza incendiului",
+      "source_list": [
+        "News.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Bucuresti Ploiesti",
+        "Prahova Incendiu",
+        "Restrictii"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=6, positive_score=3, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "governance_context:trafic",
+        "governance_location:prahova"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 6,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_infrastructure_issue"
+      ],
+      "institutional_signal_hits": [
+        "governance_context:trafic",
+        "governance_location:prahova"
+      ],
+      "romania_impact_evidence_hits": [
+        "bucuresti"
+      ],
+      "domestic_purity_score": 0.2,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_infrastructure_issue"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.20 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.2,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=6, positive_score=3, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "final_score": 55.5
+    },
+    {
+      "cluster_id": "cluster-8d5af352240e",
+      "headline": "Incendiu puternic la o biserica situata pe DN1 judetul Prahova 120 de persoane s-au evacuat",
+      "source_list": [
+        "Adevărul"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Autoritatile",
+        "Biserica",
+        "Detasamentului",
+        "Flacarile",
+        "Incendiu",
+        "Lucru Balta Doamnei Potrivit",
+        "Ploiesti",
+        "Prahova",
+        "Puchenii Mari",
+        "Puchenii Mosneni"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=1, positive_score=0, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 1,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 1,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "recovery_rejection_reason": "purity=0.00 < required=0.35",
+      "failed_threshold_name": "domestic_purity_score",
+      "threshold_required_value": 0.35,
+      "candidate_current_value": 0.0,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=1, positive_score=0, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 53.54
+    },
+    {
+      "cluster_id": "cluster-736e8f902a26",
+      "headline": "Toti ochii pe sedinta PSD Social-democratii decid daca voteaza bugetul propriului Guvern",
+      "source_list": [
+        "Cotidianul"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Guvern",
+        "Social",
+        "Toti"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=8, positive_score=6, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "actor:psd",
+        "institution:guvern"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 8,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_domestic_politics"
+      ],
+      "institutional_signal_hits": [
+        "guvern",
+        "psd"
+      ],
+      "romania_impact_evidence_hits": [
+        "buget",
+        "guvern",
+        "psd"
+      ],
+      "domestic_purity_score": 0.4,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 1.5,
+      "cluster_event_family_hints": [
+        "romanian_domestic_politics"
+      ],
+      "domestic_vs_external_rank_reason": "title-only domestic candidate added survivability",
+      "recovery_score": 97.76,
+      "recovered_domestic_candidate": true,
+      "persistence_boost_applied": 2.4,
+      "top5_balance_adjustment_reason": "Recovered as Romanian near-miss domestic candidate (recovery_score=97.76, leading_domestic_score=81.94)",
+      "recovery_rejection_reason": null,
+      "failed_threshold_name": null,
+      "threshold_required_value": null,
+      "candidate_current_value": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=8, positive_score=6, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "final_score": 52.64
+    }
+  ]
+}

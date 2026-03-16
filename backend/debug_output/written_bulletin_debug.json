@@ -1,0 +1,2730 @@
+{
+  "user_profile": {
+    "user": "debug_general",
+    "personalization": {
+      "listener_profile": {
+        "first_name": null,
+        "country": null,
+        "region": null,
+        "city": null
+      },
+      "editorial_preferences": {
+        "geography": {
+          "local": 0.0,
+          "national": 50.0,
+          "international": 50.0
+        },
+        "domains": {
+          "politics": 28.0,
+          "economy": 20.0,
+          "sport": 4.0,
+          "entertainment": 4.0,
+          "education": 14.0,
+          "health": 14.0,
+          "tech": 16.0
+        }
+      }
+    }
+  },
+  "local_anchor_resolved": {
+    "anchor": null,
+    "scope": "none",
+    "local_source_region_used": null,
+    "local_source_count": 0,
+    "local_sources_enabled": false,
+    "local_source_registry_used": false,
+    "explanation": "County local sources were not activated because local preference is 0."
+  },
+  "article_ingestion": {
+    "total_candidate_articles": 20,
+    "full_fetch_success_count": 14,
+    "rss_fallback_count": 6,
+    "candidates_by_scope": {
+      "national": 6,
+      "international": 14
+    },
+    "candidates_by_provenance": {
+      "full_fetch": 14,
+      "rss_fallback": 6
+    },
+    "source_discovery_results": [
+      {
+        "source_id": "bbc-world-news",
+        "source_name": "BBC World",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.bbc.com/news/articles/cev7111kx9wo?at_medium=RSS&at_campaign=rss",
+          "title": "Rescuers blame weather and 'underprepared skiers' for rise in Alps avalanche deaths",
+          "published_at": "2026-03-14T16:32:25Z",
+          "source_name": "BBC World",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "dw-world-news",
+        "source_name": "DW World",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.dw.com/en/belarus-kolesnikova-receives-charlemagne-prize-in-germany/a-76361654?maca=en-rss-en-world-4025-xml-mrss",
+          "title": "Belarus' Kolesnikova receives Charlemagne Prize in Germany",
+          "published_at": "2026-03-14T14:44:00Z",
+          "source_name": "DW World",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "commentary-foreign-affairs",
+        "source_name": "Foreign Affairs",
+        "source_type": "commentary",
+        "scope": "international",
+        "category": "analysis",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'commentary-foreign-affairs': listing: HTTP Error 404: Not Found."
+      },
+      {
+        "source_id": "commentary-brookings",
+        "source_name": "Brookings Commentary",
+        "source_type": "commentary",
+        "scope": "international",
+        "category": "analysis",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.brookings.edu/books/articles-of-faith-articles-of-peace/",
+          "title": "Articles of Faith, Articles of Peace",
+          "published_at": "2013-01-10T18:30:57Z",
+          "source_name": "Brookings Commentary",
+          "source_type": "commentary"
+        }
+      },
+      {
+        "source_id": "ro-libertatea",
+        "source_name": "Libertatea",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-libertatea': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-digi24",
+        "source_name": "Digi24",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-digi24': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-hotnews",
+        "source_name": "HotNews",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://hotnews.ro/c/actualitate",
+          "title": "Actualitate",
+          "published_at": "2026-03-14T16:34:00Z",
+          "source_name": "HotNews",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "ro-stiripesurse",
+        "source_name": "Stiri pe surse",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.stiripesurse.ro/trump-intra-in-forta-in-criza-din-golf-nave-de-razboi-trimise-pentru-a-redeschide-stramtoarea-ormuz_3867888",
+          "title": "18:30233Știrile ZileiTrump intră în forță în criza din Golf - Nave de război trimise pentru a redeschide Strâmtoarea Ormuz",
+          "published_at": "2026-03-14T16:30:03Z",
+          "source_name": "Stiri pe surse",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "ro-stirileprotv",
+        "source_name": "Stirile ProTV",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-stirileprotv': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-mediafax",
+        "source_name": "Mediafax",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-mediafax': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-adevarul",
+        "source_name": "Adevarul",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-adevarul': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-g4media",
+        "source_name": "G4Media",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-g4media': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-antena3",
+        "source_name": "Antena 3 CNN",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-antena3': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-romaniatv",
+        "source_name": "Romania TV",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-romaniatv': listing: <urlopen error [Errno 11002] getaddrinfo failed>; page: <urlopen error [Errno 11002] getaddrinfo failed>."
+      },
+      {
+        "source_id": "ro-euronews-ro",
+        "source_name": "Euronews Romania",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.euronews.ro/topic/stiri-externe",
+          "title": "Știri Externe",
+          "published_at": "2026-03-14T16:18:09Z",
+          "source_name": "Euronews Romania",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "ro-news-ro",
+        "source_name": "News.ro",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.news.ro/sport/atletism-alin-firfirica-locul-2-la-aruncarea-discului-la-cupa-europei-de-la-nicosia-1922403014092026031822378365",
+          "title": "Atletism: Alin Firfirică, locul 2 la aruncarea discului, la Cupa Europei de la Nicosia",
+          "published_at": "2026-03-14T18:30:09Z",
+          "source_name": "News.ro",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "ro-ziarul-financiar",
+        "source_name": "Ziarul Financiar",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-ziarul-financiar': listing: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.ziarulfinanciar.ro'. (_ssl.c:1081)>; page: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.ziarulfinanciar.ro'. (_ssl.c:1081)>."
+      },
+      {
+        "source_id": "ro-capital",
+        "source_name": "Capital",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-capital': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-dcnews",
+        "source_name": "DC News",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-dcnews': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-puterea",
+        "source_name": "Puterea",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-puterea': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-realitatea",
+        "source_name": "Realitatea",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-realitatea': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-europa-libera",
+        "source_name": "Europa Libera Romania",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-europa-libera': listing: <urlopen error timed out>; page: <urlopen error timed out>."
+      },
+      {
+        "source_id": "ro-agerpres",
+        "source_name": "Agerpres",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 1,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-agerpres': listing: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1081)>."
+      },
+      {
+        "source_id": "ro-observatornews",
+        "source_name": "Observator News",
+        "source_type": "news",
+        "scope": "national",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-observatornews': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-digisport",
+        "source_name": "Digi Sport",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-digisport': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-gsp",
+        "source_name": "Gazeta Sporturilor",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-gsp': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-prosport",
+        "source_name": "ProSport",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-prosport': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-sport-ro",
+        "source_name": "Sport.ro",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-sport-ro': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-fanatik-sport",
+        "source_name": "Fanatik",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-fanatik-sport': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-flashscore",
+        "source_name": "Flashscore Romania",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-flashscore': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-romanian-soccer",
+        "source_name": "Romanian Soccer",
+        "source_type": "news",
+        "scope": "national",
+        "category": "sport",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-romanian-soccer': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-economica",
+        "source_name": "Economica.net",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-economica': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-economedia",
+        "source_name": "Economedia",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-economedia': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-profit",
+        "source_name": "Profit.ro",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-profit': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-bursa",
+        "source_name": "Bursa",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-bursa': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-wall-street",
+        "source_name": "Wall-Street.ro",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-wall-street': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-business-magazin",
+        "source_name": "Business Magazin",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-business-magazin': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-cursbnr",
+        "source_name": "Curs BNR",
+        "source_type": "news",
+        "scope": "national",
+        "category": "economy",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-cursbnr': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-click",
+        "source_name": "Click",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-click': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-libertatea-entertainment",
+        "source_name": "Libertatea Entertainment",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-libertatea-entertainment': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-acasatv",
+        "source_name": "AcasaTV",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-acasatv': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-cancan",
+        "source_name": "Cancan",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-cancan': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-libertatea-lifestyle",
+        "source_name": "Libertatea Lifestyle",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-libertatea-lifestyle': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-prosport-monden",
+        "source_name": "ProSport Monden",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-prosport-monden': listing: HTTP Error 404: Not Found; page: HTTP Error 404: Not Found."
+      },
+      {
+        "source_id": "ro-fanatik-monden",
+        "source_name": "Fanatik Monden",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-fanatik-monden': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-elle",
+        "source_name": "Elle Romania",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.elle.ro/revista/elle-special-tendinte-fashion-beauty-primavara-vara-2026-1055078",
+          "title": "ELLE SPECIAL: Tendințe fashion &amp; beauty primăvară-vară 2026",
+          "published_at": "2026-02-24T18:36:48Z",
+          "source_name": "Elle Romania",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "ro-viva",
+        "source_name": "Viva",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-viva': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-unica",
+        "source_name": "Unica",
+        "source_type": "news",
+        "scope": "national",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-unica': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-recorder",
+        "source_name": "Recorder",
+        "source_type": "news",
+        "scope": "national",
+        "category": "analysis",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-recorder': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-contributors",
+        "source_name": "Contributors",
+        "source_type": "commentary",
+        "scope": "national",
+        "category": "analysis",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-contributors': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-presshub",
+        "source_name": "PressHub",
+        "source_type": "news",
+        "scope": "national",
+        "category": "analysis",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'ro-presshub': no parser returned a dated content item."
+      },
+      {
+        "source_id": "ro-context",
+        "source_name": "Context.ro",
+        "source_type": "news",
+        "scope": "national",
+        "category": "analysis",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://context.ro/seriale/#webpage",
+          "title": "Seriale | context",
+          "published_at": "2022-01-20T12:26:29Z",
+          "source_name": "Context.ro",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "ro-ziare",
+        "source_name": "Ziare.com",
+        "source_type": "news",
+        "scope": "national",
+        "category": "analysis",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://ziare.com/amenintari-iran/ucraina-tinta-legitima-sprijin-israel-2000266",
+          "title": "Iranul amenință Ucraina: Sprijinul pentru Israel transformă țara într-o „țintă legitimă”",
+          "published_at": "2026-03-14T18:33:53.436849Z",
+          "source_name": "Ziare.com",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-nyt",
+        "source_name": "The New York Times",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-nyt': listing: HTTP Error 403: Forbidden."
+      },
+      {
+        "source_id": "intl-guardian",
+        "source_name": "The Guardian",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-guardian': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-reuters",
+        "source_name": "Reuters",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 1,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-reuters': listing: HTTP Error 401: HTTP Forbidden; page: HTTP Error 401: HTTP Forbidden."
+      },
+      {
+        "source_id": "intl-ap",
+        "source_name": "Associated Press",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 1,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://apnews.com/live/iran-war-israel-trump-03-14-2026",
+          "title": "Live updates: Iran threatens UAE ports as war enters its third week",
+          "published_at": "2026-03-14T12:25:00Z",
+          "source_name": "Associated Press",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-cnn",
+        "source_name": "CNN",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-cnn': listing: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1081)>; page: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1081)>."
+      },
+      {
+        "source_id": "intl-aljazeera",
+        "source_name": "Al Jazeera",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-aljazeera': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-washington-post",
+        "source_name": "The Washington Post",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-washington-post': listing: The read operation timed out; page: The read operation timed out."
+      },
+      {
+        "source_id": "intl-npr",
+        "source_name": "NPR",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.npr.org/",
+          "title": "NPR - Breaking News, Analysis, Music, Arts & Podcasts",
+          "published_at": "2024-05-22T00:00:00Z",
+          "source_name": "NPR",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-foxnews",
+        "source_name": "Fox News",
+        "source_type": "news",
+        "scope": "international",
+        "category": "general",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-foxnews': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-bloomberg",
+        "source_name": "Bloomberg",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-bloomberg': listing: HTTP Error 403: Forbidden; page: HTTP Error 403: Forbidden."
+      },
+      {
+        "source_id": "intl-ft",
+        "source_name": "Financial Times",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-ft': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-wsj",
+        "source_name": "The Wall Street Journal",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 2,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-wsj': listing: HTTP Error 401: HTTP Forbidden; page: HTTP Error 401: HTTP Forbidden."
+      },
+      {
+        "source_id": "intl-cnbc",
+        "source_name": "CNBC",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.cnbc.com/china-markets/",
+          "title": "China Markets",
+          "published_at": "2018-05-30T14:21:20Z",
+          "source_name": "CNBC",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-economist",
+        "source_name": "The Economist",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-economist': listing: HTTP Error 403: Forbidden."
+      },
+      {
+        "source_id": "intl-forbes",
+        "source_name": "Forbes",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-forbes': listing: HTTP Error 403: Forbidden."
+      },
+      {
+        "source_id": "intl-yahoo-finance",
+        "source_name": "Yahoo Finance",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-yahoo-finance': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-marketwatch",
+        "source_name": "MarketWatch",
+        "source_type": "news",
+        "scope": "international",
+        "category": "economy",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-marketwatch': listing: HTTP Error 401: HTTP Forbidden; page: HTTP Error 401: HTTP Forbidden."
+      },
+      {
+        "source_id": "intl-espn",
+        "source_name": "ESPN",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-espn': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-skysports",
+        "source_name": "Sky Sports",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-skysports': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-cbssports",
+        "source_name": "CBS Sports",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.cbssports.com/betting/news/todays-top-games-to-watch-best-bets-odds-houston-arizona-virginia-duke-nba-and-much-more/",
+          "title": "Tonight's best bets: Houston-Arizona, Virginia-Duke, and NBA too",
+          "published_at": "2026-03-14T15:37:00Z",
+          "source_name": "CBS Sports",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-si",
+        "source_name": "Sports Illustrated",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.si.com/",
+          "title": "Calipari, Razorbacks Perfect For Each Other Even When Kentucky Scoffed at Move",
+          "published_at": "2026-03-14T16:53:13Z",
+          "source_name": "Sports Illustrated",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-bbc-sport",
+        "source_name": "BBC Sport",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-bbc-sport': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-athletic",
+        "source_name": "The Athletic",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-athletic': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-yahoo-sports",
+        "source_name": "Yahoo Sports",
+        "source_type": "news",
+        "scope": "international",
+        "category": "sport",
+        "editorial_priority": 3,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-yahoo-sports': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-tmz",
+        "source_name": "TMZ",
+        "source_type": "news",
+        "scope": "international",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.tmz.com/2026/03/14/north-west-shows-off-spike-fingernails/",
+          "title": "North West Check Out My Manicure with Spikes and Piercings!",
+          "published_at": "2026-03-14T16:16:54Z",
+          "source_name": "TMZ",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-people",
+        "source_name": "People",
+        "source_type": "news",
+        "scope": "international",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-people': listing: [WinError 10054] An existing connection was forcibly closed by the remote host."
+      },
+      {
+        "source_id": "intl-eonline",
+        "source_name": "E! Online",
+        "source_type": "news",
+        "scope": "international",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "error",
+        "error": "Unable to detect latest content for source 'intl-eonline': no parser returned a dated content item."
+      },
+      {
+        "source_id": "intl-usmagazine",
+        "source_name": "Us Weekly",
+        "source_type": "news",
+        "scope": "international",
+        "category": "entertainment",
+        "editorial_priority": 5,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://www.usmagazine.com/sports/",
+          "title": "Sports News",
+          "published_at": "2026-02-06T20:02:58Z",
+          "source_name": "Us Weekly",
+          "source_type": "news"
+        }
+      },
+      {
+        "source_id": "intl-variety",
+        "source_name": "Variety",
+        "source_type": "news",
+        "scope": "international",
+        "category": "entertainment",
+        "editorial_priority": 4,
+        "region": null,
+        "status": "success",
+        "latest_item": {
+          "url": "https://variety.com/what-to-watch-streaming-movies-shows-online/",
+          "title": "What To Watch On Streaming",
+          "published_at": "2020-05-29T20:30:51Z",
+          "source_name": "Variety",
+          "source_type": "news"
+        }
+      }
+    ]
+  },
+  "story_clustering": {
+    "cluster_count": 20,
+    "clusters": [
+      {
+        "cluster_id": "cluster-1c2876a32c17",
+        "representative_title": "Atletism: Alin Firfirică, locul 2 la aruncarea discului, la Cupa Europei de la Nicosia",
+        "score_total": 75.0,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 0.48,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 0.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.9,
+            "max_points": 10.0,
+            "contribution": 9.0,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.85,
+            "max_points": 20.0,
+            "contribution": 17.0,
+            "explanation": "Important institutions/leaders/countries matched: EU, UN."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.news.ro/sport/atletism-alin-firfirica-locul-2-la-aruncarea-discului-la-cupa-europei-de-la-nicosia-1922403014092026031822378365",
+            "title": "Atletism: Alin Firfirică, locul 2 la aruncarea discului, la Cupa Europei de la Nicosia",
+            "source": "News.ro",
+            "published_at": "2026-03-14T16:30:09Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 2,
+            "source_scope": "national",
+            "source_category": "general",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-46cf0c97d671",
+        "representative_title": "Rescuers blame weather and 'underprepared skiers’ for rise in avalanche deaths",
+        "score_total": 66.5,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 0.45,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 0.4 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.95,
+            "max_points": 10.0,
+            "contribution": 9.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.4,
+            "max_points": 20.0,
+            "contribution": 8.0,
+            "explanation": "Important institutions/leaders/countries matched: UN."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/cev7111kx9wo?at_medium=RSS&at_campaign=rss",
+            "title": "Rescuers blame weather and 'underprepared skiers’ for rise in avalanche deaths",
+            "source": "BBC World",
+            "published_at": "2026-03-14T16:32:25Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 2,
+            "source_scope": "international",
+            "source_category": "general",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-b6aefb97af69",
+        "representative_title": "Live updates: Iran threatens UAE ports as war enters its third week",
+        "score_total": 65.97,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 4.57,
+            "max_points": 30.0,
+            "contribution": 29.47,
+            "explanation": "Latest article is 4.6 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 1.0,
+            "max_points": 10.0,
+            "contribution": 10.0,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.5,
+            "max_points": 15.0,
+            "contribution": 7.5,
+            "explanation": "Topic terms matched: war; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://apnews.com/live/iran-war-israel-trump-03-14-2026",
+            "title": "Live updates: Iran threatens UAE ports as war enters its third week",
+            "source": "AP News",
+            "published_at": "2026-03-14T12:25:00Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 1,
+            "source_scope": "international",
+            "source_category": "general",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-9a9212d93e37",
+        "representative_title": "Belarus' Kolesnikova receives Charlemagne Prize in Germany",
+        "score_total": 64.5,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 2.24,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 2.2 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.9,
+            "max_points": 10.0,
+            "contribution": 9.0,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.4,
+            "max_points": 20.0,
+            "contribution": 8.0,
+            "explanation": "Important institutions/leaders/countries matched: US."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.dw.com/en/belarus-kolesnikova-receives-charlemagne-prize-in-germany/a-76361654?maca=en-rss-en-world-4025-xml-mrss",
+            "title": "Belarus' Kolesnikova receives Charlemagne Prize in Germany",
+            "source": "Deutsche Welle",
+            "published_at": "2026-03-14T14:44:36.511000Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 2,
+            "source_scope": "international",
+            "source_category": "general",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-33f4931126a4",
+        "representative_title": "Trump intră în forță în criza din Golf - Nave de război trimise pentru a redeschide Strâmtoarea Ormuz",
+        "score_total": 63.5,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 0.49,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 0.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.75,
+            "max_points": 10.0,
+            "contribution": 7.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.35,
+            "max_points": 20.0,
+            "contribution": 7.0,
+            "explanation": "Important institutions/leaders/countries matched: Trump."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.stiripesurse.ro/trump-intra-in-forta-in-criza-din-golf-nave-de-razboi-trimise-pentru-a-redeschide-stramtoarea-ormuz_3867888",
+            "title": "Trump intră în forță în criza din Golf - Nave de război trimise pentru a redeschide Strâmtoarea Ormuz",
+            "source": "Stiripesurse",
+            "published_at": "2026-03-14T16:30:03Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 3,
+            "source_scope": "national",
+            "source_category": "general",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-764da6c10abd",
+        "representative_title": "More US Marines and warships being moved to Middle East, reports say",
+        "score_total": 59.32,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 3.53,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 3.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty. 1 cluster article(s) came from RSS fallback and were scored more conservatively."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.4,
+            "max_points": 20.0,
+            "contribution": 8.0,
+            "explanation": "Important institutions/leaders/countries matched: US."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.5,
+            "max_points": 15.0,
+            "contribution": 7.5,
+            "explanation": "Topic terms matched: war; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/cq8gj9n12g8o?at_medium=RSS&at_campaign=rss",
+            "title": "More US Marines and warships being moved to Middle East, reports say",
+            "source": "BBC News",
+            "published_at": "2026-03-14T13:27:32Z",
+            "ingestion_kind": "rss_fallback",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-6d21b026accd",
+        "representative_title": "Un lider important din SUA îl batjocorește pe Trump: „Este cățelușul lui Putin”, Casa Albă trocul...",
+        "score_total": 56.93,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 15.49,
+            "max_points": 30.0,
+            "contribution": 19.23,
+            "explanation": "Latest article is 15.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.35,
+            "max_points": 10.0,
+            "contribution": 3.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 1.0,
+            "max_points": 20.0,
+            "contribution": 20.0,
+            "explanation": "Important institutions/leaders/countries matched: UN, Trump, Putin."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://ziare.com/amenintari-iran/ucraina-tinta-legitima-sprijin-israel-2000266",
+            "title": "Un lider important din SUA îl batjocorește pe Trump: „Este cățelușul lui Putin”, Casa Albă trocul...",
+            "source": "Ziare.Com",
+            "published_at": "2026-03-14T01:30:00Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 5,
+            "source_scope": "national",
+            "source_category": "analysis",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-85b9dc6eb4e4",
+        "representative_title": "ȘTIRI EXTERNE",
+        "score_total": 56.5,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 0.68,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 0.7 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.9,
+            "max_points": 10.0,
+            "contribution": 9.0,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.euronews.ro/topic/stiri-externe",
+            "title": "ȘTIRI EXTERNE",
+            "source": "euronews.ro: Știri de ultimă oră, breaking news, #AllViews",
+            "published_at": "2026-03-14T16:18:09Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 2,
+            "source_scope": "national",
+            "source_category": "general",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-ab37c56cc271",
+        "representative_title": "Today's top games to watch, best bets, odds: Houston-Arizona, Virginia-Duke, NBA and much more",
+        "score_total": 52.5,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 1.37,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 1.4 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.75,
+            "max_points": 10.0,
+            "contribution": 7.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.4,
+            "max_points": 20.0,
+            "contribution": 8.0,
+            "explanation": "Important institutions/leaders/countries matched: US."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.cbssports.com/betting/news/todays-top-games-to-watch-best-bets-odds-houston-arizona-virginia-duke-nba-and-much-more/",
+            "title": "Today's top games to watch, best bets, odds: Houston-Arizona, Virginia-Duke, NBA and much more",
+            "source": "CBS Sports",
+            "published_at": "2026-03-14T15:37:00Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-d70a5df560a2",
+        "representative_title": "Kennedy Center head steps down after tumultuous year",
+        "score_total": 51.82,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 1.47,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 1.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty. 1 cluster article(s) came from RSS fallback and were scored more conservatively."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.4,
+            "max_points": 20.0,
+            "contribution": 8.0,
+            "explanation": "Important institutions/leaders/countries matched: US."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/cy7jlgez0ljo?at_medium=RSS&at_campaign=rss",
+            "title": "Kennedy Center head steps down after tumultuous year",
+            "source": "BBC News",
+            "published_at": "2026-03-14T15:31:01Z",
+            "ingestion_kind": "rss_fallback",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-0637f9d59e11",
+        "representative_title": "Explosion at Amsterdam Jewish school 'a deliberate attack' says mayor",
+        "score_total": 50.86,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 4.22,
+            "max_points": 30.0,
+            "contribution": 29.79,
+            "explanation": "Latest article is 4.2 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty. 1 cluster article(s) came from RSS fallback and were scored more conservatively."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.45,
+            "max_points": 15.0,
+            "contribution": 6.75,
+            "explanation": "Topic terms matched: attack; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.45,
+            "max_points": 10.0,
+            "contribution": 4.5,
+            "explanation": "Representative title matched event-language cues: says, may."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/cwyg4j58gdyo?at_medium=RSS&at_campaign=rss",
+            "title": "Explosion at Amsterdam Jewish school 'a deliberate attack' says mayor",
+            "source": "BBC News",
+            "published_at": "2026-03-14T12:45:41Z",
+            "ingestion_kind": "rss_fallback",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-e5d30a8f4440",
+        "representative_title": "Hamas urges key ally Iran to halt attacks on Gulf states",
+        "score_total": 50.57,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 3.41,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 3.4 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty. 1 cluster article(s) came from RSS fallback and were scored more conservatively."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.45,
+            "max_points": 15.0,
+            "contribution": 6.75,
+            "explanation": "Topic terms matched: attack; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/cvg3xk6xgyzo?at_medium=RSS&at_campaign=rss",
+            "title": "Hamas urges key ally Iran to halt attacks on Gulf states",
+            "source": "BBC News",
+            "published_at": "2026-03-14T13:34:17Z",
+            "ingestion_kind": "rss_fallback",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-a39e66b2dbd0",
+        "representative_title": "Why has the US targeted Iran's Kharg Island?",
+        "score_total": 50.32,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 3.27,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 3.3 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty. 1 cluster article(s) came from RSS fallback and were scored more conservatively."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.4,
+            "max_points": 20.0,
+            "contribution": 8.0,
+            "explanation": "Important institutions/leaders/countries matched: US."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/c8jxzlwvd8ro?at_medium=RSS&at_campaign=rss",
+            "title": "Why has the US targeted Iran's Kharg Island?",
+            "source": "BBC News",
+            "published_at": "2026-03-14T13:42:48Z",
+            "ingestion_kind": "rss_fallback",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-c4330f475e48",
+        "representative_title": "'Hate-watch classic' War of the Worlds sweeps Razzie Awards",
+        "score_total": 43.43,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 12.41,
+            "max_points": 30.0,
+            "contribution": 22.11,
+            "explanation": "Latest article is 12.4 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty. 1 cluster article(s) came from RSS fallback and were scored more conservatively."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.5,
+            "max_points": 15.0,
+            "contribution": 7.5,
+            "explanation": "Topic terms matched: war; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.bbc.com/news/articles/c23zx8pgx28o?at_medium=RSS&at_campaign=rss",
+            "title": "'Hate-watch classic' War of the Worlds sweeps Razzie Awards",
+            "source": "BBC News",
+            "published_at": "2026-03-14T04:34:30Z",
+            "ingestion_kind": "rss_fallback",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-a4081493f307",
+        "representative_title": "North West Debuts Long Nails with Spikes, Piercings",
+        "score_total": 40.5,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 0.7,
+            "max_points": 30.0,
+            "contribution": 30.0,
+            "explanation": "Latest article is 0.7 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.35,
+            "max_points": 10.0,
+            "contribution": 3.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.4,
+            "max_points": 10.0,
+            "contribution": 4.0,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.tmz.com/2026/03/14/north-west-shows-off-spike-fingernails/",
+            "title": "North West Debuts Long Nails with Spikes, Piercings",
+            "source": "TMZ",
+            "published_at": "2026-03-14T16:16:54Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 5,
+            "source_scope": "international",
+            "source_category": "entertainment",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-cc6ffbdfbefe",
+        "representative_title": "China Markets",
+        "score_total": 32.32,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 68282.63,
+            "max_points": 30.0,
+            "contribution": 0.0,
+            "explanation": "Latest article is 68282.6 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.75,
+            "max_points": 10.0,
+            "contribution": 7.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.45,
+            "max_points": 20.0,
+            "contribution": 9.0,
+            "explanation": "Important institutions/leaders/countries matched: China."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.cnbc.com/china-markets/",
+            "title": "China Markets",
+            "source": "CNBC",
+            "published_at": "2018-05-30T14:21:20Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "economy",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-0f4b1f1e3838",
+        "representative_title": "How U.S. Survived Scare to Advance to WBC Semis",
+        "score_total": 31.32,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 17.86,
+            "max_points": 30.0,
+            "contribution": 17.0,
+            "explanation": "Latest article is 17.9 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.75,
+            "max_points": 10.0,
+            "contribution": 7.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.si.com/",
+            "title": "How U.S. Survived Scare to Advance to WBC Semis",
+            "source": "SI",
+            "published_at": "2026-03-13T23:07:28Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 3,
+            "source_scope": "international",
+            "source_category": "sport",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-16dcaa371dc1",
+        "representative_title": "Articles of Faith, Articles of Peace",
+        "score_total": 22.52,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 115462.47,
+            "max_points": 30.0,
+            "contribution": 0.0,
+            "explanation": "Latest article is 115462.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.85,
+            "max_points": 10.0,
+            "contribution": 8.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.brookings.edu/books/articles-of-faith-articles-of-peace/",
+            "title": "Articles of Faith, Articles of Peace",
+            "source": "Brookings",
+            "published_at": "2013-01-10T18:30:57Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 4,
+            "source_scope": "international",
+            "source_category": "analysis",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-01f10a0a0373",
+        "representative_title": "Seriale | context",
+        "score_total": 18.32,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 36340.54,
+            "max_points": 30.0,
+            "contribution": 0.0,
+            "explanation": "Latest article is 36340.5 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.55,
+            "max_points": 10.0,
+            "contribution": 5.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://context.ro/seriale/#webpage",
+            "title": "Seriale | context",
+            "source": "context",
+            "published_at": "2022-01-20T12:26:29Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 4,
+            "source_scope": "national",
+            "source_category": "analysis",
+            "is_local_source": false
+          }
+        ]
+      },
+      {
+        "cluster_id": "cluster-fc303b6a30ab",
+        "representative_title": "ELLE SPECIAL: Tendințe fashion & beauty primăvară-vară 2026",
+        "score_total": 9.0,
+        "score_breakdown": {
+          "recency": {
+            "name": "recency",
+            "value": 430.37,
+            "max_points": 30.0,
+            "contribution": 0.0,
+            "explanation": "Latest article is 430.4 hours old; newer clusters keep more of the 30-point recency budget."
+          },
+          "source_count": {
+            "name": "source_count",
+            "value": 1.0,
+            "max_points": 15.0,
+            "contribution": 3.0,
+            "explanation": "Cluster has 1 distinct source(s); broader confirmation raises priority modestly."
+          },
+          "source_quality": {
+            "name": "source_quality",
+            "value": 0.35,
+            "max_points": 10.0,
+            "contribution": 3.5,
+            "explanation": "Source-quality bonus uses trust weighting, registry priority, and a modest RSS fallback penalty."
+          },
+          "entity_importance": {
+            "name": "entity_importance",
+            "value": 0.0,
+            "max_points": 20.0,
+            "contribution": 0.0,
+            "explanation": "Important institutions/leaders/countries matched: none."
+          },
+          "topic_weight": {
+            "name": "topic_weight",
+            "value": 0.0,
+            "max_points": 15.0,
+            "contribution": 0.0,
+            "explanation": "Topic terms matched: none; hard-news topics receive a modest boost."
+          },
+          "title_strength": {
+            "name": "title_strength",
+            "value": 0.25,
+            "max_points": 10.0,
+            "contribution": 2.5,
+            "explanation": "Representative title matched event-language cues: none."
+          }
+        },
+        "member_articles": [
+          {
+            "url": "https://www.elle.ro/revista/elle-special-tendinte-fashion-beauty-primavara-vara-2026-1055078",
+            "title": "ELLE SPECIAL: Tendințe fashion & beauty primăvară-vară 2026",
+            "source": "Elle.ro",
+            "published_at": "2026-02-24T18:36:48Z",
+            "ingestion_kind": "full_fetch",
+            "editorial_priority": 5,
+            "source_scope": "national",
+            "source_category": "entertainment",
+            "is_local_source": false
+          }
+        ]
+      }
+    ]
+  },
+  "final_written_bulletin": {
+    "briefing_id": "briefing-49f9eba2be04",
+    "intro_text": "Acesta este jurnalul OpenWave cu cele mai importante informatii.",
+    "selected_stories": [
+      {
+        "position": 1,
+        "cluster_id": "cluster-1c2876a32c17",
+        "story_id": "cluster-1c2876a32c17",
+        "story_type": "major",
+        "headline": "Atletism Alin Firfirică locul aruncarea discului Cupa",
+        "lead": "Atletism Alin Firfirică locul 2 la aruncarea discului la Cupa Europei de la Nicosia.",
+        "body": "Potrivit News ro, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_attribution": "News ro relateaza ca subiectul cere clarificari rapide si reactii oficiale.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=major",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized",
+          "no_usable_quotes_detected",
+          "high_priority_story"
+        ],
+        "representative_title": "Atletism: Alin Firfirică, locul 2 la aruncarea discului, la Cupa Europei de la Nicosia",
+        "summary_text": "Potrivit News.ro, atletism Alin Firfirică locul 2 la aruncarea discului la Cupa Europei de la Nicosia. News ro relateaza ca subiectul cere clarificari rapide si reactii oficiale. Potrivit News ro, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul. Urmeaza clarificari oficiale si detalii noi.",
+        "source_labels": [
+          "News.ro"
+        ],
+        "score_total": 75.0,
+        "lead_type": "event",
+        "topic_label": "general",
+        "story_continuity_type": "new_story",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": false,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 19,
+          "notes": [
+            "word_count_outside_target_range",
+            "expanded_summary_used",
+            "duration_outside_target_range"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'Atletism: Alin Firfirică, locul 2 la aruncarea discului, la Cupa Europei de la Nicosia' was generated with short headline 'Atletism Alin Firfirică locul aruncarea discului Cupa', lead type 'event', continuity 'new_story', topic template 'general', attribution mode 'source_attribution' in attribution-first form, attribution_variant=relateaza, variation_used=True, expanded=True, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster did not appear in the previous bulletin. Compliance notes: word_count_outside_target_range, expanded_summary_used, duration_outside_target_range.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [
+            "news"
+          ],
+          "romanian_markers": [
+            "care",
+            "potrivit",
+            "si"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      },
+      {
+        "position": 2,
+        "cluster_id": "cluster-b6aefb97af69",
+        "story_id": "cluster-b6aefb97af69",
+        "story_type": "major",
+        "headline": "Iran ameninta porturi din Emiratele Arabe Unite",
+        "lead": "Apare un nou subiect cu impact public.",
+        "body": "Potrivit AP, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_attribution": "AP noteaza ca subiectul cere clarificari rapide si reactii oficiale.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=major",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized",
+          "no_usable_quotes_detected"
+        ],
+        "representative_title": "Live updates: Iran threatens UAE ports as war enters its third week",
+        "summary_text": "Potrivit AP News, apare un nou subiect cu impact public. AP noteaza ca subiectul cere clarificari rapide si reactii oficiale. Potrivit AP, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul. Urmeaza reactii diplomatice si riscul unei noi escaladari.",
+        "source_labels": [
+          "AP News"
+        ],
+        "score_total": 65.97,
+        "lead_type": "event",
+        "topic_label": "international_conflict",
+        "story_continuity_type": "update",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": false,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 16,
+          "notes": [
+            "word_count_outside_target_range",
+            "expanded_summary_used",
+            "duration_outside_target_range"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'Live updates: Iran threatens UAE ports as war enters its third week' was generated with short headline 'Iran ameninta porturi din Emiratele Arabe Unite', lead type 'event', continuity 'update', topic template 'international_conflict', attribution mode 'source_attribution' in attribution-first form, attribution_variant=noteaza, variation_used=True, expanded=True, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster appeared in previous bulletin. Compliance notes: word_count_outside_target_range, expanded_summary_used, duration_outside_target_range.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [
+            "news"
+          ],
+          "romanian_markers": [
+            "care",
+            "potrivit",
+            "si"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      },
+      {
+        "position": 3,
+        "cluster_id": "cluster-46cf0c97d671",
+        "story_id": "cluster-46cf0c97d671",
+        "story_type": "short",
+        "headline": "Subiect cu impact public",
+        "lead": "Datele noi schimba perspectiva.",
+        "body": "Potrivit BBC, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_attribution": "Potrivit BBC, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=short",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized"
+        ],
+        "representative_title": "Rescuers blame weather and 'underprepared skiers’ for rise in avalanche deaths",
+        "summary_text": "Datele noi schimba perspectiva. Potrivit BBC, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Potrivit BBC, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_labels": [
+          "BBC World"
+        ],
+        "score_total": 66.5,
+        "lead_type": "change",
+        "topic_label": "general",
+        "story_continuity_type": "new_story",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": false,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 17,
+          "notes": [
+            "word_count_outside_target_range",
+            "duration_outside_target_range"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'Rescuers blame weather and 'underprepared skiers’ for rise in avalanche deaths' was generated with short headline 'Subiect cu impact public', lead type 'change', continuity 'new_story', topic template 'general', attribution mode 'source_attribution' in attribution-first form, attribution_variant=potrivit, variation_used=False, expanded=False, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster did not appear in the previous bulletin. Compliance notes: word_count_outside_target_range, duration_outside_target_range.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [],
+          "romanian_markers": [
+            "care",
+            "masura",
+            "potrivit",
+            "si"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      },
+      {
+        "position": 4,
+        "cluster_id": "cluster-9a9212d93e37",
+        "story_id": "cluster-9a9212d93e37",
+        "story_type": "short",
+        "headline": "Belarus Kolesnikova receives Charlemagne Prize in Germany",
+        "lead": "Subiectul belarus Kolesnikova primeste Charlemagne premiul in Germania revine in atentie dupa evolutii noi.",
+        "body": "Belarus Kolesnikova primeste Charlemagne premiul in Germania.",
+        "source_attribution": "Deutsche Welle sustine ca belarus kolesnikova primeste charlemagne premiul in germania.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=short",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized"
+        ],
+        "representative_title": "Belarus' Kolesnikova receives Charlemagne Prize in Germany",
+        "summary_text": "Subiectul belarus Kolesnikova primeste Charlemagne premiul in Germania revine in atentie dupa evolutii noi. Deutsche Welle sustine ca belarus kolesnikova primeste charlemagne premiul in germania. Belarus Kolesnikova primeste Charlemagne premiul in Germania.",
+        "source_labels": [
+          "Deutsche Welle"
+        ],
+        "score_total": 64.5,
+        "lead_type": "event",
+        "topic_label": "general",
+        "story_continuity_type": "update",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": false,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 13,
+          "notes": [
+            "word_count_outside_target_range",
+            "duration_outside_target_range"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'Belarus' Kolesnikova receives Charlemagne Prize in Germany' was generated with short headline 'Belarus Kolesnikova receives Charlemagne Prize in Germany', lead type 'event', continuity 'update', topic template 'general', attribution mode 'source_attribution' in attribution-first form, attribution_variant=sustine_ca, variation_used=True, expanded=False, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster appeared in previous bulletin. Compliance notes: word_count_outside_target_range, duration_outside_target_range.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [],
+          "romanian_markers": [
+            "atentie",
+            "dupa"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      },
+      {
+        "position": 5,
+        "cluster_id": "cluster-33f4931126a4",
+        "story_id": "cluster-33f4931126a4",
+        "story_type": "short",
+        "headline": "Trump intră forță criza Golf Nave război",
+        "lead": "Trump intră în forță în criza din Golf Nave de război trimise pentru a redeschide Strâmtoarea Ormuz.",
+        "body": "Potrivit Stiripesurse, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_attribution": "Stiripesurse sustine ca trump intră în forță în criza din golf nave de război trimise pentru a redeschide strâmtoarea ormuz.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=short",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized"
+        ],
+        "representative_title": "Trump intră în forță în criza din Golf - Nave de război trimise pentru a redeschide Strâmtoarea Ormuz",
+        "summary_text": "Trump intră în forță în criza din Golf Nave de război trimise pentru a redeschide Strâmtoarea Ormuz. Stiripesurse sustine ca trump intră în forță în criza din golf nave de război trimise pentru a redeschide strâmtoarea ormuz. Potrivit Stiripesurse, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_labels": [
+          "Stiripesurse"
+        ],
+        "score_total": 63.5,
+        "lead_type": "event",
+        "topic_label": "general",
+        "story_continuity_type": "new_story",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": false,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 21,
+          "notes": [
+            "word_count_outside_target_range",
+            "duration_outside_target_range"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'Trump intră în forță în criza din Golf - Nave de război trimise pentru a redeschide Strâmtoarea Ormuz' was generated with short headline 'Trump intră forță criza Golf Nave război', lead type 'event', continuity 'new_story', topic template 'general', attribution mode 'source_attribution' in attribution-first form, attribution_variant=sustine_ca, variation_used=True, expanded=False, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster did not appear in the previous bulletin. Compliance notes: word_count_outside_target_range, duration_outside_target_range.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [],
+          "romanian_markers": [
+            "care",
+            "din",
+            "pentru",
+            "potrivit",
+            "si"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      },
+      {
+        "position": 6,
+        "cluster_id": "cluster-85b9dc6eb4e4",
+        "story_id": "cluster-85b9dc6eb4e4",
+        "story_type": "short",
+        "headline": "Subiect cu impact public",
+        "lead": "Apare un nou subiect cu impact public.",
+        "body": "Potrivit Euronews ro Știri de ultimă oră news AllViews, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_attribution": "Euronews ro Știri de ultimă oră news AllViews spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=short",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized"
+        ],
+        "representative_title": "ȘTIRI EXTERNE",
+        "summary_text": "Apare un nou subiect cu impact public. Euronews ro Știri de ultimă oră news AllViews spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Potrivit Euronews ro Știri de ultimă oră news AllViews, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_labels": [
+          "euronews.ro: Știri de ultimă oră, breaking news, #AllViews"
+        ],
+        "score_total": 56.5,
+        "lead_type": "event",
+        "topic_label": "general",
+        "story_continuity_type": "update",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": true,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 24,
+          "notes": [
+            "duration_outside_target_range",
+            "policy_core_rules_met"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'ȘTIRI EXTERNE' was generated with short headline 'Subiect cu impact public', lead type 'event', continuity 'update', topic template 'general', attribution mode 'source_attribution' in attribution-first form, attribution_variant=spune_ca, variation_used=True, expanded=False, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster appeared in previous bulletin. Compliance notes: duration_outside_target_range, policy_core_rules_met.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [
+            "news"
+          ],
+          "romanian_markers": [
+            "care",
+            "masura",
+            "potrivit",
+            "si",
+            "spune"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      },
+      {
+        "position": 7,
+        "cluster_id": "cluster-cc6ffbdfbefe",
+        "story_id": "cluster-cc6ffbdfbefe",
+        "story_type": "short",
+        "headline": "Pietele din China in atentie",
+        "lead": "Datele noi schimba perspectiva.",
+        "body": "Potrivit CNBC, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_attribution": "CNBC arata ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.",
+        "quotes": [],
+        "editorial_notes": [
+          "story_type=short",
+          "headline_ready_for_assembly",
+          "source_attribution_early",
+          "romanian_radio_normalized"
+        ],
+        "representative_title": "China Markets",
+        "summary_text": "Datele noi schimba perspectiva. CNBC arata ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Potrivit CNBC, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.",
+        "source_labels": [
+          "CNBC"
+        ],
+        "score_total": 32.32,
+        "lead_type": "change",
+        "topic_label": "general",
+        "story_continuity_type": "update",
+        "policy_compliance": {
+          "sentence_count_ok": true,
+          "word_count_ok": false,
+          "structure_ok": true,
+          "banned_patterns_found": [],
+          "estimated_duration_seconds": 17,
+          "notes": [
+            "word_count_outside_target_range",
+            "duration_outside_target_range"
+          ]
+        },
+        "generation_explanation": "Summary for cluster 'China Markets' was generated with short headline 'Pietele din China in atentie', lead type 'change', continuity 'update', topic template 'general', attribution mode 'source_attribution' in attribution-first form, attribution_variant=arata_ca, variation_used=True, expanded=False, casualties=False, context=False, memorable_quote=False, essential_numbers_kept=False, nonessential_numbers_removed=False. Continuity: Cluster appeared in previous bulletin. Compliance notes: word_count_outside_target_range, duration_outside_target_range.",
+        "language_issue": {
+          "mixed_language_detected": false,
+          "english_markers": [],
+          "romanian_markers": [
+            "arata",
+            "care",
+            "masura",
+            "potrivit",
+            "si"
+          ]
+        },
+        "member_provenance": {
+          "full_fetch": 1
+        }
+      }
+    ],
+    "outro_text": "Acestea au fost principalele stiri ale momentului.",
+    "sizing_explanation": "Briefing remains below the target window at 135 seconds. In v1, the system reports the shortfall without expanding story text."
+  },
+  "editorial_validation": {
+    "passed": true,
+    "report_path": "D:\\aplicatie_telefon\\openwave-app\\backend\\debug_output\\editorial_validation_report.json",
+    "summary": "Editorial contract validation passed for briefing 'briefing-49f9eba2be04' with 7 stories, 0 blocking violation(s), 2 warning(s), and 2 auto-fix(es).",
+    "blocking_violation_count": 0,
+    "warning_count": 2,
+    "auto_fix_count": 2,
+    "warnings": [
+      {
+        "rule": "major_story_quote_count",
+        "severity": "warning",
+        "message": "Major story does not include 2-3 attributed quotes where available.",
+        "story_id": "cluster-1c2876a32c17",
+        "segment_id": null,
+        "field_name": "summary_text"
+      },
+      {
+        "rule": "major_story_quote_count",
+        "severity": "warning",
+        "message": "Major story does not include 2-3 attributed quotes where available.",
+        "story_id": "cluster-b6aefb97af69",
+        "segment_id": null,
+        "field_name": "summary_text"
+      }
+    ],
+    "auto_fixes": [
+      {
+        "rule": "source_required",
+        "message": "Added a deterministic source-attribution lead to the story body.",
+        "story_id": "cluster-1c2876a32c17",
+        "field_name": "summary_text",
+        "original_value": "Atletism Alin Firfirică locul 2 la aruncarea discului la Cupa Europei de la Nicosia. News ro relateaza ca subiectul cere clarificari rapide si reactii oficiale. Potrivit News ro, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul. Urmeaza clarificari oficiale si detalii noi.",
+        "updated_value": "Potrivit News.ro, atletism Alin Firfirică locul 2 la aruncarea discului la Cupa Europei de la Nicosia. News ro relateaza ca subiectul cere clarificari rapide si reactii oficiale. Potrivit News ro, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul. Urmeaza clarificari oficiale si detalii noi."
+      },
+      {
+        "rule": "source_required",
+        "message": "Added a deterministic source-attribution lead to the story body.",
+        "story_id": "cluster-b6aefb97af69",
+        "field_name": "summary_text",
+        "original_value": "Apare un nou subiect cu impact public. AP noteaza ca subiectul cere clarificari rapide si reactii oficiale. Potrivit AP, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul. Urmeaza reactii diplomatice si riscul unei noi escaladari.",
+        "updated_value": "Potrivit AP News, apare un nou subiect cu impact public. AP noteaza ca subiectul cere clarificari rapide si reactii oficiale. Potrivit AP, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul. Urmeaza reactii diplomatice si riscul unei noi escaladari."
+      }
+    ]
+  },
+  "editorial_diagnostics": {
+    "mixed_language_story_ids": []
+  }
+}

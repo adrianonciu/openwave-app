@@ -9,12 +9,14 @@ class EditorialProfile(BaseModel):
     name: str
     scope: Literal["local", "national", "international"]
     display_name: str
+    description: str | None = None
+    candidate_scopes: list[str] = Field(default_factory=list)
     priority_domains: list[str] = Field(default_factory=list)
-    impact_keywords: list[str] = Field(default_factory=list)
+    impact_keywords: dict[str, float] | list[str] = Field(default_factory=dict)
     source_preferences: list[str] = Field(default_factory=list)
     purity_thresholds: dict[str, float] = Field(default_factory=dict)
     recovery_flags: dict[str, bool] = Field(default_factory=dict)
-    diversity_rules: dict[str, float | int | bool] = Field(default_factory=dict)
+    diversity_rules: dict[str, float | int | bool | str] = Field(default_factory=dict)
     geographic_signals: list[str] = Field(default_factory=list)
     debug_sections: list[str] = Field(default_factory=list)
 
@@ -27,3 +29,13 @@ class EditorialProfile(BaseModel):
         if self.scope == "international":
             return "global"
         return self.scope
+
+    @property
+    def effective_candidate_scopes(self) -> list[str]:
+        return self.candidate_scopes or [self.scope]
+
+    @property
+    def impact_keyword_weights(self) -> dict[str, float]:
+        if isinstance(self.impact_keywords, dict):
+            return {str(key): float(value) for key, value in self.impact_keywords.items()}
+        return {str(keyword): 1.0 for keyword in self.impact_keywords}

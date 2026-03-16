@@ -323,6 +323,7 @@ class StorySelectionService:
         selected = self._recover_near_miss_domestic_candidates(selected, rejected, ordered_clusters, effective_max_stories)
         selected = self._apply_soft_external_cap(selected, ordered_clusters, effective_max_stories)
         selected = self._enforce_story_family_diversity_cap(selected, ordered_clusters, effective_max_stories)
+        selected = self._enforce_local_geography_diversity_cap(selected, ordered_clusters, effective_max_stories)
         selected = sorted(selected, key=self._selection_sort_key, reverse=True)
         self._persist_romanian_event_persistence_state(selected, selected_at)
         stats = StorySelectionStats(
@@ -359,9 +360,11 @@ class StorySelectionService:
         editorial_fit_explanation = cluster.score_breakdown.editorial_fit.explanation.lower()
         scopes = self._cluster_scopes(cluster)
         categories = self._cluster_categories(cluster)
-        is_local = "local" in scopes
+        is_local = self._has_local_relevance(cluster)
         if self._is_placeholder_headline(cluster.cluster.representative_title):
             return "placeholder_headline_cluster"
+        if cluster.editorial_profile_used == "local" and not is_local:
+            return "missing_local_geographic_signal"
         if "national" in scopes and categories & self.national_hard_news_excluded_categories:
             return "non_hard_news_national_cluster"
         unique_source_count = self._unique_source_count(cluster)
@@ -645,6 +648,8 @@ class StorySelectionService:
         return best_domain
 
     def _infer_geography(self, cluster: ScoredStoryCluster) -> str:
+        if cluster.local_county_tag:
+            return cluster.local_county_tag
         if any(member.is_local_source for member in cluster.cluster.member_articles):
             return "local"
         text = self._cluster_text(cluster)
@@ -699,6 +704,13 @@ class StorySelectionService:
             member.source_scope or ("local" if member.is_local_source else "unknown")
             for member in cluster.cluster.member_articles
         }
+
+    def _has_local_relevance(self, cluster: ScoredStoryCluster) -> bool:
+        return (
+            "local" in self._cluster_scopes(cluster)
+            or cluster.local_relevance_boost > 0
+            or bool(cluster.local_county_tag)
+        )
 
     def _cluster_categories(self, cluster: ScoredStoryCluster) -> set[str]:
         return {
@@ -989,6 +1001,71 @@ class StorySelectionService:
         return selected[:max_stories]
 
 
+    def _enforce_local_geography_diversity_cap(
+        self,
+        selected: list[ScoredStoryCluster],
+        ordered_clusters: list[ScoredStoryCluster],
+        max_stories: int,
+    ) -> list[ScoredStoryCluster]:
+        if not selected or not any(cluster.editorial_profile_used == "local" for cluster in ordered_clusters):
+            return selected[:max_stories]
+        geography_cap = 2
+        geography_counts = Counter(
+            (cluster.local_county_tag or cluster.geographic_signal_detected)
+            for cluster in selected
+            if (cluster.local_county_tag or cluster.geographic_signal_detected)
+        )
+        if not any(count > geography_cap for count in geography_counts.values()):
+            return selected[:max_stories]
+
+        selected_ids = {cluster.cluster.cluster_id for cluster in selected}
+        replacement_pool = [
+            cluster for cluster in ordered_clusters
+            if cluster.cluster.cluster_id not in selected_ids
+        ]
+        replacement_pool.sort(key=self._selection_sort_key, reverse=True)
+        adjusted_selected = sorted(selected, key=self._selection_sort_key, reverse=True)
+
+        for geography_tag, count in list(geography_counts.items()):
+            if not geography_tag or count <= geography_cap:
+                continue
+            geography_members = [
+                cluster for cluster in adjusted_selected
+                if (cluster.local_county_tag or cluster.geographic_signal_detected) == geography_tag
+            ]
+            for outgoing in geography_members[geography_cap:]:
+                adjusted_selected = [
+                    cluster for cluster in adjusted_selected
+                    if cluster.cluster.cluster_id != outgoing.cluster.cluster_id
+                ]
+                selected_ids.discard(outgoing.cluster.cluster_id)
+                geography_counts[geography_tag] -= 1
+
+                replacement_index = next(
+                    (
+                        index for index, candidate in enumerate(replacement_pool)
+                        if not (candidate.local_county_tag or candidate.geographic_signal_detected)
+                        or geography_counts[(candidate.local_county_tag or candidate.geographic_signal_detected)] < geography_cap
+                    ),
+                    None,
+                )
+                if replacement_index is None:
+                    continue
+                incoming = replacement_pool.pop(replacement_index)
+                incoming.top5_balance_adjustment_reason = (
+                    incoming.top5_balance_adjustment_reason
+                    or f"Selected under local geography diversity cap replacing '{outgoing.cluster.representative_title}'"
+                )
+                adjusted_selected.append(incoming)
+                adjusted_selected = sorted(adjusted_selected, key=self._selection_sort_key, reverse=True)
+                selected_ids.add(incoming.cluster.cluster_id)
+                incoming_tag = incoming.local_county_tag or incoming.geographic_signal_detected
+                if incoming_tag:
+                    geography_counts[incoming_tag] += 1
+
+        return adjusted_selected[:max_stories]
+
+
     def _enforce_story_family_diversity_cap(
         self,
         selected: list[ScoredStoryCluster],
@@ -1206,6 +1283,7 @@ class StorySelectionService:
             "commentary_like_cluster_below_editorial_bar": "its title looked commentary-like and it did not clear the higher bar for inclusion",
             "rejected_by_editorial_preferences_soft_target": "a near-tie cluster better matched the requested editorial preferences",
             "single_source_cluster_without_local_relevance": "it was supported by only one source and did not have clear local relevance",
+            "missing_local_geographic_signal": "it did not show a county, city, or locality signal strong enough for the local bulletin",
         }
         detail = reason_map.get(reason, reason)
         return (

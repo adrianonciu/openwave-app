@@ -1,0 +1,488 @@
+{
+  "national_cluster_count": 9,
+  "multi_source_clusters": 1,
+  "national_preference_bucket_distribution": {
+    "domestic_hard_news": 1,
+    "off_target": 8
+  },
+  "clusters": [
+    {
+      "cluster_id": "cluster-ce9f87b39795",
+      "headline": "Cati bani pot ajunge in vistieria statului din taxarea sectorului bancar' Statul se asteapta sa incaseze circa 8 mld lei in 2026 din impozitarea castigurilor bancilor si ale BNR mai putin decat in 2025 De ce'",
+      "source_list": [
+        "ZF.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Aproape",
+        "Cati",
+        "Incasarile",
+        "Ministerul Finantelor",
+        "Peste",
+        "Ramane",
+        "Statul"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "domestic_hard_news",
+      "national_preference_reason": "domestic_hard_news: Romanian public-interest evidence passed rebalance threshold (domestic_score_total=16, positive_score=16, negative_score=5, romanian_entity_hits_count=2, public_interest_hits_count=3, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "institution:bnr",
+        "institution:ministerul",
+        "public_impact:buget",
+        "public_impact:impozit",
+        "public_impact:impozite"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "personal_finance:bani",
+        "soft_feature:de ce"
+      ],
+      "domestic_score_total": 16,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 3,
+      "negative_signal_count": 2,
+      "candidate_event_family_hints": [
+        "romanian_budget_fiscal"
+      ],
+      "institutional_signal_hits": [
+        "bnr",
+        "ministerul"
+      ],
+      "romania_impact_evidence_hits": [
+        "bnr"
+      ],
+      "domestic_purity_score": 0.93,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_budget_fiscal"
+      ],
+      "domestic_vs_external_rank_reason": "credible Romanian domestic evidence improved national ranking",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "domestic_hard_news: Romanian public-interest evidence passed rebalance threshold (domestic_score_total=16, positive_score=16, negative_score=5, romanian_entity_hits_count=2, public_interest_hits_count=3, headline_gate_passed=True)",
+      "final_score": 81.94
+    },
+    {
+      "cluster_id": "cluster-ecbcca9e01b1",
+      "headline": "Trump nu e pregatit sa incheie razboiul cu Iranul SUA ar putea lovi din nou Insula Kharg doar de dragul distractiei",
+      "source_list": [
+        "Antena 3",
+        "HotNews.ro",
+        "spotmedia.ro"
+      ],
+      "unique_source_count": 3,
+      "named_entities_detected": [
+        "Agerpres Autoritatile",
+        "Aparare",
+        "Armata",
+        "Atat",
+        "Benjamin Netanyahu",
+        "Benjamin Netanyahu Il",
+        "Daca",
+        "Donald Trump",
+        "Elvetia",
+        "Externe Hakan Fidan"
+      ],
+      "cluster_similarity_score": 0.084,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=6, positive_score=6, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "actor:ministrul",
+        "actor:premier",
+        "institution:guvernul"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "generic_corporate:reuters"
+      ],
+      "domestic_score_total": 6,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_domestic_politics"
+      ],
+      "institutional_signal_hits": [
+        "premier"
+      ],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.151,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_domestic_politics",
+        "romanian_major_policy_decision"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 2.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=6, positive_score=6, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 79.68
+    },
+    {
+      "cluster_id": "cluster-911a7ce876c5",
+      "headline": "CSM reia luni votul in cazul procurorilor Marius Voineag si Alex Florenta unde s-a inregistrat balotaj Candidatul pentru sefia DNA Viorel Cerbu va sustine interviul",
+      "source_list": [
+        "G4Media.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Alex Florenta",
+        "Bogdan Staicu",
+        "Candidatul",
+        "Catalina Sintion",
+        "Claudiu Sandu Emilia Ion",
+        "DIICOT",
+        "Daca",
+        "Daniel Horodniceanu",
+        "Declic Coruptia",
+        "Initiativa Romania"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=18, positive_score=17, negative_score=1, romanian_entity_hits_count=5, public_interest_hits_count=0, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "institution:diicot",
+        "institution:dna",
+        "institution:procuror",
+        "institution:procurorii",
+        "institution:procurorilor"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "off_target:scor"
+      ],
+      "domestic_score_total": 18,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 5,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 1,
+      "candidate_event_family_hints": [
+        "romanian_justice"
+      ],
+      "institutional_signal_hits": [
+        "diicot",
+        "dna",
+        "procuror",
+        "procurorii",
+        "procurorilor"
+      ],
+      "romania_impact_evidence_hits": [
+        "diicot",
+        "dna",
+        "procurorilor"
+      ],
+      "domestic_purity_score": 0.38,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_justice"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.8,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=18, positive_score=17, negative_score=1, romanian_entity_hits_count=5, public_interest_hits_count=0, headline_gate_passed=True)",
+      "final_score": 74.94
+    },
+    {
+      "cluster_id": "cluster-27158622d357",
+      "headline": "O furtuna davastatoare de nisip din Gaza a distrus taberele de refugiati ale oamenilor stramutati in urma razboiului",
+      "source_list": [
+        "Libertatea"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Conditiile",
+        "Conflictul",
+        "Fasia Gaza",
+        "Gaza",
+        "Gaza Strip Gaza Palestine",
+        "Hamas",
+        "Israel",
+        "Israelul",
+        "Khan Younis",
+        "Meanwhile"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=2, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=1, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "public_impact:infrastructura"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 3,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 1,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_infrastructure_issue"
+      ],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.005,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_infrastructure_issue"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=2, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=1, headline_gate_passed=False)",
+      "final_score": 73.58
+    },
+    {
+      "cluster_id": "cluster-7eb40ec421b2",
+      "headline": "Momentul dramatic in care un turn medieval al Castelului Escalona s-a prabusit in fata turistilor cinci",
+      "source_list": [
+        "Adevărul"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Autoritatile",
+        "Castelul Escalona",
+        "Castelului Escalona",
+        "Castilla",
+        "Castillo",
+        "Cinci",
+        "Directia Generala",
+        "Escalona",
+        "Experti",
+        "La Mancha"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=0, positive_score=0, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 0,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=0, positive_score=0, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 69.54
+    },
+    {
+      "cluster_id": "cluster-278ba598f680",
+      "headline": "IGPR 32 de perchezitii in judetele Covasna Harghita si Brasov intr-un dosar de contrabanda cu tigari O persoana a fost arestata pentru 30 de zile Cum functiona gruparea de contrabandisti",
+      "source_list": [
+        "News.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Biroul Teritorial Harghita",
+        "Brasov",
+        "Brasov Membrii",
+        "Brigazii",
+        "Combatere",
+        "Covasna",
+        "Covasna Harghita",
+        "Criminalitate Organizata",
+        "Criminalitatii Brasov",
+        "Criminalitatii Organizate Harghita"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=3, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "institution:procurorii"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 3,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 1,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [],
+      "institutional_signal_hits": [
+        "procurorii"
+      ],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=3, negative_score=0, romanian_entity_hits_count=1, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 63.9
+    },
+    {
+      "cluster_id": "cluster-716e6214d96d",
+      "headline": "Mama sunt in viata Un soldat ucrainean declarat mort dupa probe ADN si inmormantat s-a intors dupa",
+      "source_list": [
+        "Digi24"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Mama",
+        "Nataliia",
+        "Nataliia Soldat",
+        "Nazar",
+        "Nazar Daletskyi",
+        "Potrivirea",
+        "Rusia",
+        "Rusiei Ramasitele",
+        "The Guardian Nazar Daletskyi",
+        "Ucrainei Mama"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=0, positive_score=0, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=0, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 0,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 0,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_regional_security"
+      ],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.0,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_regional_security"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=0, positive_score=0, negative_score=0, romanian_entity_hits_count=0, public_interest_hits_count=0, headline_gate_passed=False)",
+      "final_score": 63.9
+    },
+    {
+      "cluster_id": "cluster-9dc71aba79d5",
+      "headline": "Mancatul seara poate creste glicemia si riscul de diabet Ce alimente sunt recomandate de medici",
+      "source_list": [
+        "Stirileprotv.ro"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Alimenteaza",
+        "Avem",
+        "Carne",
+        "Carnea",
+        "Cata",
+        "Daca",
+        "Doza",
+        "Dr Manuela Stanciu",
+        "Explicatia",
+        "Mancatul"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=4, negative_score=2, romanian_entity_hits_count=1, public_interest_hits_count=1, headline_gate_passed=False)",
+      "domestic_hard_news_positive_signals": [
+        "actor:primar",
+        "public_impact:energie"
+      ],
+      "domestic_hard_news_negative_signals": [
+        "soft_feature:de ce"
+      ],
+      "domestic_score_total": 3,
+      "headline_gate_passed": false,
+      "romanian_entity_hits_count": 1,
+      "public_interest_hits_count": 1,
+      "negative_signal_count": 1,
+      "candidate_event_family_hints": [
+        "romanian_energy_security"
+      ],
+      "institutional_signal_hits": [],
+      "romania_impact_evidence_hits": [],
+      "domestic_purity_score": 0.005,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 0.0,
+      "cluster_event_family_hints": [
+        "romanian_energy_security"
+      ],
+      "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 0.8,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=3, positive_score=4, negative_score=2, romanian_entity_hits_count=1, public_interest_hits_count=1, headline_gate_passed=False)",
+      "final_score": 61.58
+    },
+    {
+      "cluster_id": "cluster-736e8f902a26",
+      "headline": "Toti ochii pe sedinta PSD Social-democratii decid daca voteaza bugetul propriului Guvern",
+      "source_list": [
+        "Cotidianul"
+      ],
+      "unique_source_count": 1,
+      "named_entities_detected": [
+        "Guvern",
+        "Social",
+        "Toti"
+      ],
+      "cluster_similarity_score": 0.0,
+      "national_preference_bucket": "off_target",
+      "national_preference_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=8, positive_score=6, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "domestic_hard_news_positive_signals": [
+        "actor:psd",
+        "institution:guvern"
+      ],
+      "domestic_hard_news_negative_signals": [],
+      "domestic_score_total": 8,
+      "headline_gate_passed": true,
+      "romanian_entity_hits_count": 2,
+      "public_interest_hits_count": 0,
+      "negative_signal_count": 0,
+      "candidate_event_family_hints": [
+        "romanian_domestic_politics"
+      ],
+      "institutional_signal_hits": [
+        "guvern",
+        "psd"
+      ],
+      "romania_impact_evidence_hits": [
+        "buget",
+        "guvern",
+        "psd"
+      ],
+      "domestic_purity_score": 0.4,
+      "external_penalty_applied": 0.0,
+      "title_only_domestic_boost": 1.5,
+      "cluster_event_family_hints": [
+        "romanian_domestic_politics"
+      ],
+      "domestic_vs_external_rank_reason": "title-only domestic candidate added survivability",
+      "recovery_score": 0.0,
+      "recovered_domestic_candidate": false,
+      "persistence_boost_applied": 2.0,
+      "top5_balance_adjustment_reason": null,
+      "classifier_decision_reason": "off_target: Romanian public-interest evidence stayed below domestic threshold (domestic_score_total=8, positive_score=6, negative_score=0, romanian_entity_hits_count=2, public_interest_hits_count=0, headline_gate_passed=True)",
+      "final_score": 52.64
+    }
+  ]
+}

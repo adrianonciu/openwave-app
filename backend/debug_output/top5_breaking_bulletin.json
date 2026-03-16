@@ -1,28 +1,207 @@
 {
   "editorial_profiles_run": [
-    "local"
+    "national_ro"
   ],
   "top5_by_profile": {
-    "local": [
+    "national_ro": [
       {
         "rank": 1,
-        "cluster_id": "cluster-0f2c03563f0d",
-        "headline": "Accident rutier in Iasi Au fost implicate doua autoturisme",
-        "normalized_headline": "accident rutier in iasi au fost implicate doua autoturisme",
+        "cluster_id": "cluster-f25f97c0a646",
+        "headline": "Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei",
+        "normalized_headline": "italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei",
         "source_list": [
-          "BZI.ro"
+          "G4Media.ro"
         ],
         "unique_source_count": 1,
         "event_family": [],
         "regional_bucket": [],
         "freshness_score": 30.0,
-        "final_score": 55.5,
-        "domestic_purity_score": 0.0,
-        "romania_impact_evidence_hits": [],
+        "final_score": 67.4,
+        "domestic_purity_score": 1.0,
+        "romania_impact_evidence_hits": [
+          "energie"
+        ],
+        "romanian_source_count": 1,
+        "romanian_multi_source_bonus_applied": 0.0,
         "external_penalty_applied": 0.0,
         "title_only_domestic_boost": 0.0,
-        "cluster_event_family_hints": [],
-        "domestic_vs_external_rank_reason": "non-national cluster: Romanian domestic balancing not applied",
+        "cluster_event_family_hints": [
+          "romanian_domestic_politics",
+          "romanian_energy_security",
+          "romanian_eu_funds_loss",
+          "romanian_major_policy_decision"
+        ],
+        "domestic_vs_external_rank_reason": "credible Romanian domestic evidence improved national ranking",
+        "recovery_score": 0.0,
+        "recovered_domestic_candidate": false,
+        "persistence_boost_applied": 1.6,
+        "top5_balance_adjustment_reason": null,
+        "recovery_rejection_reason": null,
+        "failed_threshold_name": null,
+        "threshold_required_value": null,
+        "candidate_current_value": null,
+        "national_preference_bucket": "domestic_hard_news",
+        "attached_story_family": "domestic_politics",
+        "family_attach_reason": "shared event hints",
+        "editorial_profile_used": "national_ro",
+        "profile_config_name": "national_ro",
+        "shared_core_path_used": true,
+        "family_first_seen": "2026-03-15T11:18:27.158472+00:00",
+        "family_last_seen": "2026-03-15T13:45:43.281959+00:00",
+        "family_run_count": 22,
+        "family_age_hours": 2.45,
+        "family_lifecycle_boost": 0.4,
+        "geographic_signal_detected": null,
+        "local_relevance_boost": 0.0,
+        "local_domain_signal_hits": [],
+        "local_county_tag": null
+      },
+      {
+        "rank": 2,
+        "cluster_id": "cluster-330acb971049",
+        "headline": "Premierul Ilie Bolojan dupa ce Guvernul a adoptat o ordonanta care simplifica procedurile pentru avizarea investitiilor Vom sprijini astfel economia se va reduce birocratia si vor scadea costurile de conformare",
+        "normalized_headline": "premierul ilie bolojan dupa ce guvernul a adoptat o ordonanta care simplifica procedurile pentru avizarea investitiilor vom sprijini astfel economia se va reduce birocratia si vor scadea costurile de conformare",
+        "source_list": [
+          "News.ro"
+        ],
+        "unique_source_count": 1,
+        "event_family": [],
+        "regional_bucket": [],
+        "freshness_score": 30.0,
+        "final_score": 59.32,
+        "domestic_purity_score": 0.39,
+        "romania_impact_evidence_hits": [
+          "guvern",
+          "guvernul",
+          "premierul"
+        ],
+        "romanian_source_count": 1,
+        "romanian_multi_source_bonus_applied": 0.0,
+        "external_penalty_applied": 0.0,
+        "title_only_domestic_boost": 0.0,
+        "cluster_event_family_hints": [
+          "romanian_domestic_politics",
+          "romanian_major_policy_decision"
+        ],
+        "domestic_vs_external_rank_reason": "Romanian balance stayed neutral",
+        "recovery_score": 0.0,
+        "recovered_domestic_candidate": false,
+        "persistence_boost_applied": 1.6,
+        "top5_balance_adjustment_reason": "Selected under story-family diversity cap replacing 'ANAF s-a prins Cum se fura TVA cu capu gol ca la pomana Schema anului'",
+        "recovery_rejection_reason": null,
+        "failed_threshold_name": null,
+        "threshold_required_value": null,
+        "candidate_current_value": null,
+        "national_preference_bucket": "off_target",
+        "attached_story_family": "decision_major_policy",
+        "family_attach_reason": "shared event hints",
+        "editorial_profile_used": "national_ro",
+        "profile_config_name": "national_ro",
+        "shared_core_path_used": true,
+        "family_first_seen": "2026-03-15T11:18:27.158472+00:00",
+        "family_last_seen": "2026-03-15T13:45:43.281959+00:00",
+        "family_run_count": 4,
+        "family_age_hours": 2.45,
+        "family_lifecycle_boost": 0.3,
+        "geographic_signal_detected": null,
+        "local_relevance_boost": 0.0,
+        "local_domain_signal_hits": [],
+        "local_county_tag": null
+      },
+      {
+        "rank": 3,
+        "cluster_id": "cluster-5a0a0c12d1e9",
+        "headline": "Israeli soldiers fire on family car in occupied West Bank killing 4",
+        "normalized_headline": "israeli soldiers fire on family car in occupied west bank killing 4",
+        "source_list": [
+          "AP",
+          "Antena 3",
+          "DW",
+          "Digi24",
+          "HotNews.ro",
+          "Japan Wire by Kyodo News",
+          "Libertatea",
+          "Mediafax",
+          "NBC News",
+          "NPR",
+          "ZF.ro"
+        ],
+        "unique_source_count": 11,
+        "event_family": [
+          "military_movement",
+          "regional_conflict"
+        ],
+        "regional_bucket": [
+          "gulf_escalation"
+        ],
+        "freshness_score": 30.0,
+        "final_score": 102.6,
+        "domestic_purity_score": 0.542,
+        "romania_impact_evidence_hits": [],
+        "romanian_source_count": 6,
+        "romanian_multi_source_bonus_applied": 0.1,
+        "external_penalty_applied": 0.0,
+        "title_only_domestic_boost": 0.0,
+        "cluster_event_family_hints": [
+          "government_coalition",
+          "public_safety_local_admin",
+          "romanian_domestic_politics",
+          "romanian_economic_policy",
+          "romanian_major_policy_decision",
+          "romanian_regional_security"
+        ],
+        "domestic_vs_external_rank_reason": "credible Romanian domestic evidence improved national ranking; Romanian multi-source confirmation bonus +0.10",
+        "recovery_score": 0.0,
+        "recovered_domestic_candidate": false,
+        "persistence_boost_applied": 1.6,
+        "top5_balance_adjustment_reason": null,
+        "recovery_rejection_reason": null,
+        "failed_threshold_name": null,
+        "threshold_required_value": null,
+        "candidate_current_value": null,
+        "national_preference_bucket": "off_target",
+        "attached_story_family": "domestic_politics",
+        "family_attach_reason": "shared event hints",
+        "editorial_profile_used": "national_ro",
+        "profile_config_name": "national_ro",
+        "shared_core_path_used": true,
+        "family_first_seen": "2026-03-15T11:18:27.158472+00:00",
+        "family_last_seen": "2026-03-15T13:45:43.281959+00:00",
+        "family_run_count": 22,
+        "family_age_hours": 2.45,
+        "family_lifecycle_boost": 0.4,
+        "geographic_signal_detected": null,
+        "local_relevance_boost": 0.0,
+        "local_domain_signal_hits": [],
+        "local_county_tag": null
+      },
+      {
+        "rank": 4,
+        "cluster_id": "cluster-1463551b4d11",
+        "headline": "ANAF s-a prins Cum se fura TVA cu capu gol ca la pomana Schema anului",
+        "normalized_headline": "anaf s-a prins cum se fura tva cu capu gol ca la pomana schema anului",
+        "source_list": [
+          "Cotidianul"
+        ],
+        "unique_source_count": 1,
+        "event_family": [],
+        "regional_bucket": [],
+        "freshness_score": 30.0,
+        "final_score": 62.9,
+        "domestic_purity_score": 1.0,
+        "romania_impact_evidence_hits": [
+          "anaf",
+          "tva"
+        ],
+        "romanian_source_count": 1,
+        "romanian_multi_source_bonus_applied": 0.0,
+        "external_penalty_applied": 0.0,
+        "title_only_domestic_boost": 1.5,
+        "cluster_event_family_hints": [
+          "fiscal_policy_ro",
+          "romanian_budget_fiscal"
+        ],
+        "domestic_vs_external_rank_reason": "credible Romanian domestic evidence improved national ranking; title-only domestic candidate added survivability",
         "recovery_score": 0.0,
         "recovered_domestic_candidate": false,
         "persistence_boost_applied": 0.0,
@@ -31,24 +210,108 @@
         "failed_threshold_name": null,
         "threshold_required_value": null,
         "candidate_current_value": null,
-        "national_preference_bucket": null,
-        "attached_story_family": "accident_autoturisme_doua",
-        "family_attach_reason": "shared topic keywords",
-        "editorial_profile_used": "local",
-        "profile_config_name": "local",
+        "national_preference_bucket": "domestic_hard_news",
+        "attached_story_family": "domestic_politics",
+        "family_attach_reason": "shared event hints",
+        "editorial_profile_used": "national_ro",
+        "profile_config_name": "national_ro",
         "shared_core_path_used": true,
-        "family_first_seen": "2026-03-15T12:25:48.458992+00:00",
-        "family_last_seen": "2026-03-15T12:29:07.632561+00:00",
-        "family_run_count": 2,
-        "family_age_hours": 0.06,
-        "family_lifecycle_boost": 0.2,
-        "geographic_signal_detected": "iasi",
-        "local_relevance_boost": 0.3,
-        "local_domain_signal_hits": [
-          "accident"
+        "family_first_seen": "2026-03-15T11:18:27.158472+00:00",
+        "family_last_seen": "2026-03-15T13:45:43.281959+00:00",
+        "family_run_count": 22,
+        "family_age_hours": 2.45,
+        "family_lifecycle_boost": 0.4,
+        "geographic_signal_detected": null,
+        "local_relevance_boost": 0.0,
+        "local_domain_signal_hits": [],
+        "local_county_tag": null
+      },
+      {
+        "rank": 5,
+        "cluster_id": "cluster-1bec07fb8a69",
+        "headline": "De ce s-a suparat Volodimir Zelenski pe prietenii din UE Acest lucru se numeste santaj",
+        "normalized_headline": "de ce s-a suparat volodimir zelenski pe prietenii din ue acest lucru se numeste santaj",
+        "source_list": [
+          "Stirileprotv.ro"
         ],
-        "local_county_tag": "iasi"
+        "unique_source_count": 1,
+        "event_family": [],
+        "regional_bucket": [
+          "black_sea_security"
+        ],
+        "freshness_score": 30.0,
+        "final_score": 55.3,
+        "domestic_purity_score": 0.18,
+        "romania_impact_evidence_hits": [],
+        "romanian_source_count": 1,
+        "romanian_multi_source_bonus_applied": 0.0,
+        "external_penalty_applied": 0.38,
+        "title_only_domestic_boost": 0.0,
+        "cluster_event_family_hints": [
+          "romanian_budget_fiscal",
+          "romanian_eu_funds_loss",
+          "romanian_eu_relations",
+          "romanian_fiscal_policy_2026",
+          "romanian_pnrr_funds",
+          "romanian_regional_security"
+        ],
+        "domestic_vs_external_rank_reason": "weak Romania-specific impact evidence for external-leaning cluster",
+        "recovery_score": 0.0,
+        "recovered_domestic_candidate": false,
+        "persistence_boost_applied": 0.8,
+        "top5_balance_adjustment_reason": null,
+        "recovery_rejection_reason": null,
+        "failed_threshold_name": null,
+        "threshold_required_value": null,
+        "candidate_current_value": null,
+        "national_preference_bucket": "external_direct_impact",
+        "attached_story_family": "domestic_politics",
+        "family_attach_reason": "shared event hints",
+        "editorial_profile_used": "national_ro",
+        "profile_config_name": "national_ro",
+        "shared_core_path_used": true,
+        "family_first_seen": "2026-03-15T11:18:27.158472+00:00",
+        "family_last_seen": "2026-03-15T13:45:43.281959+00:00",
+        "family_run_count": 22,
+        "family_age_hours": 2.45,
+        "family_lifecycle_boost": 0.4,
+        "geographic_signal_detected": null,
+        "local_relevance_boost": 0.0,
+        "local_domain_signal_hits": [],
+        "local_county_tag": null
       }
     ]
+  },
+  "bulletin_shaping": {
+    "national_ro": {
+      "lead_cluster_id": "cluster-f25f97c0a646",
+      "shaping_explanation": "Bulletin shaping used profile 'national_ro' across 3 selected stories. Lead story chosen: 'Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei' (lead_story_selected: score_total=67.40, domestic_purity=1.00, family_run_count=22, lifecycle_boost=0.40, romanian_source_count=1, national_bucket=domestic_hard_news). Applied deterministic family separation, topic diversity ordering, and confidence-aware tie-breaking across 2 later placements.",
+      "decisions": [
+        {
+          "position": 1,
+          "cluster_id": "cluster-f25f97c0a646",
+          "headline": "Italia studiaza revenirea la energia nucleara pe fondul cresterii costurilor energiei",
+          "topic_bucket": "economy",
+          "story_family_id": "domestic_politics",
+          "decision_reason": "lead_story_selected: score_total=67.40, domestic_purity=1.00, family_run_count=22, lifecycle_boost=0.40, romanian_source_count=1, national_bucket=domestic_hard_news"
+        },
+        {
+          "position": 2,
+          "cluster_id": "cluster-330acb971049",
+          "headline": "Premierul Ilie Bolojan dupa ce Guvernul a adoptat o ordonanta care simplifica procedurile pentru avizarea investitiilor Vom sprijini astfel economia se va reduce birocratia si vor scadea costurile de conformare",
+          "topic_bucket": "general",
+          "story_family_id": "decision_major_policy",
+          "decision_reason": "family_separation_applied; topic_diversity_applied"
+        },
+        {
+          "position": 3,
+          "cluster_id": "cluster-5a0a0c12d1e9",
+          "headline": "Israeli soldiers fire on family car in occupied West Bank killing 4",
+          "topic_bucket": "general",
+          "story_family_id": "domestic_politics",
+          "decision_reason": "family_separation_applied; topic_repeat_unavoidable"
+        }
+      ]
+    }
   }
 }

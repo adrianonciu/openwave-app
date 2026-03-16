@@ -1,0 +1,132 @@
+--------------------------------
+OPENWAVE WRITTEN BULLETIN
+User: Adrian
+Location: Iasi
+--------------------------------
+
+Intro
+Buna ziua, Adrian. Iata principalele stiri ale momentului.
+
+Story 1
+Story Type: major
+Headline: Atac cu rachete langa ambasada SUA din Bagdad
+Lead: Un atac cu rachete in apropierea ambasadei SUA din Bagdad readuce conflictul intr-o zona de maxima tensiune.
+Source Attribution: AP News relateaza ca episodul pune presiune pe raspunsul american si pe echilibrul regional.
+Body: Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.
+Quotes: None
+Editorial Notes: story_type=major, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized, no_usable_quotes_detected, high_priority_story
+Source: AP News
+Summary: Un atac cu rachete in apropierea ambasadei SUA din Bagdad readuce conflictul intr-o zona de maxima tensiune. AP News relateaza ca episodul pune presiune pe raspunsul american si pe echilibrul regional. Miza este imediata, pentru ca episodul creste tensiunea, pune presiune pe actori si poate aduce reactii politice sau militare rapide.; accentul ramane pe efectele imediate si pe raspunsul actorilor implicati in urmatoarele ore.
+Pacing: heavy
+Continuity: new_story
+
+Story 2
+Story Type: short
+Headline: China Alexandru Cîmpanu marcat golul victoriei Chongqing
+Lead: Un eveniment important are loc.
+Source Attribution: News.ro spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: News.ro
+Summary: Un eveniment important are loc. News.ro spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Story 3
+Story Type: short
+Headline: Kharg Island Why has it been targeted by the US
+Lead: Un eveniment important are loc.
+Source Attribution: Potrivit BBC World, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: BBC World
+Summary: Un eveniment important are loc. Potrivit BBC World, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Story 4
+Story Type: short
+Headline: Politehnica Iași încheiat sezonul regulat puncte avans
+Lead: Un eveniment important are loc.
+Source Attribution: Ziarul de Iaşi - liderul presei ieşene spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: Ziarul de Iaşi - liderul presei ieşene
+Summary: Un eveniment important are loc. Ziarul de Iaşi - liderul presei ieşene spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Story 5
+Story Type: short
+Headline: Cipru anunță începe exportul gaze naturale 2028
+Lead: Un eveniment important are loc.
+Source Attribution: Stiripesurse arata ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: Stiripesurse
+Summary: Un eveniment important are loc. Stiripesurse arata ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Story 6
+Story Type: short
+Headline: Diana Buzoianu, la Iasi pentru o actiune de mediu
+Lead: Un eveniment important are loc.
+Source Attribution: Potrivit BZI.ro, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: BZI.ro
+Summary: Un eveniment important are loc. Potrivit BZI.ro, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Story 7
+Story Type: short
+Headline: Actualitate in atentie
+Lead: Un eveniment important are loc.
+Source Attribution: Euronews.ro: Știri de ultimă oră, breaking news, #AllViews spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: euronews.ro: Știri de ultimă oră, breaking news, #AllViews
+Summary: Un eveniment important are loc. Euronews.ro: Știri de ultimă oră, breaking news, #AllViews spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Story 8
+Story Type: short
+Headline: Actualitate locala din Iasi
+Lead: Un eveniment important are loc.
+Source Attribution: Potrivit Ieseanul, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Body: Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Quotes: None
+Editorial Notes: story_type=short, headline_ready_for_assembly, source_attribution_early, romanian_radio_normalized
+Source: Ieseanul
+Summary: Un eveniment important are loc. Potrivit Ieseanul, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale. Povestea conteaza acum pentru ca are efect direct in agenda publica si poate influenta deciziile sau reactiile din perioada imediat urmatoare.
+Pacing: light
+Continuity: new_story
+
+Outro
+Ati ascultat jurnalul OpenWave, Adrian.
+
+Editorial diagnostics
+- Candidate articles: 17
+- Candidates by scope: {'national': 6, 'international': 8, 'local': 3}
+- Candidates by provenance: {'full_fetch': 17}
+- Clusters created: 17
+- Selected stories: 8
+- Local stories selected: 3
+- Iasi local candidate count: 3
+- Iasi sources produced candidates: True
+- Local parser status by source: {'ziaruldeiasi.ro': {'status': 'success', 'latest_item': {'url': 'https://www.ziaruldeiasi.ro/stiri/politehnica-iasi-a-incheiat-sezonul-regulat-cu-13-puncte-avans-fata-de-baraj-cu-cine-joaca-poli-in-play-out--1843251.html', 'title': 'Politehnica Iași a încheiat sezonul regulat cu 13 puncte avans față de baraj. Cu cine joacă Poli în play-out', 'published_at': '2026-03-14T13:05:04Z', 'source_name': 'ziaruldeiasi.ro', 'source_type': 'local_county'}, 'error': None}, 'bzi.ro': {'status': 'success', 'latest_item': {'url': 'https://www.bzi.ro/ministra-diana-buzoianu-de-la-cancerul-politicii-romanesti-usr-a-venit-sa-planteze-copaci-la-lasi-5492471', 'title': 'Ministra Diana Buzoianu de la cancerul politicii românești USR, a venit să planteze copaci la lași', 'published_at': '2026-03-14T07:54:54Z', 'source_name': 'bzi.ro', 'source_type': 'local_county'}, 'error': None}, 'ieseanul.ro': {'status': 'success', 'latest_item': {'url': 'https://ieseanul.ro/litera-f/', 'title': 'Litera F', 'published_at': '2026-03-14T12:38:05Z', 'source_name': 'ieseanul.ro', 'source_type': 'local_county'}, 'error': None}}
+- Perspective pairs triggered: False
+- Mixed Romanian/English detected: False
+- Mixed-language story ids: none
+- RSS fallback usage rate: 0.0
+- RSS fallback selected stories: 0
+- Sizing explanation: Briefing remains below the target window at 177 seconds. In v1, the system reports the shortfall without expanding story text.

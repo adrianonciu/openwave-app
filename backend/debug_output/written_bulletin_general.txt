@@ -1,0 +1,55 @@
+INTRO
+
+Acesta este jurnalul OpenWave cu cele mai importante informatii.
+
+Story 1
+Atletism Alin Firfirică locul aruncarea discului Cupa
+News ro relateaza ca subiectul cere clarificari rapide si reactii oficiale.
+Atletism Alin Firfirică locul 2 la aruncarea discului la Cupa Europei de la Nicosia.
+Potrivit News ro, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.
+
+Story 2
+Iran ameninta porturi din Emiratele Arabe Unite
+AP noteaza ca subiectul cere clarificari rapide si reactii oficiale.
+Apare un nou subiect cu impact public.
+Potrivit AP, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.
+
+Story 3
+Subiect cu impact public
+Potrivit BBC, in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Datele noi schimba perspectiva.
+Potrivit BBC, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.
+
+Story 4
+Belarus Kolesnikova receives Charlemagne Prize in Germany
+Deutsche Welle sustine ca belarus kolesnikova primeste charlemagne premiul in germania.
+Subiectul belarus Kolesnikova primeste Charlemagne premiul in Germania revine in atentie dupa evolutii noi.
+Belarus Kolesnikova primeste Charlemagne premiul in Germania.
+
+Story 5
+Trump intră forță criza Golf Nave război
+Stiripesurse sustine ca trump intră în forță în criza din golf nave de război trimise pentru a redeschide strâmtoarea ormuz.
+Trump intră în forță în criza din Golf Nave de război trimise pentru a redeschide Strâmtoarea Ormuz.
+Potrivit Stiripesurse, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.
+
+Story 6
+Subiect cu impact public
+Euronews ro Știri de ultimă oră news AllViews spune ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Apare un nou subiect cu impact public.
+Potrivit Euronews ro Știri de ultimă oră news AllViews, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.
+
+Story 7
+Pietele din China in atentie
+CNBC arata ca in perioada imediat urmatoare, atentia merge spre reactii, aplicare si posibile evolutii ale subiectului, pe masura ce apar noi clarificari oficiale.
+Datele noi schimba perspectiva.
+Potrivit CNBC, urmeaza reactii si clarificari care pot schimba rapid felul in care evolueaza subiectul.
+
+OUTRO
+
+Acestea au fost principalele stiri ale momentului.
+
+Validation
+- Story count: 7
+- Validation passed: True
+- Auto-fixes applied: 2
+- Warnings: 2

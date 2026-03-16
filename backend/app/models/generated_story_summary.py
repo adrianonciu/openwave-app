@@ -3,6 +3,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.models.radio_edited_story import RadioEditedStory
+
 
 class SummaryComplianceReport(BaseModel):
     sentence_count_ok: bool
@@ -49,3 +51,6 @@ class GeneratedStorySummary(BaseModel):
     generation_explanation: str
     generated_at: datetime
     source_basis: Literal["story_cluster", "scored_story_cluster"]
+    original_summary_text: str | None = None
+    radio_edited_story: RadioEditedStory | None = None
+

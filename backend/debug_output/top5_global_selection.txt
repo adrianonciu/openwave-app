@@ -1,0 +1,91 @@
+TOP 5 GLOBAL SELECTION
+
+Editorial profile used: international
+Profile config name: international
+Shared core path used: True
+Candidate clusters: 6
+
+1. US China economic chiefs meet in Paris to clear path to Trump-Xi
+   selection_status: selected
+   cluster_id: cluster-fbb256c5d324
+   top_headline: US China economic chiefs meet in Paris to clear path to Trump-Xi summit
+   normalized_headline: US China economic chiefs meet in Paris to clear path to Trump-Xi
+   unique_source_count: 3
+   source_list: CNA, NPR, the Guardian
+   source_scope: international
+   source_category: general
+   editorial_priority: best=2 all=[2, 3]
+   freshness_score: 30.0
+   europe_romania_impact_score: 3.15
+   editorial_fit_score: 12.0
+   editorial_profile_used: international
+   shared_core_path_used: True
+   final_score: 105.15
+
+2. Use the stairs work from home Asia is already making big changes
+   selection_status: debug_rank_fallback
+   cluster_id: cluster-a50385893ccb
+   top_headline: Use the stairs work from home Asia is already making big changes as oil prices spike
+   normalized_headline: Use the stairs work from home Asia is already making big changes
+   unique_source_count: 1
+   source_list: NBC News
+   source_scope: international
+   source_category: general
+   editorial_priority: best=3 all=[3]
+   freshness_score: 30.0
+   europe_romania_impact_score: 2.48
+   editorial_fit_score: 12.0
+   editorial_profile_used: international
+   shared_core_path_used: True
+   final_score: 66.98
+
+3. Uganda's Bobi Wine says he has fled the country
+   selection_status: debug_rank_fallback
+   cluster_id: cluster-50d515c9cf6b
+   top_headline: Uganda's Bobi Wine says he has fled the country
+   normalized_headline: Uganda's Bobi Wine says he has fled the country
+   unique_source_count: 1
+   source_list: DW
+   source_scope: international
+   source_category: general
+   editorial_priority: best=2 all=[2]
+   freshness_score: 30.0
+   europe_romania_impact_score: 0.0
+   editorial_fit_score: 12.0
+   editorial_profile_used: international
+   shared_core_path_used: True
+   final_score: 66.5
+
+4. Mapping the global crackdown on shadow fleets CBC News
+   selection_status: debug_rank_fallback
+   cluster_id: cluster-42b54767d6bc
+   top_headline: Mapping the global crackdown on shadow fleets CBC News
+   normalized_headline: Mapping the global crackdown on shadow fleets CBC News
+   unique_source_count: 1
+   source_list: CBC
+   source_scope: international
+   source_category: general
+   editorial_priority: best=2 all=[2]
+   freshness_score: 30.0
+   europe_romania_impact_score: 0.0
+   editorial_fit_score: 12.0
+   editorial_profile_used: international
+   shared_core_path_used: True
+   final_score: 58.0
+
+5. Piastri fails to start again as teenager Antonelli takes maiden win
+   selection_status: debug_rank_fallback
+   cluster_id: cluster-18cadf59baa1
+   top_headline: Piastri fails to start again as teenager Antonelli takes maiden win
+   normalized_headline: Piastri fails to start again as teenager Antonelli takes maiden win
+   unique_source_count: 1
+   source_list: ABC News Australia
+   source_scope: international
+   source_category: general
+   editorial_priority: best=2 all=[2]
+   freshness_score: 27.69
+   europe_romania_impact_score: 0.0
+   editorial_fit_score: 12.0
+   editorial_profile_used: international
+   shared_core_path_used: True
+   final_score: 55.69

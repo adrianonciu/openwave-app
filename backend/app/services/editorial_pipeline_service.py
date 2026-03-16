@@ -19,6 +19,7 @@ from app.services.story_family_service import StoryFamilyService
 from app.services.story_scoring_service import StoryScoringService
 from app.services.story_selection_service import StorySelectionService
 from app.services.story_summary_generator_service import StorySummaryGeneratorService
+from app.services.radio_editing_service import RadioEditingService
 from app.services.source_watcher_service import SourceWatcherService
 
 CONTINUITY_STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "bulletin_continuity_state.json"
@@ -36,6 +37,7 @@ class EditorialPipelineService:
         )
         self.summary_generator_service = StorySummaryGeneratorService()
         self.bulletin_shaping_service = BulletinShapingService()
+        self.radio_editing_service = RadioEditingService()
         self.briefing_assembly_service = BriefingAssemblyService()
         self.bulletin_sizing_service = BulletinSizingService()
         self.source_watcher_service = SourceWatcherService()
@@ -84,9 +86,11 @@ class EditorialPipelineService:
         )
         self.summary_generator_service.reset_variation_state()
         generated_summaries = [
-            self.summary_generator_service.generate_story_summary(
-                cluster,
-                previous_bulletin_clusters=continuity_records,
+            self.radio_editing_service.apply_to_generated_story_summary(
+                self.summary_generator_service.generate_story_summary(
+                    cluster,
+                    previous_bulletin_clusters=continuity_records,
+                )
             )
             for cluster in bulletin_shaping_result.ordered_clusters
         ]

@@ -1,14 +1,466 @@
 {
-  "updated_at": "2026-03-15T11:44:16.971384+00:00",
+  "updated_at": "2026-03-15T14:38:57.730384+00:00",
   "families": [
+    {
+      "id": "domestic_politics",
+      "topic_hint": "romanian_domestic_politics",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 176,
+      "source_count": 13,
+      "run_count": 33,
+      "event_hints": [
+        "fiscal_policy_ro",
+        "government_coalition",
+        "public_safety_local_admin",
+        "romanian_anti_corruption_case",
+        "romanian_budget_fiscal",
+        "romanian_domestic_politics",
+        "romanian_economic_policy",
+        "romanian_energy_security",
+        "romanian_eu_funds_loss",
+        "romanian_eu_relations",
+        "romanian_fiscal_policy_2026",
+        "romanian_infrastructure_issue"
+      ]
+    },
+    {
+      "id": "energy_security",
+      "topic_hint": "romanian_energy_security",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 27,
+      "source_count": 1,
+      "run_count": 17,
+      "event_hints": [
+        "romanian_energy_security",
+        "romanian_regional_security"
+      ]
+    },
+    {
+      "id": "afghans_conflict_delivers",
+      "topic_hint": "afghans_conflict_delivers",
+      "first_seen": "2026-03-15T14:01:24.714814Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 11,
+      "source_count": 1,
+      "run_count": 11,
+      "event_hints": []
+    },
+    {
+      "id": "civil_crisis_humanitarian",
+      "topic_hint": "civil_crisis_humanitarian",
+      "first_seen": "2026-03-15T14:01:24.714814Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 11,
+      "source_count": 1,
+      "run_count": 11,
+      "event_hints": []
+    },
+    {
+      "id": "iran_using",
+      "topic_hint": "iran_using",
+      "first_seen": "2026-03-15T14:01:24.714814Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 11,
+      "source_count": 1,
+      "run_count": 11,
+      "event_hints": []
+    },
+    {
+      "id": "book_conspiracy'_deranged",
+      "topic_hint": "book_conspiracy'_deranged",
+      "first_seen": "2026-03-15T14:07:02.882348Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 7,
+      "source_count": 1,
+      "run_count": 7,
+      "event_hints": []
+    },
+    {
+      "id": "allies_americans_could",
+      "topic_hint": "allies_americans_could",
+      "first_seen": "2026-03-15T14:24:58.531535Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 6,
+      "source_count": 4,
+      "run_count": 6,
+      "event_hints": []
+    },
+    {
+      "id": "ancheta_cazut_copil",
+      "topic_hint": "ancheta_cazut_copil",
+      "first_seen": "2026-03-15T14:32:27.440662Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 5,
+      "source_count": 1,
+      "run_count": 5,
+      "event_hints": []
+    },
+    {
+      "id": "decision_major_policy",
+      "topic_hint": "romanian_major_policy_decision",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 32,
+      "source_count": 3,
+      "run_count": 13,
+      "event_hints": [
+        "public_safety_local_admin",
+        "romanian_domestic_politics",
+        "romanian_major_policy_decision",
+        "romanian_regional_security"
+      ]
+    },
+    {
+      "id": "alcaraz_carlos_costumatie",
+      "topic_hint": "alcaraz_carlos_costumatie",
+      "first_seen": "2026-03-15T14:36:34.651678Z",
+      "last_seen": "2026-03-15T14:38:57.697287Z",
+      "story_count": 3,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "after_decade_freed",
+      "topic_hint": "after_decade_freed",
+      "first_seen": "2026-03-15T14:24:58.531535Z",
+      "last_seen": "2026-03-15T14:36:34.651678Z",
+      "story_count": 4,
+      "source_count": 1,
+      "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "autobuz_bufnita_clar",
+      "topic_hint": "autobuz_bufnita_clar",
+      "first_seen": "2026-03-15T14:24:58.531535Z",
+      "last_seen": "2026-03-15T14:34:11.021837Z",
+      "story_count": 3,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "avizarea_bolojan_depuse",
+      "topic_hint": "avizarea_bolojan_depuse",
+      "first_seen": "2026-03-15T14:24:58.531535Z",
+      "last_seen": "2026-03-15T14:32:27.440662Z",
+      "story_count": 2,
+      "source_count": 1,
+      "run_count": 2,
+      "event_hints": []
+    },
+    {
+      "id": "2026_allies_countries",
+      "topic_hint": "2026_allies_countries",
+      "first_seen": "2026-03-15T14:01:24.714814Z",
+      "last_seen": "2026-03-15T14:07:02.882348Z",
+      "story_count": 5,
+      "source_count": 5,
+      "run_count": 5,
+      "event_hints": []
+    },
+    {
+      "id": "adolescenti_ajuta_atacuri",
+      "topic_hint": "adolescenti_ajuta_atacuri",
+      "first_seen": "2026-03-15T14:01:24.714814Z",
+      "last_seen": "2026-03-15T14:07:02.882348Z",
+      "story_count": 5,
+      "source_count": 1,
+      "run_count": 5,
+      "event_hints": []
+    },
+    {
+      "id": "conditie_fcsb_inainte",
+      "topic_hint": "conditie_fcsb_inainte",
+      "first_seen": "2026-03-15T11:56:20.938758Z",
+      "last_seen": "2026-03-15T13:45:43.281959Z",
+      "story_count": 18,
+      "source_count": 1,
+      "run_count": 18,
+      "event_hints": []
+    },
+    {
+      "id": "crackdown_fleets_global",
+      "topic_hint": "crackdown_fleets_global",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T13:45:43.281959Z",
+      "story_count": 23,
+      "source_count": 1,
+      "run_count": 19,
+      "event_hints": []
+    },
+    {
+      "id": "carpet_clobber'_features",
+      "topic_hint": "carpet_clobber'_features",
+      "first_seen": "2026-03-15T13:41:43.100682Z",
+      "last_seen": "2026-03-15T13:45:43.281959Z",
+      "story_count": 3,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "eu_relations",
+      "topic_hint": "romanian_eu_relations",
+      "first_seen": "2026-03-15T12:42:31.313645Z",
+      "last_seen": "2026-03-15T13:12:04.383217Z",
+      "story_count": 6,
+      "source_count": 1,
+      "run_count": 6,
+      "event_hints": [
+        "romanian_eu_relations"
+      ]
+    },
+    {
+      "id": "amenintari_ascult_astazi",
+      "topic_hint": "amenintari_ascult_astazi",
+      "first_seen": "2026-03-15T12:54:50.464293Z",
+      "last_seen": "2026-03-15T13:12:04.383217Z",
+      "story_count": 4,
+      "source_count": 1,
+      "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "funds_loss",
+      "topic_hint": "romanian_eu_funds_loss",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T13:12:04.383217Z",
+      "story_count": 12,
+      "source_count": 1,
+      "run_count": 8,
+      "event_hints": [
+        "romanian_eu_funds_loss"
+      ]
+    },
+    {
+      "id": "bobi_country_fled",
+      "topic_hint": "bobi_country_fled",
+      "first_seen": "2026-03-15T11:27:50.728640Z",
+      "last_seen": "2026-03-15T12:57:53.474885Z",
+      "story_count": 17,
+      "source_count": 1,
+      "run_count": 16,
+      "event_hints": []
+    },
+    {
+      "id": "anticipa_aparitia_dementa",
+      "topic_hint": "anticipa_aparitia_dementa",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T12:57:53.474885Z",
+      "story_count": 5,
+      "source_count": 1,
+      "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "adoptat_artificii_capitala",
+      "topic_hint": "adoptat_artificii_capitala",
+      "first_seen": "2026-03-15T12:52:54.705578Z",
+      "last_seen": "2026-03-15T12:54:50.464293Z",
+      "story_count": 2,
+      "source_count": 1,
+      "run_count": 2,
+      "event_hints": []
+    },
     {
       "id": "chiefs_china_clear",
       "topic_hint": "chiefs_china_clear",
       "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
+      "last_seen": "2026-03-15T12:52:54.705578Z",
+      "story_count": 16,
+      "source_count": 6,
+      "run_count": 12,
+      "event_hints": []
+    },
+    {
+      "id": "celebrului_comedie_lansat",
+      "topic_hint": "celebrului_comedie_lansat",
+      "first_seen": "2026-03-15T12:23:32.148586Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
       "story_count": 8,
-      "source_count": 3,
+      "source_count": 1,
+      "run_count": 8,
+      "event_hints": []
+    },
+    {
+      "id": "infrastructure_issue",
+      "topic_hint": "romanian_infrastructure_issue",
+      "first_seen": "2026-03-15T11:43:01.531525Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
+      "story_count": 11,
+      "source_count": 1,
+      "run_count": 11,
+      "event_hints": [
+        "romanian_infrastructure_issue"
+      ]
+    },
+    {
+      "id": "astept_atacuri_de-abia",
+      "topic_hint": "astept_atacuri_de-abia",
+      "first_seen": "2026-03-15T12:40:20.834650Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
+      "story_count": 4,
+      "source_count": 1,
       "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "asociatia_barnova_buzoianu",
+      "topic_hint": "asociatia_barnova_buzoianu",
+      "first_seen": "2026-03-15T12:25:48.458992Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
+      "story_count": 3,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "cuvinte_silabe",
+      "topic_hint": "cuvinte_silabe",
+      "first_seen": "2026-03-15T12:25:48.458992Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
+      "story_count": 3,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "accident_autoturisme_doua",
+      "topic_hint": "accident_autoturisme_doua",
+      "first_seen": "2026-03-15T12:25:48.458992Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
+      "story_count": 3,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "amanat_aprilie_marele",
+      "topic_hint": "amanat_aprilie_marele",
+      "first_seen": "2026-03-15T12:42:31.313645Z",
+      "last_seen": "2026-03-15T12:42:31.313645Z",
+      "story_count": 1,
+      "source_count": 1,
+      "run_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "again_antonelli_fails",
+      "topic_hint": "again_antonelli_fails",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T12:41:49.529466Z",
+      "story_count": 15,
+      "source_count": 1,
+      "run_count": 11,
+      "event_hints": []
+    },
+    {
+      "id": "antreprenor_cancerului_chatgpt",
+      "topic_hint": "antreprenor_cancerului_chatgpt",
+      "first_seen": "2026-03-15T12:39:16.193769Z",
+      "last_seen": "2026-03-15T12:41:49.529466Z",
+      "story_count": 4,
+      "source_count": 1,
+      "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "britanie_diana_fotografie",
+      "topic_hint": "britanie_diana_fotografie",
+      "first_seen": "2026-03-15T12:23:32.148586Z",
+      "last_seen": "2026-03-15T12:39:16.193769Z",
+      "story_count": 4,
+      "source_count": 1,
+      "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "amenzi_confuzie_indicatorul",
+      "topic_hint": "amenzi_confuzie_indicatorul",
+      "first_seen": "2026-03-15T12:39:16.193769Z",
+      "last_seen": "2026-03-15T12:39:16.193769Z",
+      "story_count": 1,
+      "source_count": 1,
+      "run_count": 1,
+      "event_hints": []
+    },
+    {
+      "id": "acord_anunta_despre",
+      "topic_hint": "acord_anunta_despre",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T12:29:07.632561Z",
+      "story_count": 5,
+      "source_count": 1,
+      "run_count": 4,
+      "event_hints": []
+    },
+    {
+      "id": "2026_anti-drone_atac",
+      "topic_hint": "2026_anti-drone_atac",
+      "first_seen": "2026-03-15T12:25:48.458992Z",
+      "last_seen": "2026-03-15T12:29:07.632561Z",
+      "story_count": 2,
+      "source_count": 4,
+      "run_count": 2,
+      "event_hints": []
+    },
+    {
+      "id": "anti_corruption_case",
+      "topic_hint": "romanian_anti_corruption_case",
+      "first_seen": "2026-03-15T11:26:45.775803Z",
+      "last_seen": "2026-03-15T11:57:06.899446Z",
+      "story_count": 10,
+      "source_count": 1,
+      "run_count": 6,
+      "event_hints": [
+        "romanian_anti_corruption_case",
+        "romanian_justice",
+        "romanian_justice_case",
+        "romanian_prosecutor_decision"
+      ]
+    },
+    {
+      "id": "among_falls_hoshoryu",
+      "topic_hint": "among_falls_hoshoryu",
+      "first_seen": "2026-03-15T11:26:45.775803Z",
+      "last_seen": "2026-03-15T11:57:06.899446Z",
+      "story_count": 8,
+      "source_count": 1,
+      "run_count": 6,
+      "event_hints": []
+    },
+    {
+      "id": "company_expose_jobs",
+      "topic_hint": "company_expose_jobs",
+      "first_seen": "2026-03-15T11:43:01.531525Z",
+      "last_seen": "2026-03-15T11:57:06.899446Z",
+      "story_count": 6,
+      "source_count": 1,
+      "run_count": 6,
+      "event_hints": []
+    },
+    {
+      "id": "antonelli_aproape_atac",
+      "topic_hint": "antonelli_aproape_atac",
+      "first_seen": "2026-03-15T11:18:27.158472Z",
+      "last_seen": "2026-03-15T11:57:06.899446Z",
+      "story_count": 4,
+      "source_count": 1,
+      "run_count": 3,
+      "event_hints": []
+    },
+    {
+      "id": "alegeri_franta_locale",
+      "topic_hint": "alegeri_franta_locale",
+      "first_seen": "2026-03-15T11:56:20.938758Z",
+      "last_seen": "2026-03-15T11:57:06.899446Z",
+      "story_count": 2,
+      "source_count": 1,
+      "run_count": 2,
       "event_hints": []
     },
     {
@@ -30,67 +482,6 @@
       "source_count": 1,
       "run_count": 4,
       "event_hints": []
-    },
-    {
-      "id": "domestic_politics",
-      "topic_hint": "romanian_domestic_politics",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 16,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": [
-        "romanian_domestic_politics",
-        "romanian_major_policy_decision",
-        "romanian_regional_security"
-      ]
-    },
-    {
-      "id": "crackdown_fleets_global",
-      "topic_hint": "crackdown_fleets_global",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 8,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": []
-    },
-    {
-      "id": "again_antonelli_fails",
-      "topic_hint": "again_antonelli_fails",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 8,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": []
-    },
-    {
-      "id": "funds_loss",
-      "topic_hint": "romanian_eu_funds_loss",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 8,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": [
-        "romanian_eu_funds_loss"
-      ]
-    },
-    {
-      "id": "anti_corruption_case",
-      "topic_hint": "romanian_anti_corruption_case",
-      "first_seen": "2026-03-15T11:26:45.775803Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 6,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": [
-        "romanian_anti_corruption_case",
-        "romanian_justice",
-        "romanian_justice_case",
-        "romanian_prosecutor_decision"
-      ]
     },
     {
       "id": "budget_fiscal",
@@ -116,39 +507,6 @@
       "event_hints": []
     },
     {
-      "id": "among_falls_hoshoryu",
-      "topic_hint": "among_falls_hoshoryu",
-      "first_seen": "2026-03-15T11:26:45.775803Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 6,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": []
-    },
-    {
-      "id": "bobi_country_fled",
-      "topic_hint": "bobi_country_fled",
-      "first_seen": "2026-03-15T11:27:50.728640Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 5,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": []
-    },
-    {
-      "id": "energy_security",
-      "topic_hint": "romanian_energy_security",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 9,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": [
-        "romanian_energy_security",
-        "romanian_regional_security"
-      ]
-    },
-    {
       "id": "credea_decat_expusi",
       "topic_hint": "credea_decat_expusi",
       "first_seen": "2026-03-15T11:43:01.531525Z",
@@ -167,28 +525,6 @@
       "source_count": 1,
       "run_count": 4,
       "event_hints": []
-    },
-    {
-      "id": "company_expose_jobs",
-      "topic_hint": "company_expose_jobs",
-      "first_seen": "2026-03-15T11:43:01.531525Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 4,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": []
-    },
-    {
-      "id": "infrastructure_issue",
-      "topic_hint": "romanian_infrastructure_issue",
-      "first_seen": "2026-03-15T11:43:01.531525Z",
-      "last_seen": "2026-03-15T11:44:16.960470Z",
-      "story_count": 4,
-      "source_count": 1,
-      "run_count": 4,
-      "event_hints": [
-        "romanian_infrastructure_issue"
-      ]
     },
     {
       "id": "accidentala_combate_descoperirea",
@@ -221,41 +557,8 @@
       "event_hints": []
     },
     {
-      "id": "decision_major_policy",
-      "topic_hint": "romanian_major_policy_decision",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:26:45.775803Z",
-      "story_count": 3,
-      "source_count": 1,
-      "run_count": 1,
-      "event_hints": [
-        "romanian_major_policy_decision",
-        "romanian_regional_security"
-      ]
-    },
-    {
       "id": "bijuterie_blinders_cunoscuta",
       "topic_hint": "bijuterie_blinders_cunoscuta",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:19:47.381839Z",
-      "story_count": 2,
-      "source_count": 1,
-      "run_count": 1,
-      "event_hints": []
-    },
-    {
-      "id": "antonelli_aproape_atac",
-      "topic_hint": "antonelli_aproape_atac",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:19:47.381839Z",
-      "story_count": 2,
-      "source_count": 1,
-      "run_count": 1,
-      "event_hints": []
-    },
-    {
-      "id": "anticipa_aparitia_dementa",
-      "topic_hint": "anticipa_aparitia_dementa",
       "first_seen": "2026-03-15T11:18:27.158472Z",
       "last_seen": "2026-03-15T11:19:47.381839Z",
       "story_count": 2,
@@ -286,16 +589,6 @@
     {
       "id": "celebrities_lip-reading_royals",
       "topic_hint": "celebrities_lip-reading_royals",
-      "first_seen": "2026-03-15T11:18:27.158472Z",
-      "last_seen": "2026-03-15T11:19:47.381839Z",
-      "story_count": 2,
-      "source_count": 1,
-      "run_count": 1,
-      "event_hints": []
-    },
-    {
-      "id": "acord_anunta_despre",
-      "topic_hint": "acord_anunta_despre",
       "first_seen": "2026-03-15T11:18:27.158472Z",
       "last_seen": "2026-03-15T11:19:47.381839Z",
       "story_count": 2,

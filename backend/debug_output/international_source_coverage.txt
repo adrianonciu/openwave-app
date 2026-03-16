@@ -1,0 +1,111 @@
+INTERNATIONAL SOURCE COVERAGE
+
+international_source_count: 12
+
+1. ABC News Australia
+   source_category: general
+   editorial_priority: 2
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 1
+   multi_source_clusters_contributed_to: 0
+
+2. CNA
+   source_category: general
+   editorial_priority: 3
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 1
+   multi_source_clusters_contributed_to: 1
+
+3. DW World
+   source_category: general
+   editorial_priority: 2
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 1
+   multi_source_clusters_contributed_to: 0
+
+4. NBC News
+   source_category: general
+   editorial_priority: 3
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 1
+   multi_source_clusters_contributed_to: 0
+
+5. NPR
+   source_category: general
+   editorial_priority: 3
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 1
+   multi_source_clusters_contributed_to: 1
+
+6. Associated Press
+   source_category: general
+   editorial_priority: 1
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
+
+7. CBC News
+   source_category: general
+   editorial_priority: 2
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
+
+8. CNBC
+   source_category: economy
+   editorial_priority: 3
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
+
+9. Kyodo News
+   source_category: general
+   editorial_priority: 3
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
+
+10. Sky News
+   source_category: general
+   editorial_priority: 3
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
+
+11. The Guardian
+   source_category: general
+   editorial_priority: 2
+   articles_discovered: 1
+   articles_fetched_successfully: 1
+   candidate_articles_produced: 1
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
+
+12. Al Jazeera
+   source_category: general
+   editorial_priority: 3
+   articles_discovered: 0
+   articles_fetched_successfully: 0
+   candidate_articles_produced: 0
+   clusters_contributed_to: 0
+   multi_source_clusters_contributed_to: 0
