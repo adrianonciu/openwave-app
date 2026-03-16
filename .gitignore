@@ -4,4 +4,6 @@ venv/
 __pycache__/
 *.pyc
 .env
+# Generated editorial previews and debug artifacts stay local.
 backend/debug_output/
+# Curated editorial benchmarks live in backend/editorial_tests/ and stay tracked.

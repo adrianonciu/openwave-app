@@ -116,3 +116,7 @@ Story families now provide light lifecycle support in ranking. Recurring familie
 Current backend infrastructure also includes a lightweight bulletin shaping layer after story selection. This stage keeps scoring and selection unchanged, then reorders the already selected stories deterministically using lead-story choice, family separation, topic diversity, and confirmation-aware tie-breaking before briefing assembly.
 
 Current backend infrastructure also includes a deterministic radio editing layer after bulletin shaping and written story generation. This layer compresses one story down to a single primary event thread, preserves high-priority entities with the rule person > institution > location > context, and rewrites the result into 3-5 Romanian radio sentences before briefing assembly and audio delivery.
+
+Repository hygiene note:
+- `backend/debug_output/` contains generated local preview/debug artifacts and is not tracked in Git.
+- `backend/editorial_tests/` contains curated benchmark bulletins kept in Git for editorial regression review.
