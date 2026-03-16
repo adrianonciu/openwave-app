@@ -1,0 +1,348 @@
+OPENWAVE RADIO EDITING PREVIEW V1.10
+
+Stories: 5
+Bulletin estimated duration: 118 secunde
+Average story words: 39.6
+Average story duration: 23.6 secunde
+Average lead/title overlap: 0.03
+Stories with lead starting with institution: 1
+Stories with institution+title-like action lead: 0
+Stories rewritten via continuation strategy: 5
+Stories over 0.4 lead/title overlap: 0
+Stories over 0.5 lead/title overlap: 0
+Leads rewritten to reduce title repetition: 5
+Continuation lead rewrites: 5
+Lead opening counts: {"consequence": 1, "action": 1, "affected_audience": 1, "person_role": 1, "institution_action": 1}
+Stories with personal attribution: 3
+Stories with person-name attribution: 1
+Stories with role+name attribution: 1
+Stories with institution attribution: 2
+Stories with media-source attribution: 0
+Stories with intra-story repetition: 1
+Stories with duplicate sentence removed: 1
+Stories with closing variation applied: 4
+Stories missing attributed voice: 0
+Lead personal attribution count: 1
+Second-sentence personal attribution count: 2
+Promoted person-attribution sentences: 3
+Role-based attribution insertions: 2
+Stories with institution-only attribution: 2
+Stories with media attribution: 0
+Stories with high title/lead overlap: 0
+International stories with Romania impact: 1
+Stories with strong closure: 2
+Repeated person names: 0
+Stories with administrative closure: 0
+Stories with multiple attributions: 0
+Operational simplifications applied: 4
+TTS pronunciation entries: 3
+
+Story 1: national_policy_01
+Band: standard
+Headline original: Ilie Bolojan anunta o ordonanta pentru simplificarea avizelor de investitii.
+Original words: 83
+Final words: 38
+Sentence count: 3
+Lead words: 11
+Scope: national
+Original headline: Ilie Bolojan anunta o ordonanta pentru simplificarea avizelor de investitii
+Generated lead initial: Premierul Ilie Bolojan a anuntat ca Guvernul Romaniei a adoptat o ordonanta care simplifica avizele pentru proiectele mari.
+Generated lead final: Investitorii ar putea trece mai repede de avizele pentru proiectele mari.
+Lead/title overlap: 0.0
+Title main entity: Ilie Bolojan
+Title main action family: none
+Lead starter family: affected_audience
+Closing phrase family: operational_timing
+Duplicate sentence removed: True
+Lead rewrite applied: True
+Lead continuation rewrite: True
+Lead opening type: affected_audience
+Attribution type used: named_person
+Attribution level used: person
+Attribution position used: sentence_2
+Attributed name: Ilie Bolojan
+Attributed role: Premierul
+Attributed institution: none
+Attributed media source: none
+Lead personal attribution: False
+Second sentence personal attribution: True
+Has named person: True
+Has role-based person: True
+Estimated duration: 23 secunde
+Attribution: person
+Romania impact included: False
+Strong closure: True
+Repeated person names: 0
+Administrative closure: False
+Multiple attributions: False
+Operational simplifications: 2
+Main actor early: False
+Kept entities: Ilie Bolojan, Guvernul Romaniei
+Dropped entities: Premierul Ilie Bolojan, Guvernul, Ministerul Finantelor, Ministerul
+Radio output:
+Investitorii ar putea trece mai repede de avizele pentru proiectele mari. Premierul Ilie Bolojan a spus ca masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
+
+Story 2: justice_01
+Band: sparse
+Headline original: CSM da aviz negativ pentru un procuror-sef adjunct propus la DNA.
+Original words: 64
+Final words: 35
+Sentence count: 3
+Lead words: 13
+Scope: national
+Original headline: CSM da aviz negativ pentru un procuror-sef adjunct propus la DNA
+Generated lead initial: Consiliul Superior al Magistraturii a dat aviz negativ pentru numirea unui procuror-sef adjunct la DNA.
+Generated lead final: Ministerul Justitiei ramane sub presiune sa vina cu o noua propunere pentru functie.
+Lead/title overlap: 0.0
+Title main entity: CSM
+Title main action family: reject
+Lead starter family: institution_action
+Closing phrase family: immediate_impact
+Duplicate sentence removed: False
+Lead rewrite applied: True
+Lead continuation rewrite: True
+Lead opening type: institution_action
+Attribution type used: institution
+Attribution level used: institution
+Attribution position used: sentence_2
+Attributed name: none
+Attributed role: none
+Attributed institution: CSM
+Attributed media source: none
+Lead personal attribution: False
+Second sentence personal attribution: False
+Has named person: False
+Has role-based person: False
+Estimated duration: 21 secunde
+Attribution: institution
+Romania impact included: False
+Strong closure: False
+Repeated person names: 0
+Administrative closure: False
+Multiple attributions: False
+Operational simplifications: 1
+Main actor early: False
+Kept entities: Consiliul Superior al Magistraturii
+Dropped entities: CSM, DNA, Ministerul Justitiei, Ministerul, Presedintie
+Radio output:
+Ministerul Justitiei ramane sub presiune sa vina cu o noua propunere pentru functie. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Ministerul trebuie acum sa decida daca revine cu o alta propunere.
+
+Story 3: economy_01
+Band: standard
+Headline original: ANAF anunta controale extinse dupa o schema de frauda cu TVA.
+Original words: 86
+Final words: 42
+Sentence count: 3
+Lead words: 20
+Scope: national
+Original headline: ANAF anunta controale extinse dupa o schema de frauda cu TVA
+Generated lead initial: ANAF a anuntat controale extinse dupa descoperirea unei scheme de frauda cu TVA care ar fi functionat prin firme fantoma.
+Generated lead final: Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii.
+Lead/title overlap: 0.0
+Title main entity: ANAF
+Title main action family: none
+Lead starter family: person_role
+Closing phrase family: immediate_impact
+Duplicate sentence removed: False
+Lead rewrite applied: True
+Lead continuation rewrite: True
+Lead opening type: person_role
+Attribution type used: role_based_person
+Attribution level used: person
+Attribution position used: lead
+Attributed name: none
+Attributed role: inspectorii
+Attributed institution: none
+Attributed media source: none
+Lead personal attribution: True
+Second sentence personal attribution: False
+Has named person: False
+Has role-based person: True
+Estimated duration: 25 secunde
+Attribution: role
+Romania impact included: False
+Strong closure: False
+Repeated person names: 0
+Administrative closure: False
+Multiple attributions: False
+Operational simplifications: 0
+Main actor early: False
+Kept entities: ANAF
+Dropped entities: none
+Radio output:
+Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Inspectorii asteapta acum deciziile dupa inchiderea controalelor din teren.
+
+Story 4: international_impact_01
+Band: sparse
+Headline original: Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz.
+Original words: 76
+Final words: 49
+Sentence count: 4
+Lead words: 16
+Scope: international
+Original headline: Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz
+Generated lead initial: Casa Alba a anuntat ca Statele Unite trimit nave suplimentare spre Stramtoarea Ormuz dupa noi atacuri asupra transportului comercial.
+Generated lead final: Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie.
+Lead/title overlap: 0.0
+Title main entity: none
+Title main action family: reroute
+Lead starter family: consequence
+Closing phrase family: policy_impact
+Duplicate sentence removed: False
+Lead rewrite applied: True
+Lead continuation rewrite: True
+Lead opening type: consequence
+Attribution type used: institution
+Attribution level used: institution
+Attribution position used: sentence_2
+Attributed name: none
+Attributed role: none
+Attributed institution: Casa Alba
+Attributed media source: none
+Lead personal attribution: False
+Second sentence personal attribution: False
+Has named person: False
+Has role-based person: False
+Estimated duration: 29 secunde
+Attribution: institution
+Romania impact included: True
+Strong closure: False
+Repeated person names: 0
+Administrative closure: False
+Multiple attributions: False
+Operational simplifications: 0
+Main actor early: False
+Kept entities: Casa Alba, Romania
+Dropped entities: Stramtoarea Ormuz, Ormuz
+Radio output:
+Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Casa Alba spune ca iranul respinge acuzatiile privind implicarea directa. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Consumatorii ar putea vedea primele schimbari direct pe factura.
+
+Story 5: local_01
+Band: sparse
+Headline original: Primaria Bacau incepe lucrari noi pe un coridor important de trafic.
+Original words: 79
+Final words: 34
+Sentence count: 3
+Lead words: 12
+Scope: local
+Original headline: Primaria Bacau incepe lucrari noi pe un coridor important de trafic
+Generated lead initial: Primaria Bacau anunta ca incepe luni lucrari noi pe un coridor important de trafic dintre centru si zona de nord.
+Generated lead final: Santierul include reabilitarea carosabilului, benzi dedicate transportului public si schimbari de trafic.
+Lead/title overlap: 0.14
+Title main entity: Primaria Bacau
+Title main action family: start
+Lead starter family: action
+Closing phrase family: operational_timing
+Duplicate sentence removed: False
+Lead rewrite applied: True
+Lead continuation rewrite: True
+Lead opening type: action
+Attribution type used: role_based_person
+Attribution level used: person
+Attribution position used: sentence_2
+Attributed name: none
+Attributed role: soferii
+Attributed institution: none
+Attributed media source: none
+Lead personal attribution: False
+Second sentence personal attribution: True
+Has named person: False
+Has role-based person: True
+Estimated duration: 20 secunde
+Attribution: role
+Romania impact included: False
+Strong closure: True
+Repeated person names: 0
+Administrative closure: False
+Multiple attributions: False
+Operational simplifications: 1
+Main actor early: False
+Kept entities: Primaria
+Dropped entities: Compania de Transport Public, Transport Public
+Radio output:
+Santierul include reabilitarea carosabilului, benzi dedicate transportului public si schimbari de trafic. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Programul actualizat se aplica de la inceputul saptamanii.
+
+Validation summary:
+{
+  "story_count": 5,
+  "total_estimated_bulletin_duration_seconds": 118,
+  "average_word_count": 39.6,
+  "average_estimated_duration_seconds": 23.6,
+  "average_lead_title_overlap_score": 0.03,
+  "stories_with_lead_starting_with_institution": 1,
+  "stories_with_lead_starting_with_institution_and_title_like_action": 0,
+  "stories_rewritten_via_continuation_strategy": 5,
+  "stories_over_0_4_lead_title_overlap": 0,
+  "stories_over_0_5_lead_title_overlap": 0,
+  "min_word_count": 34,
+  "max_word_count": 49,
+  "min_estimated_duration_seconds": 20,
+  "max_estimated_duration_seconds": 29,
+  "sparse_story_count": 3,
+  "standard_story_count": 2,
+  "major_story_count": 0,
+  "stories_under_65_words": 5,
+  "stories_in_65_to_82_band": 0,
+  "stories_in_85_to_105_band": 0,
+  "stories_over_105_words": 0,
+  "stories_with_sentences_over_24_words": 0,
+  "stories_with_sentence_over_25_words": 0,
+  "stories_with_lead_over_20_words": 0,
+  "stories_where_main_actor_does_not_appear_early_in_lead": 5,
+  "stories_where_person_entity_existed_but_was_not_preserved": 0,
+  "leads_rewritten_to_reduce_title_repetition": 5,
+  "lead_continuation_rewrite_count": 5,
+  "lead_opening_type_counts": {
+    "consequence": 1,
+    "action": 1,
+    "affected_audience": 1,
+    "person_role": 1,
+    "institution_action": 1
+  },
+  "lead_starter_family_distribution": {
+    "consequence": 1,
+    "action": 1,
+    "affected_audience": 1,
+    "person_role": 1,
+    "institution_action": 1
+  },
+  "stories_with_personal_attribution": 3,
+  "stories_with_person_name_attribution": 1,
+  "stories_with_person_role_and_name_attribution": 1,
+  "stories_with_institution_attribution": 2,
+  "stories_with_media_source_attribution": 0,
+  "stories_with_intra_story_repetition": 1,
+  "stories_with_duplicate_sentence_removed": 1,
+  "stories_with_closing_variation_applied": 4,
+  "stories_missing_attributed_voice": 0,
+  "lead_has_personal_attribution_count": 1,
+  "second_sentence_has_personal_attribution_count": 2,
+  "promoted_person_attribution_sentence_count": 3,
+  "role_based_attribution_inserted_count": 2,
+  "stories_with_institution_only_attribution": 2,
+  "stories_with_media_attribution": 0,
+  "stories_with_high_title_lead_overlap": 0,
+  "international_stories_with_romania_impact": 1,
+  "stories_with_strong_closure": 2,
+  "repeated_person_name_count": 0,
+  "stories_with_administrative_closure": 0,
+  "stories_with_multiple_attributions": 0,
+  "simplified_operational_description_count": 4,
+  "tts_pronunciation_entry_count": 3,
+  "explicit_attribution_counts": {
+    "person": 1,
+    "institution": 2,
+    "media": 0
+  }
+}
+
+Sample preview bulletin:
+Investitorii ar putea trece mai repede de avizele pentru proiectele mari. Premierul Ilie Bolojan a spus ca masura ar trebui sa grabeasca proiectele publice si private si sa reduca birocratia pentru investitori. Masura intra in vigoare luna viitoare.
+
+Ministerul Justitiei ramane sub presiune sa vina cu o noua propunere pentru functie. CSM a transmis ca avizul vine dupa audieri si analiza dosarului. Ministerul trebuie acum sa decida daca revine cu o alta propunere.
+
+Inspectorii spun ca prejudiciul estimat trece de 2,3 milioane lei si ca verificarile vizeaza mai multe lanturi de tranzactii. Asta inseamna presiune mai mare pe firmele verificate si pe colectarea la buget. Inspectorii asteapta acum deciziile dupa inchiderea controalelor din teren.
+
+Pentru Romania si restul Europei, tensiunea poate duce la preturi mai mari la petrol si energie. Casa Alba spune ca iranul respinge acuzatiile privind implicarea directa. Masura are rolul de a proteja rutele maritime si de a descuraja alte incidente. Consumatorii ar putea vedea primele schimbari direct pe factura.
+
+Santierul include reabilitarea carosabilului, benzi dedicate transportului public si schimbari de trafic. Primaria a transmis ca soferii vor circula pe benzi restranse in mai multe etape. Programul actualizat se aplica de la inceputul saptamanii.

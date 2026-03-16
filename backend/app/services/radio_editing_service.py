@@ -647,11 +647,15 @@ class RadioEditingService:
         polished = self._diversify_generic_lead(payload, compression, polished)
         polished, repetition_meta = self._reduce_intra_story_repetition(payload, polished)
         polished, closing_variation_applied = self._apply_closing_variation(payload, compression, polished)
+        polished, late_repetition_meta = self._reduce_intra_story_repetition(payload, polished)
+        repetition_meta["duplicate_sentence_removed"] = repetition_meta["duplicate_sentence_removed"] or late_repetition_meta["duplicate_sentence_removed"]
+        repetition_meta["stories_with_intra_story_repetition"] = repetition_meta["stories_with_intra_story_repetition"] or late_repetition_meta["stories_with_intra_story_repetition"]
         polished = [
             self._finalize_sentence(self._trim_sentence(sentence, LEAD_MAX_WORDS if index == 0 else SENTENCE_SOFT_MAX_WORDS))
             for index, sentence in enumerate(polished)
             if sentence
         ]
+        polished = self._dedupe_story_sentences(polished)
         final_lead = polished[0] if polished else ""
         lead_title_overlap_score = round(self._lead_title_overlap_score(payload["headline_original"], final_lead), 2)
         attribution_type_used = self._story_attribution_type(polished, payload)
@@ -799,10 +803,6 @@ class RadioEditingService:
             if "tren" in lowered or "peron" in lowered:
                 return self._finalize_sentence("Navetistii vor avea un orar provizoriu si schimbari de peron in urmatoarele zile.")
             return self._finalize_sentence("Soferii vor circula pe rute ocolitoare sau pe benzi restranse incepand din primele zile.")
-        if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
-            return self._finalize_sentence("Consumatorii ar putea vedea presiune mai mare pe facturi si pe preturile la energie.")
-        if any(term in lowered for term in ("investitii", "avize", "birocratia", "ordonanta")):
-            return self._finalize_sentence("Investitorii ar putea trece mai repede de avizele pentru proiectele mari.")
         if any(term in lowered for term in ("dna", "csm", "presedintie", "parchete", "propunere")):
             return self._finalize_sentence("Ministerul Justitiei ramane sub presiune sa vina cu o noua propunere pentru functie.")
         if any(term in lowered for term in ("catalogul digital", "elevi", "parinti", "scoli")):
@@ -811,12 +811,18 @@ class RadioEditingService:
             return self._finalize_sentence("Studentii navetisti ar putea acoperi mai usor transportul si o parte din cazare.")
         if any(term in lowered for term in ("fermierii", "seceta", "alimente", "agriculturii")):
             return self._finalize_sentence("Fermierii cer sprijin rapid ca sa limiteze presiunea pe preturile la alimente.")
-        if any(term in lowered for term in ("nato", "marea neagra", "securitatea regionala")):
-            return self._finalize_sentence("Pentru Romania, miscarile din zona sporesc atentia asupra securitatii de la Marea Neagra.")
+        if any(term in lowered for term in ("frauda", "tva", "buget", "anaf", "rambursari")):
+            return self._finalize_sentence("Bugetul ramane sub presiune dupa schema de frauda descoperita de inspectori.")
+        if any(term in lowered for term in ("investitii", "avize", "birocratia", "ordonanta")):
+            return self._finalize_sentence("Investitorii ar putea trece mai repede de avizele pentru proiectele mari.")
         if any(term in lowered for term in ("ormuz", "rutele maritime", "transportului comercial")):
             return self._finalize_sentence("Pentru Romania si Europa, tensiunea poate ridica rapid costurile la energie si transport.")
+        if any(term in lowered for term in ("nato", "marea neagra", "securitatea regionala")):
+            return self._finalize_sentence("Pentru Romania, miscarile din zona sporesc atentia asupra securitatii de la Marea Neagra.")
         if any(term in lowered for term in ("cipuri", "export", "bateriile", "lanturile de aprovizionare")):
             return self._finalize_sentence("Companiile pot vedea costuri mai mari si livrari mai lente pe lanturile de aprovizionare.")
+        if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
+            return self._finalize_sentence("Consumatorii ar putea vedea presiune mai mare pe facturi si pe preturile la energie.")
         return lead
 
     def _derive_support_sentence(self, payload: dict[str, object], compression: CompressedStoryCore, existing: list[str]) -> str:
@@ -1365,7 +1371,11 @@ class RadioEditingService:
         if not sentences:
             return sentences, False
         current_family = self._closing_phrase_family(sentences[-1])
-        if list(self._recent_closing_families).count(current_family) == 0 and not self._starts_with_primele_formula(sentences[-1]):
+        if (
+            list(self._recent_closing_families).count(current_family) == 0
+            and not self._starts_with_primele_formula(sentences[-1])
+            and sentences[-1] not in self._recent_closing_sentences
+        ):
             return sentences, False
         replacement = self._best_closure_candidate(payload, compression, sentences[:-1], current_closure=sentences[-1])
         if (
@@ -1412,6 +1422,11 @@ class RadioEditingService:
                 "Pacientii pot intra pe noul flux chiar din aceasta saptamana.",
                 "Programul extins va fi evaluat dupa primele zile de functionare.",
             ])
+        if any(term in lowered for term in ("frauda", "tva", "buget", "anaf", "rambursari")):
+            candidates.extend([
+                "Inspectorii asteapta acum deciziile dupa inchiderea controalelor din teren.",
+                "Presiunea ramane pe recuperarea banilor si pe blocarea schemelor similare.",
+            ])
         if any(term in lowered for term in ("energie", "petrol", "facturi", "consumatori", "preturi")):
             candidates.extend([
                 "Consumatorii ar putea vedea primele schimbari direct pe factura.",
@@ -1429,8 +1444,8 @@ class RadioEditingService:
             ])
         if any(term in lowered for term in ("fermierii", "seceta", "agriculturii", "alimente")):
             candidates.extend([
-                "Preturile pot reactiona rapid daca seceta continua si in urmatoarele saptamani.",
                 "Fermierii asteapta decizia inaintea urmatoarelor lucrari de camp.",
+                "Preturile la alimente pot reactiona rapid daca seceta continua.",
             ])
         if any(term in lowered for term in ("nato", "marea neagra", "ormuz", "rutele maritime", "export", "cipuri", "bateriile")):
             candidates.extend([
@@ -1834,6 +1849,17 @@ class RadioEditingService:
             "duplicate_sentence_removed": duplicate_removed,
             "stories_with_intra_story_repetition": repetition_found,
         }
+
+    def _dedupe_story_sentences(self, sentences: list[str]) -> list[str]:
+        deduped: list[str] = []
+        seen: set[str] = set()
+        for sentence in sentences:
+            key = self._comparison_text(sentence)
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            deduped.append(sentence)
+        return deduped[:MAX_SENTENCE_COUNT]
 
     def _sentence_similarity(self, first: str, second: str) -> float:
         first_tokens = set(self._comparison_tokens(first))
