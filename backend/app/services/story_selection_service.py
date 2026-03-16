@@ -652,8 +652,18 @@ class StorySelectionService:
     def _infer_geography(self, cluster: ScoredStoryCluster) -> str:
         if cluster.local_county_tag:
             return cluster.local_county_tag
+        geo_scopes = {member.geo_scope for member in cluster.cluster.member_articles if member.geo_scope}
+        detected_counties = [member.county_detected for member in cluster.cluster.member_articles if member.county_detected]
+        if detected_counties:
+            return detected_counties[0]
         if any(member.is_local_source for member in cluster.cluster.member_articles):
             return "local"
+        if "regional" in geo_scopes:
+            return "regional"
+        if "national" in geo_scopes:
+            return "national"
+        if "international" in geo_scopes:
+            return "international"
         text = self._cluster_text(cluster)
         best_label = "international"
         best_matches = 0
@@ -678,7 +688,20 @@ class StorySelectionService:
             for member in cluster.cluster.member_articles
             if member.is_local_source and member.source_region
         }
-        if target_county and target_county in source_regions:
+        geo_counties = {
+            self._normalize_text(str(member.county_detected or ""))
+            for member in cluster.cluster.member_articles
+            if member.county_detected
+        }
+        geo_regions = {
+            self._normalize_text(str(member.region_detected or ""))
+            for member in cluster.cluster.member_articles
+            if member.region_detected
+        }
+        if target_county and (target_county in source_regions or target_county in geo_counties):
+            return "region_match"
+        target_macro_region = self._normalize_text(resolved_anchor.resolved_macro_region or "")
+        if target_macro_region and target_macro_region in geo_regions:
             return "region_match"
         text = self._cluster_text(cluster)
         for alias in self._regional_aliases(resolved_anchor.resolved_county, resolved_anchor.resolved_macro_region):

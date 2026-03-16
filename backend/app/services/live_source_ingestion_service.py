@@ -10,6 +10,7 @@ from app.models.article_fetch import FetchedArticle
 from app.models.live_source_ingestion import LiveStoryCandidate, SourceRegistryEntry
 from app.models.user_personalization import UserPersonalization
 from app.services.article_fetch_and_clean_service import ArticleFetchAndCleanService
+from app.services.geo_tagging_service import GeoTaggingService
 from app.services.source_registry_service import SourceRegistryService
 from app.services.source_watcher_service import SourceWatcherService
 
@@ -26,6 +27,7 @@ class LiveSourceIngestionService:
         self.source_watcher_service = SourceWatcherService()
         self.source_registry_service = SourceRegistryService()
         self.article_fetch_and_clean_service = ArticleFetchAndCleanService()
+        self.geo_tagging_service = GeoTaggingService()
 
     def load_registry(self) -> list[SourceRegistryEntry]:
         return self.source_registry_service.load_registry()
@@ -167,16 +169,18 @@ class LiveSourceIngestionService:
 
             failures.append({'source_name': candidate.source_name, 'url': candidate.original_url, 'status': fetch_result.status})
 
+        tagged_articles, geo_debug = self.geo_tagging_service.tag_articles(articles)
         debug.update(
             {
-                'article_count': len(articles),
+                'article_count': len(tagged_articles),
                 'full_fetch_count': full_fetch_count,
                 'rss_fallback_count': rss_fallback_count,
                 'failed_candidates': failures,
                 'candidates_used': [candidate.model_dump(mode='json') for candidate in ranked_candidates[: max_full_fetch + max_rss_fallback]],
+                'geo_tagging_summary': geo_debug,
             }
         )
-        return articles, debug
+        return tagged_articles, debug
 
     def write_registry_audit(self, output_path: Path, personalization: UserPersonalization | None = None) -> dict[str, Any]:
         monitored_sources, _resolution = self.source_watcher_service.resolve_monitored_source_configs(personalization)

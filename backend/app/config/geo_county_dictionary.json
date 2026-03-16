@@ -1,0 +1,595 @@
+{
+  "counties": [
+    {
+      "county_name": "Alba",
+      "county_seat": "Alba Iulia",
+      "major_cities": [
+        "Alba Iulia"
+      ],
+      "common_variants": [
+        "Alba",
+        "judetul Alba",
+        "judet Alba",
+        "Alba Iulia"
+      ]
+    },
+    {
+      "county_name": "Arad",
+      "county_seat": "Arad",
+      "major_cities": [
+        "Arad"
+      ],
+      "common_variants": [
+        "Arad",
+        "judetul Arad",
+        "judet Arad"
+      ]
+    },
+    {
+      "county_name": "Arges",
+      "county_seat": "Pitesti",
+      "major_cities": [
+        "Pitesti",
+        "Campulung",
+        "Curtea de Arges"
+      ],
+      "common_variants": [
+        "Arges",
+        "judetul Arges",
+        "judet Arges",
+        "Pitesti",
+        "Campulung",
+        "Curtea de Arges"
+      ]
+    },
+    {
+      "county_name": "Bacau",
+      "county_seat": "Bacau",
+      "major_cities": [
+        "Bacau",
+        "Onesti",
+        "Moinesti"
+      ],
+      "common_variants": [
+        "Bacau",
+        "judetul Bacau",
+        "judet Bacau",
+        "Onesti",
+        "Moinesti"
+      ]
+    },
+    {
+      "county_name": "Bihor",
+      "county_seat": "Oradea",
+      "major_cities": [
+        "Oradea"
+      ],
+      "common_variants": [
+        "Bihor",
+        "judetul Bihor",
+        "judet Bihor",
+        "Oradea"
+      ]
+    },
+    {
+      "county_name": "Bistrita-Nasaud",
+      "county_seat": "Bistrita",
+      "major_cities": [
+        "Bistrita"
+      ],
+      "common_variants": [
+        "Bistrita-Nasaud",
+        "Bistrita Nasaud",
+        "judetul Bistrita-Nasaud",
+        "judet Bistrita-Nasaud",
+        "Bistrita"
+      ]
+    },
+    {
+      "county_name": "Botosani",
+      "county_seat": "Botosani",
+      "major_cities": [
+        "Botosani",
+        "Dorohoi"
+      ],
+      "common_variants": [
+        "Botosani",
+        "judetul Botosani",
+        "judet Botosani",
+        "Dorohoi"
+      ]
+    },
+    {
+      "county_name": "Braila",
+      "county_seat": "Braila",
+      "major_cities": [
+        "Braila"
+      ],
+      "common_variants": [
+        "Braila",
+        "judetul Braila",
+        "judet Braila"
+      ]
+    },
+    {
+      "county_name": "Brasov",
+      "county_seat": "Brasov",
+      "major_cities": [
+        "Brasov"
+      ],
+      "common_variants": [
+        "Brasov",
+        "judetul Brasov",
+        "judet Brasov"
+      ]
+    },
+    {
+      "county_name": "Bucuresti",
+      "county_seat": "Bucuresti",
+      "major_cities": [
+        "Bucuresti",
+        "Bucharest"
+      ],
+      "common_variants": [
+        "Bucuresti",
+        "judetul Bucuresti",
+        "judet Bucuresti",
+        "Bucharest"
+      ]
+    },
+    {
+      "county_name": "Buzau",
+      "county_seat": "Buzau",
+      "major_cities": [
+        "Buzau"
+      ],
+      "common_variants": [
+        "Buzau",
+        "judetul Buzau",
+        "judet Buzau"
+      ]
+    },
+    {
+      "county_name": "Calarasi",
+      "county_seat": "Calarasi",
+      "major_cities": [
+        "Calarasi"
+      ],
+      "common_variants": [
+        "Calarasi",
+        "judetul Calarasi",
+        "judet Calarasi"
+      ]
+    },
+    {
+      "county_name": "Caras-Severin",
+      "county_seat": "Resita",
+      "major_cities": [
+        "Resita",
+        "Caransebes"
+      ],
+      "common_variants": [
+        "Caras-Severin",
+        "Caras Severin",
+        "judetul Caras-Severin",
+        "judet Caras-Severin",
+        "Resita",
+        "Caransebes"
+      ]
+    },
+    {
+      "county_name": "Cluj",
+      "county_seat": "Cluj",
+      "major_cities": [
+        "Cluj",
+        "Cluj-Napoca",
+        "Turda",
+        "Dej"
+      ],
+      "common_variants": [
+        "Cluj",
+        "judetul Cluj",
+        "judet Cluj",
+        "Cluj-Napoca",
+        "Turda",
+        "Dej"
+      ]
+    },
+    {
+      "county_name": "Constanta",
+      "county_seat": "Constanta",
+      "major_cities": [
+        "Constanta",
+        "Mangalia"
+      ],
+      "common_variants": [
+        "Constanta",
+        "judetul Constanta",
+        "judet Constanta",
+        "Mangalia"
+      ]
+    },
+    {
+      "county_name": "Covasna",
+      "county_seat": "Sfantu Gheorghe",
+      "major_cities": [
+        "Sfantu Gheorghe",
+        "Targu Secuiesc"
+      ],
+      "common_variants": [
+        "Covasna",
+        "judetul Covasna",
+        "judet Covasna",
+        "Sfantu Gheorghe",
+        "Targu Secuiesc"
+      ]
+    },
+    {
+      "county_name": "Dambovita",
+      "county_seat": "Targoviste",
+      "major_cities": [
+        "Targoviste"
+      ],
+      "common_variants": [
+        "Dambovita",
+        "judetul Dambovita",
+        "judet Dambovita",
+        "Targoviste"
+      ]
+    },
+    {
+      "county_name": "Dolj",
+      "county_seat": "Craiova",
+      "major_cities": [
+        "Craiova"
+      ],
+      "common_variants": [
+        "Dolj",
+        "judetul Dolj",
+        "judet Dolj",
+        "Craiova"
+      ]
+    },
+    {
+      "county_name": "Galati",
+      "county_seat": "Galati",
+      "major_cities": [
+        "Galati",
+        "Tecuci"
+      ],
+      "common_variants": [
+        "Galati",
+        "judetul Galati",
+        "judet Galati",
+        "Tecuci"
+      ]
+    },
+    {
+      "county_name": "Giurgiu",
+      "county_seat": "Giurgiu",
+      "major_cities": [
+        "Giurgiu"
+      ],
+      "common_variants": [
+        "Giurgiu",
+        "judetul Giurgiu",
+        "judet Giurgiu"
+      ]
+    },
+    {
+      "county_name": "Gorj",
+      "county_seat": "Targu Jiu",
+      "major_cities": [
+        "Targu Jiu"
+      ],
+      "common_variants": [
+        "Gorj",
+        "judetul Gorj",
+        "judet Gorj",
+        "Targu Jiu"
+      ]
+    },
+    {
+      "county_name": "Harghita",
+      "county_seat": "Miercurea Ciuc",
+      "major_cities": [
+        "Miercurea Ciuc",
+        "Odorheiu Secuiesc"
+      ],
+      "common_variants": [
+        "Harghita",
+        "judetul Harghita",
+        "judet Harghita",
+        "Miercurea Ciuc",
+        "Odorheiu Secuiesc"
+      ]
+    },
+    {
+      "county_name": "Hunedoara",
+      "county_seat": "Deva",
+      "major_cities": [
+        "Deva",
+        "Hunedoara",
+        "Petrosani"
+      ],
+      "common_variants": [
+        "Hunedoara",
+        "judetul Hunedoara",
+        "judet Hunedoara",
+        "Deva",
+        "Petrosani"
+      ]
+    },
+    {
+      "county_name": "Ialomita",
+      "county_seat": "Slobozia",
+      "major_cities": [
+        "Slobozia"
+      ],
+      "common_variants": [
+        "Ialomita",
+        "judetul Ialomita",
+        "judet Ialomita",
+        "Slobozia"
+      ]
+    },
+    {
+      "county_name": "Iasi",
+      "county_seat": "Iasi",
+      "major_cities": [
+        "Iasi",
+        "Pascani"
+      ],
+      "common_variants": [
+        "Iasi",
+        "judetul Iasi",
+        "judet Iasi",
+        "Pascani"
+      ]
+    },
+    {
+      "county_name": "Ilfov",
+      "county_seat": "Buftea",
+      "major_cities": [
+        "Buftea",
+        "Voluntari",
+        "Otopeni"
+      ],
+      "common_variants": [
+        "Ilfov",
+        "judetul Ilfov",
+        "judet Ilfov",
+        "Buftea",
+        "Voluntari",
+        "Otopeni"
+      ]
+    },
+    {
+      "county_name": "Maramures",
+      "county_seat": "Baia Mare",
+      "major_cities": [
+        "Baia Mare",
+        "Sighetu Marmatiei"
+      ],
+      "common_variants": [
+        "Maramures",
+        "judetul Maramures",
+        "judet Maramures",
+        "Baia Mare",
+        "Sighetu Marmatiei"
+      ]
+    },
+    {
+      "county_name": "Mehedinti",
+      "county_seat": "Drobeta-Turnu Severin",
+      "major_cities": [
+        "Drobeta-Turnu Severin"
+      ],
+      "common_variants": [
+        "Mehedinti",
+        "judetul Mehedinti",
+        "judet Mehedinti",
+        "Drobeta-Turnu Severin"
+      ]
+    },
+    {
+      "county_name": "Mures",
+      "county_seat": "Targu Mures",
+      "major_cities": [
+        "Targu Mures",
+        "Sighisoara"
+      ],
+      "common_variants": [
+        "Mures",
+        "judetul Mures",
+        "judet Mures",
+        "Targu Mures",
+        "Sighisoara"
+      ]
+    },
+    {
+      "county_name": "Neamt",
+      "county_seat": "Piatra Neamt",
+      "major_cities": [
+        "Piatra Neamt",
+        "Roman"
+      ],
+      "common_variants": [
+        "Neamt",
+        "judetul Neamt",
+        "judet Neamt",
+        "Piatra Neamt",
+        "Roman"
+      ]
+    },
+    {
+      "county_name": "Olt",
+      "county_seat": "Slatina",
+      "major_cities": [
+        "Slatina"
+      ],
+      "common_variants": [
+        "Olt",
+        "judetul Olt",
+        "judet Olt",
+        "Slatina"
+      ]
+    },
+    {
+      "county_name": "Prahova",
+      "county_seat": "Ploiesti",
+      "major_cities": [
+        "Ploiesti",
+        "Campina"
+      ],
+      "common_variants": [
+        "Prahova",
+        "judetul Prahova",
+        "judet Prahova",
+        "Ploiesti",
+        "Campina"
+      ]
+    },
+    {
+      "county_name": "Salaj",
+      "county_seat": "Zalau",
+      "major_cities": [
+        "Zalau"
+      ],
+      "common_variants": [
+        "Salaj",
+        "judetul Salaj",
+        "judet Salaj",
+        "Zalau"
+      ]
+    },
+    {
+      "county_name": "Satu Mare",
+      "county_seat": "Satu Mare",
+      "major_cities": [
+        "Satu Mare"
+      ],
+      "common_variants": [
+        "Satu Mare",
+        "judetul Satu Mare",
+        "judet Satu Mare"
+      ]
+    },
+    {
+      "county_name": "Sibiu",
+      "county_seat": "Sibiu",
+      "major_cities": [
+        "Sibiu",
+        "Medias"
+      ],
+      "common_variants": [
+        "Sibiu",
+        "judetul Sibiu",
+        "judet Sibiu",
+        "Medias"
+      ]
+    },
+    {
+      "county_name": "Suceava",
+      "county_seat": "Suceava",
+      "major_cities": [
+        "Suceava",
+        "Falticeni",
+        "Radauti"
+      ],
+      "common_variants": [
+        "Suceava",
+        "judetul Suceava",
+        "judet Suceava",
+        "Falticeni",
+        "Radauti"
+      ]
+    },
+    {
+      "county_name": "Teleorman",
+      "county_seat": "Alexandria",
+      "major_cities": [
+        "Alexandria",
+        "Rosiori de Vede"
+      ],
+      "common_variants": [
+        "Teleorman",
+        "judetul Teleorman",
+        "judet Teleorman",
+        "Alexandria",
+        "Rosiori de Vede"
+      ]
+    },
+    {
+      "county_name": "Timis",
+      "county_seat": "Timisoara",
+      "major_cities": [
+        "Timisoara",
+        "Lugoj"
+      ],
+      "common_variants": [
+        "Timis",
+        "judetul Timis",
+        "judet Timis",
+        "Timisoara",
+        "Lugoj"
+      ]
+    },
+    {
+      "county_name": "Tulcea",
+      "county_seat": "Tulcea",
+      "major_cities": [
+        "Tulcea"
+      ],
+      "common_variants": [
+        "Tulcea",
+        "judetul Tulcea",
+        "judet Tulcea"
+      ]
+    },
+    {
+      "county_name": "Valcea",
+      "county_seat": "Ramnicu Valcea",
+      "major_cities": [
+        "Ramnicu Valcea",
+        "Ramnicul Valcea"
+      ],
+      "common_variants": [
+        "Valcea",
+        "judetul Valcea",
+        "judet Valcea",
+        "Ramnicu Valcea",
+        "Ramnicul Valcea"
+      ]
+    },
+    {
+      "county_name": "Vaslui",
+      "county_seat": "Vaslui",
+      "major_cities": [
+        "Vaslui",
+        "Barlad",
+        "Husi"
+      ],
+      "common_variants": [
+        "Vaslui",
+        "judetul Vaslui",
+        "judet Vaslui",
+        "Barlad",
+        "Husi"
+      ]
+    },
+    {
+      "county_name": "Vrancea",
+      "county_seat": "Focsani",
+      "major_cities": [
+        "Focsani"
+      ],
+      "common_variants": [
+        "Vrancea",
+        "judetul Vrancea",
+        "judet Vrancea",
+        "Focsani"
+      ]
+    }
+  ]
+}

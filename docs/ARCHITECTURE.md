@@ -1721,3 +1721,7 @@ This layer does not perform:
 - cluster changes
 - source discovery changes
 - TTS or Flutter changes
+
+## Geo Tagging Layer
+
+Live ingestion now passes normalized stories through a deterministic geo-tagging service before editorial selection. The service assigns county, macro-region, national, or international scope metadata and feeds county-first local routing without changing the downstream story contracts.

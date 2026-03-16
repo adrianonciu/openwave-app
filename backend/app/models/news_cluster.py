@@ -26,6 +26,11 @@ class NewsClusteringArticle(BaseModel):
     institutional_signal_hits: list[str] = Field(default_factory=list)
     romania_impact_evidence_hits: list[str] = Field(default_factory=list)
     title_only_domestic_boost: float = 0.0
+    geo_scope: Literal["county", "regional", "national", "international"] | None = None
+    county_detected: str | None = None
+    region_detected: str | None = None
+    county_match_confidence: float | None = None
+    geo_signals: list[str] = Field(default_factory=list)
 
     @classmethod
     def from_fetched_article(cls, article: FetchedArticle) -> "NewsClusteringArticle":
@@ -50,6 +55,11 @@ class NewsClusteringArticle(BaseModel):
             institutional_signal_hits=article.institutional_signal_hits,
             romania_impact_evidence_hits=article.romania_impact_evidence_hits,
             title_only_domestic_boost=article.title_only_domestic_boost,
+            geo_scope=article.geo_scope,
+            county_detected=article.county_detected,
+            region_detected=article.region_detected,
+            county_match_confidence=article.county_match_confidence,
+            geo_signals=article.geo_signals,
         )
 
 
@@ -72,6 +82,11 @@ class ClusterMemberArticle(BaseModel):
     institutional_signal_hits: list[str] = Field(default_factory=list)
     romania_impact_evidence_hits: list[str] = Field(default_factory=list)
     title_only_domestic_boost: float = 0.0
+    geo_scope: Literal["county", "regional", "national", "international"] | None = None
+    county_detected: str | None = None
+    region_detected: str | None = None
+    county_match_confidence: float | None = None
+    geo_signals: list[str] = Field(default_factory=list)
 
 
 class StoryCluster(BaseModel):

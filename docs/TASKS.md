@@ -848,3 +848,6 @@ Still intentionally excluded from this task:
 - clustering changes
 - source-discovery changes
 - Flutter or TTS changes
+
+Geo tagging note:
+- Live-ingested stories now pass through a deterministic county/region detection layer before selection so county-first local routing can rely on explicit geo metadata as well as source provenance.

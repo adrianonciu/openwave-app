@@ -29,6 +29,7 @@ GEORGE_COVASNA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_george_cov
 NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "sample_generalist_bulletin_nicu_constanta.txt"
 LIVE_NICU_CONSTANTA_OUTPUT_PATH = OUTPUT_DIR / "live_generalist_bulletin_nicu_constanta.txt"
 LIVE_SOURCE_REGISTRY_AUDIT_PATH = OUTPUT_DIR / "live_source_registry_audit.json"
+GEO_TAGGING_PREVIEW_PATH = OUTPUT_DIR / "geo_tagging_preview.json"
 
 PREVIEW_FIXTURES = [
     {
@@ -1356,12 +1357,16 @@ def _build_live_nicu_constanta_personalization() -> UserPersonalization:
 
 def _cluster_local_origin_type(cluster, target_county: str) -> str:
     county_key = (target_county or '').strip().lower()
-    local_regions = {str(member.source_region or '').strip().lower() for member in cluster.cluster.member_articles if member.is_local_source}
-    if county_key and county_key in local_regions:
-        return 'county'
-    if local_regions:
-        return 'fallback_region'
+    local_members = [member for member in cluster.cluster.member_articles if member.is_local_source]
+    local_regions = {str(member.source_region or '').strip().lower() for member in local_members if member.source_region}
+    detected_counties = {str(member.county_detected or '').strip().lower() for member in local_members if member.county_detected}
     scopes = {member.source_scope for member in cluster.cluster.member_articles}
+    if 'international' in scopes and len(local_members) <= 1:
+        return 'international'
+    if county_key and (county_key in local_regions or county_key in detected_counties):
+        return 'county'
+    if local_regions or detected_counties:
+        return 'fallback_region'
     if 'international' in scopes:
         return 'international'
     return 'national'
@@ -1381,6 +1386,9 @@ def _render_live_preview_text(preview_payload: dict[str, object]) -> str:
         f"Local stories from regional fallback: {preview_payload['local_story_count_from_regional_fallback']}",
         f"Media source credits emitted: {preview_payload['written_source_credits_emitted']}",
         f"Registry audit path: {preview_payload['registry_audit_path']}",
+        f"Geo tagging preview path: {preview_payload['geo_tagging_preview_path']}",
+        f"Geo tagged county/regional/national/international: {preview_payload['geo_tagged_county']}/{preview_payload['geo_tagged_regional']}/{preview_payload['geo_tagged_national']}/{preview_payload['geo_tagged_international']}",
+        f"Stories with multiple county hits: {preview_payload['stories_with_multiple_county_hits']}",
         '',
         'Stories:',
     ]
@@ -1442,6 +1450,18 @@ def _run_live_mode() -> None:
     articles, ingestion_debug = live_service.fetch_articles(personalization=personalization)
 
     if not articles:
+        geo_preview_payload = {
+            'stories': [],
+            'validation_summary': {
+                'story_count': 0,
+                'geo_tagged_county': 0,
+                'geo_tagged_regional': 0,
+                'geo_tagged_national': 0,
+                'geo_tagged_international': 0,
+                'stories_with_multiple_county_hits': 0,
+            },
+        }
+        GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
         payload = {
             'mode': 'live',
             'resolved_user_county': 'Constanta',
@@ -1451,6 +1471,12 @@ def _run_live_mode() -> None:
             'story_count': 0,
             'local_story_count_from_constanta_county': 0,
             'local_story_count_from_regional_fallback': 0,
+            'geo_tagging_preview_path': str(GEO_TAGGING_PREVIEW_PATH),
+            'geo_tagged_county': 0,
+            'geo_tagged_regional': 0,
+            'geo_tagged_national': 0,
+            'geo_tagged_international': 0,
+            'stories_with_multiple_county_hits': 0,
             'stories': [],
             'media_source_credits': [],
             'written_source_credits_emitted': False,
@@ -1502,6 +1528,10 @@ def _run_live_mode() -> None:
             'local_origin_type': _cluster_local_origin_type(cluster, target_county) if cluster is not None else 'unknown',
         })
 
+    geo_preview_payload = live_service.geo_tagging_service.build_preview_payload(articles)
+    GEO_TAGGING_PREVIEW_PATH.write_text(json.dumps(geo_preview_payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    geo_summary = geo_preview_payload['validation_summary']
+
     payload = {
         'mode': 'live',
         'resolved_user_county': final_briefing.local_source_region_used or target_county,
@@ -1511,6 +1541,12 @@ def _run_live_mode() -> None:
         'story_count': len(story_rows),
         'local_story_count_from_constanta_county': sum(1 for row in story_rows if row['local_origin_type'] == 'county'),
         'local_story_count_from_regional_fallback': sum(1 for row in story_rows if row['local_origin_type'] == 'fallback_region'),
+        'geo_tagging_preview_path': str(GEO_TAGGING_PREVIEW_PATH),
+        'geo_tagged_county': geo_summary['geo_tagged_county'],
+        'geo_tagged_regional': geo_summary['geo_tagged_regional'],
+        'geo_tagged_national': geo_summary['geo_tagged_national'],
+        'geo_tagged_international': geo_summary['geo_tagged_international'],
+        'stories_with_multiple_county_hits': geo_summary['stories_with_multiple_county_hits'],
         'stories': story_rows,
         'media_source_credits': final_briefing.media_source_credits,
         'written_source_credits_emitted': bool(final_briefing.media_source_credits),

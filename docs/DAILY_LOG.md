@@ -2009,3 +2009,9 @@ Important note:
 - shaping is working as intended structurally
 - the national pool itself still needs stronger Romanian same-event convergence and cleaner domestic classification
 - shaping improves the order of the available selected set, but it does not and should not repair upstream candidate-quality issues
+
+## 2026-03-16
+
+- added a deterministic geo-tagging layer for live-ingested stories with county, region, national, and international classification
+- generated Romanian county and macro-region config maps for the editorial pipeline
+- integrated geo tagging into live ingestion and exposed a geo preview artifact for debugging county-first routing

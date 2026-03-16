@@ -120,3 +120,5 @@ Current backend infrastructure also includes a deterministic radio editing layer
 Repository hygiene note:
 - `backend/debug_output/` contains generated local preview/debug artifacts and is not tracked in Git.
 - `backend/editorial_tests/` contains curated benchmark bulletins kept in Git for editorial regression review.
+
+Current backend infrastructure also includes a deterministic geo-tagging layer that classifies live-ingested stories as county, regional, national, or international before editorial selection.

@@ -34,6 +34,11 @@ class FetchedArticle(BaseModel):
     title_only_domestic_boost: float = 0.0
     source_selection_reason: str | None = None
     classifier_decision_reason: str | None = None
+    geo_scope: Literal["county", "regional", "national", "international"] | None = None
+    county_detected: str | None = None
+    region_detected: str | None = None
+    county_match_confidence: float | None = None
+    geo_signals: list[str] = []
 
 
 class ArticleFetchResult(BaseModel):

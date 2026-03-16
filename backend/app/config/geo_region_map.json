@@ -1,0 +1,91 @@
+{
+  "regions": [
+    {
+      "region_name": "Banat",
+      "counties": [
+        "Caras-Severin",
+        "Timis"
+      ]
+    },
+    {
+      "region_name": "Bucuresti-Ilfov",
+      "counties": [
+        "Bucuresti",
+        "Ilfov"
+      ]
+    },
+    {
+      "region_name": "Crisana",
+      "counties": [
+        "Arad",
+        "Bihor"
+      ]
+    },
+    {
+      "region_name": "Dobrogea",
+      "counties": [
+        "Constanta",
+        "Tulcea"
+      ]
+    },
+    {
+      "region_name": "Maramures",
+      "counties": [
+        "Maramures",
+        "Satu Mare"
+      ]
+    },
+    {
+      "region_name": "Moldova",
+      "counties": [
+        "Bacau",
+        "Botosani",
+        "Galati",
+        "Iasi",
+        "Neamt",
+        "Suceava",
+        "Vaslui",
+        "Vrancea"
+      ]
+    },
+    {
+      "region_name": "Muntenia",
+      "counties": [
+        "Arges",
+        "Braila",
+        "Buzau",
+        "Calarasi",
+        "Dambovita",
+        "Giurgiu",
+        "Ialomita",
+        "Prahova",
+        "Teleorman"
+      ]
+    },
+    {
+      "region_name": "Oltenia",
+      "counties": [
+        "Dolj",
+        "Gorj",
+        "Mehedinti",
+        "Olt",
+        "Valcea"
+      ]
+    },
+    {
+      "region_name": "Transilvania",
+      "counties": [
+        "Alba",
+        "Bistrita-Nasaud",
+        "Brasov",
+        "Cluj",
+        "Covasna",
+        "Harghita",
+        "Hunedoara",
+        "Mures",
+        "Salaj",
+        "Sibiu"
+      ]
+    }
+  ]
+}

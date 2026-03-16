@@ -494,6 +494,11 @@ class NewsClusteringService:
                 institutional_signal_hits=item.article.institutional_signal_hits,
                 romania_impact_evidence_hits=item.article.romania_impact_evidence_hits,
                 title_only_domestic_boost=item.article.title_only_domestic_boost,
+                geo_scope=item.article.geo_scope,
+                county_detected=item.article.county_detected,
+                region_detected=item.article.region_detected,
+                county_match_confidence=item.article.county_match_confidence,
+                geo_signals=item.article.geo_signals,
             )
             for item in sorted(cluster_signals, key=lambda value: value.article.published_at)
         ]

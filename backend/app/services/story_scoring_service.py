@@ -569,13 +569,23 @@ class StoryScoringService:
             for member in cluster.cluster.member_articles
             if member.is_local_source and member.source_region
         ]
+        geo_county_hits = [
+            member.county_detected
+            for member in cluster.cluster.member_articles
+            if member.county_detected
+        ]
+        geo_region_hits = [
+            member.region_detected
+            for member in cluster.cluster.member_articles
+            if member.region_detected
+        ]
         domain_hits = [
             keyword
             for keyword, _weight in profile.impact_keyword_weights.items()
             if self._contains_normalized_term(text, keyword)
         ]
 
-        geographic_signal = geographic_hits[0] if geographic_hits else (source_region_hits[0] if source_region_hits else None)
+        geographic_signal = geographic_hits[0] if geographic_hits else (geo_county_hits[0] if geo_county_hits else (source_region_hits[0] if source_region_hits else (geo_region_hits[0] if geo_region_hits else None)))
         cluster.geographic_signal_detected = geographic_signal
         cluster.local_county_tag = geographic_signal
         cluster.local_domain_signal_hits = domain_hits[:5]
@@ -592,7 +602,7 @@ class StoryScoringService:
         boost = min(0.45, base_boost + min(0.25, weighted_domain_score * 0.08))
         cluster.local_relevance_boost = round(boost, 2)
         cluster.score_total = round(cluster.score_total + cluster.local_relevance_boost, 2)
-        source_region_note = '' if geographic_hits else ' using source-region fallback'
+        source_region_note = '' if geographic_hits else ' using geo/source-region fallback'
         cluster.scoring_explanation = (
             f"{cluster.scoring_explanation} Local profile boost +{cluster.local_relevance_boost} from geographic signal "
             f"'{cluster.geographic_signal_detected}'{source_region_note} and local-domain hits {', '.join(cluster.local_domain_signal_hits[:3])}."
